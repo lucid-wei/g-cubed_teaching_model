@@ -60,7 +60,8 @@ You will probably need to reinstall gcubed if there is a version update.
 
 # The G-Cubed model IO folder
 
-The G-Cubed model requires a number of files to run. These files are organised into a folder with a set of subfolders. The gcubed package will load these files and produce certain outputs into this folder.
+The G-Cubed model requires a number of files to run. These files are organised into a folder with a set of subfolders. The gcubed package will load these files and produce certain outputs into this folder.  
+
 The lower-case names of the subfolders are built-in for this particular model, and should not be changed during typical usage. The capitalised names of folder and files can be altered at your discretion, depending on your use case. 
 
 The names that include parts like <PART> are to be substituted as follows:
@@ -128,10 +129,35 @@ To generate the HTML documentation of the model, run:
 <SYM> -html ggg2r170.sym model_<VERSION>_<NUMBER>.html
 ```
 
-Both of these commands should be run from within the sym subfolder documented above. In other words, you will need to run command like this to change your location:
+Both of these commands should be run from within the sym subfolder documented above. In other words, you will need to run command like this to change your location before you run your .exe:
 ```
-  cd path/where/you/extract/this/repo/model_IO_folder/sym
+cd path/where/you/extract/this/repo/model_IO_folder/sym
+```
+where cd is a common command in both Windows and MacOS, standing for 'change directory'.
+  
+# Running the G-Cubed using your own Python script.
+
+Modify the following python script to run the model.  
+An example of this script is contained in the python directory of the model (python/run.py).
+
+```
+from gcubed.runner import Runner
+
+# Working directory - where you will store outputs from the run.
+# Configuration file location relative to the working directory.
+# Experiment file location relative to the model simulations folder.
+runner: Runner = Runner(
+    working_directory="path/where/you want/the/results/to/be/saved/",
+    configuration_file="relative/path/from/working/directory/to/configuration2R164.csv", 
+    experiment_design_file="experiment1/design.csv"
+    )
+
+runner.run()
 ```
 
-  
+To execute this script, run the following command under the python subfolder:
+  ```
+python run.py
+  ```
+If you encounter some error saying python is nowhere to be found, (assuming you already install python) this means you have not configured PYTHONPATH and your terminal does not know where to find your installed python executable.
   
