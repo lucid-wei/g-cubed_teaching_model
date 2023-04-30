@@ -1,0 +1,17 @@
+//  gggopt-ls-on.sym
+//  October 2010
+//
+//  Turn on the lump sum closure option and make government spending
+//  exogenous.
+//
+
+variable GOVS(regions)        'total gov spending'                     exo,gdp ;
+
+//
+//  Endogenous lump sum tax
+//
+
+TAXL = INTR*BOND;
+     
+	 
+

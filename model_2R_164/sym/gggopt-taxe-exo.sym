@@ -1,0 +1,10 @@
+//  gggopt-taxe-on.sym
+//  October 2010
+//
+//  Optional module to allow TAXE to be calculated externally
+//  and inserted into the model as an exogenous shock.  Allows
+//  TAXE to incorporate nonlinear effects.  TAXE becomes exogenous
+//  and there's no longer an internal TAXE equation.
+//
+
+variable TAXE(regions)  'revenue from externality taxes'  exo,gdp ;

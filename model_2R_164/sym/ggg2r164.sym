@@ -1,0 +1,7 @@
+//  G-Cubed model definition file
+
+#include gggs2r.sym          // regions and sectors
+#include gggv1640.sym         // core model
+#include gggopt-txgs-off.sym  // sector-specific taxes with exo RVGS
+#include gggopt-ls-on.sym    // lump sum closure
+#include gggopt-taxe-exo.sym  // taxe exogenous

@@ -1,0 +1,33 @@
+//  gggs2r.sym
+//  July  2022
+//
+//  G-Cubed 2r sets
+//
+
+//
+//  Regions
+//
+
+set regions   (UU,NN)      'countries and regions'  ;
+
+set oecd      (UU)         'OECD countries'         ;
+set AnnexB    = oecd    	'Annex B countries'      ;
+set notAnnexB (NN)		   'Non Annex B countries'  ;
+set notUS     = notAnnexB  'used with REXC equation';
+
+// 
+//  Sectors and goods:
+//
+//     01 energy
+//     02 non-energy
+//     Y  capital producing sector
+//     Z  household capital
+//
+
+set sectors   (a01,a02)    'ordinary sectors'  ;
+set sec_std   = sectors 'sectors with standard treatment';
+
+set goods     (g01,g02) 'all goods' ;
+set goods_o   = goods 'goods with standard treatment' ;
+set goods_e   = goods(g01) 'energy goods'      ;
+set goods_m   = goods(g02) 'materials'         ;

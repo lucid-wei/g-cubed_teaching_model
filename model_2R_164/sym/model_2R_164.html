@@ -1,0 +1,1670 @@
+<html>
+<head>
+<title>model_R_164</title>
+<style type="text/css">
+a:link { color:blue; } body { margin-left:2em; margin-top:2em; } table.dec {} td { padding-left: 1em; padding-right: 1em; } th { text-align: left; padding-left: 1em; padding-right: 1em; } div.heading { margin-top: 2em; font-weight: bold; font-size: 120%; } div.dblock { margin-top: 1em; margin-left: 2em; } div.eblock { margin-top: 1em; overflow-x: scroll;  } div.eqn { margin-top: 1em; margin-left: 2em;} </style>
+<script>MathJax = { jax: ['input/tex', 'output/svg'], tex: { tags: 'ams', packages: {'[+]': ['textmacros']} }, svg: { displayAlign: 'left' }, loader: {load: ['[tex]/textmacros']} };</script><script type='text/javascript' id='MathJax-script' async src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js'></script>
+</head>
+<body>
+<h1>model_R_164</h1>
+<div class="heading">Sets:</div>
+<div class="dblock">
+<table class="dec" border=1 cellspacing=0>
+<tr><th>Name<th>Elements<th>Description</tr>
+<tr><td><a id='abroad'><b>abroad</b></a><td>UU, NN<td>used in asset calculations</tr>
+<tr><td><a id='AnnexB'><b>AnnexB</b></a><td>UU<td>Annex B countries</tr>
+<tr><td><a id='currency'><b>currency</b></a><td>UU, NN<td>currency of assets</tr>
+<tr><td><a id='dest'><b>dest</b></a><td>UU, NN<td>alias for regions</tr>
+<tr><td><a id='domfor'><b>domfor</b></a><td>D, F<td>domestic vs foreign</tr>
+<tr><td><a id='factors'><b>factors</b></a><td>K, L, E, M<td>top tier factors of production</tr>
+<tr><td><a id='goods'><b>goods</b></a><td>g01, g02<td>all goods</tr>
+<tr><td><a id='goods_e'><b>goods_e</b></a><td>g01<td>energy goods</tr>
+<tr><td><a id='goods_m'><b>goods_m</b></a><td>g02<td>materials</tr>
+<tr><td><a id='goods_o'><b>goods_o</b></a><td>g01, g02<td>goods with standard treatment</tr>
+<tr><td><a id='last'><b>last</b></a><td>t9<td>steady state</tr>
+<tr><td><a id='notAnnexB'><b>notAnnexB</b></a><td>NN<td>Non Annex B countries</tr>
+<tr><td><a id='notUS'><b>notUS</b></a><td>NN<td>used with REXC equation</tr>
+<tr><td><a id='oecd'><b>oecd</b></a><td>UU<td>OECD countries</tr>
+<tr><td><a id='orig'><b>orig</b></a><td>UU, NN<td>alias for regions</tr>
+<tr><td><a id='owner'><b>owner</b></a><td>UU, NN<td>owner of assets ASSE</tr>
+<tr><td><a id='regions'><b>regions</b></a><td>UU, NN<td>countries and regions</tr>
+<tr><td><a id='sec_std'><b>sec_std</b></a><td>a01, a02<td>sectors with standard treatment</tr>
+<tr><td><a id='sectors'><b>sectors</b></a><td>a01, a02<td>ordinary sectors</tr>
+<tr><td><a id='time'><b>time</b></a><td>t0, t1, t2, t3, t4, t5, t6, t7, t8, t9<td>tablo time periods</tr>
+<tr><td><a id='varfac'><b>varfac</b></a><td>L, E, M<td>variable factors</tr>
+</table>
+</div>
+<div class="heading">Variables:</div>
+<div class="dblock">
+<table class="dec" border=1 cellspacing=0>
+<tr><th>Name<th>Domain<th>Description<th>Units<th>LHS<th>RHS</tr>
+<tr><td><a id='ABUY'><b>ABUY</b></a><td><a href='#owner'>owner</a><td>new purchases of foreign assets<td>end,gdp<td><a href='#143'>143</a><td><a href='#144'>144</a></tr>
+<tr><td><a id='ASSE'><b>ASSE</b></a><td><a href='#currency'>currency</a>, <a href='#owner'>owner</a><td>assets in each currency, including own<td>sta,usgdp<td><a href='#144'>144</a><td><a href='#144'>144</a>, <a href='#146'>146</a>, <a href='#81'>81</a>, <a href='#82'>82</a></tr>
+<tr><td><a id='ASSU'><b>ASSU</b></a><td><a href='#regions'>regions</a><td>assets held by region, in US$<td>end,gdp<td><a href='#146'>146</a><td><a href='#112'>112</a></tr>
+<tr><td><a id='BCOL'><b>BCOL</b></a><td><a href='#regions'>regions</a><td>Quads from coal<td>btu,exo<td>none<td>none</tr>
+<tr><td><a id='BCT'><b>BCT</b></a><td><a href='#goods_o'>goods_o</a>, <a href='#dest'>dest</a>, <a href='#orig'>orig</a><td>unit border tax adjustment<td>cent,exo<td>none<td><a href='#25'>25</a>, <a href='#6'>6</a></tr>
+<tr><td><a id='BGAS'><b>BGAS</b></a><td><a href='#regions'>regions</a><td>Quads from gas<td>btu,exo<td>none<td>none</tr>
+<tr><td><a id='BOIL'><b>BOIL</b></a><td><a href='#regions'>regions</a><td>Quads from oil<td>btu,exo<td>none<td>none</tr>
+<tr><td><a id='BOND'><b>BOND</b></a><td><a href='#regions'>regions</a><td>bonds<td>gdp,sta<td><a href='#129'>129</a><td><a href='#112'>112</a>, <a href='#123'>123</a>, <a href='#124'>124</a>, <a href='#129'>129</a>, <a href='#152'>152</a>, <a href='#79'>79</a></tr>
+<tr><td><a id='CAP'><b>CAP</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>capital stock<td>gdp,sta<td><a href='#38'>38</a><td><a href='#32'>32</a>, <a href='#38'>38</a>, <a href='#44'>44</a>, <a href='#45'>45</a>, <a href='#50'>50</a>, <a href='#69'>69</a></tr>
+<tr><td><a id='CAPY'><b>CAPY</b></a><td><a href='#regions'>regions</a><td>raw invt capital stock<td>gdp,sta<td><a href='#39'>39</a><td><a href='#112'>112</a>, <a href='#33'>33</a>, <a href='#39'>39</a>, <a href='#46'>46</a>, <a href='#48'>48</a>, <a href='#52'>52</a></tr>
+<tr><td><a id='CAPZ'><b>CAPZ</b></a><td><a href='#regions'>regions</a><td>HH capital stock<td>gdp,sta<td><a href='#40'>40</a><td><a href='#112'>112</a>, <a href='#34'>34</a>, <a href='#40'>40</a>, <a href='#47'>47</a>, <a href='#49'>49</a>, <a href='#54'>54</a></tr>
+<tr><td><a id='CNPE'><b>CNPE</b></a><td><a href='#regions'>regions</a><td>HH demand for E<td>end,gdp<td><a href='#84'>84</a><td><a href='#67'>67</a>, <a href='#87'>87</a></tr>
+<tr><td><a id='CNPK'><b>CNPK</b></a><td><a href='#regions'>regions</a><td>HH cap services<td>end,gdp<td><a href='#86'>86</a><td>none</tr>
+<tr><td><a id='CNPL'><b>CNPL</b></a><td><a href='#regions'>regions</a><td>HH demand for L<td>end,gdp<td><a href='#83'>83</a><td><a href='#113'>113</a>, <a href='#119'>119</a>, <a href='#22'>22</a>, <a href='#67'>67</a>, <a href='#79'>79</a></tr>
+<tr><td><a id='CNPO'><b>CNPO</b></a><td><a href='#regions'>regions</a><td>HH demand for M<td>end,gdp<td><a href='#85'>85</a><td><a href='#67'>67</a>, <a href='#88'>88</a></tr>
+<tr><td><a id='CON'><b>CON</b></a><td><a href='#goods_o'>goods_o</a>, <a href='#regions'>regions</a><td>HH demand for goods<td>end,gdp<td><a href='#87'>87</a>, <a href='#88'>88</a><td><a href='#2'>2</a>, <a href='#3'>3</a></tr>
+<tr><td><a id='CONP'><b>CONP</b></a><td><a href='#regions'>regions</a><td>national accounts C<td>end,gdp<td><a href='#80'>80</a><td><a href='#106'>106</a>, <a href='#107'>107</a>, <a href='#34'>34</a>, <a href='#67'>67</a>, <a href='#83'>83</a>, <a href='#84'>84</a>, <a href='#85'>85</a>, <a href='#86'>86</a></tr>
+<tr><td><a id='CURN'><b>CURN</b></a><td><a href='#regions'>regions</a><td>current account, dom currency, using INAS<td>end,gdp<td><a href='#110'>110</a><td><a href='#132'>132</a>, <a href='#133'>133</a></tr>
+<tr><td><a id='CURR'><b>CURR</b></a><td><a href='#regions'>regions</a><td>current account, US$, using IRAS<td>end,gdp<td><a href='#111'>111</a><td><a href='#131'>131</a>, <a href='#143'>143</a>, <a href='#144'>144</a></tr>
+<tr><td><a id='DEFI'><b>DEFI</b></a><td><a href='#regions'>regions</a><td>fiscal deficit, using INTR<td>end,gdp<td><a href='#124'>124</a><td><a href='#129'>129</a>, <a href='#131'>131</a></tr>
+<tr><td><a id='DEFN'><b>DEFN</b></a><td><a href='#regions'>regions</a><td>fiscal deficit, using INTN<td>end,gdp<td><a href='#123'>123</a><td><a href='#132'>132</a></tr>
+<tr><td><a id='DEFX'><b>DEFX</b></a><td><a href='#regions'>regions</a><td>fiscal deficit, using INTR (exog)<td>exo,gdp<td>none<td>none</tr>
+<tr><td><a id='ECOL'><b>ECOL</b></a><td><a href='#regions'>regions</a><td>CO2 emissions from coal<td>exo,mmt<td>none<td>none</tr>
+<tr><td><a id='EGAS'><b>EGAS</b></a><td><a href='#regions'>regions</a><td>CO2 emissions from gas<td>exo,mmt<td>none<td>none</tr>
+<tr><td><a id='EN'><b>EN</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#goods_e'>goods_e</a>, <a href='#regions'>regions</a><td>sector demand for E goods<td>end,gdp<td><a href='#147'>147</a><td><a href='#2'>2</a></tr>
+<tr><td><a id='ENT'><b>ENT</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>sector demand for E<td>end,gdp<td><a href='#15'>15</a><td><a href='#147'>147</a>, <a href='#65'>65</a></tr>
+<tr><td><a id='EOIL'><b>EOIL</b></a><td><a href='#regions'>regions</a><td>CO2 emissions from oil<td>exo,mmt<td>none<td>none</tr>
+<tr><td><a id='EPRC'><b>EPRC</b></a><td><a href='#regions'>regions</a><td>expected PRCT inflation rate<td>end,pct<td><a href='#98'>98</a><td><a href='#96'>96</a></tr>
+<tr><td><a id='EXCH'><b>EXCH</b></a><td><a href='#regions'>regions</a><td>exch rate as US$ per unit of region currency<td>pct,stl<td><a href='#1'>1</a>, <a href='#136'>136</a><td><a href='#137'>137</a>, <a href='#141'>141</a>, <a href='#5'>5</a>, <a href='#96'>96</a></tr>
+<tr><td><a id='EXCL'><b>EXCL</b></a><td><a href='#regions'>regions</a><td>exch rate as US$ per unit of region currency - lagged<td>pct,sta<td><a href='#137'>137</a><td>none</tr>
+<tr><td><a id='EXCR'><b>EXCR</b></a><td><a href='#regions'>regions</a><td>country risk premium relative to US<td>exo,pct<td>none<td><a href='#138'>138</a></tr>
+<tr><td><a id='EXCX'><b>EXCX</b></a><td><a href='#regions'>regions</a><td>exch rate target <td>exo,pct<td>none<td><a href='#96'>96</a></tr>
+<tr><td><a id='EXQ'><b>EXQ</b></a><td><a href='#goods_o'>goods_o</a>, <a href='#regions'>regions</a><td>exports, EXP.xx<td>end,gdp<td><a href='#10'>10</a><td><a href='#117'>117</a>, <a href='#151'>151</a>, <a href='#2'>2</a>, <a href='#3'>3</a>, <a href='#9'>9</a></tr>
+<tr><td><a id='EXQT'><b>EXQT</b></a><td><a href='#regions'>regions</a><td>value of exports at source<td>end,gdp<td><a href='#9'>9</a><td><a href='#134'>134</a>, <a href='#135'>135</a></tr>
+<tr><td><a id='EYGR'><b>EYGR</b></a><td><a href='#regions'>regions</a><td>expected output growth<td>end,pct<td><a href='#97'>97</a><td><a href='#96'>96</a></tr>
+<tr><td><a id='GCE'><b>GCE</b></a><td><a href='#goods_o'>goods_o</a>, <a href='#regions'>regions</a><td>government purchases of goods&serv<td>end,gdp<td><a href='#126'>126</a>, <a href='#127'>127</a><td><a href='#125'>125</a>, <a href='#2'>2</a>, <a href='#3'>3</a></tr>
+<tr><td><a id='GCET'><b>GCET</b></a><td><a href='#regions'>regions</a><td>national accounts G except gov labor<td>end,gdp<td><a href='#125'>125</a><td><a href='#106'>106</a>, <a href='#107'>107</a>, <a href='#122'>122</a></tr>
+<tr><td><a id='GDPN'><b>GDPN</b></a><td><a href='#regions'>regions</a><td>GDP, nominal<td>end,gdp<td><a href='#106'>106</a><td><a href='#108'>108</a></tr>
+<tr><td><a id='GDPR'><b>GDPR</b></a><td><a href='#regions'>regions</a><td>GDP, real<td>end,gdp<td><a href='#107'>107</a><td><a href='#108'>108</a>, <a href='#109'>109</a></tr>
+<tr><td><a id='GNPR'><b>GNPR</b></a><td><a href='#regions'>regions</a><td>GNP, GDPR plus PBAL and interest<td>end,gdp<td><a href='#109'>109</a><td>none</tr>
+<tr><td><a id='GOVL'><b>GOVL</b></a><td><a href='#regions'>regions</a><td>labor used by gov<td>exo,gdp<td>none<td><a href='#113'>113</a>, <a href='#119'>119</a>, <a href='#122'>122</a>, <a href='#22'>22</a>, <a href='#79'>79</a></tr>
+<tr><td><a id='GOVS'><b>GOVS</b></a><td><a href='#regions'>regions</a><td>total gov spending<td>exo,gdp<td>none<td><a href='#126'>126</a>, <a href='#127'>127</a></tr>
+<tr><td><a id='GOVT'><b>GOVT</b></a><td><a href='#regions'>regions</a><td>national accounts G including labor<td>end,gdp<td><a href='#122'>122</a><td><a href='#123'>123</a>, <a href='#124'>124</a></tr>
+<tr><td><a id='IIN'><b>IIN</b></a><td><a href='#goods_o'>goods_o</a>, <a href='#regions'>regions</a><td>R demand for goods<td>end,gdp<td><a href='#20'>20</a>, <a href='#21'>21</a><td><a href='#2'>2</a>, <a href='#3'>3</a></tr>
+<tr><td><a id='IITE'><b>IITE</b></a><td><a href='#regions'>regions</a><td>R demand for E<td>end,gdp<td><a href='#18'>18</a><td><a href='#20'>20</a>, <a href='#66'>66</a></tr>
+<tr><td><a id='IITL'><b>IITL</b></a><td><a href='#regions'>regions</a><td>R demand for L<td>end,gdp<td><a href='#17'>17</a><td><a href='#113'>113</a>, <a href='#119'>119</a>, <a href='#22'>22</a>, <a href='#66'>66</a>, <a href='#79'>79</a></tr>
+<tr><td><a id='IITO'><b>IITO</b></a><td><a href='#regions'>regions</a><td>R demand for M<td>end,gdp<td><a href='#19'>19</a><td><a href='#21'>21</a>, <a href='#66'>66</a></tr>
+<tr><td><a id='IMP'><b>IMP</b></a><td><a href='#goods_o'>goods_o</a>, <a href='#dest'>dest</a>, <a href='#orig'>orig</a><td>individual imports, IMP.xy<td>end,gdp<td><a href='#6'>6</a><td><a href='#10'>10</a>, <a href='#115'>115</a>, <a href='#7'>7</a></tr>
+<tr><td><a id='IMPX'><b>IMPX</b></a><td><a href='#goods_o'>goods_o</a>, <a href='#dest'>dest</a>, <a href='#orig'>orig</a><td>individual imports shift <td>exo,gdp<td>none<td><a href='#6'>6</a></tr>
+<tr><td><a id='IMQ'><b>IMQ</b></a><td><a href='#goods_o'>goods_o</a>, <a href='#regions'>regions</a><td>DF imports by good, IMQ.xx<td>end,gdp<td><a href='#4'>4</a><td><a href='#151'>151</a>, <a href='#6'>6</a>, <a href='#7'>7</a>, <a href='#8'>8</a></tr>
+<tr><td><a id='IMQT'><b>IMQT</b></a><td><a href='#regions'>regions</a><td>value of imports at dest<td>end,gdp<td><a href='#8'>8</a><td><a href='#134'>134</a>, <a href='#135'>135</a></tr>
+<tr><td><a id='INAS'><b>INAS</b></a><td><a href='#regions'>regions</a><td>net int pmts on for assets using INTN (USD)<td>end,gdp<td><a href='#82'>82</a><td><a href='#110'>110</a></tr>
+<tr><td><a id='INCM'><b>INCM</b></a><td><a href='#regions'>regions</a><td>after tax household income<td>end,gdp<td><a href='#79'>79</a><td><a href='#80'>80</a></tr>
+<tr><td><a id='INFL'><b>INFL</b></a><td><a href='#regions'>regions</a><td>inflation rate in PRCT<td>del,end<td><a href='#102'>102</a><td><a href='#96'>96</a></tr>
+<tr><td><a id='INFP'><b>INFP</b></a><td><a href='#regions'>regions</a><td>inflation rate in PRID<td>del,end<td><a href='#103'>103</a><td><a href='#78'>78</a></tr>
+<tr><td><a id='INFX'><b>INFX</b></a><td><a href='#regions'>regions</a><td>inflation target<td>del,exo<td>none<td><a href='#96'>96</a></tr>
+<tr><td><a id='INPL'><b>INPL</b></a><td><a href='#regions'>regions</a><td>desired interest rate, short-run,  (lagged)<td>del,sta<td><a href='#95'>95</a><td><a href='#96'>96</a></tr>
+<tr><td><a id='INPN'><b>INPN</b></a><td><a href='#regions'>regions</a><td>desired interest rate, short-run, nominal<td>del,stl<td><a href='#96'>96</a><td><a href='#93'>93</a>, <a href='#95'>95</a></tr>
+<tr><td><a id='INS'><b>INS</b></a><td><a href='#regions'>regions</a>, <a href='#goods_o'>goods_o</a><td>agg I demand shocks<td>exo,gdp<td>none<td><a href='#106'>106</a>, <a href='#107'>107</a>, <a href='#2'>2</a>, <a href='#3'>3</a></tr>
+<tr><td><a id='INTF'><b>INTF</b></a><td><a href='#regions'>regions</a><td>risk free interest rate, short-run, real<td>del,end<td><a href='#99'>99</a><td><a href='#100'>100</a></tr>
+<tr><td><a id='INTL'><b>INTL</b></a><td><a href='#regions'>regions</a><td>interest rate, short-run, nominal (lagged)<td>del,sta<td><a href='#94'>94</a><td><a href='#93'>93</a></tr>
+<tr><td><a id='INTN'><b>INTN</b></a><td><a href='#regions'>regions</a><td>interest rate, short (policy), nominal<td>del,stl<td><a href='#93'>93</a><td><a href='#123'>123</a>, <a href='#82'>82</a>, <a href='#92'>92</a>, <a href='#93'>93</a>, <a href='#94'>94</a>, <a href='#99'>99</a></tr>
+<tr><td><a id='INTR'><b>INTR</b></a><td><a href='#regions'>regions</a><td>risk adjusted interest rate, short-run, real<td>del,end<td><a href='#100'>100</a><td><a href='#113'>113</a>, <a href='#124'>124</a>, <a href='#138'>138</a>, <a href='#152'>152</a>, <a href='#50'>50</a>, <a href='#52'>52</a>, <a href='#54'>54</a>, <a href='#79'>79</a>, <a href='#81'>81</a></tr>
+<tr><td><a id='INTX'><b>INTX</b></a><td><a href='#regions'>regions</a><td>interest rate target<td>del,exo<td>none<td><a href='#93'>93</a></tr>
+<tr><td><a id='INV'><b>INV</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>raw investment<td>end,gdp<td><a href='#44'>44</a><td><a href='#151'>151</a>, <a href='#45'>45</a>, <a href='#65'>65</a>, <a href='#71'>71</a></tr>
+<tr><td><a id='INVT'><b>INVT</b></a><td><a href='#regions'>regions</a><td>total cap goods demanded<td>end,gdp<td><a href='#71'>71</a><td><a href='#106'>106</a>, <a href='#107'>107</a>, <a href='#131'>131</a>, <a href='#132'>132</a>, <a href='#133'>133</a>, <a href='#17'>17</a>, <a href='#18'>18</a>, <a href='#19'>19</a>, <a href='#33'>33</a>, <a href='#66'>66</a></tr>
+<tr><td><a id='INVY'><b>INVY</b></a><td><a href='#regions'>regions</a><td>raw investment<td>end,gdp<td><a href='#46'>46</a><td><a href='#66'>66</a>, <a href='#71'>71</a></tr>
+<tr><td><a id='INVZ'><b>INVZ</b></a><td><a href='#regions'>regions</a><td>HH investment<td>end,gdp<td><a href='#47'>47</a><td><a href='#119'>119</a>, <a href='#67'>67</a>, <a href='#71'>71</a></tr>
+<tr><td><a id='IRAS'><b>IRAS</b></a><td><a href='#regions'>regions</a><td>net int pmts on for assets using INTR (USD)<td>end,gdp<td><a href='#81'>81</a><td><a href='#109'>109</a>, <a href='#111'>111</a>, <a href='#79'>79</a></tr>
+<tr><td><a id='JNV'><b>JNV</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>installed investment<td>end,gdp<td><a href='#45'>45</a><td><a href='#38'>38</a>, <a href='#50'>50</a></tr>
+<tr><td><a id='JNVY'><b>JNVY</b></a><td><a href='#regions'>regions</a><td>installed RR investment<td>end,gdp<td><a href='#48'>48</a><td><a href='#39'>39</a>, <a href='#46'>46</a>, <a href='#52'>52</a></tr>
+<tr><td><a id='JNVZ'><b>JNVZ</b></a><td><a href='#regions'>regions</a><td>installed HH investment<td>end,gdp<td><a href='#49'>49</a><td><a href='#40'>40</a>, <a href='#47'>47</a>, <a href='#54'>54</a></tr>
+<tr><td><a id='LAB'><b>LAB</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>sector demand for L<td>end,gdp<td><a href='#14'>14</a><td><a href='#113'>113</a>, <a href='#119'>119</a>, <a href='#22'>22</a>, <a href='#65'>65</a>, <a href='#79'>79</a></tr>
+<tr><td><a id='LABO'><b>LABO</b></a><td><a href='#regions'>regions</a><td>total labor demanded<td>end,gdp<td><a href='#22'>22</a><td><a href='#35'>35</a></tr>
+<tr><td><a id='LABX'><b>LABX</b></a><td><a href='#regions'>regions</a><td>total labor supply<td>exo,gdp<td>none<td>none</tr>
+<tr><td><a id='LAM'><b>LAM</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>costate var lambda<td>cos,del<td><a href='#50'>50</a><td><a href='#50'>50</a>, <a href='#56'>56</a>, <a href='#69'>69</a></tr>
+<tr><td><a id='LAMY'><b>LAMY</b></a><td><a href='#regions'>regions</a><td>costate var RR lambda<td>cos,del<td><a href='#52'>52</a><td><a href='#112'>112</a>, <a href='#52'>52</a>, <a href='#57'>57</a></tr>
+<tr><td><a id='LAMZ'><b>LAMZ</b></a><td><a href='#regions'>regions</a><td>costate var HH lambda<td>cos,del<td><a href='#54'>54</a><td><a href='#112'>112</a>, <a href='#54'>54</a>, <a href='#58'>58</a></tr>
+<tr><td><a id='LGDPN'><b>LGDPN</b></a><td><a href='#regions'>regions</a><td>GDP, nominal<td>del,exo<td>none<td>none</tr>
+<tr><td><a id='LGDPP'><b>LGDPP</b></a><td><a href='#regions'>regions</a><td>GDP, PPP<td>del,exo<td>none<td>none</tr>
+<tr><td><a id='LGDPR'><b>LGDPR</b></a><td><a href='#regions'>regions</a><td>GDP, real<td>del,exo<td>none<td>none</tr>
+<tr><td><a id='LGYL'><b>LGYL</b></a><td><a href='#regions'>regions</a><td>ln of output (lagged)<td>pct,sta<td><a href='#76'>76</a><td><a href='#77'>77</a>, <a href='#96'>96</a></tr>
+<tr><td><a id='LGYX'><b>LGYX</b></a><td><a href='#regions'>regions</a><td>ln of output target<td>exo,pct<td>none<td>none</tr>
+<tr><td><a id='LOGY'><b>LOGY</b></a><td><a href='#regions'>regions</a><td>ln of output<td>ets,pct<td><a href='#75'>75</a><td><a href='#76'>76</a>, <a href='#77'>77</a>, <a href='#92'>92</a>, <a href='#96'>96</a>, <a href='#97'>97</a></tr>
+<tr><td><a id='MONE'><b>MONE</b></a><td><a href='#regions'>regions</a><td>money demanded IN LOGS<td>end,pct<td><a href='#92'>92</a><td><a href='#112'>112</a></tr>
+<tr><td><a id='MONL'><b>MONL</b></a><td><a href='#regions'>regions</a><td>money demanded as %GDP<td>end,gdp<td>none<td>none</tr>
+<tr><td><a id='MONX'><b>MONX</b></a><td><a href='#regions'>regions</a><td>money target IN LOGS<td>exo,pct<td>none<td>none</tr>
+<tr><td><a id='NB02'><b>NB02</b></a><td><a href='#regions'>regions</a><td>interest rate, 2-year, nominal<td>del,end<td>none<td>none</tr>
+<tr><td><a id='NB05'><b>NB05</b></a><td><a href='#regions'>regions</a><td>interest rate, 5-year, nominal<td>del,end<td>none<td>none</tr>
+<tr><td><a id='NB10'><b>NB10</b></a><td><a href='#regions'>regions</a><td>interest rate, 10-year, nominal<td>del,end<td>none<td>none</tr>
+<tr><td><a id='NEER'><b>NEER</b></a><td><a href='#regions'>regions</a><td>trade-weighted exch rate, FC/domestic<td>end,pct<td><a href='#141'>141</a><td>none</tr>
+<tr><td><a id='NGRO'><b>NGRO</b></a><td><a href='#regions'>regions</a><td>nominal output growth<td>end,pct<td><a href='#78'>78</a><td>none</tr>
+<tr><td><a id='OI'><b>OI</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#goods_m'>goods_m</a>, <a href='#regions'>regions</a><td>sector demand for M goods<td>end,gdp<td><a href='#148'>148</a><td><a href='#3'>3</a></tr>
+<tr><td><a id='OIN'><b>OIN</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>sector demand for M<td>end,gdp<td><a href='#16'>16</a><td><a href='#148'>148</a>, <a href='#65'>65</a></tr>
+<tr><td><a id='OUG'><b>OUG</b></a><td><a href='#goods'>goods</a>, <a href='#regions'>regions</a><td>domestic supply of goods<td>end,gdp<td><a href='#12'>12</a><td><a href='#13'>13</a>, <a href='#151'>151</a>, <a href='#74'>74</a></tr>
+<tr><td><a id='OUP'><b>OUP</b></a><td><a href='#sectors'>sectors</a>, <a href='#regions'>regions</a><td>domestic production<td>end,gdp<td><a href='#13'>13</a><td><a href='#14'>14</a>, <a href='#15'>15</a>, <a href='#16'>16</a>, <a href='#32'>32</a>, <a href='#65'>65</a></tr>
+<tr><td><a id='OUTP'><b>OUTP</b></a><td><a href='#regions'>regions</a><td>agg output Q index to match PRID<td>end,gdp<td><a href='#74'>74</a><td><a href='#120'>120</a>, <a href='#75'>75</a></tr>
+<tr><td><a id='OUY'><b>OUY</b></a><td><a href='#goods'>goods</a>, <a href='#regions'>regions</a><td>composite supply<td>end,gdp<td><a href='#2'>2</a>, <a href='#3'>3</a><td><a href='#12'>12</a>, <a href='#4'>4</a></tr>
+<tr><td><a id='PBAG'><b>PBAG</b></a><td><a href='#regions'>regions</a><td>value of permits sold through govt USD<td>exo,gdp<td>none<td><a href='#129'>129</a></tr>
+<tr><td><a id='PBAL'><b>PBAL</b></a><td><a href='#regions'>regions</a><td>value of permits sold, USD<td>exo,gdp<td>none<td><a href='#109'>109</a>, <a href='#110'>110</a>, <a href='#111'>111</a></tr>
+<tr><td><a id='PGDP'><b>PGDP</b></a><td><a href='#regions'>regions</a><td>GDP, implicit price deflator GDPN/GDPR<td>end,pct<td><a href='#108'>108</a><td>none</tr>
+<tr><td><a id='PIM'><b>PIM</b></a><td><a href='#goods_o'>goods_o</a>, <a href='#dest'>dest</a>, <a href='#orig'>orig</a><td>landed price of IMP<td>end,pct<td><a href='#5'>5</a><td><a href='#115'>115</a>, <a href='#25'>25</a>, <a href='#6'>6</a>, <a href='#7'>7</a></tr>
+<tr><td><a id='PMQ'><b>PMQ</b></a><td><a href='#goods_o'>goods_o</a>, <a href='#regions'>regions</a><td>landed price index for IMQ<td>end,pct<td><a href='#7'>7</a><td><a href='#26'>26</a>, <a href='#8'>8</a></tr>
+<tr><td><a id='PMR'><b>PMR</b></a><td><a href='#goods_o'>goods_o</a>, <a href='#regions'>regions</a><td>price of imports incl tariffs<td>end,pct<td><a href='#25'>25</a><td><a href='#151'>151</a>, <a href='#23'>23</a>, <a href='#4'>4</a>, <a href='#6'>6</a></tr>
+<tr><td><a id='POI'><b>POI</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>sector price of M<td>end,pct<td><a href='#150'>150</a><td><a href='#148'>148</a>, <a href='#16'>16</a>, <a href='#30'>30</a>, <a href='#65'>65</a></tr>
+<tr><td><a id='PRCE'><b>PRCE</b></a><td><a href='#regions'>regions</a><td>HH price of E<td>end,pct<td><a href='#90'>90</a><td><a href='#67'>67</a>, <a href='#84'>84</a>, <a href='#87'>87</a>, <a href='#89'>89</a></tr>
+<tr><td><a id='PRCL'><b>PRCL</b></a><td><a href='#regions'>regions</a><td>aggregate price of consumer goods lag<td>pct,sta<td><a href='#104'>104</a><td><a href='#102'>102</a>, <a href='#35'>35</a></tr>
+<tr><td><a id='PRCO'><b>PRCO</b></a><td><a href='#regions'>regions</a><td>HH price of M<td>end,pct<td><a href='#91'>91</a><td><a href='#67'>67</a>, <a href='#85'>85</a>, <a href='#88'>88</a>, <a href='#89'>89</a></tr>
+<tr><td><a id='PRCT'><b>PRCT</b></a><td><a href='#regions'>regions</a><td>aggregate price of consumer goods<td>ets,pct<td><a href='#89'>89</a><td><a href='#102'>102</a>, <a href='#104'>104</a>, <a href='#106'>106</a>, <a href='#34'>34</a>, <a href='#35'>35</a>, <a href='#67'>67</a>, <a href='#80'>80</a>, <a href='#83'>83</a>, <a href='#84'>84</a>, <a href='#85'>85</a>, <a href='#86'>86</a>, <a href='#98'>98</a></tr>
+<tr><td><a id='PRD'><b>PRD</b></a><td><a href='#goods'>goods</a>, <a href='#regions'>regions</a><td>pretax price of goods<td>end,pct<td><a href='#29'>29</a><td><a href='#12'>12</a>, <a href='#151'>151</a>, <a href='#23'>23</a>, <a href='#72'>72</a>, <a href='#74'>74</a></tr>
+<tr><td><a id='PRDL'><b>PRDL</b></a><td><a href='#regions'>regions</a><td>weighted price of domestic output lag<td>pct,sta<td><a href='#105'>105</a><td><a href='#103'>103</a></tr>
+<tr><td><a id='PRDX'><b>PRDX</b></a><td><a href='#regions'>regions</a><td>weighted price of domestic output<td>exo,pct<td>none<td>none</tr>
+<tr><td><a id='PRE'><b>PRE</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>sector price of E<td>end,pct<td><a href='#149'>149</a><td><a href='#147'>147</a>, <a href='#15'>15</a>, <a href='#30'>30</a>, <a href='#65'>65</a></tr>
+<tr><td><a id='PRF'><b>PRF</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>short run profits<td>end,gdp<td><a href='#65'>65</a><td><a href='#151'>151</a>, <a href='#68'>68</a></tr>
+<tr><td><a id='PRFT'><b>PRFT</b></a><td><a href='#regions'>regions</a><td>Total economywide profits<td>end,gdp<td><a href='#68'>68</a><td><a href='#79'>79</a></tr>
+<tr><td><a id='PRFY'><b>PRFY</b></a><td><a href='#regions'>regions</a><td>profits on R capital<td>end,gdp<td><a href='#66'>66</a><td><a href='#151'>151</a>, <a href='#68'>68</a></tr>
+<tr><td><a id='PRFZ'><b>PRFZ</b></a><td><a href='#regions'>regions</a><td>imputed short run profits on HH cap<td>end,gdp<td><a href='#67'>67</a><td><a href='#79'>79</a></tr>
+<tr><td><a id='PRGT'><b>PRGT</b></a><td><a href='#regions'>regions</a><td>aggregate price of government goods<td>end,pct<td><a href='#128'>128</a><td>none</tr>
+<tr><td><a id='PRID'><b>PRID</b></a><td><a href='#regions'>regions</a><td>weighted price of domestic output<td>ets,pct<td><a href='#72'>72</a><td><a href='#103'>103</a>, <a href='#105'>105</a>, <a href='#106'>106</a>, <a href='#112'>112</a>, <a href='#113'>113</a>, <a href='#115'>115</a>, <a href='#117'>117</a>, <a href='#119'>119</a>, <a href='#122'>122</a>, <a href='#125'>125</a>, <a href='#126'>126</a>, <a href='#127'>127</a>, <a href='#131'>131</a>, <a href='#132'>132</a>, <a href='#133'>133</a>, <a href='#136'>136</a>, <a href='#151'>151</a>, <a href='#50'>50</a>, <a href='#52'>52</a>, <a href='#54'>54</a>, <a href='#56'>56</a>, <a href='#57'>57</a>, <a href='#58'>58</a>, <a href='#65'>65</a>, <a href='#66'>66</a>, <a href='#67'>67</a>, <a href='#74'>74</a>, <a href='#79'>79</a>, <a href='#80'>80</a>, <a href='#92'>92</a>, <a href='#99'>99</a></tr>
+<tr><td><a id='PRIE'><b>PRIE</b></a><td><a href='#regions'>regions</a><td>R price of E<td>end,pct<td><a href='#27'>27</a><td><a href='#18'>18</a>, <a href='#20'>20</a>, <a href='#31'>31</a>, <a href='#66'>66</a></tr>
+<tr><td><a id='PRII'><b>PRII</b></a><td><a href='#regions'>regions</a><td>prod price of inv goods<td>end,pct<td><a href='#31'>31</a><td><a href='#106'>106</a>, <a href='#119'>119</a>, <a href='#131'>131</a>, <a href='#132'>132</a>, <a href='#133'>133</a>, <a href='#151'>151</a>, <a href='#17'>17</a>, <a href='#18'>18</a>, <a href='#19'>19</a>, <a href='#33'>33</a>, <a href='#50'>50</a>, <a href='#52'>52</a>, <a href='#54'>54</a>, <a href='#56'>56</a>, <a href='#57'>57</a>, <a href='#58'>58</a>, <a href='#65'>65</a>, <a href='#66'>66</a>, <a href='#67'>67</a></tr>
+<tr><td><a id='PRIM'><b>PRIM</b></a><td><a href='#regions'>regions</a><td>weighted price of imports<td>end,pct<td><a href='#26'>26</a><td><a href='#8'>8</a></tr>
+<tr><td><a id='PRIX'><b>PRIX</b></a><td><a href='#regions'>regions</a><td>weighted price of exports<td>end,pct<td><a href='#73'>73</a><td><a href='#9'>9</a></tr>
+<tr><td><a id='PRK'><b>PRK</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>implicit rental price<td>end,pct<td><a href='#32'>32</a><td><a href='#30'>30</a>, <a href='#50'>50</a></tr>
+<tr><td><a id='PRKY'><b>PRKY</b></a><td><a href='#regions'>regions</a><td>implicit RR rental price<td>end,pct<td><a href='#33'>33</a><td><a href='#31'>31</a>, <a href='#52'>52</a></tr>
+<tr><td><a id='PRKZ'><b>PRKZ</b></a><td><a href='#regions'>regions</a><td>implicit HH rental price<td>end,pct<td><a href='#34'>34</a><td><a href='#54'>54</a>, <a href='#86'>86</a>, <a href='#89'>89</a></tr>
+<tr><td><a id='PROI'><b>PROI</b></a><td><a href='#regions'>regions</a><td>R price of M<td>end,pct<td><a href='#28'>28</a><td><a href='#19'>19</a>, <a href='#21'>21</a>, <a href='#31'>31</a>, <a href='#66'>66</a></tr>
+<tr><td><a id='PRP'><b>PRP</b></a><td><a href='#sectors'>sectors</a>, <a href='#regions'>regions</a><td>producer price<td>end,pct<td><a href='#30'>30</a><td><a href='#14'>14</a>, <a href='#15'>15</a>, <a href='#16'>16</a>, <a href='#29'>29</a>, <a href='#32'>32</a>, <a href='#65'>65</a></tr>
+<tr><td><a id='PRS'><b>PRS</b></a><td><a href='#goods'>goods</a>, <a href='#regions'>regions</a><td>producer price of composite<td>end,pct<td><a href='#23'>23</a><td><a href='#11'>11</a>, <a href='#117'>117</a>, <a href='#12'>12</a>, <a href='#151'>151</a>, <a href='#24'>24</a>, <a href='#4'>4</a></tr>
+<tr><td><a id='PRX'><b>PRX</b></a><td><a href='#goods_o'>goods_o</a>, <a href='#regions'>regions</a><td>price of exports at source<td>end,pct<td><a href='#11'>11</a><td><a href='#5'>5</a>, <a href='#73'>73</a>, <a href='#9'>9</a></tr>
+<tr><td><a id='PRXX'><b>PRXX</b></a><td><a href='#regions'>regions</a><td>price of consumer goods expected shock<td>exo,pct<td>none<td><a href='#35'>35</a></tr>
+<tr><td><a id='PRY'><b>PRY</b></a><td><a href='#goods'>goods</a>, <a href='#regions'>regions</a><td>purchase price of composite<td>end,pct<td><a href='#24'>24</a><td><a href='#125'>125</a>, <a href='#126'>126</a>, <a href='#127'>127</a>, <a href='#128'>128</a>, <a href='#147'>147</a>, <a href='#148'>148</a>, <a href='#149'>149</a>, <a href='#150'>150</a>, <a href='#20'>20</a>, <a href='#21'>21</a>, <a href='#27'>27</a>, <a href='#28'>28</a>, <a href='#87'>87</a>, <a href='#88'>88</a>, <a href='#90'>90</a>, <a href='#91'>91</a></tr>
+<tr><td><a id='RB10'><b>RB10</b></a><td><a href='#regions'>regions</a><td>interest rate, 10-year, real<td>del,end<td>none<td>none</tr>
+<tr><td><a id='REER'><b>REER</b></a><td><a href='#regions'>regions</a><td>trade-weighted real exch rate, FC/domestic<td>end,pct<td><a href='#142'>142</a><td>none</tr>
+<tr><td><a id='REXC'><b>REXC</b></a><td><a href='#regions'>regions</a><td>real exch rate as US$ per unit of regions currency<td>cos,pct<td><a href='#138'>138</a><td><a href='#138'>138</a>, <a href='#139'>139</a></tr>
+<tr><td><a id='REXN'><b>REXN</b></a><td><a href='#regions'>regions</a><td>real exchange rate with capital controls<td>end,pct<td><a href='#139'>139</a><td><a href='#109'>109</a>, <a href='#110'>110</a>, <a href='#112'>112</a>, <a href='#131'>131</a>, <a href='#135'>135</a>, <a href='#136'>136</a>, <a href='#142'>142</a>, <a href='#144'>144</a>, <a href='#146'>146</a>, <a href='#79'>79</a>, <a href='#81'>81</a>, <a href='#82'>82</a></tr>
+<tr><td><a id='RISE'><b>RISE</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>equity risk premium by sector by region<td>del,exo<td>none<td><a href='#50'>50</a></tr>
+<tr><td><a id='RISH'><b>RISH</b></a><td><a href='#regions'>regions</a><td>risk premium shock for human wealth<td>del,exo<td>none<td><a href='#113'>113</a></tr>
+<tr><td><a id='RISR'><b>RISR</b></a><td><a href='#regions'>regions</a><td>risk premium in the yield curve<td>del,exo<td>none<td><a href='#100'>100</a></tr>
+<tr><td><a id='RISW'><b>RISW</b></a><td><a href='#regions'>regions</a><td>risk premium for human wealth<td>del,exo<td>none<td><a href='#113'>113</a>, <a href='#80'>80</a></tr>
+<tr><td><a id='RISY'><b>RISY</b></a><td><a href='#regions'>regions</a><td>risk premium for R capital<td>del,exo<td>none<td><a href='#52'>52</a></tr>
+<tr><td><a id='RISZ'><b>RISZ</b></a><td><a href='#regions'>regions</a><td>risk premium for HH capital<td>del,exo<td>none<td><a href='#54'>54</a></tr>
+<tr><td><a id='ROGY'><b>ROGY</b></a><td><a href='#regions'>regions</a><td>potential output growth<td>exo,pct<td>none<td><a href='#96'>96</a></tr>
+<tr><td><a id='SAVI'><b>SAVI</b></a><td><a href='#regions'>regions</a><td>domestic saving, real<td>end,gdp<td><a href='#131'>131</a><td>none</tr>
+<tr><td><a id='SAVN'><b>SAVN</b></a><td><a href='#regions'>regions</a><td>domestic saving, nominal<td>end,gdp<td><a href='#132'>132</a><td>none</tr>
+<tr><td><a id='SAVT'><b>SAVT</b></a><td><a href='#regions'>regions</a><td>domestic non-governmen saving, nominal<td>end,gdp<td><a href='#133'>133</a><td>none</tr>
+<tr><td><a id='SHEF'><b>SHEF</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>aeei shock<td>exo,pct<td>none<td><a href='#15'>15</a>, <a href='#30'>30</a></tr>
+<tr><td><a id='SHEFC'><b>SHEFC</b></a><td><a href='#regions'>regions</a><td>aeei shock - consumption<td>exo,pct<td>none<td><a href='#84'>84</a>, <a href='#89'>89</a></tr>
+<tr><td><a id='SHK'><b>SHK</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>capital efficiency shock<td>exo,pct<td>none<td><a href='#30'>30</a>, <a href='#32'>32</a></tr>
+<tr><td><a id='SHKC'><b>SHKC</b></a><td><a href='#regions'>regions</a><td>agg con shock<td>exo,gdp<td>none<td><a href='#80'>80</a></tr>
+<tr><td><a id='SHKI'><b>SHKI</b></a><td><a href='#regions'>regions</a>, <a href='#sec_std'>sec_std</a><td>shock in inv equation<td>exo,gdp<td>none<td><a href='#44'>44</a></tr>
+<tr><td><a id='SHKM'><b>SHKM</b></a><td><a href='#regions'>regions</a><td>shock to money demand<td>exo,pct<td>none<td><a href='#92'>92</a></tr>
+<tr><td><a id='SHL'><b>SHL</b></a><td><a href='#regions'>regions</a>, <a href='#sec_std'>sec_std</a><td>labor shock<td>exo,pct<td>none<td><a href='#14'>14</a>, <a href='#30'>30</a></tr>
+<tr><td><a id='SHLY'><b>SHLY</b></a><td><a href='#regions'>regions</a><td>labor shock, R<td>exo,pct<td>none<td><a href='#17'>17</a>, <a href='#31'>31</a></tr>
+<tr><td><a id='SHLZ'><b>SHLZ</b></a><td><a href='#regions'>regions</a><td>labor shock, HH<td>exo,pct<td>none<td><a href='#83'>83</a>, <a href='#89'>89</a></tr>
+<tr><td><a id='SHY'><b>SHY</b></a><td><a href='#sectors'>sectors</a>, <a href='#regions'>regions</a><td>tfp shock<td>exo,pct<td>none<td><a href='#14'>14</a>, <a href='#15'>15</a>, <a href='#16'>16</a>, <a href='#30'>30</a>, <a href='#32'>32</a></tr>
+<tr><td><a id='SHYY'><b>SHYY</b></a><td><a href='#regions'>regions</a><td>tfp shock, R<td>exo,pct<td>none<td><a href='#17'>17</a>, <a href='#18'>18</a>, <a href='#19'>19</a>, <a href='#31'>31</a>, <a href='#33'>33</a></tr>
+<tr><td><a id='SHYZ'><b>SHYZ</b></a><td><a href='#regions'>regions</a><td>tfp shock, HH<td>exo,pct<td>none<td><a href='#34'>34</a>, <a href='#83'>83</a>, <a href='#84'>84</a>, <a href='#85'>85</a>, <a href='#86'>86</a>, <a href='#89'>89</a></tr>
+<tr><td><a id='STM'><b>STM</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>stock market value<td>end,gdp<td><a href='#69'>69</a><td><a href='#112'>112</a>, <a href='#70'>70</a></tr>
+<tr><td><a id='STMT'><b>STMT</b></a><td><a href='#regions'>regions</a><td>Total stock market value<td>end,gdp<td><a href='#70'>70</a><td>none</tr>
+<tr><td><a id='TAX'><b>TAX</b></a><td><a href='#goods'>goods</a>, <a href='#regions'>regions</a><td>sales tax on composite<td>exo,pct<td>none<td><a href='#151'>151</a>, <a href='#24'>24</a></tr>
+<tr><td><a id='TAXC'><b>TAXC</b></a><td><a href='#regions'>regions</a><td>revenue from sales & corp taxes<td>end,gdp<td><a href='#151'>151</a><td><a href='#118'>118</a></tr>
+<tr><td><a id='TAXE'><b>TAXE</b></a><td><a href='#regions'>regions</a><td>revenue from externality taxes<td>exo,gdp<td>none<td><a href='#118'>118</a></tr>
+<tr><td><a id='TAXH'><b>TAXH</b></a><td><a href='#regions'>regions</a><td>revenue from taxes on wages<td>end,gdp<td><a href='#119'>119</a><td><a href='#113'>113</a>, <a href='#118'>118</a></tr>
+<tr><td><a id='TAXL'><b>TAXL</b></a><td><a href='#regions'>regions</a><td>revenue for bond interest plus TAXS<td>end,gdp<td><a href='#152'>152</a><td><a href='#113'>113</a>, <a href='#118'>118</a>, <a href='#79'>79</a></tr>
+<tr><td><a id='TAXM'><b>TAXM</b></a><td><a href='#regions'>regions</a><td>tariff revenue<td>end,gdp<td><a href='#116'>116</a><td><a href='#118'>118</a></tr>
+<tr><td><a id='TAXS'><b>TAXS</b></a><td><a href='#regions'>regions</a><td>exogenous lump sum tax<td>exo,gdp<td>none<td>none</tr>
+<tr><td><a id='TAXT'><b>TAXT</b></a><td><a href='#regions'>regions</a><td>total revenue<td>end,gdp<td><a href='#118'>118</a><td><a href='#123'>123</a>, <a href='#124'>124</a></tr>
+<tr><td><a id='TAXX'><b>TAXX</b></a><td><a href='#regions'>regions</a><td>extern tax revenue<td>end,gdp<td><a href='#117'>117</a><td><a href='#118'>118</a></tr>
+<tr><td><a id='TBAL'><b>TBAL</b></a><td><a href='#regions'>regions</a><td>trade surplus, domestic currency<td>end,gdp<td><a href='#134'>134</a><td><a href='#106'>106</a>, <a href='#107'>107</a>, <a href='#110'>110</a></tr>
+<tr><td><a id='TBAU'><b>TBAU</b></a><td><a href='#regions'>regions</a><td>trade surplus, USD<td>end,gdp<td><a href='#135'>135</a><td><a href='#111'>111</a></tr>
+<tr><td><a id='TBFD'><b>TBFD</b></a><td><a href='#regions'>regions</a><td>unit tax on energy<td>cent,exo<td>none<td><a href='#29'>29</a></tr>
+<tr><td><a id='TBFI'><b>TBFI</b></a><td><a href='#regions'>regions</a><td>unit tax on energy, imports<td>cent,exo<td>none<td><a href='#25'>25</a>, <a href='#6'>6</a></tr>
+<tr><td><a id='TBFX'><b>TBFX</b></a><td><a href='#regions'>regions</a><td>unit tax on energy, exports<td>cent,exo<td>none<td><a href='#11'>11</a></tr>
+<tr><td><a id='TCAW'><b>TCAW</b></a><td>&nbsp;<td>unit tax on carbon<td>cent,end<td>none<td>none</tr>
+<tr><td><a id='TCAX'><b>TCAX</b></a><td><a href='#regions'>regions</a><td>unit tax on carbon - real<td>cent,exo<td>none<td>none</tr>
+<tr><td><a id='TCOR'><b>TCOR</b></a><td><a href='#regions'>regions</a><td>tax rate on corporate profits<td>exo,pct<td>none<td><a href='#151'>151</a>, <a href='#50'>50</a>, <a href='#52'>52</a>, <a href='#79'>79</a></tr>
+<tr><td><a id='TCP'><b>TCP</b></a><td><a href='#goods'>goods</a>, <a href='#regions'>regions</a><td>nonlinear unit tax shock for carbon<td>cent,exo<td>none<td><a href='#11'>11</a>, <a href='#25'>25</a>, <a href='#29'>29</a>, <a href='#6'>6</a></tr>
+<tr><td><a id='TEX'><b>TEX</b></a><td><a href='#goods'>goods</a>, <a href='#regions'>regions</a><td>extern tax on composite<td>exo,pct<td>none<td><a href='#11'>11</a>, <a href='#117'>117</a></tr>
+<tr><td><a id='TIF'><b>TIF</b></a><td><a href='#goods_o'>goods_o</a>, <a href='#dest'>dest</a><td>fta tariff rates<td>exo,pct<td>none<td><a href='#115'>115</a>, <a href='#25'>25</a>, <a href='#6'>6</a></tr>
+<tr><td><a id='TIM'><b>TIM</b></a><td><a href='#goods_o'>goods_o</a>, <a href='#dest'>dest</a>, <a href='#orig'>orig</a><td>multilateral tariff rates<td>exo,pct<td>none<td><a href='#115'>115</a>, <a href='#25'>25</a>, <a href='#6'>6</a></tr>
+<tr><td><a id='TINC'><b>TINC</b></a><td><a href='#regions'>regions</a><td>tax rate on labor income<td>exo,pct<td>none<td><a href='#119'>119</a>, <a href='#79'>79</a></tr>
+<tr><td><a id='TITC'><b>TITC</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>rate of ITC<td>exo,pct<td>none<td><a href='#151'>151</a>, <a href='#50'>50</a>, <a href='#56'>56</a>, <a href='#65'>65</a>, <a href='#69'>69</a></tr>
+<tr><td><a id='TITCH'><b>TITCH</b></a><td><a href='#regions'>regions</a><td>rate of ITC for households<td>exo,pct<td>none<td><a href='#119'>119</a>, <a href='#54'>54</a>, <a href='#58'>58</a>, <a href='#67'>67</a></tr>
+<tr><td><a id='TIX'><b>TIX</b></a><td><a href='#goods_o'>goods_o</a>, <a href='#dest'>dest</a><td>multilateral iceberg costs<td>exo,pct<td>none<td><a href='#25'>25</a>, <a href='#6'>6</a></tr>
+<tr><td><a id='TOB'><b>TOB</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>marginal q, TOB.NC<td>del,end<td><a href='#56'>56</a><td><a href='#44'>44</a>, <a href='#59'>59</a></tr>
+<tr><td><a id='TOBY'><b>TOBY</b></a><td><a href='#regions'>regions</a><td>marginal q, RR<td>del,end<td><a href='#57'>57</a><td><a href='#48'>48</a>, <a href='#60'>60</a></tr>
+<tr><td><a id='TOBZ'><b>TOBZ</b></a><td><a href='#regions'>regions</a><td>marginal q, HH<td>del,end<td><a href='#58'>58</a><td><a href='#49'>49</a>, <a href='#61'>61</a></tr>
+<tr><td><a id='TPA'><b>TPA</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>partial adjustment q<td>del,sta<td><a href='#59'>59</a><td><a href='#44'>44</a>, <a href='#59'>59</a></tr>
+<tr><td><a id='TPAY'><b>TPAY</b></a><td><a href='#regions'>regions</a><td>partial adjustment q RR<td>del,sta<td><a href='#60'>60</a><td><a href='#48'>48</a>, <a href='#60'>60</a></tr>
+<tr><td><a id='TPAZ'><b>TPAZ</b></a><td><a href='#regions'>regions</a><td>partial adjustment q HH<td>del,sta<td><a href='#61'>61</a><td><a href='#49'>49</a>, <a href='#61'>61</a></tr>
+<tr><td><a id='TRAN'><b>TRAN</b></a><td><a href='#regions'>regions</a><td>total transfers<td>end,gdp<td><a href='#120'>120</a><td><a href='#113'>113</a>, <a href='#123'>123</a>, <a href='#124'>124</a>, <a href='#79'>79</a></tr>
+<tr><td><a id='TRANX'><b>TRANX</b></a><td><a href='#regions'>regions</a><td>exogenous transfers<td>exo,gdp<td>none<td><a href='#120'>120</a></tr>
+<tr><td><a id='TXM'><b>TXM</b></a><td><a href='#goods_o'>goods_o</a>, <a href='#dest'>dest</a><td>tariff revenue by good<td>end,gdp<td><a href='#115'>115</a><td><a href='#116'>116</a></tr>
+<tr><td><a id='WAG'><b>WAG</b></a><td><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a><td>sector wage<td>end,pct<td><a href='#37'>37</a><td><a href='#113'>113</a>, <a href='#119'>119</a>, <a href='#14'>14</a>, <a href='#30'>30</a>, <a href='#65'>65</a>, <a href='#79'>79</a></tr>
+<tr><td><a id='WAGE'><b>WAGE</b></a><td><a href='#regions'>regions</a><td>wage rate<td>pct,sta<td><a href='#35'>35</a><td><a href='#113'>113</a>, <a href='#119'>119</a>, <a href='#121'>121</a>, <a href='#17'>17</a>, <a href='#31'>31</a>, <a href='#35'>35</a>, <a href='#37'>37</a>, <a href='#66'>66</a>, <a href='#67'>67</a>, <a href='#79'>79</a>, <a href='#83'>83</a>, <a href='#89'>89</a></tr>
+<tr><td><a id='WAGG'><b>WAGG</b></a><td><a href='#regions'>regions</a><td>government wage<td>end,pct<td><a href='#121'>121</a><td><a href='#113'>113</a>, <a href='#119'>119</a>, <a href='#122'>122</a>, <a href='#79'>79</a></tr>
+<tr><td><a id='WELH'><b>WELH</b></a><td><a href='#regions'>regions</a><td>human wealth<td>cos,gdp<td><a href='#113'>113</a><td><a href='#112'>112</a>, <a href='#113'>113</a></tr>
+<tr><td><a id='WELT'><b>WELT</b></a><td><a href='#regions'>regions</a><td>total wealth<td>end,gdp<td><a href='#112'>112</a><td><a href='#80'>80</a></tr>
+<tr><td><a id='YGRO'><b>YGRO</b></a><td><a href='#regions'>regions</a><td>real output growth<td>end,pct<td><a href='#77'>77</a><td><a href='#78'>78</a>, <a href='#96'>96</a></tr>
+<tr><td><a id='YRATN'><b>YRATN</b></a><td><a href='#regions'>regions</a><td>GDP ratio, nominal<td>exo,pct<td>none<td>none</tr>
+<tr><td><a id='YRATP'><b>YRATP</b></a><td><a href='#regions'>regions</a><td>GDP ratio, PPP<td>exo,pct<td>none<td>none</tr>
+<tr><td><a id='YRATR'><b>YRATR</b></a><td><a href='#regions'>regions</a><td>GDP ratio, real<td>exo,pct<td>none<td>none</tr>
+</table>
+</div>
+<div class="heading">Parameters:</div>
+<div class="dblock">
+<table class="dec" border=1 cellspacing=0>
+<tr><th>Name<th>Domain<th>Description</tr>
+<tr><td><a id='adapt'><b>adapt</b></a><td><b><a href='#regions'>regions</a></b><td>rate of closure TOB-TPA gap</tr></a>
+<tr><td><a id='aeye'><b>aeye</b></a><td><b><a href='#currency'>currency</a>, <a href='#owner'>owner</a></b><td>identity matrix</tr></a>
+<tr><td><a id='ainv'><b>ainv</b></a><td><b><a href='#owner'>owner</a>, <a href='#abroad'>abroad</a></b><td>inverse of I-ashr</tr></a>
+<tr><td><a id='alph_rex'><b>alph_rex</b></a><td><b><a href='#regions'>regions</a></b><td>weight on shadow real exchange rate in CA intervention</tr></a>
+<tr><td><a id='ashr'><b>ashr</b></a><td><b><a href='#currency'>currency</a>, <a href='#owner'>owner</a></b><td>asset split among currencies</tr></a>
+<tr><td><a id='base_jk'><b>base_jk</b></a><td><b><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a></b><td>base J/K</tr></a>
+<tr><td><a id='btucoef'><b>btucoef</b></a><td><b><a href='#goods'>goods</a>, <a href='#regions'>regions</a></b><td>emissions coefficients, energy</tr></a>
+<tr><td><a id='carcoef'><b>carcoef</b></a><td><b><a href='#goods'>goods</a>, <a href='#regions'>regions</a></b><td>emissions coefficients, carbon</tr></a>
+<tr><td><a id='cd_df'><b>cd_df</b></a><td><b><a href='#goods_o'>goods_o</a>, <a href='#regions'>regions</a></b><td>1 if cd, 0 if ces</tr></a>
+<tr><td><a id='cd_e'><b>cd_e</b></a><td><b><a href='#sectors'>sectors</a>, <a href='#regions'>regions</a></b><td>1 if cd, 0 if ces</tr></a>
+<tr><td><a id='cd_eH'><b>cd_eH</b></a><td><b><a href='#regions'>regions</a></b><td>1 if cd, 0 if ces</tr></a>
+<tr><td><a id='cd_eR'><b>cd_eR</b></a><td><b><a href='#regions'>regions</a></b><td>1 if cd, 0 if ces</tr></a>
+<tr><td><a id='cd_ff'><b>cd_ff</b></a><td><b><a href='#goods_o'>goods_o</a>, <a href='#dest'>dest</a></b><td>1 if cd, 0 if ces</tr></a>
+<tr><td><a id='cd_m'><b>cd_m</b></a><td><b><a href='#sectors'>sectors</a>, <a href='#regions'>regions</a></b><td>1 if cd, 0 if ces</tr></a>
+<tr><td><a id='cd_mH'><b>cd_mH</b></a><td><b><a href='#regions'>regions</a></b><td>1 if cd, 0 if ces</tr></a>
+<tr><td><a id='cd_mR'><b>cd_mR</b></a><td><b><a href='#regions'>regions</a></b><td>1 if cd, 0 if ces</tr></a>
+<tr><td><a id='cd_o'><b>cd_o</b></a><td><b><a href='#sectors'>sectors</a>, <a href='#regions'>regions</a></b><td>1 if cd, 0 if ces</tr></a>
+<tr><td><a id='cd_oH'><b>cd_oH</b></a><td><b><a href='#regions'>regions</a></b><td>1 if cd, 0 if ces</tr></a>
+<tr><td><a id='cd_oR'><b>cd_oR</b></a><td><b><a href='#regions'>regions</a></b><td>1 if cd, 0 if ces</tr></a>
+<tr><td><a id='delta'><b>delta</b></a><td><b><a href='#regions'>regions</a></b><td>depreciation rate</tr></a>
+<tr><td><a id='delta_dom'><b>delta_dom</b></a><td><b><a href='#goods_o'>goods_o</a>, <a href='#regions'>regions</a></b><td>domestic weight in DF</tr></a>
+<tr><td><a id='delta_e'><b>delta_e</b></a><td><b><a href='#regions'>regions</a>, <a href='#sec_std'>sec_std</a>, <a href='#goods_e'>goods_e</a></b><td>input weights, individ goods</tr></a>
+<tr><td><a id='delta_eG'><b>delta_eG</b></a><td><b><a href='#goods_e'>goods_e</a>, <a href='#regions'>regions</a></b><td>gov budget shares on E goods</tr></a>
+<tr><td><a id='delta_eH'><b>delta_eH</b></a><td><b><a href='#goods_e'>goods_e</a>, <a href='#regions'>regions</a></b><td>input weights, individ goods</tr></a>
+<tr><td><a id='delta_eR'><b>delta_eR</b></a><td><b><a href='#goods_e'>goods_e</a>, <a href='#regions'>regions</a></b><td>input weights, individ goods</tr></a>
+<tr><td><a id='delta_ff'><b>delta_ff</b></a><td><b><a href='#goods_o'>goods_o</a>, <a href='#dest'>dest</a>, <a href='#orig'>orig</a></b><td>foreign source weights in FF</tr></a>
+<tr><td><a id='delta_m'><b>delta_m</b></a><td><b><a href='#regions'>regions</a>, <a href='#sec_std'>sec_std</a>, <a href='#goods_m'>goods_m</a></b><td>input weights, individ goods</tr></a>
+<tr><td><a id='delta_mG'><b>delta_mG</b></a><td><b><a href='#goods_m'>goods_m</a>, <a href='#regions'>regions</a></b><td>gov budget shares on M goods</tr></a>
+<tr><td><a id='delta_mH'><b>delta_mH</b></a><td><b><a href='#goods_m'>goods_m</a>, <a href='#regions'>regions</a></b><td>input weights, individ goods</tr></a>
+<tr><td><a id='delta_mR'><b>delta_mR</b></a><td><b><a href='#goods_m'>goods_m</a>, <a href='#regions'>regions</a></b><td>input weights, individ goods</tr></a>
+<tr><td><a id='delta_o'><b>delta_o</b></a><td><b><a href='#factors'>factors</a>, <a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a></b><td>input weights, KLEM tier</tr></a>
+<tr><td><a id='delta_oG'><b>delta_oG</b></a><td><b><a href='#factors'>factors</a>, <a href='#regions'>regions</a></b><td>gov KLEM budget shares</tr></a>
+<tr><td><a id='delta_oH'><b>delta_oH</b></a><td><b><a href='#factors'>factors</a>, <a href='#regions'>regions</a></b><td>input weights, KLEM tier</tr></a>
+<tr><td><a id='delta_oR'><b>delta_oR</b></a><td><b><a href='#factors'>factors</a>, <a href='#regions'>regions</a></b><td>input weights, KLEM tier</tr></a>
+<tr><td><a id='eer_weight'><b>eer_weight</b></a><td><b><a href='#dest'>dest</a>, <a href='#orig'>orig</a></b><td>trade weights, NEER and REER</tr></a>
+<tr><td><a id='eurowt'><b>eurowt</b></a><td><b><a href='#regions'>regions</a></b><td>weight on countries in Eurozone</tr></a>
+<tr><td><a id='fore_c'><b>fore_c</b></a><td><b><a href='#regions'>regions</a></b><td>shr of C driven by foresight</tr></a>
+<tr><td><a id='fore_i_y'><b>fore_i_y</b></a><td><b><a href='#regions'>regions</a></b><td>shr of I driven by foresight in capital sector</tr></a>
+<tr><td><a id='fore_i_z'><b>fore_i_z</b></a><td><b><a href='#regions'>regions</a></b><td>shr of I driven by foresight in household capital</tr></a>
+<tr><td><a id='forei'><b>forei</b></a><td><b><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a></b><td>shr of I driven by foresight std sector</tr></a>
+<tr><td><a id='FTA'><b>FTA</b></a><td><b><a href='#dest'>dest</a>, <a href='#orig'>orig</a></b><td>free trade area tariff flag</tr></a>
+<tr><td><a id='int_elast'><b>int_elast</b></a><td><b><a href='#regions'>regions</a></b><td>interest elast of money demand</tr></a>
+<tr><td><a id='labgrow'><b>labgrow</b></a><td><b><a href='#regions'>regions</a></b><td>growth of effective labor</tr></a>
+<tr><td><a id='makeinv'><b>makeinv</b></a><td><b><a href='#goods'>goods</a>, <a href='#sectors'>sectors</a>, <a href='#regions'>regions</a></b><td>inverse of make table</tr></a>
+<tr><td><a id='mongdp'><b>mongdp</b></a><td><b><a href='#regions'>regions</a></b><td>coefficient on MONE in WELT</tr></a>
+<tr><td><a id='mpc'><b>mpc</b></a><td><b><a href='#regions'>regions</a></b><td>marginal propensity to consume</tr></a>
+<tr><td><a id='mrule_ex'><b>mrule_ex</b></a><td><b><a href='#regions'>regions</a></b><td>weight on exchange rate in M rule</tr></a>
+<tr><td><a id='mrule_f'><b>mrule_f</b></a><td><b><a href='#regions'>regions</a></b><td>weight on expected variables</tr></a>
+<tr><td><a id='mrule_in'><b>mrule_in</b></a><td><b><a href='#regions'>regions</a></b><td>weight on inflation in M rule</tr></a>
+<tr><td><a id='mrule_m'><b>mrule_m</b></a><td><b><a href='#regions'>regions</a></b><td>weight on money in M rule</tr></a>
+<tr><td><a id='mrule_ny'><b>mrule_ny</b></a><td><b><a href='#regions'>regions</a></b><td>weight on nominal income in M rule</tr></a>
+<tr><td><a id='mrule_r'><b>mrule_r</b></a><td><b><a href='#regions'>regions</a></b><td>weight on lag interest rate in M rule</tr></a>
+<tr><td><a id='mrule_y'><b>mrule_y</b></a><td><b><a href='#regions'>regions</a></b><td>weight on output in M rule</tr></a>
+<tr><td><a id='MUL'><b>MUL</b></a><td><b><a href='#dest'>dest</a>, <a href='#orig'>orig</a></b><td>multilateral tariff flag</tr></a>
+<tr><td><a id='phi'><b>phi</b></a><td><b><a href='#sec_std'>sec_std</a>, <a href='#regions'>regions</a></b><td>adjustment cost parameter std sector</tr></a>
+<tr><td><a id='phi_y'><b>phi_y</b></a><td><b><a href='#regions'>regions</a></b><td>adjustment cost parameter capital sector</tr></a>
+<tr><td><a id='phi_z'><b>phi_z</b></a><td><b><a href='#regions'>regions</a></b><td>adjustment cost parameter household capital</tr></a>
+<tr><td><a id='prid_weight'><b>prid_weight</b></a><td><b><a href='#goods'>goods</a>, <a href='#regions'>regions</a></b><td>weights in PRID</tr></a>
+<tr><td><a id='prim_weight'><b>prim_weight</b></a><td><b><a href='#goods_o'>goods_o</a>, <a href='#regions'>regions</a></b><td>weights in PRIM</tr></a>
+<tr><td><a id='prix_weight'><b>prix_weight</b></a><td><b><a href='#goods_o'>goods_o</a>, <a href='#regions'>regions</a></b><td>weights in PRIX</tr></a>
+<tr><td><a id='sigma_df'><b>sigma_df</b></a><td><b><a href='#goods_o'>goods_o</a>, <a href='#regions'>regions</a></b><td>subs elast between D&F srcs</tr></a>
+<tr><td><a id='sigma_e'><b>sigma_e</b></a><td><b><a href='#sectors'>sectors</a>, <a href='#regions'>regions</a></b><td>subs elast, E tier</tr></a>
+<tr><td><a id='sigma_eH'><b>sigma_eH</b></a><td><b><a href='#regions'>regions</a></b><td>subs elast, E tier</tr></a>
+<tr><td><a id='sigma_eR'><b>sigma_eR</b></a><td><b><a href='#regions'>regions</a></b><td>subs elast, E tier</tr></a>
+<tr><td><a id='sigma_ff'><b>sigma_ff</b></a><td><b><a href='#goods_o'>goods_o</a>, <a href='#dest'>dest</a></b><td>subs elast between F sources</tr></a>
+<tr><td><a id='sigma_m'><b>sigma_m</b></a><td><b><a href='#sectors'>sectors</a>, <a href='#regions'>regions</a></b><td>subs elast, M tier</tr></a>
+<tr><td><a id='sigma_mH'><b>sigma_mH</b></a><td><b><a href='#regions'>regions</a></b><td>subs elast, M tier</tr></a>
+<tr><td><a id='sigma_mR'><b>sigma_mR</b></a><td><b><a href='#regions'>regions</a></b><td>subs elast, M tier</tr></a>
+<tr><td><a id='sigma_o'><b>sigma_o</b></a><td><b><a href='#sectors'>sectors</a>, <a href='#regions'>regions</a></b><td>subs elast, KLEM tier</tr></a>
+<tr><td><a id='sigma_oH'><b>sigma_oH</b></a><td><b><a href='#regions'>regions</a></b><td>subs elast, KLEM tier</tr></a>
+<tr><td><a id='sigma_oR'><b>sigma_oR</b></a><td><b><a href='#regions'>regions</a></b><td>subs elast, KLEM tier</tr></a>
+<tr><td><a id='timepref'><b>timepref</b></a><td><b><a href='#regions'>regions</a></b><td>time preference rate</tr></a>
+<tr><td><a id='transgdp'><b>transgdp</b></a><td><b><a href='#regions'>regions</a></b><td>transfers per unit of GDP</tr></a>
+<tr><td><a id='wage_p'><b>wage_p</b></a><td><b><a href='#regions'>regions</a></b><td>exp infl weight in wage eqn</tr></a>
+<tr><td><a id='wage_q'><b>wage_q</b></a><td><b><a href='#regions'>regions</a></b><td>employment param in wage eqn</tr></a>
+</table>
+</div>
+<div class="heading">Equations:</div>
+<div class="dblock">
+<a id='1'/><div class="eblock">
+Equation 1: <a href='#EXCH'>EXCH</a><br>
+<div class="eqn"> \[ \href{#EXCH}{EXCH(\text{UU})} = 0 \] </div>
+</div>
+<a id='2'/><div class="eblock">
+Equation 2: <a href='#OUY'>OUY</a><br>
+For <i>g1</i> in <b><a href='#goods_e'>goods_e</a></b>, <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#OUY}{OUY(g1,r)} = \href{#CON}{CON(g1,r)}+\href{#IIN}{IIN(g1,r)} 
+        +\href{#INS}{INS(r,g1)} 
+        +\href{#GCE}{GCE(g1,r)} 
+        +\href{#EXQ}{EXQ(g1,r)} 
+        +\sum_{s \; \text{in} \; \href{#sec_std}{sec\_std}} { \left(\href{#EN}{EN(s,g1,r)}\right) } \] </div>
+</div>
+<a id='3'/><div class="eblock">
+Equation 3: <a href='#OUY'>OUY</a><br>
+For <i>g2</i> in <b><a href='#goods_m'>goods_m</a></b>, <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#OUY}{OUY(g2,r)} = \href{#CON}{CON(g2,r)}+\href{#IIN}{IIN(g2,r)} 
+        +\href{#INS}{INS(r,g2)} 
+        +\href{#GCE}{GCE(g2,r)} 
+        +\href{#EXQ}{EXQ(g2,r)} 
+        +\sum_{s \; \text{in} \; \href{#sec_std}{sec\_std}} { \left(\href{#OI}{OI(s,g2,r)}\right) } \] </div>
+</div>
+<a id='4'/><div class="eblock">
+Equation 4: <a href='#IMQ'>IMQ</a><br>
+For <i>g3</i> in <b><a href='#goods_o'>goods_o</a></b>, <i>r</i> in <b><a href='#regions'>regions</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#IMQ}{IMQ(g3,r)} = {(1-\href{#delta_dom}{delta\_dom(g3,r)})} 
+        *\href{#OUY}{OUY(g3,r)} 
+        *exp{ \left( 
+        \href{#PRS}{PRS(g3,r)}-\href{#PMR}{PMR(g3,r)}\right) } 
+        ^\href{#sigma_df}{sigma\_df(g3,r)} \] </div>
+</div>
+<a id='5'/><div class="eblock">
+Equation 5: <a href='#PIM'>PIM</a><br>
+For <i>d</i> in <b><a href='#dest'>dest</a></b>, <i>g3</i> in <b><a href='#goods_o'>goods_o</a></b>, <i>o1</i> in <b><a href='#orig'>orig</a></b> (8 total):<br>
+<div class="eqn"> \[ \href{#PIM}{PIM(g3,d,o1)} = \href{#EXCH}{EXCH(o1)}+\href{#PRX}{PRX(g3,o1)} 
+        -\href{#EXCH}{EXCH(d)} \] </div>
+</div>
+<a id='6'/><div class="eblock">
+Equation 6: <a href='#IMP'>IMP</a><br>
+For <i>d</i> in <b><a href='#dest'>dest</a></b>, <i>g3</i> in <b><a href='#goods_o'>goods_o</a></b>, <i>o1</i> in <b><a href='#orig'>orig</a></b> (8 total):<br>
+<div class="eqn"> \[ \href{#IMP}{IMP(g3,d,o1)} = \href{#delta_ff}{delta\_ff(g3,d,o1)}*\href{#IMQ}{IMQ(g3,d)} 
+        *{(\href{#carcoef}{carcoef(g3,d)}*\href{#TCP}{TCP(g3,d)} 
+        +\href{#btucoef}{btucoef(g3,d)}*\href{#TBFI}{TBFI(d)} 
+        +\href{#BCT}{BCT(g3,d,o1)} 
+        +{(1 
+        +{(\href{#TIM}{TIM(g3,d,o1)}+\href{#TIX}{TIX(g3,d)})} 
+        *\href{#MUL}{MUL(d,o1)} 
+        +\href{#TIF}{TIF(g3,d)}*\href{#FTA}{FTA(d,o1)})} 
+        *exp{ \left( 
+        \href{#PIM}{PIM(g3,d,o1)}-\href{#PMR}{PMR(g3,d)}\right) })} 
+        ^{(-\href{#sigma_ff}{sigma\_ff(g3,d)})} 
+        +\href{#IMPX}{IMPX(g3,d,o1)} \] </div>
+</div>
+<a id='7'/><div class="eblock">
+Equation 7: <a href='#PMQ'>PMQ</a><br>
+For <i>d</i> in <b><a href='#dest'>dest</a></b>, <i>g3</i> in <b><a href='#goods_o'>goods_o</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#PMQ}{PMQ(g3,d)} = ln{ \left( 
+        \frac{\sum_{o1 \; \text{in} \; \href{#orig}{orig}} { \left(\href{#IMP}{IMP(g3,d,o1)} 
+        *exp{ \left(\href{#PIM}{PIM(g3,d,o1)}\right) }\right) }}{\href{#IMQ}{IMQ(g3,d)}}\right) } \] </div>
+</div>
+<a id='8'/><div class="eblock">
+Equation 8: <a href='#IMQT'>IMQT</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#IMQT}{IMQT(r)} = \frac{\sum_{g3 \; \text{in} \; \href{#goods_o}{goods\_o}} { \left(exp{ \left(\href{#PMQ}{PMQ(g3,r)}\right) } 
+        *\href{#IMQ}{IMQ(g3,r)}\right) }}{exp{ \left(\href{#PRIM}{PRIM(r)}\right) }} \] </div>
+</div>
+<a id='9'/><div class="eblock">
+Equation 9: <a href='#EXQT'>EXQT</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#EXQT}{EXQT(r)} = \frac{\sum_{g3 \; \text{in} \; \href{#goods_o}{goods\_o}} { \left(exp{ \left(\href{#PRX}{PRX(g3,r)}\right) } 
+        *\href{#EXQ}{EXQ(g3,r)}\right) }}{exp{ \left(\href{#PRIX}{PRIX(r)}\right) }} \] </div>
+</div>
+<a id='10'/><div class="eblock">
+Equation 10: <a href='#EXQ'>EXQ</a><br>
+For <i>g3</i> in <b><a href='#goods_o'>goods_o</a></b>, <i>o1</i> in <b><a href='#orig'>orig</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#EXQ}{EXQ(g3,o1)} = \sum_{d \; \text{in} \; \href{#dest}{dest}} { \left(\href{#IMP}{IMP(g3,d,o1)}\right) } \] </div>
+</div>
+<a id='11'/><div class="eblock">
+Equation 11: <a href='#PRX'>PRX</a><br>
+For <i>g3</i> in <b><a href='#goods_o'>goods_o</a></b>, <i>r</i> in <b><a href='#regions'>regions</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#PRX}{PRX(g3,r)} = ln{ \left( 
+        {(1+\href{#TEX}{TEX(g3,r)})} 
+        *exp{ \left(\href{#PRS}{PRS(g3,r)}\right) } 
+        -\href{#carcoef}{carcoef(g3,r)}*\href{#TCP}{TCP(g3,r)} 
+        +\href{#btucoef}{btucoef(g3,r)}*\href{#TBFX}{TBFX(r)}\right) } \] </div>
+</div>
+<a id='12'/><div class="eblock">
+Equation 12: <a href='#OUG'>OUG</a><br>
+For <i>g3</i> in <b><a href='#goods_o'>goods_o</a></b>, <i>r</i> in <b><a href='#regions'>regions</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#OUG}{OUG(g3,r)} = \href{#delta_dom}{delta\_dom(g3,r)}*\href{#OUY}{OUY(g3,r)} 
+        *exp{ \left( 
+        \href{#PRS}{PRS(g3,r)}-\href{#PRD}{PRD(g3,r)}\right) } 
+        ^\href{#sigma_df}{sigma\_df(g3,r)} \] </div>
+</div>
+<a id='13'/><div class="eblock">
+Equation 13: <a href='#OUP'>OUP</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s1</i> in <b><a href='#sectors'>sectors</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#OUP}{OUP(s1,r)} = \sum_{g \; \text{in} \; \href{#goods}{goods}} { \left(\href{#makeinv}{makeinv(g,s1,r)}*\href{#OUG}{OUG(g,r)}\right) } \] </div>
+</div>
+<a id='14'/><div class="eblock">
+Equation 14: <a href='#LAB'>LAB</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#LAB}{LAB(s,r)} = exp{ \left( 
+        \href{#SHL}{SHL(r,s)}+\href{#SHY}{SHY(s,r)}\right) } 
+        ^{(\href{#sigma_o}{sigma\_o(s,r)}-1)} 
+        *\href{#delta_o}{delta\_o(\text{l},s,r)} 
+        *\href{#OUP}{OUP(s,r)} 
+        *exp{ \left( 
+        \href{#PRP}{PRP(s,r)}-\href{#WAG}{WAG(s,r)}\right) } 
+        ^\href{#sigma_o}{sigma\_o(s,r)} \] </div>
+</div>
+<a id='15'/><div class="eblock">
+Equation 15: <a href='#ENT'>ENT</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#ENT}{ENT(s,r)} = exp{ \left( 
+        \href{#SHEF}{SHEF(s,r)}+\href{#SHY}{SHY(s,r)}\right) } 
+        ^{(\href{#sigma_o}{sigma\_o(s,r)}-1)} 
+        *\href{#delta_o}{delta\_o(\text{e},s,r)} 
+        *\href{#OUP}{OUP(s,r)} 
+        *exp{ \left( 
+        \href{#PRP}{PRP(s,r)}-\href{#PRE}{PRE(s,r)}\right) } 
+        ^\href{#sigma_o}{sigma\_o(s,r)} \] </div>
+</div>
+<a id='16'/><div class="eblock">
+Equation 16: <a href='#OIN'>OIN</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#OIN}{OIN(s,r)} = exp{ \left(\href{#SHY}{SHY(s,r)}\right) } 
+        ^{(\href{#sigma_o}{sigma\_o(s,r)}-1)} 
+        *\href{#delta_o}{delta\_o(\text{m},s,r)} 
+        *\href{#OUP}{OUP(s,r)} 
+        *exp{ \left( 
+        \href{#PRP}{PRP(s,r)}-\href{#POI}{POI(s,r)}\right) } 
+        ^\href{#sigma_o}{sigma\_o(s,r)} \] </div>
+</div>
+<a id='17'/><div class="eblock">
+Equation 17: <a href='#IITL'>IITL</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#IITL}{IITL(r)} = exp{ \left( 
+        \href{#SHLY}{SHLY(r)}+\href{#SHYY}{SHYY(r)}\right) } 
+        ^{(\href{#sigma_oR}{sigma\_oR(r)}-1)} 
+        *\href{#delta_oR}{delta\_oR(\text{l},r)} 
+        *\href{#INVT}{INVT(r)} 
+        *exp{ \left( 
+        \href{#PRII}{PRII(r)}-\href{#WAGE}{WAGE(r)}\right) } 
+        ^\href{#sigma_oR}{sigma\_oR(r)} \] </div>
+</div>
+<a id='18'/><div class="eblock">
+Equation 18: <a href='#IITE'>IITE</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#IITE}{IITE(r)} = exp{ \left(\href{#SHYY}{SHYY(r)}\right) } 
+        ^{(\href{#sigma_oR}{sigma\_oR(r)}-1)} 
+        *\href{#delta_oR}{delta\_oR(\text{e},r)} 
+        *\href{#INVT}{INVT(r)} 
+        *exp{ \left( 
+        \href{#PRII}{PRII(r)}-\href{#PRIE}{PRIE(r)}\right) } 
+        ^\href{#sigma_oR}{sigma\_oR(r)} \] </div>
+</div>
+<a id='19'/><div class="eblock">
+Equation 19: <a href='#IITO'>IITO</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#IITO}{IITO(r)} = exp{ \left(\href{#SHYY}{SHYY(r)}\right) } 
+        ^{(\href{#sigma_oR}{sigma\_oR(r)}-1)} 
+        *\href{#delta_oR}{delta\_oR(\text{m},r)} 
+        *\href{#INVT}{INVT(r)} 
+        *exp{ \left( 
+        \href{#PRII}{PRII(r)}-\href{#PROI}{PROI(r)}\right) } 
+        ^\href{#sigma_oR}{sigma\_oR(r)} \] </div>
+</div>
+<a id='20'/><div class="eblock">
+Equation 20: <a href='#IIN'>IIN</a><br>
+For <i>g1</i> in <b><a href='#goods_e'>goods_e</a></b>, <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#IIN}{IIN(g1,r)} = \href{#delta_eR}{delta\_eR(g1,r)}*\href{#IITE}{IITE(r)} 
+        *exp{ \left( 
+        \href{#PRIE}{PRIE(r)}-\href{#PRY}{PRY(g1,r)}\right) } 
+        ^\href{#sigma_eR}{sigma\_eR(r)} \] </div>
+</div>
+<a id='21'/><div class="eblock">
+Equation 21: <a href='#IIN'>IIN</a><br>
+For <i>g2</i> in <b><a href='#goods_m'>goods_m</a></b>, <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#IIN}{IIN(g2,r)} = \href{#delta_mR}{delta\_mR(g2,r)}*\href{#IITO}{IITO(r)} 
+        *exp{ \left( 
+        \href{#PROI}{PROI(r)}-\href{#PRY}{PRY(g2,r)}\right) } 
+        ^\href{#sigma_mR}{sigma\_mR(r)} \] </div>
+</div>
+<a id='22'/><div class="eblock">
+Equation 22: <a href='#LABO'>LABO</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#LABO}{LABO(r)} = \href{#IITL}{IITL(r)}+\href{#CNPL}{CNPL(r)} 
+        +\href{#GOVL}{GOVL(r)} 
+        +\sum_{s \; \text{in} \; \href{#sec_std}{sec\_std}} { \left(\href{#LAB}{LAB(s,r)}\right) } \] </div>
+</div>
+<a id='23'/><div class="eblock">
+Equation 23: <a href='#PRS'>PRS</a><br>
+For <i>g3</i> in <b><a href='#goods_o'>goods_o</a></b>, <i>r</i> in <b><a href='#regions'>regions</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#PRS}{PRS(g3,r)} = \href{#cd_df}{cd\_df(g3,r)} 
+        *{(\href{#delta_dom}{delta\_dom(g3,r)}*\href{#PRD}{PRD(g3,r)} 
+        +{(1-\href{#delta_dom}{delta\_dom(g3,r)})} 
+        *\href{#PMR}{PMR(g3,r)})} 
+        +\frac{{({(1-\href{#cd_df}{cd\_df(g3,r)})} 
+        *ln{ \left( 
+        \href{#delta_dom}{delta\_dom(g3,r)} 
+        *exp{ \left(\href{#PRD}{PRD(g3,r)}\right) } 
+        ^{(1-\href{#sigma_df}{sigma\_df(g3,r)})} 
+        +{(1-\href{#delta_dom}{delta\_dom(g3,r)})} 
+        *exp{ \left(\href{#PMR}{PMR(g3,r)}\right) } 
+        ^{(1-\href{#sigma_df}{sigma\_df(g3,r)})}\right) })}}{{(1 
+        -\href{#sigma_df}{sigma\_df(g3,r)}*{(1-\href{#cd_df}{cd\_df(g3,r)})})}} \] </div>
+</div>
+<a id='24'/><div class="eblock">
+Equation 24: <a href='#PRY'>PRY</a><br>
+For <i>g</i> in <b><a href='#goods'>goods</a></b>, <i>r</i> in <b><a href='#regions'>regions</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#PRY}{PRY(g,r)} = ln{ \left(1+\href{#TAX}{TAX(g,r)}\right) } 
+        +\href{#PRS}{PRS(g,r)} \] </div>
+</div>
+<a id='25'/><div class="eblock">
+Equation 25: <a href='#PMR'>PMR</a><br>
+For <i>d</i> in <b><a href='#dest'>dest</a></b>, <i>g3</i> in <b><a href='#goods_o'>goods_o</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#PMR}{PMR(g3,d)} = \href{#cd_ff}{cd\_ff(g3,d)} 
+        *\sum_{o1 \; \text{in} \; \href{#orig}{orig}} { \left(\href{#delta_ff}{delta\_ff(g3,d,o1)} 
+        *ln{ \left( 
+        \href{#carcoef}{carcoef(g3,d)}*\href{#TCP}{TCP(g3,d)} 
+        +\href{#btucoef}{btucoef(g3,d)}*\href{#TBFI}{TBFI(d)} 
+        +\href{#BCT}{BCT(g3,d,o1)} 
+        +{(1 
+        +{(\href{#TIM}{TIM(g3,d,o1)}+\href{#TIX}{TIX(g3,d)})} 
+        *\href{#MUL}{MUL(d,o1)} 
+        +\href{#TIF}{TIF(g3,d)}*\href{#FTA}{FTA(d,o1)})} 
+        *exp{ \left(\href{#PIM}{PIM(g3,d,o1)}\right) }\right) }\right) } 
+        +\frac{{({(1-\href{#cd_ff}{cd\_ff(g3,d)})} 
+        *ln{ \left( 
+        \sum_{o1 \; \text{in} \; \href{#orig}{orig}} { \left(\href{#delta_ff}{delta\_ff(g3,d,o1)} 
+        *{(\href{#carcoef}{carcoef(g3,d)}*\href{#TCP}{TCP(g3,d)} 
+        +\href{#btucoef}{btucoef(g3,d)}*\href{#TBFI}{TBFI(d)} 
+        +\href{#BCT}{BCT(g3,d,o1)} 
+        +{(1 
+        +{(\href{#TIM}{TIM(g3,d,o1)}+\href{#TIX}{TIX(g3,d)})} 
+        *\href{#MUL}{MUL(d,o1)} 
+        +\href{#TIF}{TIF(g3,d)}*\href{#FTA}{FTA(d,o1)})} 
+        *exp{ \left(\href{#PIM}{PIM(g3,d,o1)}\right) })} 
+        ^{(1-\href{#sigma_ff}{sigma\_ff(g3,d)})}\right) }\right) })}}{{(1 
+        -\href{#sigma_ff}{sigma\_ff(g3,d)}*{(1-\href{#cd_ff}{cd\_ff(g3,d)})})}} \] </div>
+</div>
+<a id='26'/><div class="eblock">
+Equation 26: <a href='#PRIM'>PRIM</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#PRIM}{PRIM(r)} = \sum_{g3 \; \text{in} \; \href{#goods_o}{goods\_o}} { \left(\href{#prim_weight}{prim\_weight(g3,r)}*\href{#PMQ}{PMQ(g3,r)}\right) } \] </div>
+</div>
+<a id='27'/><div class="eblock">
+Equation 27: <a href='#PRIE'>PRIE</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#PRIE}{PRIE(r)} = \href{#cd_eR}{cd\_eR(r)} 
+        *\sum_{g1 \; \text{in} \; \href{#goods_e}{goods\_e}} { \left(\href{#delta_eR}{delta\_eR(g1,r)}*\href{#PRY}{PRY(g1,r)}\right) } 
+        +\frac{{({(1-\href{#cd_eR}{cd\_eR(r)})} 
+        *ln{ \left( 
+        \sum_{g1 \; \text{in} \; \href{#goods_e}{goods\_e}} { \left(\href{#delta_eR}{delta\_eR(g1,r)} 
+        *exp{ \left(\href{#PRY}{PRY(g1,r)}\right) } 
+        ^{(1-\href{#sigma_eR}{sigma\_eR(r)})}\right) }\right) })}}{{(1 
+        -\href{#sigma_eR}{sigma\_eR(r)}*{(1-\href{#cd_eR}{cd\_eR(r)})})}} \] </div>
+</div>
+<a id='28'/><div class="eblock">
+Equation 28: <a href='#PROI'>PROI</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#PROI}{PROI(r)} = \href{#cd_mR}{cd\_mR(r)} 
+        *\sum_{g2 \; \text{in} \; \href{#goods_m}{goods\_m}} { \left(\href{#delta_mR}{delta\_mR(g2,r)}*\href{#PRY}{PRY(g2,r)}\right) } 
+        +\frac{{({(1-\href{#cd_mR}{cd\_mR(r)})} 
+        *ln{ \left( 
+        \sum_{g2 \; \text{in} \; \href{#goods_m}{goods\_m}} { \left(\href{#delta_mR}{delta\_mR(g2,r)} 
+        *exp{ \left(\href{#PRY}{PRY(g2,r)}\right) } 
+        ^{(1-\href{#sigma_mR}{sigma\_mR(r)})}\right) }\right) })}}{{(1 
+        -\href{#sigma_mR}{sigma\_mR(r)}*{(1-\href{#cd_mR}{cd\_mR(r)})})}} \] </div>
+</div>
+<a id='29'/><div class="eblock">
+Equation 29: <a href='#PRD'>PRD</a><br>
+For <i>g</i> in <b><a href='#goods'>goods</a></b>, <i>r</i> in <b><a href='#regions'>regions</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#PRD}{PRD(g,r)} = ln{ \left( 
+        exp{ \left( 
+        \sum_{s1 \; \text{in} \; \href{#sectors}{sectors}} { \left(\href{#makeinv}{makeinv(g,s1,r)}*\href{#PRP}{PRP(s1,r)}\right) }\right) } 
+        +\href{#carcoef}{carcoef(g,r)}*\href{#TCP}{TCP(g,r)} 
+        +\href{#btucoef}{btucoef(g,r)}*\href{#TBFD}{TBFD(r)}\right) } \] </div>
+</div>
+<a id='30'/><div class="eblock">
+Equation 30: <a href='#PRP'>PRP</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#PRP}{PRP(s,r)} = \href{#cd_o}{cd\_o(s,r)} 
+        *{(\href{#delta_o}{delta\_o(\text{k},s,r)}*\href{#PRK}{PRK(s,r)} 
+        +\href{#delta_o}{delta\_o(\text{l},s,r)}*\href{#WAG}{WAG(s,r)} 
+        +\href{#delta_o}{delta\_o(\text{e},s,r)}*\href{#PRE}{PRE(s,r)} 
+        +\href{#delta_o}{delta\_o(\text{m},s,r)}*\href{#POI}{POI(s,r)} 
+        -\href{#delta_o}{delta\_o(\text{l},s,r)}*\href{#SHL}{SHL(r,s)} 
+        -\href{#delta_o}{delta\_o(\text{k},s,r)}*\href{#SHK}{SHK(s,r)} 
+        -\href{#delta_o}{delta\_o(\text{e},s,r)}*\href{#SHEF}{SHEF(s,r)})} 
+        +\frac{{({(1-\href{#cd_o}{cd\_o(s,r)})} 
+        *ln{ \left( 
+        \href{#delta_o}{delta\_o(\text{k},s,r)} 
+        *exp{ \left( 
+        \href{#PRK}{PRK(s,r)}-\href{#SHK}{SHK(s,r)}\right) } 
+        ^{(1-\href{#sigma_o}{sigma\_o(s,r)})} 
+        +\href{#delta_o}{delta\_o(\text{l},s,r)} 
+        *exp{ \left( 
+        \href{#WAG}{WAG(s,r)}-\href{#SHL}{SHL(r,s)}\right) } 
+        ^{(1-\href{#sigma_o}{sigma\_o(s,r)})} 
+        +\href{#delta_o}{delta\_o(\text{e},s,r)} 
+        *exp{ \left( 
+        \href{#PRE}{PRE(s,r)}-\href{#SHEF}{SHEF(s,r)}\right) } 
+        ^{(1-\href{#sigma_o}{sigma\_o(s,r)})} 
+        +\href{#delta_o}{delta\_o(\text{m},s,r)} 
+        *exp{ \left(\href{#POI}{POI(s,r)}\right) } 
+        ^{(1-\href{#sigma_o}{sigma\_o(s,r)})}\right) })}}{{(1 
+        -\href{#sigma_o}{sigma\_o(s,r)}*{(1-\href{#cd_o}{cd\_o(s,r)})})}} 
+        -\href{#SHY}{SHY(s,r)} \] </div>
+</div>
+<a id='31'/><div class="eblock">
+Equation 31: <a href='#PRII'>PRII</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#PRII}{PRII(r)} = \href{#cd_oR}{cd\_oR(r)} 
+        *{(\href{#delta_oR}{delta\_oR(\text{k},r)}*\href{#PRKY}{PRKY(r)} 
+        +\href{#delta_oR}{delta\_oR(\text{l},r)}*\href{#WAGE}{WAGE(r)} 
+        +\href{#delta_oR}{delta\_oR(\text{e},r)}*\href{#PRIE}{PRIE(r)} 
+        +\href{#delta_oR}{delta\_oR(\text{m},r)}*\href{#PROI}{PROI(r)} 
+        -\href{#delta_oR}{delta\_oR(\text{l},r)}*\href{#SHLY}{SHLY(r)})} 
+        +\frac{{({(1-\href{#cd_oR}{cd\_oR(r)})} 
+        *ln{ \left( 
+        \href{#delta_oR}{delta\_oR(\text{k},r)} 
+        *exp{ \left(\href{#PRKY}{PRKY(r)}\right) } 
+        ^{(1-\href{#sigma_oR}{sigma\_oR(r)})} 
+        +\href{#delta_oR}{delta\_oR(\text{l},r)} 
+        *exp{ \left( 
+        \href{#WAGE}{WAGE(r)}-\href{#SHLY}{SHLY(r)}\right) } 
+        ^{(1-\href{#sigma_oR}{sigma\_oR(r)})} 
+        +\href{#delta_oR}{delta\_oR(\text{e},r)} 
+        *exp{ \left(\href{#PRIE}{PRIE(r)}\right) } 
+        ^{(1-\href{#sigma_oR}{sigma\_oR(r)})} 
+        +\href{#delta_oR}{delta\_oR(\text{m},r)} 
+        *exp{ \left(\href{#PROI}{PROI(r)}\right) } 
+        ^{(1-\href{#sigma_oR}{sigma\_oR(r)})}\right) })}}{{(1 
+        -\href{#sigma_oR}{sigma\_oR(r)}*{(1-\href{#cd_oR}{cd\_oR(r)})})}} 
+        -\href{#SHYY}{SHYY(r)} \] </div>
+</div>
+<a id='32'/><div class="eblock">
+Equation 32: <a href='#PRK'>PRK</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#PRK}{PRK(s,r)} = \href{#PRP}{PRP(s,r)} 
+        +\frac{ln{ \left( 
+        \frac{{(\href{#delta_o}{delta\_o(\text{k},s,r)}*\href{#OUP}{OUP(s,r)})}}{\href{#CAP}{CAP(s,r)}}\right) }}{\href{#sigma_o}{sigma\_o(s,r)}} 
+        +\frac{{({(\href{#SHY}{SHY(s,r)}+\href{#SHK}{SHK(s,r)})} 
+        *{(\href{#sigma_o}{sigma\_o(s,r)}-1)})}}{\href{#sigma_o}{sigma\_o(s,r)}} \] </div>
+</div>
+<a id='33'/><div class="eblock">
+Equation 33: <a href='#PRKY'>PRKY</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#PRKY}{PRKY(r)} = \href{#PRII}{PRII(r)} 
+        +\frac{ln{ \left( 
+        \frac{{(\href{#delta_oR}{delta\_oR(\text{k},r)}*\href{#INVT}{INVT(r)})}}{\href{#CAPY}{CAPY(r)}}\right) }}{\href{#sigma_oR}{sigma\_oR(r)}} 
+        +\frac{{(\href{#SHYY}{SHYY(r)}*{(\href{#sigma_oR}{sigma\_oR(r)}-1)})}}{\href{#sigma_oR}{sigma\_oR(r)}} \] </div>
+</div>
+<a id='34'/><div class="eblock">
+Equation 34: <a href='#PRKZ'>PRKZ</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#PRKZ}{PRKZ(r)} = \href{#PRCT}{PRCT(r)} 
+        +\frac{ln{ \left( 
+        \frac{{(\href{#delta_oH}{delta\_oH(\text{k},r)}*\href{#CONP}{CONP(r)})}}{\href{#CAPZ}{CAPZ(r)}}\right) }}{\href{#sigma_oH}{sigma\_oH(r)}} 
+        +\frac{{(\href{#SHYZ}{SHYZ(r)}*{(\href{#sigma_oH}{sigma\_oH(r)}-1)})}}{\href{#sigma_oH}{sigma\_oH(r)}} \] </div>
+</div>
+<a id='35'/><div class="eblock">
+Equation 35: <a href='#WAGE'>WAGE</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ lead({\href{#WAGE}{WAGE(r)}}) = \href{#WAGE}{WAGE(r)} 
+        +\href{#wage_p}{wage\_p(r)} 
+        *{(lead({\href{#PRCT}{PRCT(r)}})+\href{#PRXX}{PRXX(r)} 
+        -\href{#PRCT}{PRCT(r)})} 
+        +{(1-\href{#wage_p}{wage\_p(r)})} 
+        *{(\href{#PRCT}{PRCT(r)}-\href{#PRCL}{PRCL(r)})} 
+        +\href{#wage_q}{wage\_q(r)}*ln{ \left(\href{#LABO}{LABO(r)}\right) } \] </div>
+</div>
+<a id='36'/><div class="eblock">
+Equation 36: <a href='#LABO'>LABO</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#LABO}{LABO(r)} = \href{#LABX}{LABX(r)} \] </div>
+</div>
+<a id='37'/><div class="eblock">
+Equation 37: <a href='#WAG'>WAG</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#WAG}{WAG(s,r)} = \href{#WAGE}{WAGE(r)} \] </div>
+</div>
+<a id='38'/><div class="eblock">
+Equation 38: <a href='#CAP'>CAP</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ lead({\href{#CAP}{CAP(s,r)}}) = \href{#JNV}{JNV(s,r)} 
+        +{(1-\href{#delta}{delta(r)}-\href{#labgrow}{labgrow(r)})} 
+        *\href{#CAP}{CAP(s,r)} \] </div>
+</div>
+<a id='39'/><div class="eblock">
+Equation 39: <a href='#CAPY'>CAPY</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ lead({\href{#CAPY}{CAPY(r)}}) = \href{#JNVY}{JNVY(r)} 
+        +{(1-\href{#delta}{delta(r)}-\href{#labgrow}{labgrow(r)})} 
+        *\href{#CAPY}{CAPY(r)} \] </div>
+</div>
+<a id='40'/><div class="eblock">
+Equation 40: <a href='#CAPZ'>CAPZ</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ lead({\href{#CAPZ}{CAPZ(r)}}) = \href{#JNVZ}{JNVZ(r)} 
+        +{(1-\href{#delta}{delta(r)}-\href{#labgrow}{labgrow(r)})} 
+        *\href{#CAPZ}{CAPZ(r)} \] </div>
+</div>
+<a id='41'/><div class="eblock">
+Equation 41: <a href='#CAP'>CAP</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#CAP}{CAP(s,r)} = \frac{\href{#JNV}{JNV(s,r)}}{{(\href{#delta}{delta(r)}+\href{#labgrow}{labgrow(r)})}} \] </div>
+</div>
+<a id='42'/><div class="eblock">
+Equation 42: <a href='#CAPY'>CAPY</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#CAPY}{CAPY(r)} = \frac{\href{#JNVY}{JNVY(r)}}{{(\href{#delta}{delta(r)}+\href{#labgrow}{labgrow(r)})}} \] </div>
+</div>
+<a id='43'/><div class="eblock">
+Equation 43: <a href='#CAPZ'>CAPZ</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#CAPZ}{CAPZ(r)} = \frac{\href{#JNVZ}{JNVZ(r)}}{{(\href{#delta}{delta(r)}+\href{#labgrow}{labgrow(r)})}} \] </div>
+</div>
+<a id='44'/><div class="eblock">
+Equation 44: <a href='#INV'>INV</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#INV}{INV(s,r)} = \frac{{({(1+.5*{(\href{#TOB}{TOB(s,r)}-1)})}*{(\href{#TOB}{TOB(s,r)}-1)} 
+        *\href{#CAP}{CAP(s,r)})}}{\href{#phi}{phi(s,r)}} 
+        *\href{#forei}{forei(s,r)} 
+        +\frac{{({(1+.5*{(\href{#TPA}{TPA(s,r)}-1)})}*{(\href{#TPA}{TPA(s,r)}-1)} 
+        *\href{#CAP}{CAP(s,r)})}}{\href{#phi}{phi(s,r)}} 
+        *{(1-\href{#forei}{forei(s,r)})} 
+        +\href{#SHKI}{SHKI(r,s)} \] </div>
+</div>
+<a id='45'/><div class="eblock">
+Equation 45: <a href='#JNV'>JNV</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#JNV}{JNV(s,r)} = \frac{{(\href{#INV}{INV(s,r)} 
+        +\href{#phi}{phi(s,r)}*0.5*\href{#base_jk}{base\_jk(s,r)}^2 
+        *\href{#CAP}{CAP(s,r)})}}{{(1 
+        +\href{#phi}{phi(s,r)}*\href{#base_jk}{base\_jk(s,r)})}} \] </div>
+</div>
+<a id='46'/><div class="eblock">
+Equation 46: <a href='#INVY'>INVY</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#INVY}{INVY(r)} = \href{#JNVY}{JNVY(r)} 
+        *{(1 
+        +\frac{{(\frac{\href{#phi_y}{phi\_y(r)}}{2}*\href{#JNVY}{JNVY(r)})}}{\href{#CAPY}{CAPY(r)}})} \] </div>
+</div>
+<a id='47'/><div class="eblock">
+Equation 47: <a href='#INVZ'>INVZ</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#INVZ}{INVZ(r)} = \href{#JNVZ}{JNVZ(r)} 
+        *{(1 
+        +\frac{{(\frac{\href{#phi_z}{phi\_z(r)}}{2}*\href{#JNVZ}{JNVZ(r)})}}{\href{#CAPZ}{CAPZ(r)}})} \] </div>
+</div>
+<a id='48'/><div class="eblock">
+Equation 48: <a href='#JNVY'>JNVY</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#JNVY}{JNVY(r)} = \frac{{(\href{#CAPY}{CAPY(r)} 
+        *{(\href{#fore_i_y}{fore\_i\_y(r)}*\href{#TOBY}{TOBY(r)} 
+        +{(1-\href{#fore_i_y}{fore\_i\_y(r)})}*\href{#TPAY}{TPAY(r)} 
+        -1)})}}{\href{#phi_y}{phi\_y(r)}} \] </div>
+</div>
+<a id='49'/><div class="eblock">
+Equation 49: <a href='#JNVZ'>JNVZ</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#JNVZ}{JNVZ(r)} = \frac{{(\href{#CAPZ}{CAPZ(r)} 
+        *{(\href{#fore_i_z}{fore\_i\_z(r)}*\href{#TOBZ}{TOBZ(r)} 
+        +{(1-\href{#fore_i_z}{fore\_i\_z(r)})}*\href{#TPAZ}{TPAZ(r)} 
+        -1)})}}{\href{#phi_z}{phi\_z(r)}} \] </div>
+</div>
+<a id='50'/><div class="eblock">
+Equation 50: <a href='#LAM'>LAM</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ lead({\href{#LAM}{LAM(s,r)}}) = {(1+\href{#INTR}{INTR(r)}+\href{#RISE}{RISE(s,r)} 
+        +\href{#delta}{delta(r)})} 
+        *\href{#LAM}{LAM(s,r)} 
+        -{(1-\href{#TCOR}{TCOR(r)})} 
+        *exp{ \left( 
+        \href{#PRK}{PRK(s,r)}-\href{#PRID}{PRID(r)}\right) } 
+        -{(1-\href{#TITC}{TITC(s,r)})} 
+        *exp{ \left( 
+        \href{#PRII}{PRII(r)}-\href{#PRID}{PRID(r)}\right) } 
+        *\frac{\href{#phi}{phi(s,r)}}{2} 
+        *\frac{\href{#JNV}{JNV(s,r)}}{\href{#CAP}{CAP(s,r)}} 
+        ^2 \] </div>
+</div>
+<a id='51'/><div class="eblock">
+Equation 51: <a href='#LAM'>LAM</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#LAM}{LAM(s,r)} = \frac{{({(1-\href{#TCOR}{TCOR(r)})} 
+        *exp{ \left( 
+        \href{#PRK}{PRK(s,r)}-\href{#PRID}{PRID(r)}\right) } 
+        +{(1-\href{#TITC}{TITC(s,r)})} 
+        *exp{ \left( 
+        \href{#PRII}{PRII(r)}-\href{#PRID}{PRID(r)}\right) } 
+        *\frac{\href{#phi}{phi(s,r)}}{2} 
+        *\frac{\href{#JNV}{JNV(s,r)}}{\href{#CAP}{CAP(s,r)}} 
+        ^2)}}{{(\href{#INTR}{INTR(r)}+\href{#RISE}{RISE(s,r)} 
+        +\href{#delta}{delta(r)})}} \] </div>
+</div>
+<a id='52'/><div class="eblock">
+Equation 52: <a href='#LAMY'>LAMY</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ lead({\href{#LAMY}{LAMY(r)}}) = {(1+\href{#INTR}{INTR(r)}+\href{#RISY}{RISY(r)} 
+        +\href{#delta}{delta(r)})} 
+        *\href{#LAMY}{LAMY(r)} 
+        -{(1-\href{#TCOR}{TCOR(r)})} 
+        *exp{ \left( 
+        \href{#PRKY}{PRKY(r)}-\href{#PRID}{PRID(r)}\right) } 
+        -exp{ \left( 
+        \href{#PRII}{PRII(r)}-\href{#PRID}{PRID(r)}\right) } 
+        *\frac{\href{#phi_y}{phi\_y(r)}}{2} 
+        *\frac{\href{#JNVY}{JNVY(r)}}{\href{#CAPY}{CAPY(r)}} 
+        ^2 \] </div>
+</div>
+<a id='53'/><div class="eblock">
+Equation 53: <a href='#LAMY'>LAMY</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#LAMY}{LAMY(r)} = \frac{{({(1-\href{#TCOR}{TCOR(r)})} 
+        *exp{ \left( 
+        \href{#PRKY}{PRKY(r)}-\href{#PRID}{PRID(r)}\right) } 
+        +exp{ \left( 
+        \href{#PRII}{PRII(r)}-\href{#PRID}{PRID(r)}\right) } 
+        *\frac{\href{#phi_y}{phi\_y(r)}}{2} 
+        *\frac{\href{#JNVY}{JNVY(r)}}{\href{#CAPY}{CAPY(r)}} 
+        ^2)}}{{(\href{#INTR}{INTR(r)}+\href{#RISY}{RISY(r)} 
+        +\href{#delta}{delta(r)})}} \] </div>
+</div>
+<a id='54'/><div class="eblock">
+Equation 54: <a href='#LAMZ'>LAMZ</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ lead({\href{#LAMZ}{LAMZ(r)}}) = {(1+\href{#INTR}{INTR(r)}+\href{#RISZ}{RISZ(r)} 
+        +\href{#delta}{delta(r)})} 
+        *\href{#LAMZ}{LAMZ(r)} 
+        -exp{ \left( 
+        \href{#PRKZ}{PRKZ(r)}-\href{#PRID}{PRID(r)}\right) } 
+        -{(1-\href{#TITCH}{TITCH(r)})} 
+        *exp{ \left( 
+        \href{#PRII}{PRII(r)}-\href{#PRID}{PRID(r)}\right) } 
+        *\frac{\href{#phi_z}{phi\_z(r)}}{2} 
+        *\frac{\href{#JNVZ}{JNVZ(r)}}{\href{#CAPZ}{CAPZ(r)}} 
+        ^2 \] </div>
+</div>
+<a id='55'/><div class="eblock">
+Equation 55: <a href='#LAMZ'>LAMZ</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#LAMZ}{LAMZ(r)} = \frac{{(exp{ \left( 
+        \href{#PRKZ}{PRKZ(r)}-\href{#PRID}{PRID(r)}\right) } 
+        +{(1-\href{#TITCH}{TITCH(r)})} 
+        *exp{ \left( 
+        \href{#PRII}{PRII(r)}-\href{#PRID}{PRID(r)}\right) } 
+        *\frac{\href{#phi_z}{phi\_z(r)}}{2} 
+        *\frac{\href{#JNVZ}{JNVZ(r)}}{\href{#CAPZ}{CAPZ(r)}} 
+        ^2)}}{{(\href{#INTR}{INTR(r)}+\href{#RISZ}{RISZ(r)} 
+        +\href{#delta}{delta(r)})}} \] </div>
+</div>
+<a id='56'/><div class="eblock">
+Equation 56: <a href='#TOB'>TOB</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#TOB}{TOB(s,r)} = \frac{{(\href{#LAM}{LAM(s,r)} 
+        *exp{ \left( 
+        \href{#PRID}{PRID(r)}-\href{#PRII}{PRII(r)}\right) })}}{{(1-\href{#TITC}{TITC(s,r)})}} \] </div>
+</div>
+<a id='57'/><div class="eblock">
+Equation 57: <a href='#TOBY'>TOBY</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#TOBY}{TOBY(r)} = \href{#LAMY}{LAMY(r)} 
+        *exp{ \left( 
+        \href{#PRID}{PRID(r)}-\href{#PRII}{PRII(r)}\right) } \] </div>
+</div>
+<a id='58'/><div class="eblock">
+Equation 58: <a href='#TOBZ'>TOBZ</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#TOBZ}{TOBZ(r)} = \frac{{(\href{#LAMZ}{LAMZ(r)} 
+        *exp{ \left( 
+        \href{#PRID}{PRID(r)}-\href{#PRII}{PRII(r)}\right) })}}{{(1-\href{#TITCH}{TITCH(r)})}} \] </div>
+</div>
+<a id='59'/><div class="eblock">
+Equation 59: <a href='#TPA'>TPA</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ lead({\href{#TPA}{TPA(s,r)}}) = \href{#TPA}{TPA(s,r)} 
+        +\href{#adapt}{adapt(r)} 
+        *{(\href{#TOB}{TOB(s,r)}-\href{#TPA}{TPA(s,r)})} \] </div>
+</div>
+<a id='60'/><div class="eblock">
+Equation 60: <a href='#TPAY'>TPAY</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ lead({\href{#TPAY}{TPAY(r)}}) = \href{#TPAY}{TPAY(r)} 
+        +\href{#adapt}{adapt(r)} 
+        *{(\href{#TOBY}{TOBY(r)}-\href{#TPAY}{TPAY(r)})} \] </div>
+</div>
+<a id='61'/><div class="eblock">
+Equation 61: <a href='#TPAZ'>TPAZ</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ lead({\href{#TPAZ}{TPAZ(r)}}) = \href{#TPAZ}{TPAZ(r)} 
+        +\href{#adapt}{adapt(r)} 
+        *{(\href{#TOBZ}{TOBZ(r)}-\href{#TPAZ}{TPAZ(r)})} \] </div>
+</div>
+<a id='62'/><div class="eblock">
+Equation 62: <a href='#TPA'>TPA</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#TPA}{TPA(s,r)} = \href{#TOB}{TOB(s,r)} \] </div>
+</div>
+<a id='63'/><div class="eblock">
+Equation 63: <a href='#TPAY'>TPAY</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#TPAY}{TPAY(r)} = \href{#TOBY}{TOBY(r)} \] </div>
+</div>
+<a id='64'/><div class="eblock">
+Equation 64: <a href='#TPAZ'>TPAZ</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#TPAZ}{TPAZ(r)} = \href{#TOBZ}{TOBZ(r)} \] </div>
+</div>
+<a id='65'/><div class="eblock">
+Equation 65: <a href='#PRF'>PRF</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#PRF}{PRF(s,r)} = \frac{{(\href{#OUP}{OUP(s,r)} 
+        *exp{ \left(\href{#PRP}{PRP(s,r)}\right) } 
+        -\href{#ENT}{ENT(s,r)} 
+        *exp{ \left(\href{#PRE}{PRE(s,r)}\right) } 
+        -\href{#LAB}{LAB(s,r)} 
+        *exp{ \left(\href{#WAG}{WAG(s,r)}\right) } 
+        -\href{#OIN}{OIN(s,r)} 
+        *exp{ \left(\href{#POI}{POI(s,r)}\right) } 
+        -{(1-\href{#TITC}{TITC(s,r)})}*\href{#INV}{INV(s,r)} 
+        *exp{ \left(\href{#PRII}{PRII(r)}\right) })}}{exp{ \left(\href{#PRID}{PRID(r)}\right) }} \] </div>
+</div>
+<a id='66'/><div class="eblock">
+Equation 66: <a href='#PRFY'>PRFY</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#PRFY}{PRFY(r)} = \frac{{(\href{#INVT}{INVT(r)} 
+        *exp{ \left(\href{#PRII}{PRII(r)}\right) } 
+        -\href{#IITE}{IITE(r)} 
+        *exp{ \left(\href{#PRIE}{PRIE(r)}\right) } 
+        -\href{#IITL}{IITL(r)} 
+        *exp{ \left(\href{#WAGE}{WAGE(r)}\right) } 
+        -\href{#IITO}{IITO(r)} 
+        *exp{ \left(\href{#PROI}{PROI(r)}\right) } 
+        -\href{#INVY}{INVY(r)} 
+        *exp{ \left(\href{#PRII}{PRII(r)}\right) })}}{exp{ \left(\href{#PRID}{PRID(r)}\right) }} \] </div>
+</div>
+<a id='67'/><div class="eblock">
+Equation 67: <a href='#PRFZ'>PRFZ</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#PRFZ}{PRFZ(r)} = \frac{{(\href{#CONP}{CONP(r)} 
+        *exp{ \left(\href{#PRCT}{PRCT(r)}\right) } 
+        -\href{#CNPE}{CNPE(r)} 
+        *exp{ \left(\href{#PRCE}{PRCE(r)}\right) } 
+        -\href{#CNPL}{CNPL(r)} 
+        *exp{ \left(\href{#WAGE}{WAGE(r)}\right) } 
+        -\href{#CNPO}{CNPO(r)} 
+        *exp{ \left(\href{#PRCO}{PRCO(r)}\right) } 
+        -{(1-\href{#TITCH}{TITCH(r)})}*\href{#INVZ}{INVZ(r)} 
+        *exp{ \left(\href{#PRII}{PRII(r)}\right) })}}{exp{ \left(\href{#PRID}{PRID(r)}\right) }} \] </div>
+</div>
+<a id='68'/><div class="eblock">
+Equation 68: <a href='#PRFT'>PRFT</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#PRFT}{PRFT(r)} = \sum_{s \; \text{in} \; \href{#sec_std}{sec\_std}} { \left(\href{#PRF}{PRF(s,r)}\right) } 
+        +\href{#PRFY}{PRFY(r)} \] </div>
+</div>
+<a id='69'/><div class="eblock">
+Equation 69: <a href='#STM'>STM</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#STM}{STM(s,r)} = \frac{{(\href{#LAM}{LAM(s,r)}*\href{#CAP}{CAP(s,r)})}}{{(1-\href{#TITC}{TITC(s,r)})}} \] </div>
+</div>
+<a id='70'/><div class="eblock">
+Equation 70: <a href='#STMT'>STMT</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#STMT}{STMT(r)} = \sum_{s \; \text{in} \; \href{#sec_std}{sec\_std}} { \left(\href{#STM}{STM(s,r)}\right) } \] </div>
+</div>
+<a id='71'/><div class="eblock">
+Equation 71: <a href='#INVT'>INVT</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#INVT}{INVT(r)} = \href{#INVY}{INVY(r)}+\href{#INVZ}{INVZ(r)} 
+        +\sum_{s \; \text{in} \; \href{#sec_std}{sec\_std}} { \left(\href{#INV}{INV(s,r)}\right) } \] </div>
+</div>
+<a id='72'/><div class="eblock">
+Equation 72: <a href='#PRID'>PRID</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#PRID}{PRID(r)} = \sum_{g \; \text{in} \; \href{#goods}{goods}} { \left(\href{#prid_weight}{prid\_weight(g,r)}*\href{#PRD}{PRD(g,r)}\right) } \] </div>
+</div>
+<a id='73'/><div class="eblock">
+Equation 73: <a href='#PRIX'>PRIX</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#PRIX}{PRIX(r)} = \sum_{g3 \; \text{in} \; \href{#goods_o}{goods\_o}} { \left(\href{#prix_weight}{prix\_weight(g3,r)}*\href{#PRX}{PRX(g3,r)}\right) } \] </div>
+</div>
+<a id='74'/><div class="eblock">
+Equation 74: <a href='#OUTP'>OUTP</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#OUTP}{OUTP(r)} = \frac{\sum_{g \; \text{in} \; \href{#goods}{goods}} { \left(exp{ \left(\href{#PRD}{PRD(g,r)}\right) } 
+        *\href{#OUG}{OUG(g,r)}\right) }}{exp{ \left(\href{#PRID}{PRID(r)}\right) }} \] </div>
+</div>
+<a id='75'/><div class="eblock">
+Equation 75: <a href='#LOGY'>LOGY</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#LOGY}{LOGY(r)} = ln{ \left(\href{#OUTP}{OUTP(r)}\right) } \] </div>
+</div>
+<a id='76'/><div class="eblock">
+Equation 76: <a href='#LGYL'>LGYL</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ lead({\href{#LGYL}{LGYL(r)}}) = \href{#LOGY}{LOGY(r)} \] </div>
+</div>
+<a id='77'/><div class="eblock">
+Equation 77: <a href='#YGRO'>YGRO</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#YGRO}{YGRO(r)} = \href{#LOGY}{LOGY(r)}-\href{#LGYL}{LGYL(r)} \] </div>
+</div>
+<a id='78'/><div class="eblock">
+Equation 78: <a href='#NGRO'>NGRO</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#NGRO}{NGRO(r)} = \href{#YGRO}{YGRO(r)}+\href{#INFP}{INFP(r)} \] </div>
+</div>
+<a id='79'/><div class="eblock">
+Equation 79: <a href='#INCM'>INCM</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#INCM}{INCM(r)} = \href{#TRAN}{TRAN(r)}-\href{#TAXL}{TAXL(r)} 
+        +\href{#INTR}{INTR(r)}*\href{#BOND}{BOND(r)} 
+        +\frac{\href{#IRAS}{IRAS(r)}}{exp{ \left(\href{#REXN}{REXN(r)}\right) }} 
+        +\href{#PRFZ}{PRFZ(r)} 
+        +{(1-\href{#TCOR}{TCOR(r)})}*\href{#PRFT}{PRFT(r)} 
+        +\frac{{({(1-\href{#TINC}{TINC(r)})} 
+        *{(exp{ \left(\href{#WAGE}{WAGE(r)}\right) } 
+        *{(\href{#IITL}{IITL(r)}+\href{#CNPL}{CNPL(r)})} 
+        +exp{ \left(\href{#WAGG}{WAGG(r)}\right) } 
+        *\href{#GOVL}{GOVL(r)} 
+        +\sum_{s \; \text{in} \; \href{#sec_std}{sec\_std}} { \left(exp{ \left(\href{#WAG}{WAG(s,r)}\right) } 
+        *\href{#LAB}{LAB(s,r)}\right) })})}}{exp{ \left(\href{#PRID}{PRID(r)}\right) }} \] </div>
+</div>
+<a id='80'/><div class="eblock">
+Equation 80: <a href='#CONP'>CONP</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#CONP}{CONP(r)} = \href{#fore_c}{fore\_c(r)} 
+        *{(\href{#timepref}{timepref(r)}+\href{#RISW}{RISW(r)})} 
+        *\href{#WELT}{WELT(r)} 
+        *exp{ \left( 
+        \href{#PRID}{PRID(r)}-\href{#PRCT}{PRCT(r)}\right) } 
+        +{(1-\href{#fore_c}{fore\_c(r)})}*\href{#mpc}{mpc(r)} 
+        *\href{#INCM}{INCM(r)} 
+        *exp{ \left( 
+        \href{#PRID}{PRID(r)}-\href{#PRCT}{PRCT(r)}\right) } 
+        +\href{#SHKC}{SHKC(r)} \] </div>
+</div>
+<a id='81'/><div class="eblock">
+Equation 81: <a href='#IRAS'>IRAS</a><br>
+For <i>o2</i> in <b><a href='#owner'>owner</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#IRAS}{IRAS(o2)} = \sum_{c \; \text{in} \; \href{#currency}{currency}} { \left(\href{#INTR}{INTR(c)} 
+        *exp{ \left(\href{#REXN}{REXN(c)}\right) } 
+        *\href{#ASSE}{ASSE(c,o2)}\right) } \] </div>
+</div>
+<a id='82'/><div class="eblock">
+Equation 82: <a href='#INAS'>INAS</a><br>
+For <i>o2</i> in <b><a href='#owner'>owner</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#INAS}{INAS(o2)} = \sum_{c \; \text{in} \; \href{#currency}{currency}} { \left(\href{#INTN}{INTN(c)} 
+        *exp{ \left(\href{#REXN}{REXN(c)}\right) } 
+        *\href{#ASSE}{ASSE(c,o2)}\right) } \] </div>
+</div>
+<a id='83'/><div class="eblock">
+Equation 83: <a href='#CNPL'>CNPL</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#CNPL}{CNPL(r)} = exp{ \left( 
+        \href{#SHLZ}{SHLZ(r)}+\href{#SHYZ}{SHYZ(r)}\right) } 
+        ^{(\href{#sigma_oH}{sigma\_oH(r)}-1)} 
+        *\href{#delta_oH}{delta\_oH(\text{l},r)} 
+        *\href{#CONP}{CONP(r)} 
+        *exp{ \left( 
+        \href{#PRCT}{PRCT(r)}-\href{#WAGE}{WAGE(r)}\right) } 
+        ^\href{#sigma_oH}{sigma\_oH(r)} \] </div>
+</div>
+<a id='84'/><div class="eblock">
+Equation 84: <a href='#CNPE'>CNPE</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#CNPE}{CNPE(r)} = exp{ \left( 
+        \href{#SHEFC}{SHEFC(r)}+\href{#SHYZ}{SHYZ(r)}\right) } 
+        ^{(\href{#sigma_oH}{sigma\_oH(r)}-1)} 
+        *\href{#delta_oH}{delta\_oH(\text{e},r)} 
+        *\href{#CONP}{CONP(r)} 
+        *exp{ \left( 
+        \href{#PRCT}{PRCT(r)}-\href{#PRCE}{PRCE(r)}\right) } 
+        ^\href{#sigma_oH}{sigma\_oH(r)} \] </div>
+</div>
+<a id='85'/><div class="eblock">
+Equation 85: <a href='#CNPO'>CNPO</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#CNPO}{CNPO(r)} = exp{ \left(\href{#SHYZ}{SHYZ(r)}\right) } 
+        ^{(\href{#sigma_oH}{sigma\_oH(r)}-1)} 
+        *\href{#delta_oH}{delta\_oH(\text{m},r)} 
+        *\href{#CONP}{CONP(r)} 
+        *exp{ \left( 
+        \href{#PRCT}{PRCT(r)}-\href{#PRCO}{PRCO(r)}\right) } 
+        ^\href{#sigma_oH}{sigma\_oH(r)} \] </div>
+</div>
+<a id='86'/><div class="eblock">
+Equation 86: <a href='#CNPK'>CNPK</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#CNPK}{CNPK(r)} = exp{ \left(\href{#SHYZ}{SHYZ(r)}\right) } 
+        ^{(\href{#sigma_oH}{sigma\_oH(r)}-1)} 
+        *\href{#delta_oH}{delta\_oH(\text{k},r)} 
+        *\href{#CONP}{CONP(r)} 
+        *exp{ \left( 
+        \href{#PRCT}{PRCT(r)}-\href{#PRKZ}{PRKZ(r)}\right) } 
+        ^\href{#sigma_oH}{sigma\_oH(r)} \] </div>
+</div>
+<a id='87'/><div class="eblock">
+Equation 87: <a href='#CON'>CON</a><br>
+For <i>g1</i> in <b><a href='#goods_e'>goods_e</a></b>, <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#CON}{CON(g1,r)} = \href{#delta_eH}{delta\_eH(g1,r)}*\href{#CNPE}{CNPE(r)} 
+        *exp{ \left( 
+        \href{#PRCE}{PRCE(r)}-\href{#PRY}{PRY(g1,r)}\right) } 
+        ^\href{#sigma_eH}{sigma\_eH(r)} \] </div>
+</div>
+<a id='88'/><div class="eblock">
+Equation 88: <a href='#CON'>CON</a><br>
+For <i>g2</i> in <b><a href='#goods_m'>goods_m</a></b>, <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#CON}{CON(g2,r)} = \href{#delta_mH}{delta\_mH(g2,r)}*\href{#CNPO}{CNPO(r)} 
+        *exp{ \left( 
+        \href{#PRCO}{PRCO(r)}-\href{#PRY}{PRY(g2,r)}\right) } 
+        ^\href{#sigma_mH}{sigma\_mH(r)} \] </div>
+</div>
+<a id='89'/><div class="eblock">
+Equation 89: <a href='#PRCT'>PRCT</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#PRCT}{PRCT(r)} = \href{#cd_oH}{cd\_oH(r)} 
+        *{(\href{#delta_oH}{delta\_oH(\text{k},r)}*\href{#PRKZ}{PRKZ(r)} 
+        +\href{#delta_oH}{delta\_oH(\text{l},r)}*\href{#WAGE}{WAGE(r)} 
+        +\href{#delta_oH}{delta\_oH(\text{e},r)}*\href{#PRCE}{PRCE(r)} 
+        +\href{#delta_oH}{delta\_oH(\text{m},r)}*\href{#PRCO}{PRCO(r)} 
+        -\href{#delta_oH}{delta\_oH(\text{l},r)}*\href{#SHLZ}{SHLZ(r)} 
+        -\href{#delta_oH}{delta\_oH(\text{e},r)}*\href{#SHEFC}{SHEFC(r)})} 
+        +\frac{{({(1-\href{#cd_oH}{cd\_oH(r)})} 
+        *ln{ \left( 
+        \href{#delta_oH}{delta\_oH(\text{k},r)} 
+        *exp{ \left(\href{#PRKZ}{PRKZ(r)}\right) } 
+        ^{(1-\href{#sigma_oH}{sigma\_oH(r)})} 
+        +\href{#delta_oH}{delta\_oH(\text{l},r)} 
+        *exp{ \left( 
+        \href{#WAGE}{WAGE(r)}-\href{#SHLZ}{SHLZ(r)}\right) } 
+        ^{(1-\href{#sigma_oH}{sigma\_oH(r)})} 
+        +\href{#delta_oH}{delta\_oH(\text{e},r)} 
+        *exp{ \left( 
+        \href{#PRCE}{PRCE(r)}-\href{#SHEFC}{SHEFC(r)}\right) } 
+        ^{(1-\href{#sigma_oH}{sigma\_oH(r)})} 
+        +\href{#delta_oH}{delta\_oH(\text{m},r)} 
+        *exp{ \left(\href{#PRCO}{PRCO(r)}\right) } 
+        ^{(1-\href{#sigma_oH}{sigma\_oH(r)})}\right) })}}{{(1 
+        -\href{#sigma_oH}{sigma\_oH(r)}*{(1-\href{#cd_oH}{cd\_oH(r)})})}} 
+        -\href{#SHYZ}{SHYZ(r)} \] </div>
+</div>
+<a id='90'/><div class="eblock">
+Equation 90: <a href='#PRCE'>PRCE</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#PRCE}{PRCE(r)} = \href{#cd_eH}{cd\_eH(r)} 
+        *\sum_{g1 \; \text{in} \; \href{#goods_e}{goods\_e}} { \left(\href{#delta_eH}{delta\_eH(g1,r)}*\href{#PRY}{PRY(g1,r)}\right) } 
+        +\frac{{({(1-\href{#cd_eH}{cd\_eH(r)})} 
+        *ln{ \left( 
+        \sum_{g1 \; \text{in} \; \href{#goods_e}{goods\_e}} { \left(\href{#delta_eH}{delta\_eH(g1,r)} 
+        *exp{ \left(\href{#PRY}{PRY(g1,r)}\right) } 
+        ^{(1-\href{#sigma_eH}{sigma\_eH(r)})}\right) }\right) })}}{{(1 
+        -\href{#sigma_eH}{sigma\_eH(r)}*{(1-\href{#cd_eH}{cd\_eH(r)})})}} \] </div>
+</div>
+<a id='91'/><div class="eblock">
+Equation 91: <a href='#PRCO'>PRCO</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#PRCO}{PRCO(r)} = \href{#cd_mH}{cd\_mH(r)} 
+        *\sum_{g2 \; \text{in} \; \href{#goods_m}{goods\_m}} { \left(\href{#delta_mH}{delta\_mH(g2,r)}*\href{#PRY}{PRY(g2,r)}\right) } 
+        +\frac{{({(1-\href{#cd_mH}{cd\_mH(r)})} 
+        *ln{ \left( 
+        \sum_{g2 \; \text{in} \; \href{#goods_m}{goods\_m}} { \left(\href{#delta_mH}{delta\_mH(g2,r)} 
+        *exp{ \left(\href{#PRY}{PRY(g2,r)}\right) } 
+        ^{(1-\href{#sigma_mH}{sigma\_mH(r)})}\right) }\right) })}}{{(1 
+        -\href{#sigma_mH}{sigma\_mH(r)}*{(1-\href{#cd_mH}{cd\_mH(r)})})}} \] </div>
+</div>
+<a id='92'/><div class="eblock">
+Equation 92: <a href='#MONE'>MONE</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#MONE}{MONE(r)} = \href{#PRID}{PRID(r)}+\href{#LOGY}{LOGY(r)} 
+        +\href{#int_elast}{int\_elast(r)}*\href{#INTN}{INTN(r)} 
+        +\href{#SHKM}{SHKM(r)} \] </div>
+</div>
+<a id='93'/><div class="eblock">
+Equation 93: <a href='#INTN'>INTN</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#INTN}{INTN(r)} = \href{#INTL}{INTL(r)} 
+        +\href{#mrule_m}{mrule\_m(r)} 
+        *{(\href{#INPN}{INPN(r)}-\href{#INTN}{INTN(r)})} 
+        +\href{#INTX}{INTX(r)} \] </div>
+</div>
+<a id='94'/><div class="eblock">
+Equation 94: <a href='#INTL'>INTL</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ lead({\href{#INTL}{INTL(r)}}) = \href{#INTN}{INTN(r)} \] </div>
+</div>
+<a id='95'/><div class="eblock">
+Equation 95: <a href='#INPL'>INPL</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ lead({\href{#INPL}{INPL(r)}}) = \href{#INPN}{INPN(r)} \] </div>
+</div>
+<a id='96'/><div class="eblock">
+Equation 96: <a href='#INPN'>INPN</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#INPN}{INPN(r)} = \href{#mrule_r}{mrule\_r(r)}*\href{#INPL}{INPL(r)} 
+        +\href{#mrule_ex}{mrule\_ex(r)} 
+        *{(\href{#EXCH}{EXCH(r)}-\href{#EXCX}{EXCX(r)})} 
+        +\href{#mrule_ny}{mrule\_ny(r)} 
+        *{(\href{#INFL}{INFL(r)}-\href{#INFX}{INFX(r)} 
+        +\href{#LOGY}{LOGY(r)} 
+        -\href{#LGYL}{LGYL(r)} 
+        -\href{#ROGY}{ROGY(r)})} 
+        +\href{#mrule_f}{mrule\_f(r)}*\href{#mrule_in}{mrule\_in(r)} 
+        *{(\href{#EPRC}{EPRC(r)}-\href{#INFX}{INFX(r)})} 
+        +{(1-\href{#mrule_f}{mrule\_f(r)})}*\href{#mrule_in}{mrule\_in(r)} 
+        *{(\href{#INFL}{INFL(r)}-\href{#INFX}{INFX(r)})} 
+        +\href{#mrule_f}{mrule\_f(r)}*\href{#mrule_y}{mrule\_y(r)} 
+        *{(\href{#EYGR}{EYGR(r)}-\href{#ROGY}{ROGY(r)})} 
+        +{(1-\href{#mrule_f}{mrule\_f(r)})}*\href{#mrule_y}{mrule\_y(r)} 
+        *{(\href{#YGRO}{YGRO(r)}-\href{#ROGY}{ROGY(r)})} \] </div>
+</div>
+<a id='97'/><div class="eblock">
+Equation 97: <a href='#EYGR'>EYGR</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#EYGR}{EYGR(r)} = lead({\href{#LOGY}{LOGY(r)}})-\href{#LOGY}{LOGY(r)} \] </div>
+</div>
+<a id='98'/><div class="eblock">
+Equation 98: <a href='#EPRC'>EPRC</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#EPRC}{EPRC(r)} = lead({\href{#PRCT}{PRCT(r)}})-\href{#PRCT}{PRCT(r)} \] </div>
+</div>
+<a id='99'/><div class="eblock">
+Equation 99: <a href='#INTF'>INTF</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#INTF}{INTF(r)} = \href{#INTN}{INTN(r)}-lead({\href{#PRID}{PRID(r)}}) 
+        +\href{#PRID}{PRID(r)} \] </div>
+</div>
+<a id='100'/><div class="eblock">
+Equation 100: <a href='#INTR'>INTR</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#INTR}{INTR(r)} = \href{#INTF}{INTF(r)}+\href{#RISR}{RISR(r)} \] </div>
+</div>
+<a id='101'/><div class="eblock">
+Equation 101: <a href='#INTR'>INTR</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#INTR}{INTR(r)} = \href{#INTN}{INTN(r)} \] </div>
+</div>
+<a id='102'/><div class="eblock">
+Equation 102: <a href='#INFL'>INFL</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#INFL}{INFL(r)} = \href{#PRCT}{PRCT(r)}-\href{#PRCL}{PRCL(r)} \] </div>
+</div>
+<a id='103'/><div class="eblock">
+Equation 103: <a href='#INFP'>INFP</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#INFP}{INFP(r)} = \href{#PRID}{PRID(r)}-\href{#PRDL}{PRDL(r)} \] </div>
+</div>
+<a id='104'/><div class="eblock">
+Equation 104: <a href='#PRCL'>PRCL</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ lead({\href{#PRCL}{PRCL(r)}}) = \href{#PRCT}{PRCT(r)} \] </div>
+</div>
+<a id='105'/><div class="eblock">
+Equation 105: <a href='#PRDL'>PRDL</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ lead({\href{#PRDL}{PRDL(r)}}) = \href{#PRID}{PRID(r)} \] </div>
+</div>
+<a id='106'/><div class="eblock">
+Equation 106: <a href='#GDPN'>GDPN</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#GDPN}{GDPN(r)} = exp{ \left(\href{#PRCT}{PRCT(r)}\right) } 
+        *\href{#CONP}{CONP(r)} 
+        +exp{ \left(\href{#PRID}{PRID(r)}\right) } 
+        *\href{#GCET}{GCET(r)} 
+        +exp{ \left(\href{#PRII}{PRII(r)}\right) } 
+        *\href{#INVT}{INVT(r)} 
+        +exp{ \left(\href{#PRID}{PRID(r)}\right) } 
+        *\href{#TBAL}{TBAL(r)} 
+        +\sum_{g3 \; \text{in} \; \href{#goods_o}{goods\_o}} { \left(exp{ \left(\href{#PRII}{PRII(r)}\right) } 
+        *\href{#INS}{INS(r,g3)}\right) } \] </div>
+</div>
+<a id='107'/><div class="eblock">
+Equation 107: <a href='#GDPR'>GDPR</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#GDPR}{GDPR(r)} = \href{#CONP}{CONP(r)}+\href{#GCET}{GCET(r)} 
+        +\href{#INVT}{INVT(r)} 
+        +\href{#TBAL}{TBAL(r)} 
+        +\sum_{g3 \; \text{in} \; \href{#goods_o}{goods\_o}} { \left(\href{#INS}{INS(r,g3)}\right) } \] </div>
+</div>
+<a id='108'/><div class="eblock">
+Equation 108: <a href='#PGDP'>PGDP</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#PGDP}{PGDP(r)} = ln{ \left(\href{#GDPN}{GDPN(r)}\right) } 
+        -ln{ \left(\href{#GDPR}{GDPR(r)}\right) } \] </div>
+</div>
+<a id='109'/><div class="eblock">
+Equation 109: <a href='#GNPR'>GNPR</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#GNPR}{GNPR(r)} = \href{#GDPR}{GDPR(r)} 
+        +\frac{{(\href{#PBAL}{PBAL(r)}+\href{#IRAS}{IRAS(r)})}}{exp{ \left(\href{#REXN}{REXN(r)}\right) }} \] </div>
+</div>
+<a id='110'/><div class="eblock">
+Equation 110: <a href='#CURN'>CURN</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#CURN}{CURN(r)} = \href{#TBAL}{TBAL(r)} 
+        +\frac{{(\href{#PBAL}{PBAL(r)}+\href{#INAS}{INAS(r)})}}{exp{ \left(\href{#REXN}{REXN(r)}\right) }} \] </div>
+</div>
+<a id='111'/><div class="eblock">
+Equation 111: <a href='#CURR'>CURR</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#CURR}{CURR(r)} = \href{#TBAU}{TBAU(r)}+\href{#PBAL}{PBAL(r)} 
+        +\href{#IRAS}{IRAS(r)} \] </div>
+</div>
+<a id='112'/><div class="eblock">
+Equation 112: <a href='#WELT'>WELT</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#WELT}{WELT(r)} = \href{#BOND}{BOND(r)} 
+        +\frac{\href{#ASSU}{ASSU(r)}}{exp{ \left(\href{#REXN}{REXN(r)}\right) }} 
+        +\frac{{(\href{#mongdp}{mongdp(r)} 
+        *exp{ \left(\href{#MONE}{MONE(r)}\right) })}}{exp{ \left(\href{#PRID}{PRID(r)}\right) }} 
+        +\href{#WELH}{WELH(r)} 
+        +\href{#LAMY}{LAMY(r)}*\href{#CAPY}{CAPY(r)} 
+        +\href{#LAMZ}{LAMZ(r)}*\href{#CAPZ}{CAPZ(r)} 
+        +\sum_{s \; \text{in} \; \href{#sec_std}{sec\_std}} { \left(\href{#STM}{STM(s,r)}\right) } \] </div>
+</div>
+<a id='113'/><div class="eblock">
+Equation 113: <a href='#WELH'>WELH</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ lead({\href{#WELH}{WELH(r)}}) = {(1+\href{#RISW}{RISW(r)}+\href{#RISH}{RISH(r)} 
+        +\href{#INTR}{INTR(r)} 
+        -\href{#labgrow}{labgrow(r)})} 
+        *\href{#WELH}{WELH(r)} 
+        -(\href{#TRAN}{TRAN(r)}-\href{#TAXH}{TAXH(r)} 
+        -\href{#TAXL}{TAXL(r)}) 
+        -\frac{{(exp{ \left(\href{#WAGE}{WAGE(r)}\right) } 
+        *{(\href{#IITL}{IITL(r)}+\href{#CNPL}{CNPL(r)})} 
+        +exp{ \left(\href{#WAGG}{WAGG(r)}\right) } 
+        *\href{#GOVL}{GOVL(r)} 
+        +\sum_{s \; \text{in} \; \href{#sec_std}{sec\_std}} { \left(exp{ \left(\href{#WAG}{WAG(s,r)}\right) } 
+        *\href{#LAB}{LAB(s,r)}\right) })}}{exp{ \left(\href{#PRID}{PRID(r)}\right) }} \] </div>
+</div>
+<a id='114'/><div class="eblock">
+Equation 114: <a href='#WELH'>WELH</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#WELH}{WELH(r)} = \frac{{(\href{#TRAN}{TRAN(r)}-\href{#TAXH}{TAXH(r)} 
+        -\href{#TAXL}{TAXL(r)} 
+        +\frac{{(exp{ \left(\href{#WAGE}{WAGE(r)}\right) } 
+        *{(\href{#IITL}{IITL(r)}+\href{#CNPL}{CNPL(r)})} 
+        +exp{ \left(\href{#WAGG}{WAGG(r)}\right) } 
+        *\href{#GOVL}{GOVL(r)} 
+        +\sum_{s \; \text{in} \; \href{#sec_std}{sec\_std}} { \left(exp{ \left(\href{#WAG}{WAG(s,r)}\right) } 
+        *\href{#LAB}{LAB(s,r)}\right) })}}{exp{ \left(\href{#PRID}{PRID(r)}\right) }})}}{{(\href{#RISW}{RISW(r)}+\href{#RISH}{RISH(r)} 
+        +\href{#INTR}{INTR(r)} 
+        -\href{#labgrow}{labgrow(r)})}} \] </div>
+</div>
+<a id='115'/><div class="eblock">
+Equation 115: <a href='#TXM'>TXM</a><br>
+For <i>d</i> in <b><a href='#dest'>dest</a></b>, <i>g3</i> in <b><a href='#goods_o'>goods_o</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#TXM}{TXM(g3,d)} = \frac{\sum_{o1 \; \text{in} \; \href{#orig}{orig}} { \left({(\href{#TIM}{TIM(g3,d,o1)}*\href{#MUL}{MUL(d,o1)} 
+        +\href{#TIF}{TIF(g3,d)}*\href{#FTA}{FTA(d,o1)})} 
+        *exp{ \left(\href{#PIM}{PIM(g3,d,o1)}\right) } 
+        *\href{#IMP}{IMP(g3,d,o1)}\right) }}{exp{ \left(\href{#PRID}{PRID(d)}\right) }} \] </div>
+</div>
+<a id='116'/><div class="eblock">
+Equation 116: <a href='#TAXM'>TAXM</a><br>
+For <i>d</i> in <b><a href='#dest'>dest</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#TAXM}{TAXM(d)} = \sum_{g3 \; \text{in} \; \href{#goods_o}{goods\_o}} { \left(\href{#TXM}{TXM(g3,d)}\right) } \] </div>
+</div>
+<a id='117'/><div class="eblock">
+Equation 117: <a href='#TAXX'>TAXX</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#TAXX}{TAXX(r)} = \frac{\sum_{g3 \; \text{in} \; \href{#goods_o}{goods\_o}} { \left(\href{#TEX}{TEX(g3,r)} 
+        *exp{ \left(\href{#PRS}{PRS(g3,r)}\right) } 
+        *\href{#EXQ}{EXQ(g3,r)}\right) }}{exp{ \left(\href{#PRID}{PRID(r)}\right) }} \] </div>
+</div>
+<a id='118'/><div class="eblock">
+Equation 118: <a href='#TAXT'>TAXT</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#TAXT}{TAXT(r)} = \href{#TAXC}{TAXC(r)}+\href{#TAXH}{TAXH(r)} 
+        +\href{#TAXL}{TAXL(r)} 
+        +\href{#TAXM}{TAXM(r)} 
+        +\href{#TAXX}{TAXX(r)} 
+        +\href{#TAXE}{TAXE(r)} \] </div>
+</div>
+<a id='119'/><div class="eblock">
+Equation 119: <a href='#TAXH'>TAXH</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#TAXH}{TAXH(r)} = \frac{{(\href{#TINC}{TINC(r)} 
+        *{(exp{ \left(\href{#WAGE}{WAGE(r)}\right) } 
+        *{(\href{#IITL}{IITL(r)}+\href{#CNPL}{CNPL(r)})} 
+        +exp{ \left(\href{#WAGG}{WAGG(r)}\right) } 
+        *\href{#GOVL}{GOVL(r)} 
+        +\sum_{s \; \text{in} \; \href{#sec_std}{sec\_std}} { \left(exp{ \left(\href{#WAG}{WAG(s,r)}\right) } 
+        *\href{#LAB}{LAB(s,r)}\right) })})}}{exp{ \left(\href{#PRID}{PRID(r)}\right) }} 
+        -\frac{{(\href{#TITCH}{TITCH(r)} 
+        *exp{ \left(\href{#PRII}{PRII(r)}\right) } 
+        *\href{#INVZ}{INVZ(r)})}}{exp{ \left(\href{#PRID}{PRID(r)}\right) }} \] </div>
+</div>
+<a id='120'/><div class="eblock">
+Equation 120: <a href='#TRAN'>TRAN</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#TRAN}{TRAN(r)} = \href{#TRANX}{TRANX(r)} 
+        -\href{#transgdp}{transgdp(r)}*\href{#OUTP}{OUTP(r)} \] </div>
+</div>
+<a id='121'/><div class="eblock">
+Equation 121: <a href='#WAGG'>WAGG</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#WAGG}{WAGG(r)} = \href{#WAGE}{WAGE(r)} \] </div>
+</div>
+<a id='122'/><div class="eblock">
+Equation 122: <a href='#GOVT'>GOVT</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#GOVT}{GOVT(r)} = \href{#GCET}{GCET(r)} 
+        +\href{#GOVL}{GOVL(r)} 
+        *exp{ \left( 
+        \href{#WAGG}{WAGG(r)}-\href{#PRID}{PRID(r)}\right) } \] </div>
+</div>
+<a id='123'/><div class="eblock">
+Equation 123: <a href='#DEFN'>DEFN</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#DEFN}{DEFN(r)} = \href{#GOVT}{GOVT(r)}+\href{#TRAN}{TRAN(r)} 
+        -\href{#TAXT}{TAXT(r)} 
+        +\href{#INTN}{INTN(r)}*\href{#BOND}{BOND(r)} \] </div>
+</div>
+<a id='124'/><div class="eblock">
+Equation 124: <a href='#DEFI'>DEFI</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#DEFI}{DEFI(r)} = \href{#GOVT}{GOVT(r)}+\href{#TRAN}{TRAN(r)} 
+        -\href{#TAXT}{TAXT(r)} 
+        +\href{#INTR}{INTR(r)}*\href{#BOND}{BOND(r)} \] </div>
+</div>
+<a id='125'/><div class="eblock">
+Equation 125: <a href='#GCET'>GCET</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#GCET}{GCET(r)} = \frac{\sum_{g3 \; \text{in} \; \href{#goods_o}{goods\_o}} { \left(\href{#GCE}{GCE(g3,r)} 
+        *exp{ \left(\href{#PRY}{PRY(g3,r)}\right) }\right) }}{exp{ \left(\href{#PRID}{PRID(r)}\right) }} \] </div>
+</div>
+<a id='126'/><div class="eblock">
+Equation 126: <a href='#GCE'>GCE</a><br>
+For <i>g1</i> in <b><a href='#goods_e'>goods_e</a></b>, <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#GCE}{GCE(g1,r)} = \frac{{(\href{#delta_eG}{delta\_eG(g1,r)} 
+        *\frac{\href{#delta_oG}{delta\_oG(\text{e},r)}}{{(\href{#delta_oG}{delta\_oG(\text{e},r)} 
+        +\href{#delta_oG}{delta\_oG(\text{m},r)})}} 
+        *\href{#GOVS}{GOVS(r)} 
+        *exp{ \left(\href{#PRID}{PRID(r)}\right) })}}{exp{ \left(\href{#PRY}{PRY(g1,r)}\right) }} \] </div>
+</div>
+<a id='127'/><div class="eblock">
+Equation 127: <a href='#GCE'>GCE</a><br>
+For <i>g2</i> in <b><a href='#goods_m'>goods_m</a></b>, <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#GCE}{GCE(g2,r)} = \frac{{(\href{#delta_mG}{delta\_mG(g2,r)} 
+        *\frac{\href{#delta_oG}{delta\_oG(\text{m},r)}}{{(\href{#delta_oG}{delta\_oG(\text{e},r)} 
+        +\href{#delta_oG}{delta\_oG(\text{m},r)})}} 
+        *\href{#GOVS}{GOVS(r)} 
+        *exp{ \left(\href{#PRID}{PRID(r)}\right) })}}{exp{ \left(\href{#PRY}{PRY(g2,r)}\right) }} \] </div>
+</div>
+<a id='128'/><div class="eblock">
+Equation 128: <a href='#PRGT'>PRGT</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#PRGT}{PRGT(r)} = \frac{\href{#delta_oG}{delta\_oG(\text{e},r)}}{{(\href{#delta_oG}{delta\_oG(\text{e},r)} 
+        +\href{#delta_oG}{delta\_oG(\text{m},r)})}} 
+        *\sum_{g1 \; \text{in} \; \href{#goods_e}{goods\_e}} { \left(\href{#delta_eG}{delta\_eG(g1,r)}*\href{#PRY}{PRY(g1,r)}\right) } 
+        +\frac{\href{#delta_oG}{delta\_oG(\text{m},r)}}{{(\href{#delta_oG}{delta\_oG(\text{e},r)} 
+        +\href{#delta_oG}{delta\_oG(\text{m},r)})}} 
+        *\sum_{g2 \; \text{in} \; \href{#goods_m}{goods\_m}} { \left(\href{#delta_mG}{delta\_mG(g2,r)}*\href{#PRY}{PRY(g2,r)}\right) } \] </div>
+</div>
+<a id='129'/><div class="eblock">
+Equation 129: <a href='#BOND'>BOND</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ lead({\href{#BOND}{BOND(r)}}) = \href{#DEFI}{DEFI(r)} 
+        +\href{#BOND}{BOND(r)}*{(1-\href{#labgrow}{labgrow(r)})} 
+        -\href{#PBAG}{PBAG(r)} \] </div>
+</div>
+<a id='130'/><div class="eblock">
+Equation 130: <a href='#BOND'>BOND</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#BOND}{BOND(r)} = \frac{\href{#DEFI}{DEFI(r)}}{\href{#labgrow}{labgrow(r)}} \] </div>
+</div>
+<a id='131'/><div class="eblock">
+Equation 131: <a href='#SAVI'>SAVI</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#SAVI}{SAVI(r)} = \href{#INVT}{INVT(r)} 
+        *exp{ \left( 
+        \href{#PRII}{PRII(r)}-\href{#PRID}{PRID(r)}\right) } 
+        +\frac{\href{#CURR}{CURR(r)}}{exp{ \left(\href{#REXN}{REXN(r)}\right) }} 
+        +\href{#DEFI}{DEFI(r)} \] </div>
+</div>
+<a id='132'/><div class="eblock">
+Equation 132: <a href='#SAVN'>SAVN</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#SAVN}{SAVN(r)} = \href{#INVT}{INVT(r)} 
+        *exp{ \left( 
+        \href{#PRII}{PRII(r)}-\href{#PRID}{PRID(r)}\right) } 
+        +\href{#CURN}{CURN(r)} 
+        +\href{#DEFN}{DEFN(r)} \] </div>
+</div>
+<a id='133'/><div class="eblock">
+Equation 133: <a href='#SAVT'>SAVT</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#SAVT}{SAVT(r)} = \href{#INVT}{INVT(r)} 
+        *exp{ \left( 
+        \href{#PRII}{PRII(r)}-\href{#PRID}{PRID(r)}\right) } 
+        +\href{#CURN}{CURN(r)} \] </div>
+</div>
+<a id='134'/><div class="eblock">
+Equation 134: <a href='#TBAL'>TBAL</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#TBAL}{TBAL(r)} = \href{#EXQT}{EXQT(r)}-\href{#IMQT}{IMQT(r)} \] </div>
+</div>
+<a id='135'/><div class="eblock">
+Equation 135: <a href='#TBAU'>TBAU</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#TBAU}{TBAU(r)} = {(\href{#EXQT}{EXQT(r)}-\href{#IMQT}{IMQT(r)})} 
+        *exp{ \left(\href{#REXN}{REXN(r)}\right) } \] </div>
+</div>
+<a id='136'/><div class="eblock">
+Equation 136: <a href='#EXCH'>EXCH</a><br>
+<div class="eqn"> \[ \href{#EXCH}{EXCH(n1)} = \href{#REXN}{REXN(n1)}-\href{#PRID}{PRID(n1)} 
+        +\href{#PRID}{PRID(\text{UU})} \] </div>
+</div>
+<a id='137'/><div class="eblock">
+Equation 137: <a href='#EXCL'>EXCL</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ lead({\href{#EXCL}{EXCL(r)}}) = \href{#EXCH}{EXCH(r)} \] </div>
+</div>
+<a id='138'/><div class="eblock">
+Equation 138: <a href='#REXC'>REXC</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ lead({\href{#REXC}{REXC(r)}}) = \href{#REXC}{REXC(r)}-\href{#INTR}{INTR(r)} 
+        +\href{#INTR}{INTR(\text{UU})} 
+        +\href{#EXCR}{EXCR(r)} \] </div>
+</div>
+<a id='139'/><div class="eblock">
+Equation 139: <a href='#REXN'>REXN</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#REXN}{REXN(r)} = \href{#REXC}{REXC(r)} \] </div>
+</div>
+<a id='140'/><div class="eblock">
+Equation 140: <a href='#INTR'>INTR</a><br>
+<div class="eqn"> \[ \href{#INTR}{INTR(n1)} = \href{#INTR}{INTR(\text{UU})}+\href{#EXCR}{EXCR(n1)} \] </div>
+</div>
+<a id='141'/><div class="eblock">
+Equation 141: <a href='#NEER'>NEER</a><br>
+For <i>d</i> in <b><a href='#dest'>dest</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#NEER}{NEER(d)} = {( 
+        -\sum_{o1 \; \text{in} \; \href{#orig}{orig}} { \left(\href{#eer_weight}{eer\_weight(d,o1)} 
+        *{(\href{#EXCH}{EXCH(o1)}-\href{#EXCH}{EXCH(d)})}\right) })} \] </div>
+</div>
+<a id='142'/><div class="eblock">
+Equation 142: <a href='#REER'>REER</a><br>
+For <i>d</i> in <b><a href='#dest'>dest</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#REER}{REER(d)} = {( 
+        -\sum_{o1 \; \text{in} \; \href{#orig}{orig}} { \left(\href{#eer_weight}{eer\_weight(d,o1)} 
+        *{(\href{#REXN}{REXN(o1)}-\href{#REXN}{REXN(d)})}\right) })} \] </div>
+</div>
+<a id='143'/><div class="eblock">
+Equation 143: <a href='#ABUY'>ABUY</a><br>
+For <i>o2</i> in <b><a href='#owner'>owner</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#ABUY}{ABUY(o2)} = \sum_{a \; \text{in} \; \href{#abroad}{abroad}} { \left(\href{#ainv}{ainv(o2,a)}*\href{#CURR}{CURR(a)}\right) } \] </div>
+</div>
+<a id='144'/><div class="eblock">
+Equation 144: <a href='#ASSE'>ASSE</a><br>
+For <i>c</i> in <b><a href='#currency'>currency</a></b>, <i>o2</i> in <b><a href='#owner'>owner</a></b> (4 total):<br>
+<div class="eqn"> \[ lead({\href{#ASSE}{ASSE(c,o2)}}) = \href{#ASSE}{ASSE(c,o2)}*{(1-\href{#labgrow}{labgrow(o2)})} 
+        +\frac{{(\href{#ashr}{ashr(c,o2)}*\href{#ABUY}{ABUY(o2)} 
+        +\href{#aeye}{aeye(c,o2)} 
+        *{(\href{#CURR}{CURR(o2)}-\href{#ABUY}{ABUY(o2)})})}}{exp{ \left(\href{#REXN}{REXN(c)}\right) }} \] </div>
+</div>
+<a id='145'/><div class="eblock">
+Equation 145: <a href='#ASSE'>ASSE</a><br>
+For <i>c</i> in <b><a href='#currency'>currency</a></b>, <i>o2</i> in <b><a href='#owner'>owner</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#ASSE}{ASSE(c,o2)} = \frac{{(\frac{{(\href{#ashr}{ashr(c,o2)}*\href{#ABUY}{ABUY(o2)})}}{\href{#labgrow}{labgrow(o2)}} 
+        +\frac{{(\href{#aeye}{aeye(c,o2)} 
+        *{(\href{#CURR}{CURR(o2)}-\href{#ABUY}{ABUY(o2)})})}}{\href{#labgrow}{labgrow(o2)}})}}{exp{ \left(\href{#REXN}{REXN(c)}\right) }} \] </div>
+</div>
+<a id='146'/><div class="eblock">
+Equation 146: <a href='#ASSU'>ASSU</a><br>
+For <i>o2</i> in <b><a href='#owner'>owner</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#ASSU}{ASSU(o2)} = \sum_{c \; \text{in} \; \href{#currency}{currency}} { \left(exp{ \left(\href{#REXN}{REXN(c)}\right) } 
+        *\href{#ASSE}{ASSE(c,o2)}\right) } \] </div>
+</div>
+<a id='147'/><div class="eblock">
+Equation 147: <a href='#EN'>EN</a><br>
+For <i>g1</i> in <b><a href='#goods_e'>goods_e</a></b>, <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#EN}{EN(s,g1,r)} = \href{#delta_e}{delta\_e(r,s,g1)}*\href{#ENT}{ENT(s,r)} 
+        *exp{ \left( 
+        \href{#PRE}{PRE(s,r)}-\href{#PRY}{PRY(g1,r)}\right) } 
+        ^\href{#sigma_e}{sigma\_e(s,r)} \] </div>
+</div>
+<a id='148'/><div class="eblock">
+Equation 148: <a href='#OI'>OI</a><br>
+For <i>g2</i> in <b><a href='#goods_m'>goods_m</a></b>, <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#OI}{OI(s,g2,r)} = \href{#delta_m}{delta\_m(r,s,g2)}*\href{#OIN}{OIN(s,r)} 
+        *exp{ \left( 
+        \href{#POI}{POI(s,r)}-\href{#PRY}{PRY(g2,r)}\right) } 
+        ^\href{#sigma_m}{sigma\_m(s,r)} \] </div>
+</div>
+<a id='149'/><div class="eblock">
+Equation 149: <a href='#PRE'>PRE</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#PRE}{PRE(s,r)} = \href{#cd_e}{cd\_e(s,r)} 
+        *\sum_{g1 \; \text{in} \; \href{#goods_e}{goods\_e}} { \left(\href{#delta_e}{delta\_e(r,s,g1)}*\href{#PRY}{PRY(g1,r)}\right) } 
+        +\frac{{({(1-\href{#cd_e}{cd\_e(s,r)})} 
+        *ln{ \left( 
+        \sum_{g1 \; \text{in} \; \href{#goods_e}{goods\_e}} { \left(\href{#delta_e}{delta\_e(r,s,g1)} 
+        *exp{ \left(\href{#PRY}{PRY(g1,r)}\right) } 
+        ^{(1-\href{#sigma_e}{sigma\_e(s,r)})}\right) }\right) })}}{{(1 
+        -\href{#sigma_e}{sigma\_e(s,r)}*{(1-\href{#cd_e}{cd\_e(s,r)})})}} \] </div>
+</div>
+<a id='150'/><div class="eblock">
+Equation 150: <a href='#POI'>POI</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b>, <i>s</i> in <b><a href='#sec_std'>sec_std</a></b> (4 total):<br>
+<div class="eqn"> \[ \href{#POI}{POI(s,r)} = \href{#cd_m}{cd\_m(s,r)} 
+        *\sum_{g2 \; \text{in} \; \href{#goods_m}{goods\_m}} { \left(\href{#delta_m}{delta\_m(r,s,g2)}*\href{#PRY}{PRY(g2,r)}\right) } 
+        +\frac{{({(1-\href{#cd_m}{cd\_m(s,r)})} 
+        *ln{ \left( 
+        \sum_{g2 \; \text{in} \; \href{#goods_m}{goods\_m}} { \left(\href{#delta_m}{delta\_m(r,s,g2)} 
+        *exp{ \left(\href{#PRY}{PRY(g2,r)}\right) } 
+        ^{(1-\href{#sigma_m}{sigma\_m(s,r)})}\right) }\right) })}}{{(1 
+        -\href{#sigma_m}{sigma\_m(s,r)}*{(1-\href{#cd_m}{cd\_m(s,r)})})}} \] </div>
+</div>
+<a id='151'/><div class="eblock">
+Equation 151: <a href='#TAXC'>TAXC</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#TAXC}{TAXC(r)} = \href{#TCOR}{TCOR(r)} 
+        *{(\sum_{s \; \text{in} \; \href{#sec_std}{sec\_std}} { \left(\href{#PRF}{PRF(s,r)}\right) } 
+        +\href{#PRFY}{PRFY(r)})} 
+        +\frac{\sum_{g \; \text{in} \; \href{#goods}{goods}} { \left(\href{#TAX}{TAX(g,r)} 
+        *exp{ \left(\href{#PRD}{PRD(g,r)}\right) } 
+        *\href{#OUG}{OUG(g,r)}\right) }}{exp{ \left(\href{#PRID}{PRID(r)}\right) }} 
+        +\frac{\sum_{g3 \; \text{in} \; \href{#goods_o}{goods\_o}} { \left(\href{#TAX}{TAX(g3,r)} 
+        *exp{ \left(\href{#PMR}{PMR(g3,r)}\right) } 
+        *\href{#IMQ}{IMQ(g3,r)}\right) }}{exp{ \left(\href{#PRID}{PRID(r)}\right) }} 
+        -\frac{\sum_{s \; \text{in} \; \href{#sec_std}{sec\_std}} { \left(\href{#TITC}{TITC(s,r)} 
+        *exp{ \left(\href{#PRII}{PRII(r)}\right) } 
+        *\href{#INV}{INV(s,r)}\right) }}{exp{ \left(\href{#PRID}{PRID(r)}\right) }} 
+        -\frac{\sum_{g3 \; \text{in} \; \href{#goods_o}{goods\_o}} { \left(\href{#TAX}{TAX(g3,r)} 
+        *exp{ \left(\href{#PRS}{PRS(g3,r)}\right) } 
+        *\href{#EXQ}{EXQ(g3,r)}\right) }}{exp{ \left(\href{#PRID}{PRID(r)}\right) }} \] </div>
+</div>
+<a id='152'/><div class="eblock">
+Equation 152: <a href='#TAXL'>TAXL</a><br>
+For <i>r</i> in <b><a href='#regions'>regions</a></b> (2 total):<br>
+<div class="eqn"> \[ \href{#TAXL}{TAXL(r)} = \href{#INTR}{INTR(r)}*\href{#BOND}{BOND(r)} \] </div>
+</div>
+</div>
+</body>
+</html>

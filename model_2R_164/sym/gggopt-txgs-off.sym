@@ -1,0 +1,35 @@
+//  gggopt-txgs-off.sym
+//  October 2010
+//
+//  Turn off the sector-specific sales tax option and use the
+//  standard setup.
+//
+
+//
+//  Standard low-level intermediate demands
+//
+
+sec_std: EN  = delta_e  * ENT  * exp( PRE - PRY(goods_e)#sec_std )^sigma_e;
+sec_std: OI  = delta_m  * OIN  * exp( POI - PRY(goods_m)#sec_std )^sigma_m ;
+
+//
+//  Standard low-level price indexes
+//
+
+sec_std: PRE = cd_e*sum(goods_e, delta_e*PRY(goods_e)#sec_std)
+    + (1-cd_e)*ln( sum(goods_e, delta_e*exp(PRY(goods_e)#sec_std)^(1-sigma_e)) )/(1-sigma_e*(1-cd_e));
+
+sec_std: POI = cd_m*sum(goods_m, delta_m*PRY(goods_m)#sec_std)
+    + (1-cd_m)*ln( sum(goods_m, delta_m*exp(PRY(goods_m)#sec_std)^(1-sigma_m)) )/(1-sigma_m*(1-cd_m));
+
+//
+//  Standard corporate and sales tax revenue
+//
+
+TAXC = TCOR*( sum(sec_std,PRF) + PRFY )
+     + sum(goods  , TAX *exp(PRD)*OUG  )/exp(PRID)
+     + sum(goods_o, TAX(goods_o)*exp(PMR)*IMQ  )/exp(PRID)
+     - sum(sec_std, TITC*exp(PRII)*INV )/exp(PRID)
+     - sum(goods_o, TAX(goods_o)*exp(PRS(goods_o))*EXQ  )/exp(PRID)
+     ;
+
