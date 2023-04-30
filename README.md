@@ -41,7 +41,7 @@ But they are not needed to be installed manually, when you install the gcubed pa
 Thus, make sure pip is properly setup before you install the gcubed package.
 
 ## G-Cubed package installation
-The first thing you need to do is to download this repository (goto [code section/root directory](https://github.com/lucid-wei/g-cubed_teaching_model), click code - download zip).  
+The first thing you need to do is to download this repository (goto [code section/root directory](https://github.com/lucid-wei/g-cubed_teaching_model), click the green button code - download zip) and extract the files.  
 
 Then you can find the binary distribution of the G-Cubed package in gcubed_distribution/ directory, with filename gcubed-*version*-py3-none-any.whl.
 The current package version is 1.0.0 but this may evolve relatively quickly. 
@@ -138,8 +138,7 @@ where cd is a common command in both Windows and MacOS, standing for 'change dir
   
 # Running the G-Cubed using your own Python script.
 
-Modify the following python script to run the model.  
-An example of this script is contained in the python directory of the model (python/run.py).
+Modify the following python script to run the model. An example of this script is contained in the python directory of the model (python/run.py).
 
 ```
 from gcubed.runner import Runner
@@ -160,5 +159,5 @@ To execute this script, run the following command under the python subfolder:
   ```
 python run.py
   ```
-If you encounter some error saying python is nowhere to be found, (assuming you already install python) this means you have not configured PYTHONPATH and your terminal does not know where to find your installed python executable.
+If you encounter some error saying python is nowhere to be found, (assuming you already install python) this means you have not configured system PATH environment variables thus your terminal does not know where to find your installed python executable. Here is [a guide for this issue](https://stackoverflow.com/questions/6318156/adding-python-to-path-on-windows).
   
