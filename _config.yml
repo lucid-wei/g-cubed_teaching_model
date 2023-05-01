@@ -1,7 +1,17 @@
 remote_theme: pmarsceill/just-the-docs
-title: The G-Cubed Model
-nav_exclude: true
-search_exclude: true
+title: The G-Cubed Model Doc
+#nav_exclude: true
+#search_exclude: true
 
 just_the_docs:
   max_level: 3
+
+nav:
+  - title: "GitHub for this page"
+    url: "https://github.com/lucid-wei/g-cubed_teaching_model"
+  - title: "Download teaching contents"
+    url: "https://github.com/lucid-wei/g-cubed_teaching_model/archive/refs/heads/main.zip"
+  - title: "G-Cubed official website"
+    url: "http://www.sensiblepolicy.com/index.html"
+  - title: "Page maintainer"
+    url: "mailto:lucid.wei@alumni.anu.edu.com"

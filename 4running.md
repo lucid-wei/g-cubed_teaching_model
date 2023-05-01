@@ -2,7 +2,7 @@
 layout: default
 nav_order: 4
 ---
-# Running the G-Cubed using your own Python script.
+# Running the G-Cubed using your own Python script
 
 Modify the following python script to run the model. An example of this script is contained in the python directory of the model (python/run.py).
 
