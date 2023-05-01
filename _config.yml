@@ -4,26 +4,13 @@ title: The G-Cubed Model Doc
 just_the_docs:
   max_level: 2
 
-nav:
-  - title: "GitHub for this page"
-    url: "https://github.com/lucid-wei/g-cubed_teaching_model"
-  - title: "Download teaching contents"
-    url: "https://github.com/lucid-wei/g-cubed_teaching_model/archive/refs/heads/main.zip"
-  - title: "G-Cubed official website"
-    url: "http://www.sensiblepolicy.com/index.html"
-  - title: "Page maintainer"
-    url: "mailto:lucid.wei@alumni.anu.edu.com"
 # External navigation links
 nav_external_links:
-  - title: Just the Docs on GitHub
-    url: https://github.com/just-the-docs/just-the-docs
-    hide_icon: false # set to true to hide the external link icon - defaults to false
-  - title: Just the Docs on GitHub
-    url: https://github.com/just-the-docs/just-the-docs
-    hide_icon: false # set to true to hide the external link icon - defaults to false
-  - title: Just the Docs on GitHub
-    url: https://github.com/just-the-docs/just-the-docs
-    hide_icon: false # set to true to hide the external link icon - defaults to false
-  - title: Just the Docs on GitHub
-    url: https://github.com/just-the-docs/just-the-docs
-    hide_icon: false # set to true to hide the external link icon - defaults to false
+  - title: GitHub for this page
+    url: https://github.com/lucid-wei/g-cubed_teaching_model
+  - title: Download teaching contents
+    url: https://github.com/lucid-wei/g-cubed_teaching_model/archive/refs/heads/main.zip
+  - title: G-Cubed official website
+    url: http://www.sensiblepolicy.com/index.html
+  - title: Page maintainer
+    url: mailto:lucid.wei@alumni.anu.edu.com
