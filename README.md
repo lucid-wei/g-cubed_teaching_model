@@ -41,7 +41,7 @@ But they are not needed to be installed manually, when you install the gcubed pa
 Thus, make sure pip is properly setup before you install the gcubed package.
 
 ## G-Cubed package installation
-The first thing you need to do is to download this repository (goto [code section/root directory](https://github.com/lucid-wei/g-cubed_teaching_model), click the green button code - download zip) and extract the files.  
+The first thing you need to do is to download this repository from [this link](https://github.com/lucid-wei/g-cubed_teaching_model/archive/refs/heads/main.zip), and extract the files.  
 
 Then you can find the binary distribution of the G-Cubed package in gcubed_distribution/ directory, with filename gcubed-*version*-py3-none-any.whl.
 The current package version is 1.0.0 but this may evolve relatively quickly. 
