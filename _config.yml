@@ -1,1 +1,7 @@
 remote_theme: pmarsceill/just-the-docs
+title: The G-Cubed Model
+nav_exclude: true
+search_exclude: true
+
+just_the_docs:
+  max_level: 3
