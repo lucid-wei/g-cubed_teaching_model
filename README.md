@@ -1,4 +1,11 @@
-﻿# Introduction
+---
+layout: default
+title: My Page Title
+nav_order: 1
+has_children: true
+---
+
+# Introduction
 This is a documentation for users of the python-implemented G-Cubed model.  
 
 Two components are needed to run the model, simply put, input data (of various kinds) and the algorithm. Input and output data vary depending on the model version, this repository stores those for the teaching version of the model, model 2R164. The algorithm or computing logic is packaged into a python package which can be installed into one's local machine.
