@@ -1,10 +1,8 @@
 remote_theme: pmarsceill/just-the-docs
 title: The G-Cubed Model Doc
-#nav_exclude: true
-#search_exclude: true
 
 just_the_docs:
-  max_level: 3
+  max_level: 2
 
 nav:
   - title: "GitHub for this page"
@@ -15,3 +13,17 @@ nav:
     url: "http://www.sensiblepolicy.com/index.html"
   - title: "Page maintainer"
     url: "mailto:lucid.wei@alumni.anu.edu.com"
+# External navigation links
+nav_external_links:
+  - title: Just the Docs on GitHub
+    url: https://github.com/just-the-docs/just-the-docs
+    hide_icon: false # set to true to hide the external link icon - defaults to false
+  - title: Just the Docs on GitHub
+    url: https://github.com/just-the-docs/just-the-docs
+    hide_icon: false # set to true to hide the external link icon - defaults to false
+  - title: Just the Docs on GitHub
+    url: https://github.com/just-the-docs/just-the-docs
+    hide_icon: false # set to true to hide the external link icon - defaults to false
+  - title: Just the Docs on GitHub
+    url: https://github.com/just-the-docs/just-the-docs
+    hide_icon: false # set to true to hide the external link icon - defaults to false
