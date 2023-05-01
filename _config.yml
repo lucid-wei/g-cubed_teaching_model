@@ -6,11 +6,11 @@ just_the_docs:
 
 # External navigation links
 nav_external_links:
-  - title: GitHub for this page
-    url: https://github.com/lucid-wei/g-cubed_teaching_model
   - title: Download teaching contents
     url: https://github.com/lucid-wei/g-cubed_teaching_model/archive/refs/heads/main.zip
   - title: G-Cubed official website
     url: http://www.sensiblepolicy.com/index.html
+  - title: GitHub for this page
+    url: https://github.com/lucid-wei/g-cubed_teaching_model
   - title: Page maintainer
     url: mailto:lucid.wei@alumni.anu.edu.com
