@@ -1,9 +1,3 @@
----
-layout: default
-title: My Page Title
-nav_order: 1
-has_children: true
----
 
 # Introduction
 This is a documentation for users of the python-implemented G-Cubed model.  
