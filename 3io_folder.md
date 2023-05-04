@@ -45,22 +45,77 @@ The model version and the model number need to match their values in the CONFIGU
 │   │   ├── LAYER2_DATA.csv
 │   │   ├── ...
 │   ├── ...
+├── python
+│   ├── run.py
+│   ├── RESULTS_GENERTION-TIME
+│   │   ├── baseline_projections.csv
+│   │   ├── deviation_projections.csv
+│   │   ├── simulation_projections.csv
+│   │   ├── run.log
 ```
 
-### The data folder and its contents
+## The configuration file
 
-The data folder contains the CSV data files defining the model.
+The configuration file defines which files gcubed needs to read from, which years gcubed uses for its algorithms, 
+and a few other configurable options during its calculation.
 
-### The simulations folder and its contents
+Usually information in this file does not need to be changed.
+
+## The data folder and its contents
+
+The data folder contains the CSV data files defining the model, including:
+
+### DATABASE.csv
+
+Is DATAvR2018.csv for model 2R164. 
+
+Data in this file is considered to be the real data of the world economy.
+
+### IOTABLES.csv
+
+Is IOTABLESvR2011.csv for model 2R164.
+
+Each region has an IO table, which has the following structure: columns correspond to uses of the inputs and each row is a different input:
+
+|     |     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|     | a01 | …   | a0N | C   | I   | G   | X   | M   |
+| g01 |     |     |     |     |     |     |     |     |
+| :   |     |     |     |     |     |     |     |     |
+| g0N |     |     |     |     |     |     |     |     |
+|     | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   |
+| M   |     |     |     |     |     |     |     |     |
+| K   |     |     |     |     |     |     |     |     |
+| L   |     |     |     |     |     |     |     |     |
+
+Note that industry a0N produces good g0N.
+
+For model 2R164, a01 is ,a02 is.？？？？？？
+
+All model versions include:  
+- M is a sector-specific material.  
+- K is capital.  
+- L is labour.  
+
+These 2 sectors are not in the IO table but reflected in variable names:
+- Sector Y is the sector that produces the capital used in production.  
+- Sector Z produces household capital.  
+
+Note that sectors Y and Z are dummy sectors that buy output from the other sectors to create investment goods and this cumulates into the capital stock of sectors y and Z.   
+When firms buy investment goods they by a package good from sector Y that goes into K in sector i.   
+Households draw a return from the capital stock that is in sector Z. It is in fact the outcome of their investment decisions on durable goods.   
+They carry many of the parameter names used in other sectors but they are not traded.
+
+## The simulations folder and its contents
 
 The simulations folder contains the one folder for each simulation experiment being conducted with the model.
 
-### The experiment folder names are user-determined.
+## The experiment folder names are user-determined.
 
 Each experiment folder contains an experiment design CSV file that configures the experiment, documenting
 the layers of adjustments to variables that are to be applied in specific years through the projections.
 
-### The sym folder and its contents
+## The sym folder and its contents
 
 If necessary, the *.sym files in the sym folder should be used to generate the other files in that folder, by running the SYM processor <SYM>, sym4mac.exe on MacOS or sym4win.exe on Windows.
 
