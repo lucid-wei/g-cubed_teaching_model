@@ -77,16 +77,14 @@ Is IOTABLESvR2011.csv for model 2R164.
 
 Each region has an IO table, which has the following structure: columns correspond to uses of the inputs and each row is a different input:
 
-|     |     |     |     |     |     |     |     |     |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-|     | a01 | …   | a0N | C   | I   | G   | X   | M   |
-| g01 |     |     |     |     |     |     |     |     |
-| :   |     |     |     |     |     |     |     |     |
-| g0N |     |     |     |     |     |     |     |     |
-|     | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   |
-| M   |     |     |     |     |     |     |     |     |
-| K   |     |     |     |     |     |     |     |     |
-| L   |     |     |     |     |     |     |     |     |
+| Input\Output | a01 | …   | a0N | C   | I   | G   | X   | M   |
+|--------------| --- | --- | --- | --- | --- | --- | --- | --- |
+| g01          |     |     |     |     |     |     |     |     |
+| :            |     |     |     |     |     |     |     |     |
+| g0N          |     |     |     |     |     |     |     |     |
+| M            |     |     |     |     |     |     |     |     |
+| K            |     |     |     |     |     |     |     |     |
+| L            |     |     |     |     |     |     |     |     |
 
 Note that industry a0N produces good g0N.
 
@@ -97,7 +95,7 @@ All model versions include:
 - K is capital.  
 - L is labour.  
 
-These 2 sectors are not in the IO table but reflected in variable names:
+These 2 sectors are not in the IO table but reflected in variable names (e.g. SHLY):
 - Sector Y is the sector that produces the capital used in production.  
 - Sector Z produces household capital.  
 
