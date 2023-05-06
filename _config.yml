@@ -2,6 +2,6 @@ remote_theme: pmarsceill/just-the-docs
 collections:
   docs:
     output: true
-    permalink: /:path.html
+    permalink: /:title/
 
 source: site_src
