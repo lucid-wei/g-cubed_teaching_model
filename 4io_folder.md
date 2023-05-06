@@ -1,6 +1,6 @@
 ---
 layout: default
-nav_order: 3
+nav_order: 4
 ---
 
 # The G-Cubed model IO folder
@@ -69,7 +69,10 @@ The data folder contains the CSV data files defining the model, including:
 
 Is DATAvR2018.csv for model 2R164. 
 
-Data in this file is considered to be the real data of the world economy.
+Data in this file is considered to be the real data of the world economy. Following the variables names, are 
+descriptions, units of measurement, and country/region code.
+
+More detailed definitions of the variables are in 
 
 ### IOTABLES.csv
 
@@ -86,9 +89,7 @@ Each region has an IO table, which has the following structure: columns correspo
 | K            |     |     |     |     |     |     |     |     |
 | L            |     |     |     |     |     |     |     |     |
 
-Note that industry a0N produces good g0N.
-
-For model 2R164, a01 is ,a02 is.？？？？？？
+Note that industry a0N produces good g0N. For model 2R164, a01 is energy sector,a02 is non-energy sector.
 
 All model versions include:  
 - M is a sector-specific material.  
@@ -104,6 +105,14 @@ When firms buy investment goods they by a package good from sector Y that goes i
 Households draw a return from the capital stock that is in sector Z. It is in fact the outcome of their investment decisions on durable goods.   
 They carry many of the parameter names used in other sectors but they are not traded.
 
+### SETPARAMETERS.csv
+
+
+
+
+│   │   ├── POPULATION.csv
+│   │   ├── PRODUCTIVITY.csv
+│   │   ├── AEEINEW.csv
 ## The simulations folder and its contents
 
 The simulations folder contains the one folder for each simulation experiment being conducted with the model.
