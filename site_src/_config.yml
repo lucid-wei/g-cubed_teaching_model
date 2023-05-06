@@ -10,9 +10,14 @@ nav_external_links:
     url: https://github.com/lucid-wei/g-cubed_teaching_model/archive/refs/heads/main.zip
   - title: G-Cubed official website
     url: http://www.sensiblepolicy.com/index.html
-  - title: GitHub for this page
-    url: https://github.com/lucid-wei/g-cubed_teaching_model
+#  - title: GitHub for this page
+#    url: https://github.com/lucid-wei/g-cubed_teaching_model
   - title: Page maintainer
     url: mailto:lucid.wei@alumni.anu.edu.au
 
-logo: "site_src/assets/images/g-cubed-logo.jpg"
+logo: "/site_src/assets/images/g-cubed-logo.jpg"
+
+# Aux links for the upper right navigation
+aux_links:
+  "GitHub for this page":
+    - "https://github.com/lucid-wei/g-cubed_teaching_model"
