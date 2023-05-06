@@ -28,7 +28,7 @@ Z. Household capital goods
 Because a same type of variable can be used to describe different objects, e.g. country U and country N both have their GDP values. 
 Thus, variables must be defined over sets. 
 
-A set is a collection of distinct objects or elements, which are used to define variables.
+A set is a collection of distinct objects or elements, which are used to define variables, parameters and equations.
 
 # Variables
 

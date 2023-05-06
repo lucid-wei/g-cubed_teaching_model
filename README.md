@@ -1,7 +1,3 @@
----
-nav_exclude: true
----
-
 # Introduction
 This is a documentation for users of the python-implemented G-Cubed model.  
 

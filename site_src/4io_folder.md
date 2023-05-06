@@ -89,14 +89,16 @@ Each region has an IO table, which has the following structure: columns correspo
 | K            |     |     |     |     |     |     |     |     |
 | L            |     |     |     |     |     |     |     |     |
 
-Note that industry a0N produces good g0N. For model 2R164, a01 is energy sector,a02 is non-energy sector.
+Note that industry a0N produces good g0N. 
+
+For model 2R164, a01 is energy sector,a02 is non-energy sector.
 
 All model versions include:  
 - M is a sector-specific material.  
 - K is capital.  
 - L is labour.  
 
-These 2 sectors are not in the IO table but reflected in variable names (e.g. SHLY):
+There are 2 sectors not in the IO table but reflected in variable names (e.g. SHLY):
 - Sector Y is the sector that produces the capital used in production.  
 - Sector Z produces household capital.  
 
@@ -107,7 +109,7 @@ They carry many of the parameter names used in other sectors but they are not tr
 
 ### SETPARAMETERS.csv
 
-
+This file contains user-defined parameters. 
 
 
 │   │   ├── POPULATION.csv
