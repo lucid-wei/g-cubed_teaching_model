@@ -1,8 +1,8 @@
-remote_theme: just-the-docs/just-the-docs
-
-title: The G-Cubed Model Doc
-baseurl: "/g-cubed_teaching_model" # the subpath of your site, e.g. /blog
-url: "https://lucid-wei.github.io/"
+#remote_theme: just-the-docs/just-the-docs
+#
+#title: The G-Cubed Model Doc
+#baseurl: "/g-cubed_teaching_model" # the subpath of your site, e.g. /blog
+#url: "https://lucid-wei.github.io/"
 
 #just_the_docs:
 #  max_level: 2
