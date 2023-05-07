@@ -65,7 +65,7 @@ Some variables can be set by users to design their own experiments.
 
 WHICH ONES???????
 
-# Parameters
+# Parameters <a id="parameters"></a>
 
 Like variables, parameters are also defined over sets. 
 

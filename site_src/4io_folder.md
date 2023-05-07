@@ -56,7 +56,7 @@ The model version and the model number need to match their values in the CONFIGU
 
 ## The configuration file
 
-The configuration file defines which files gcubed needs to read from, which years gcubed uses for its algorithms, 
+The configuration2R164.csv defines which files gcubed python module needs to read from, which years gcubed uses for its algorithms, 
 and a few other configurable options during its calculation.
 
 Usually information in this file does not need to be changed.
@@ -109,7 +109,8 @@ They carry many of the parameter names used in other sectors but they are not tr
 
 ### SETPARAMETERS.csv
 
-This file contains user-defined parameters. 
+This file contains user-defined parameters.  
+More information on parameters please check [model definitions section](3model_definitions.md#parameters).
 
 
 │   │   ├── POPULATION.csv
