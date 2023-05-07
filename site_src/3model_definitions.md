@@ -2,10 +2,10 @@
 layout: default
 nav_order: 3
 ---
-# [Model definitions](./model_2R_164/sym/model_2R_164.html)
+# [Model definitions](../model_2R_164/sym/model_2R_164.html)
 
 The model definitions for this particular model version can be found in 
-[this link](./model_2R_164/sym/model_2R_164.html), which includes definitions of sets, variables, parameters and equations.
+[this link](../model_2R_164/sym/model_2R_164.html), which includes definitions of sets, variables, parameters and equations.
 
 This file will be referenced a lot when you design your own simulations. But before reading the model definitions, 
 a few conventions should be kept in mind to understand that file:
@@ -72,7 +72,7 @@ Like variables, parameters are also defined over sets.
 When users adjust parameters, (usually) the entire dynamic of the model will change. 
 Thus, (some) parameters can be altered when users design their own experiments.
 
-WHICH ONES???????
+Those user-defined parameters can be altered in [setparameters.csv](4io_folder.md#setparameters).
 
 # Equations
 

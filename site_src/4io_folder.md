@@ -107,15 +107,36 @@ When firms buy investment goods they by a package good from sector Y that goes i
 Households draw a return from the capital stock that is in sector Z. It is in fact the outcome of their investment decisions on durable goods.   
 They carry many of the parameter names used in other sectors but they are not traded.
 
-### SETPARAMETERS.csv
+### SETPARAMETERS.csv <a id="setparameters"></a>
 
 This file contains user-defined parameters.  
-More information on parameters please check [model definitions section](3model_definitions.md#parameters).
+More information on parameters please check [related model definitions section](3model_definitions.md#parameters).
+
+### POPULATION.csv
+
+The modpop.csv records annual population growth rates data for all regions, expressed such that a value of 1 is a 1% growth rate.
+
+This data is supposed to be generated from the [GTAP database](https://www.gtap.agecon.purdue.edu/databases/) and already processed,
+users usually do not need to change. 
+
+### PRODUCTIVITY.csv
+
+The prodmat.csv file specifies productivity growth rates for all years in the projection.
+It contains:  
+- productivity growth in each year of the projection for each sector of the US. A value of 1 implies a 1% simple annual growth rate.  
+- productivity convergence rates in each year of the projection for each sector of the US. A value of 1 implies a convergence rate of 1% (Note: Currently convergence rates are not used in the productivity level projections process.)  
+- For each non-US region, for each sector, specify the starting period fraction of US productivity for the same sector (a value of 1 implies the same productivity). This is only required in the initial period.  
+- For each non-US region, for each sector, in each year of the projection, specify the catch-up rate as that non-US region’s sector catches up to the productivity of the same sector in the US. A value of 0.02 implies that the gap in productivity from the previous year declines by 2% to determine the new gap to US productivity. Note that this is not the same as the productivity growth rate information.
+
+The processed population data are then combined with processed productivity data to calculate the effective labour productivity,
+defined as AL: the product of labour and productivity as per Solow-Swan.
+
+### AEEINEW.csv
+
+The aeeinew.csv file records data on Autonomous energy efficiency improvement.  
+See McKibbin and Wilcoxen (2013) [A global approach to energy and environment: the G-Cubed model](https://www.researchgate.net/publication/285239562_A_global_approach_to_energy_and_environment_the_G-Cubed_model) for details of AEEI.
 
 
-│   │   ├── POPULATION.csv
-│   │   ├── PRODUCTIVITY.csv
-│   │   ├── AEEINEW.csv
 ## The simulations folder and its contents
 
 The simulations folder contains the one folder for each simulation experiment being conducted with the model.
@@ -127,7 +148,11 @@ the layers of adjustments to variables that are to be applied in specific years 
 
 ## The sym folder and its contents
 
-If necessary, the *.sym files in the sym folder should be used to generate the other files in that folder, by running the SYM processor <SYM>, sym4mac.exe on MacOS or sym4win.exe on Windows.
+The sym folder stores machine generated contents that are used by the gcubed python module (.py, .lis and .csv files) and 
+the [model definitions information page](../model_2R_164/sym/model_2R_164.html).
+
+Currently in this folder, all files needed are already generated, so you do not need to run any of the commands below. 
+But FYI, the *.sym files are used to generate the other files in that folder, by running the SYM processor <SYM>, sym4mac.exe on MacOS or sym4win.exe on Windows.
 
 If the root file of the SYM model definition (the *.sym files) is called ggg2r170.sym, then the command to generate these files is:
 ```
