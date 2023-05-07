@@ -141,9 +141,7 @@ See McKibbin and Wilcoxen (2013) [A global approach to energy and environment: t
 
 The simulations folder contains one folder for each simulation experiment being conducted with the model.
 
-## The experiment folder names are user-determined.
-
-Each experiment folder contains an experiment design CSV file that configures the experiment, documenting
+The experiment folder names are user-determined. Each experiment folder contains an experiment design CSV file that configures the experiment, documenting
 the layers of adjustments to variables that are to be applied in specific years through the projections.
 
 ## The sym folder and its contents
