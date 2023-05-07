@@ -139,7 +139,7 @@ See McKibbin and Wilcoxen (2013) [A global approach to energy and environment: t
 
 ## The simulations folder and its contents
 
-The simulations folder contains the one folder for each simulation experiment being conducted with the model.
+The simulations folder contains one folder for each simulation experiment being conducted with the model.
 
 ## The experiment folder names are user-determined.
 
