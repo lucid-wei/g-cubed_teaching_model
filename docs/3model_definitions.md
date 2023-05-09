@@ -63,7 +63,8 @@ cent = cents per unit
 
 Some variables can be set by users to design their own experiments.
 
-WHICH ONES???????
+Note that only exogenous variables and to the initial value of the state variables are configurable when designing simulations.  
+Some parameters are also configurable, see next section below.
 
 # Parameters <a id="parameters"></a>
 
@@ -71,8 +72,11 @@ Like variables, parameters are also defined over sets.
 
 When users adjust parameters, (usually) the entire dynamic of the model will change. 
 Thus, (some) parameters can be altered when users design their own experiments.
-
 Those user-defined parameters can be altered in [setparameters.csv](4io_folder.md#setparameters).
+
+However, it is currently not supported to load parameters changes from a csv file like you do to variables,
+i.e. users cannot specify dynamics to parameters. If you need to see the effects of parameter changes,
+you need to run different simulations separately and check their difference in simulation results manually.
 
 # Equations
 
