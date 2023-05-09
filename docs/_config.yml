@@ -6,7 +6,7 @@ url: "https://lucid-wei.github.io"
 
 permalink: /:title/
 
-source: site_src
+#source: docs
 
 # External navigation links
 nav_external_links:
@@ -17,7 +17,7 @@ nav_external_links:
   - title: Page maintainer
     url: mailto:lucid.wei@alumni.anu.edu.au
 
-#logo: "/site_src/assets/images/g-cubed-logo.jpg"
+#logo: "/docs/assets/images/g-cubed-logo.jpg"
 
 # Aux links for the upper right navigation
 aux_links:
