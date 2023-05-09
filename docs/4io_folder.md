@@ -90,7 +90,6 @@ Each region has an IO table, which has the following structure: columns correspo
 | L            |     |     |     |     |     |     |     |     |
 
 Note that industry a0N produces good g0N. 
-
 For model 2R164, a01 is energy sector,a02 is non-energy sector.
 
 All model versions include:  

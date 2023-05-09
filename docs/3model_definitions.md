@@ -64,6 +64,7 @@ cent = cents per unit
 Some variables can be set by users to design their own experiments.
 
 Note that only exogenous variables and to the initial value of the state variables are configurable when designing simulations.  
+
 Some parameters are also configurable, see next section below.
 
 # Parameters <a id="parameters"></a>
