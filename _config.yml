@@ -9,6 +9,9 @@ permalink: /:title/
 
 # External navigation links
 nav_external_links:
+  - title: Auto-gen gcubed API documentation
+    url: https://github.com/lucid-wei/g-cubed_teaching_model/docs/gcubed
+    hide_icon: true
   - title: Download teaching contents
     url: https://github.com/lucid-wei/g-cubed_teaching_model/archive/refs/heads/main.zip
   - title: G-Cubed official website
