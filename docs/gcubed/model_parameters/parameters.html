@@ -1,0 +1,2364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>gcubed.model_parameters.parameters API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>gcubed.model_parameters.parameters</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ------------------------------------------------------------------
+# Purpose: Model parameter handling
+# Author: Geoff Shuetrim
+# ------------------------------------------------------------------
+from __future__ import annotations
+import logging
+import os
+import re
+import pandas as pd
+import numpy as np
+from gcubed.base import Base
+from gcubed.model_configuration import ModelConfiguration
+from gcubed.sym_data import SymData
+from gcubed.data.database import Database
+from gcubed.data.calibration_database import CalibrationDatabase
+from gcubed.io_data import IOData
+
+class Parameters(Base):
+    &#34;&#34;&#34;
+    Manage loading, calculation and provision of model parameters.
+
+    Properties:
+
+        database: The model database
+
+        TODO: Complete this listing of class properties and their explanations.
+        _database: the dataframe containing the annual data for all variables.
+
+    &#34;&#34;&#34;
+
+    def __init__(self, database: Database, base_year: int) -&gt; None:
+
+        logging.info(f&#34;Calibrating the model parameters&#34;)
+
+        assert database is not None
+        self._sym_data: SymData = database.sym_data
+        self._base_year = base_year
+        self._calibration_database: CalibrationDatabase = CalibrationDatabase(database=database, base_year=base_year)
+        self._io_data: IOData = IOData(sym_data = self.sym_data)
+
+        self._all_parameters: dict[str, dict[str, float]] = None
+        self._parameter_values: pd.DataFrame = None
+
+        # Build up dictionary of parameter values provided by the user.
+        self.__load_user_set_parameters()
+
+        # Configure all parameter values, using user-specified and computed parameters.
+        self.__configure_parameter_values()
+
+
+    def validate(self):
+        &#34;&#34;&#34;
+        Run from subclass initialisation after the subclass initialisation has completed.
+        Raise an exception if the parameter setting information is invalid
+        &#34;&#34;&#34;
+        assert self._all_parameters is not None
+        assert self._parameter_values is not None
+
+        # No parameter value remains null.
+        parameters_with_missing_values = self.parameter_values[self.parameter_values[&#39;value&#39;].isnull()].index.tolist()
+        if len(parameters_with_missing_values) &gt; 0:
+            logging.error(&#34;The following parameters have not been set:\n{}&#34;.format(parameters_with_missing_values))
+            raise Exception(f&#34;The model is not ready to run. The following parameters have missing values:\n{parameters_with_missing_values}&#34;)
+
+        # If there is an electricity distribution sector,
+        # then phi parameter has a row for each non-distribution sector
+        # otherwise there is a row for all sectors.
+        phi = self.parameter(&#34;phi&#34;)
+        if self.sym_data.energy_distribution_sectors_count &gt; 0:
+            assert len(
+                phi.index) == self.sym_data.non_energy_distribution_sectors_count
+        else:
+            assert len(
+                phi.index) == self.sym_data.sectors_count
+
+        # If the parameters include TCAX, then the SYM model must include the variable with the same name.
+        # TODO: enable these validations when adding optimal policy handling to stable manifold class.
+        # if self.EMZT is not None and isinstance(self.EMZT, pd.DataFrame):
+        #     assert self.TCAX  is not None
+        #     if not self.sym_data.has_variable(variable_name_prefix=&#34;EMZT&#34;):
+        #         logging.error(
+        #             &#34;The user parameters refer to EMZT but EMZT is not in the SYM model definition.&#34;)
+        # if self.TCAX is not None and isinstance(self.TCAX, pd.DataFrame):
+        #     assert self.EMZT is not None
+        #     if not self.sym_data.has_variable(variable_name_prefix=&#34;TCAX&#34;):
+        #         logging.error(
+        #             &#34;The user parameters refer to TCAX but TCAX is not in the SYM model definition.&#34;)
+
+        # Policy optimisation only allowed to be turned on 
+        # if the model parameters include TCAX and EMZT for all regions
+        # and both of those parameters are not zero for all regions.
+        # TODO: enable these validations when adding optimal policy handling to stable manifold class.
+        # TODO: Are there other constraints that should also be imposed (e.g. TCAX and EMZT should be 1 for same regions?)
+        if self.configuration.stable_manifold_use_policy_optimisation:
+            assert self.EMZT is not None
+            assert isinstance(self.EMZT , pd.DataFrame)
+            if self.EMZT.to_numpy().sum().sum() == 0:
+                raise Exception(&#34;You cannot set the model configuration to use optimal policy if EMZT (refer to the SYM variables documentation for the model) is all zeros or missing from the user set parameters.&#34;)
+            assert self.TCAX is not None
+            assert isinstance(self.TCAX, pd.DataFrame)
+            if self.TCAX.to_numpy().sum().sum() == 0:
+                raise Exception(&#34;You cannot set the model configuration to use optimal policy if TCAX (refer to the SYM variables documentation for the model) is all zeros or missing from the user set parameters.&#34;)
+
+    @property 
+    def sym_data(self) -&gt; SymData:
+        return self._sym_data
+
+    @property
+    def configuration(self) -&gt; ModelConfiguration:
+        return self.sym_data.configuration
+
+    @property
+    def calibration_database(self) -&gt; CalibrationDatabase:
+        return self._calibration_database
+
+    @property
+    def calibration_year(self) -&gt; int:
+        return self._base_year
+
+    @ property
+    def non_sym_parameter_names(self):
+        &#34;&#34;&#34;
+        Returns a tuple containing the names of parameters that are assigned values in 
+        the user-set parameter values by region but where those parameters are not
+        defined in the SYM model definition.
+        &#34;&#34;&#34;
+        return (&#34;discrate&#34;, &#34;TCAX&#34;, &#34;EMZT&#34;)
+
+    @ property
+    def all_parameters(self):
+        return self._all_parameters
+
+    def parameter(self, parameter_name: str) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Arguments:
+
+        parameter_name: The name of the parameter to return.
+
+        Return the value of the named parameter as a dataframe.
+
+        Raise an exception if the parameter is not available.
+        &#34;&#34;&#34;
+        if parameter_name in self.all_parameters:
+            return self.all_parameters[parameter_name]
+        raise Exception(f&#34;Parameter {parameter_name} is not set in the model.&#34;)
+
+    def has_parameter(self, parameter_name: str) -&gt; bool:
+        &#34;&#34;&#34;
+        Arguments:
+
+        parameter_name: The name of the parameter to return.
+
+        Return true iff the parameter is available and false otherwise.
+        &#34;&#34;&#34;
+        if not parameter_name in self.all_parameters:
+            return False
+        return True
+
+
+    @ property
+    def parameter_values(self):
+        &#34;&#34;&#34;
+        The vectorised parameter values in SYM model order as a data frame
+        indexed by the parameter name.
+        &#34;&#34;&#34;
+        return self._parameter_values
+
+    @ property
+    def parameter_values_vector(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Used when evaluating the model equations for linearisation.
+        &#34;&#34;&#34;
+        result: np.ndarray = self.parameter_values.value.to_numpy()
+        return result
+
+    @ property
+    def discrate(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Discount rates by region
+        &#34;&#34;&#34;
+        return self.all_parameters[&#34;discrate&#34;]
+
+    @ property
+    def TCAX(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        The TCAX parameter values are 1 for regions where the TCAX (unit tax on carbon)
+        is to be used for the region and 0 if it is not to be used for the region.
+        This feeds into the stable manifold calculation.
+        &#34;&#34;&#34;
+        return self.all_parameters[&#34;TCAX&#34;]
+
+    @ property
+    def EMZT(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        The EMZT parameter values are 1 for regions where the EMZT (carbon emissions)
+        is to be used for the region and 0 if it is not to be used for the region.
+        This feeds into the stable manifold calculation.
+        &#34;&#34;&#34;
+        return self.all_parameters[&#34;EMZT&#34;]
+
+
+    def __load_user_set_parameters(self):
+        &#34;&#34;&#34;
+        Loads the user-specified parameter values from the CSV file
+        listed in the model configuration.
+        &#34;&#34;&#34;
+
+        # Load the parameter values that are set by the user (not in code)
+        filename = self.configuration.parameters_file
+        if not os.path.isfile(filename):
+            raise Exception(&#34;setparameters file &#34; +
+                            filename + &#34; does not exist.&#34;)
+
+        # Load the data and drop the header row that was read in from the CSV file.
+        data: pd.DataFrame = pd.read_csv(filename, header=None)
+        data = data.iloc[1:, :]
+
+        # Read through the rows of the data, populating
+        # a parameter-name keyed dictionary of parameter values.
+        # Take care with parameters that have values spanning
+        # multiple rows. Just store them using the base name
+        # and with the value being the grid of associated values.
+        self._all_parameters: dict[str, pd.DataFrame] = dict()
+        key: str = None
+        values: pd.DataFrame = None
+
+        for row in data.itertuples(index=False):
+            name: str = row[0]
+
+            if isinstance(name, float):
+                raise Exception(f&#34;In the parameters CSV file, the parameter {name} should not have a float datatype. Is it missing?&#34;)
+
+            if name is None:
+                continue
+
+            if name == &#39;end&#39;:
+                if key is not None:
+                    values.columns = self.sym_data.regions_members
+                    self._all_parameters[key] = values
+                break
+
+            new_values = pd.DataFrame(row[1:])
+            new_values = pd.DataFrame.transpose(new_values)
+            new_values = new_values.astype(&#34;float&#34;)
+
+            if &#39;(&#39; in name:
+                name_parts: list = name.split(&#39;(&#39;)
+                base_name = name_parts[0]
+                if base_name != key:
+                    if key is not None:
+                        values.columns = self.sym_data.regions_members
+                        self._all_parameters[key] = values
+                    key = base_name
+                    values = new_values
+                else:
+                    values = pd.concat([values, new_values], ignore_index=True)
+                    values.reset_index()
+            else:
+                if key is not None:
+                    values.columns = self.sym_data.regions_members
+                    self._all_parameters[key] = values
+                key = None
+                values = None
+                new_values.columns = self.sym_data.regions_members
+                self._all_parameters[name] = new_values
+
+
+    def __configure_parameter_values(self):
+        &#34;&#34;&#34;
+        Associates a value with each parameter in the model.
+        Parameters are either set by the user or they
+        are computed.
+        &#34;&#34;&#34;
+        # Get the list of parameter names as the relevant column from var_map
+        parameter_details: pd.DataFrame = self.sym_data.var_map
+        parameter_details = self.sym_data.var_map[self.sym_data.var_map.var_type == &#34;par&#34;].copy()
+
+        # Add a column of missing values that will be filled in.
+        parameter_details[&#39;value&#39;] = np.nan
+        self._parameter_full_names = parameter_details.name.to_list()
+        self._parameter_base_names: list[str] = [re.sub(&#34;[\(\[].*?[\)\]]&#34;, &#34;&#34;, parameter_name) for parameter_name in self._parameter_full_names]
+        parameter_details = parameter_details.reset_index(drop=True)
+        self._parameter_values = parameter_details
+
+        # Incorporate information for the user-specified parameters.
+        self.__set_user_specified_parameters()
+
+        # Now set up the parameters that are determined programmatically (not by direct user input)
+        # Store them in the parameters dictionary as well as in the long vector of parameter values.
+        self.__set_a_matrix_parameters()
+        self.__set_investment_parameters()
+        self.__set_cd_parameters()
+        self.__set_delta_parameters()
+        self.__set_emissions_parameters()
+        self._set_weight_parameters()
+        self.__set_other_parameters()
+
+
+    def __set_user_specified_parameters(self):
+        &#34;&#34;&#34;
+        Set the values in the parameters.
+
+        The user set parameters are contained in a dictionary of dataframes.
+        Iterate this dictionary, vectorise the dataframe appropriately, and add the vectorised
+        values to the parameter_details value column.
+        &#34;&#34;&#34;
+        user_set_parameter_names = self._all_parameters.keys()
+        for user_set_parameter_name in user_set_parameter_names:
+
+            # Stack the transposed rows of the parameter value to store in dataframe.
+            user_set_parameter_value: pd.DataFrame = self._all_parameters[user_set_parameter_name]
+            assert user_set_parameter_value is not None
+
+            vectorised_parameter_value: np.ndarray = user_set_parameter_value.to_numpy().flatten()
+            vectorised_parameter_value = vectorised_parameter_value.reshape((len(vectorised_parameter_value), 1))
+            self.insert_parameter(user_set_parameter_name, vectorised_parameter_value)
+
+    def __set_a_matrix_parameters(self):
+        &#34;&#34;&#34;
+        aeye - Identity matrix.
+        ashr -
+        ainv - Inverse of (aeye - ashr)
+        &#34;&#34;&#34;
+        # aeye - Identity matrix
+        aeye: pd.DataFrame = pd.DataFrame(np.identity(self.sym_data.regions_count))
+        aeye.index = self.sym_data.regions_members
+        aeye.columns = self.sym_data.regions_members
+        self._all_parameters[&#34;aeye&#34;] = aeye
+        self.insert_parameter(&#34;aeye&#34;, aeye.to_numpy().flatten())
+
+        # ashr parameter - Supposed to be the asset split among currencies, for each region.
+        # TODO: Figure out why this approach to setting ashr makes sense. Figure out why this is a constant.
+        # Create the vector yra that is the value of YRATN(XX) for each region XX as given in the original data set
+        # The yra matrix is the values for YRATN in the base year?. (nominal? GDP ratios to USA)
+        # Replicate yra as a column vector, once for each region, to create a square matrix and then obtain its lower triangular matrix,
+        # (zeroing out the values above the main diagonal). Use the numpy tril function to get the lower triangular matrix.
+        # Subtract the lower triangular matrix from the original matrix to get zero everywhere except
+        # above the main diagonal.
+        # sum the columns of this resulting matrix.
+        # For each region, if its column total is above zero, divide all elements in the regions
+        # column of the resulting matrix by the column total to get the column to sum to 1.
+        # If the region&#39;s column total is zero, then set the first element in that column to 1
+        # implying that all future holdings of assets by the region described by that column will be in US dollars.
+        yra: np.ndarray = self.calibration_database.get_data(&#39;^YRATN\(&#39;, self.calibration_year).to_numpy()
+        ashr: np.ndarray = np.repeat(yra, self.sym_data.regions_count)
+        ashr = ashr.reshape((self.sym_data.regions_count,
+                             self.sym_data.regions_count))
+        ashr = ashr - np.tril(ashr, k=0)
+        column_totals = ashr.sum(axis=0)
+        # Divide by column totals, ensuring that we do not try to
+        # divide zero by zero. Use -1 in place of the zeros so we can find the zeros in the next step...
+        column_totals[column_totals == 0] = -1
+        ashr = ashr/column_totals
+        for i in range(1, self.sym_data.regions_count-1, 1):
+            if column_totals[i] == -1:
+                ashr[0][i] = 1
+        ashr = np.abs(ashr)
+        self._all_parameters[&#34;ashr&#34;] = ashr
+        self.insert_parameter(&#34;ashr&#34;, ashr.flatten())
+
+        # ainv parameter - matrix inverse of (aeye - ashr)
+        ainv: np.ndarray = np.linalg.inv(aeye - ashr)
+        # logging.debug(&#34;####### ainv&#34;)
+        # logging.debug(ainv)
+        self._all_parameters[&#34;ainv&#34;] = ainv
+        self.insert_parameter(&#34;ainv&#34;, ainv.flatten())
+
+    def __set_investment_parameters(self):
+        &#34;&#34;&#34;
+        base_jk parameter - base investment (J) divided by capital (K)
+        for the calibration year for each region/standard industry combination:
+
+        This corresponds to a matrix formed from elements
+        in each row of data provided in the calibration year database.
+        &#34;&#34;&#34;
+        inv: np.ndarray = self.calibration_database.get_data(&#39;^INV\(&#39;, self.calibration_year).to_numpy()
+        cap: np.ndarray = self.calibration_database.get_data(&#39;^CAP\(&#39;, self.calibration_year).to_numpy()
+        base_jk: np.ndarray = (inv / cap).reshape((self.sym_data.non_energy_distribution_sectors_count,self.sym_data.regions_count))
+        self._all_parameters[&#34;base_jk&#34;] = base_jk
+        self.insert_parameter(&#34;base_jk&#34;, base_jk.flatten())
+
+    def __set_cd_parameters(self):
+        &#34;&#34;&#34;
+        cd_*  parameters are all switches to flip between the
+        Constant Elasticity of Substitution (CES) production function
+        and the Cobb-Douglas production function.
+
+        A value of 1 means Cobb-Douglas and 0 means CES.
+
+        These parameters are all inferred from the supplied elasticities of
+        substitution. If the elasticities of substitution are close enough to 1
+        then the elasticity of substitution is effectively set to 1 by
+        working with the Cobb-Douglas function.
+        &#34;&#34;&#34;
+
+        sigma_parameter_names: list[str] = []
+        for parameter_name in self.all_parameters:
+            if parameter_name.startswith(&#34;sigma_&#34;):
+                sigma_parameter_names.append(parameter_name)
+
+        for sigma_parameter_name in sigma_parameter_names:
+            cd_parameter_name: str = sigma_parameter_name.replace(&#34;sigma_&#34;, &#34;cd_&#34;, 1)
+            cd_parameter_value = self.__set_cd(self._all_parameters[sigma_parameter_name])
+            self._all_parameters[cd_parameter_name] = cd_parameter_value
+            self.insert_parameter(cd_parameter_name, cd_parameter_value.to_numpy().flatten())
+
+    def __set_delta_parameters(self):
+        &#34;&#34;&#34;
+        TODO: Document the definitions of each of these parameters
+        and the economics behind their calibration.
+
+        delta_dom
+        delta_e
+        delta_m
+        delta_ff
+        delta_mH - C: consumption column of IO table
+        delta_mR - I: investment column of IO table
+        delta_mG - G: government column of IO table
+        delta_eH - C: consumption column of IO table - energy sectors
+        delta_eR - I: investment column of IO table - energy sectors
+        delta_eG - G: government column of IO table - energy sectors
+        delta_oG - C: consumption column of IO table
+        delta_oH - I: investment column of IO table
+        delta_oR - G: government column of IO table
+        &#34;&#34;&#34;
+
+        # delta_dom parameter - The ratio of OUY (composite supply) to
+        # OUP (domestic production), in the calibration year,
+        # for all the non-electricity generation sectors (g01, g02, ...).
+        # OUP is region AND sector based.
+        # OUY is region and good based.
+        oup: np.ndarray = self.calibration_database.get_data(&#39;^OUP\(&#39;, self.calibration_year).to_numpy()
+        oup = pd.DataFrame(oup.reshape(self.sym_data.goods_count, self.sym_data.regions_count))
+        oup.index = self.sym_data.goods_members
+        oup.columns = self.sym_data.regions_members
+        ouy: np.ndarray = self.calibration_database.get_data(&#39;^OUY\(&#39;, self.calibration_year).to_numpy()
+        ouy = pd.DataFrame(ouy.reshape(self.sym_data.goods_count, self.sym_data.regions_count))
+        ouy.index = self.sym_data.goods_members
+        ouy.columns = self.sym_data.regions_members
+        oup = oup.loc[self.sym_data.non_electricity_generation_goods_members, :]
+        ouy = ouy.loc[self.sym_data.non_electricity_generation_goods_members, :]
+        delta_dom = oup / ouy
+        self._all_parameters[&#34;delta_dom&#34;] = delta_dom
+        self.insert_parameter(&#34;delta_dom&#34;, delta_dom.to_numpy().flatten())
+
+        # Initialise the delta parameters that will be populated as we iterate the regions
+        delta_e: np.ndarray = None
+
+        delta_m: np.ndarray = None
+
+        delta_mH: pd.DataFrame = self.zeros(
+            rows=self.sym_data.non_energy_or_generation_goods_count, cols=self.sym_data.regions_count)
+        delta_mH.index = self.sym_data.non_energy_or_generation_goods_members
+        delta_mH.columns = self.sym_data.regions_members
+
+        delta_mR: pd.DataFrame = self.zeros(
+            rows=self.sym_data.non_energy_or_generation_goods_count, cols=self.sym_data.regions_count)
+        delta_mR.index = self.sym_data.non_energy_or_generation_goods_members
+        delta_mR.columns = self.sym_data.regions_members
+
+        delta_mG: pd.DataFrame = self.zeros(
+            rows=self.sym_data.non_energy_or_generation_goods_count, cols=self.sym_data.regions_count)
+        delta_mG.index = self.sym_data.non_energy_or_generation_goods_members
+        delta_mG.columns = self.sym_data.regions_members
+
+        delta_eG: pd.DataFrame = self.zeros(
+            rows=self.sym_data.energy_goods_count, cols=self.sym_data.regions_count)
+        delta_eG.index = self.sym_data.energy_goods_members
+        delta_eG.columns = self.sym_data.regions_members
+
+        delta_eH: pd.DataFrame = self.zeros(
+            rows=self.sym_data.energy_goods_count, cols=self.sym_data.regions_count)
+        delta_eH.index = self.sym_data.energy_goods_members
+        delta_eH.columns = self.sym_data.regions_members
+
+        delta_eR: pd.DataFrame = self.zeros(
+            rows=self.sym_data.energy_goods_count, cols=self.sym_data.regions_count)
+        delta_eR.index = self.sym_data.energy_goods_members
+        delta_eR.columns = self.sym_data.regions_members
+
+        delta_oH: pd.DataFrame = self.zeros(
+            rows=self.sym_data.factors_of_production_count, cols=self.sym_data.regions_count)
+        delta_oH.index = self.sym_data.factors_of_production_members
+        delta_oH.columns = self.sym_data.regions_members
+
+        delta_oR: pd.DataFrame = self.zeros(
+            rows=self.sym_data.factors_of_production_count, cols=self.sym_data.regions_count)
+        delta_oR.index = self.sym_data.factors_of_production_members
+        delta_oR.columns = self.sym_data.regions_members
+
+        delta_oG: pd.DataFrame = self.zeros(
+            rows=self.sym_data.factors_of_production_count, cols=self.sym_data.regions_count)
+        delta_oG.index = self.sym_data.factors_of_production_members
+        delta_oG.columns = self.sym_data.regions_members
+
+        # delta_o preparation
+        delta_o_rows: list[str] = self._io_data.io_table_inputs
+        delta_o_rows = [i for i in delta_o_rows if i not in self.sym_data.energy_distribution_sectors_members]
+        delta_o_rows = [i for i in delta_o_rows if i not in [self._io_data.io_table_tax]]
+        delta_oK: pd.DataFrame = self.zeros(rows=self.sym_data.non_energy_distribution_sectors_count, cols=self.sym_data.regions_count)
+        delta_oL: pd.DataFrame = self.zeros(rows=self.sym_data.non_energy_distribution_sectors_count, cols=self.sym_data.regions_count)
+        delta_oE: pd.DataFrame = self.zeros(rows=self.sym_data.non_energy_distribution_sectors_count, cols=self.sym_data.regions_count)
+        delta_oM: pd.DataFrame = self.zeros(rows=self.sym_data.non_energy_distribution_sectors_count, cols=self.sym_data.regions_count)
+        delta_oK.columns = self.sym_data.regions_members
+        delta_oL.columns = self.sym_data.regions_members
+        delta_oE.columns = self.sym_data.regions_members
+        delta_oM.columns = self.sym_data.regions_members
+        delta_oK.index = self.sym_data.non_energy_distribution_sectors_members
+        delta_oL.index = self.sym_data.non_energy_distribution_sectors_members
+        delta_oE.index = self.sym_data.non_energy_distribution_sectors_members
+        delta_oM.index = self.sym_data.non_energy_distribution_sectors_members
+
+        # Now calculate the delta parameters based on the IO tables.
+        for region in self.sym_data.regions_members:
+
+            io_table: pd.DataFrame = self._io_data.io_table(region)
+            if io_table is None:
+                raise Exception(f&#34;There is no IO table for region {region}&#34;)
+
+            # delta_e
+            if self.sym_data.energy_distribution_sectors_count &gt; 0:
+                delta_e_column_names = self.sym_data.non_energy_distribution_sectors_members
+            else:
+                delta_e_column_names = self.sym_data.sectors_members
+            delta_e_io_data = io_table.loc[self.sym_data.energy_goods_members,delta_e_column_names]
+            delta_e_io_data_totals = delta_e_io_data.sum()
+            delta_e_region = np.transpose((delta_e_io_data / delta_e_io_data_totals).to_numpy())
+            if delta_e is None:
+                delta_e = delta_e_region
+            else:
+                delta_e = np.vstack((delta_e, delta_e_region))
+
+           # delta_m
+            if self.sym_data.energy_goods_count &gt; 0:
+                delta_m_column_names = self.sym_data.non_energy_distribution_sectors_members
+            else:
+                delta_m_column_names = self.sym_data.sectors_members
+            delta_m_io_data = io_table.loc[self.sym_data.non_energy_goods_members,
+                                           delta_m_column_names]
+            delta_m_io_data_totals = delta_m_io_data.sum()
+            delta_m_region = delta_m_io_data / delta_m_io_data_totals
+            delta_m_region = pd.DataFrame(
+                np.transpose(delta_m_region.to_numpy()))
+            delta_m_region.index = delta_m_column_names
+            delta_m_region.columns = self.sym_data.non_energy_goods_members
+            delta_m_region_subset = delta_m_region.loc[:, self.sym_data.non_energy_or_generation_goods_members]
+            delta_m_region = delta_m_region_subset.to_numpy()
+            if delta_m is None:
+                delta_m = delta_m_region
+            else:
+                delta_m = np.vstack((delta_m, delta_m_region))
+
+            # delta_mH
+            delta_mH_intermediate: pd.DataFrame = io_table.loc[self.sym_data.non_energy_goods_members,&#34;C&#34;]
+            delta_mH_intermediate = delta_mH_intermediate / delta_mH_intermediate.sum()
+            delta_mH.loc[self.sym_data.non_energy_or_generation_goods_members,region] = delta_mH_intermediate
+
+            # delta_mR
+            delta_mR_intermediate: pd.DataFrame = io_table.loc[self.sym_data.non_energy_goods_members, &#34;I&#34;]
+            delta_mR_intermediate = delta_mR_intermediate / delta_mR_intermediate.sum()
+            delta_mR.loc[self.sym_data.non_energy_or_generation_goods_members, region] = delta_mR_intermediate
+
+            # delta_mG
+            delta_mG_intermediate: pd.DataFrame = io_table.loc[self.sym_data.non_energy_goods_members, &#34;G&#34;]
+            delta_mG_intermediate = delta_mG_intermediate / delta_mG_intermediate.sum()
+            delta_mG.loc[self.sym_data.non_energy_or_generation_goods_members, region] = delta_mG_intermediate
+
+            # delta_eH
+            delta_eH_intermediate: pd.DataFrame = io_table.loc[self.sym_data.energy_goods_members, &#34;C&#34;]
+            delta_eH_intermediate = delta_eH_intermediate / delta_eH_intermediate.sum()
+            delta_eH.loc[:, region] = delta_eH_intermediate.to_numpy()
+
+            # delta_eR
+            delta_eR_intermediate: pd.DataFrame = io_table.loc[self.sym_data.energy_goods_members, &#34;I&#34;].copy() * 1000000000
+            delta_eR_intermediate = delta_eR_intermediate / delta_eR_intermediate.sum()
+            delta_eR.loc[:, region] = delta_eR_intermediate.to_numpy()
+
+            # delta_eG
+            delta_eG_intermediate: pd.DataFrame = io_table.loc[self.sym_data.energy_goods_members, &#34;G&#34;]
+            delta_eG_intermediate = delta_eG_intermediate / delta_eG_intermediate.sum()
+            delta_eG.loc[:, region] = delta_eG_intermediate.to_numpy()
+
+            # delta_oH, delta_oR, delta_oG
+            non_tax_rows = io_table.index.to_list()
+            non_tax_rows.remove(&#34;TAX&#34;)
+
+            delta_oH_intermediate: pd.DataFrame = io_table.loc[non_tax_rows, &#34;C&#34;]
+            delta_oH_total = delta_oH_intermediate.sum()
+            delta_oH.loc[&#34;K&#34;, region] = delta_oH_intermediate[&#34;K&#34;] / delta_oH_total
+            delta_oH.loc[&#34;L&#34;, region] = delta_oH_intermediate[&#34;L&#34;] / delta_oH_total
+            delta_oH.loc[&#34;E&#34;, region] = delta_oH_intermediate[self.sym_data.energy_goods_members].sum() / delta_oH_total
+            delta_oH.loc[&#34;M&#34;, region] = delta_oH_intermediate[self.sym_data.non_energy_goods_members].sum() / delta_oH_total
+
+            delta_oR_intermediate: pd.DataFrame = io_table.loc[non_tax_rows, &#34;I&#34;]
+            delta_oR_total = delta_oR_intermediate.sum()
+            delta_oR.loc[&#34;K&#34;, region] = delta_oR_intermediate[&#34;K&#34;] / delta_oR_total
+            delta_oR.loc[&#34;L&#34;, region] = delta_oR_intermediate[&#34;L&#34;] / delta_oR_total
+            delta_oR.loc[&#34;E&#34;, region] = delta_oR_intermediate[self.sym_data.energy_goods_members].sum() / delta_oR_total
+            delta_oR.loc[&#34;M&#34;, region] = delta_oR_intermediate[self.sym_data.non_energy_goods_members].sum() / delta_oR_total
+
+            non_tax_rows.remove(&#34;K&#34;)
+            delta_oG_intermediate: pd.DataFrame = io_table.loc[non_tax_rows, &#34;G&#34;]
+            delta_oG_total = delta_oG_intermediate.sum()
+            delta_oG.loc[&#34;K&#34;, region] = 0 / delta_oG_total
+            delta_oG.loc[&#34;L&#34;, region] = delta_oG_intermediate[&#34;L&#34;] /  delta_oG_total
+            delta_oG.loc[&#34;E&#34;, region] = delta_oG_intermediate[self.sym_data.energy_goods_members].sum() / delta_oG_total
+            delta_oG.loc[&#34;M&#34;, region] = delta_oG_intermediate[self.sym_data.non_energy_goods_members].sum() / delta_oG_total
+
+            # delta_o (delta_oK, delta_oL, delta_oE, delta_oM) calculations
+            delta_o_denominators = io_table.loc[delta_o_rows,self.sym_data.non_energy_distribution_sectors_members].sum()
+            delta_oK_numerators = io_table.loc[self._io_data.io_table_capital,self.sym_data.non_energy_distribution_sectors_members]
+            delta_oK_region = delta_oK_numerators / delta_o_denominators
+            delta_oL_numerators = io_table.loc[self._io_data.io_table_labour,self.sym_data.non_energy_distribution_sectors_members]
+            delta_oL_region = delta_oL_numerators / delta_o_denominators
+            delta_oE_numerators = io_table.loc[self.sym_data.energy_goods_members,self.sym_data.non_energy_distribution_sectors_members].sum()
+            delta_oE_region = delta_oE_numerators / delta_o_denominators
+            delta_oM_numerators = io_table.loc[self.sym_data.non_energy_goods_members,self.sym_data.non_energy_distribution_sectors_members].sum()
+            delta_oM_region = delta_oM_numerators / delta_o_denominators
+
+            # Store the delta_o components
+            delta_oK.loc[:, region] = delta_oK_region.to_numpy()
+            delta_oL.loc[:, region] = delta_oL_region.to_numpy()
+            delta_oE.loc[:, region] = delta_oE_region.to_numpy()
+            delta_oM.loc[:, region] = delta_oM_region.to_numpy()
+
+        # Store all the delta parameters that were populated
+        # while iterating over the IO tables for the regions.
+
+        # Store delta_e
+        delta_e: pd.DataFrame = pd.DataFrame(delta_e)
+        delta_e.columns = self.sym_data.energy_goods_members
+        self._all_parameters[&#34;delta_e&#34;] = delta_e
+        self.insert_parameter(&#34;delta_e&#34;, delta_e.to_numpy().flatten())
+
+        # Store delta_m
+        delta_m: pd.DataFrame = pd.DataFrame(delta_m)
+        delta_m.columns = self.sym_data.non_energy_or_generation_goods_members
+        self._all_parameters[&#34;delta_m&#34;] = delta_m
+        self.insert_parameter(&#34;delta_m&#34;, delta_m.to_numpy().flatten())
+
+        # Store delta_mH
+        self._all_parameters[&#34;delta_mH&#34;] = delta_mH
+        self.insert_parameter(&#34;delta_mH&#34;, delta_mH.to_numpy().flatten())
+
+        # Store delta_mR
+        self._all_parameters[&#34;delta_mR&#34;] = delta_mR
+        self.insert_parameter(&#34;delta_mR&#34;, delta_mR.to_numpy().flatten())
+
+        # Store delta_mG
+        self._all_parameters[&#34;delta_mG&#34;] = delta_mG
+        self.insert_parameter(&#34;delta_mG&#34;, delta_mG.to_numpy().flatten())
+
+        # Store delta_eH
+        # Replace nan values due to division by zero, with zero.
+        delta_eH = delta_eH.fillna(0)
+        self._all_parameters[&#34;delta_eH&#34;] = delta_eH
+        self.insert_parameter(&#34;delta_eH&#34;, delta_eH.to_numpy().flatten())
+
+        # Store delta_eR
+        # Replace nan values due to division by zero, with zero.
+        delta_eR = delta_eR.fillna(0)
+        self._all_parameters[&#34;delta_eR&#34;] = delta_eR
+        self.insert_parameter(&#34;delta_eR&#34;, delta_eR.to_numpy().flatten())
+
+        # Store delta_eG
+        # Replace nan values due to division by zero, with zero.
+        delta_eG = delta_eG.fillna(0)
+        self._all_parameters[&#34;delta_eG&#34;] = delta_eG
+        self.insert_parameter(&#34;delta_eG&#34;, delta_eG.to_numpy().flatten())
+
+        # Store delta_oH
+        self._all_parameters[&#34;delta_oH&#34;] = delta_oH
+        self.insert_parameter(&#34;delta_oH&#34;, delta_oH.to_numpy().flatten())
+
+        # Store delta_oR
+        self._all_parameters[&#34;delta_oR&#34;] = delta_oR
+        self.insert_parameter(&#34;delta_oR&#34;, delta_oR.to_numpy().flatten())
+
+        # Store delta_oG
+        self._all_parameters[&#34;delta_oG&#34;] = delta_oG
+        self.insert_parameter(&#34;delta_oG&#34;, delta_oG.to_numpy().flatten())
+
+        # store delta_o
+        delta_o: pd.DataFrame = pd.DataFrame(np.vstack((delta_oK.to_numpy(), delta_oL.to_numpy(), delta_oE.to_numpy(), delta_oM.to_numpy())))
+        delta_o.columns = self.sym_data.regions_members
+        self.all_parameters[&#34;delta_o&#34;] = delta_o
+        self.insert_parameter(&#34;delta_o&#34;, delta_o.to_numpy().flatten())
+
+        # delta_ff calculation - very similar to eer_weight calculation!!!
+        # delta_ff foreign source weights in FF
+        imp = self.calibration_database.get_data(&#39;^IMP\(&#39;, self.calibration_year).to_numpy()
+        imp = imp.reshape((self.sym_data.non_electricity_generation_goods_count,
+                           self.sym_data.regions_count,
+                           self.sym_data.regions_count))
+
+        # Sum across sectors (given in axis 0 of the numpy 3D array)
+        # to give the total for each region/region combination
+        # produce the data in variable a as used in Ox implementation.
+        imp_totals = np.sum(imp, axis=2)
+
+        # Divide region to region data for each good by sum across to-regions - I think...
+        # This replicates the normalisation in the Ox implementation and vectorises in the same way...
+        # Geoff: I am sure we could do less transposing if I had good understanding of axis
+        # manipulation in Python numpy arrays.
+        delta_ff: np.ndarray = None
+        delta_ff_dataframe: pd.DataFrame = None
+        for good_index in range(self.sym_data.non_electricity_generation_goods_count):
+            imp[good_index, :, :] = np.transpose(imp[good_index, :, :]) / imp_totals[good_index, :]
+            if delta_ff is None:
+                delta_ff = np.transpose(imp[good_index, :, :]).flatten()
+                delta_ff_dataframe = imp[good_index, :, :]
+            else:
+                delta_ff_dataframe = np.vstack((delta_ff_dataframe, imp[good_index, :, :]))
+                delta_ff = np.hstack((delta_ff, np.transpose(imp[good_index, :, :]).flatten()))
+
+        delta_ff_dataframe = pd.DataFrame(delta_ff_dataframe)
+        delta_ff_dataframe.columns = self.sym_data.regions_members
+        self._all_parameters[&#34;delta_ff&#34;] = delta_ff_dataframe
+        delta_ff = np.transpose(delta_ff)
+        self.insert_parameter(&#34;delta_ff&#34;, delta_ff)
+
+    def _set_weight_parameters(self):
+        &#34;&#34;&#34;
+        prid_weight - Domestic production for each sector in a region.
+        as a fraction of total domestic production across all sectors
+        for that region.
+
+        prim_weight - DF imports by good type divided by
+        the value of imports in total at the destination.
+
+        prix_weight - Exports by non-electricity generating sector  as a fraction of region total exports
+        where exports are measured as a percentage of real GDP for the region.
+
+        eer_weight - trade weights, NEER (trade-weighted exch rate, FC/domestic) and REER (trade-weighted real exch rate, FC/domestic)
+
+        All of these parameters are set using data from the calibration year.
+        &#34;&#34;&#34;
+
+        # prid_weight calculation
+        oup: np.ndarray = self.calibration_database.get_data(&#39;^OUP\(&#39;, self.calibration_year)
+        oup_matrix = oup.to_numpy().reshape((self.sym_data.sectors_count, self.sym_data.regions_count))
+        oup_by_region = np.sum(oup_matrix, axis=0)
+        prid_weight = pd.DataFrame(oup_matrix / oup_by_region)
+        prid_weight.index = self.sym_data.sectors_members
+        prid_weight.columns = self.sym_data.regions_members
+        self._all_parameters[&#34;prid_weight&#34;] = prid_weight
+        self.insert_parameter(&#34;prid_weight&#34;, prid_weight.to_numpy().flatten())
+
+        # prim_weight calculation
+
+        imq: np.ndarray = self.calibration_database.get_data(&#39;^IMQ\(&#39;, self.calibration_year)
+        imq_matrix = imq.to_numpy().reshape((self.sym_data.non_electricity_generation_goods_count, self.sym_data.regions_count))
+
+        imqt: np.ndarray = self.calibration_database.get_data(&#39;^IMQT\(&#39;, self.calibration_year).to_numpy().reshape((1, self.sym_data.regions_count))
+        prim_weight = pd.DataFrame(imq_matrix / imqt)
+        prim_weight.index = self.sym_data.non_electricity_generation_goods_members
+        prim_weight.columns = self.sym_data.regions_members
+        self._all_parameters[&#34;prim_weight&#34;] = prim_weight
+        self.insert_parameter(&#34;prim_weight&#34;, prim_weight.to_numpy().flatten())
+
+        # prix_weight calculation
+        exq = self.calibration_database.get_data(&#39;^EXQ\(&#39;, self.calibration_year).to_numpy().reshape((self.sym_data.non_electricity_generation_goods_count, self.sym_data.regions_count))
+        exq_region_totals = np.sum(exq, axis=0)
+        prix_weight = pd.DataFrame(exq / exq_region_totals)
+        prix_weight.index = self.sym_data.non_electricity_generation_goods_members
+        prix_weight.columns = self.sym_data.regions_members
+        self._all_parameters[&#34;prix_weight&#34;] = prix_weight
+        self.insert_parameter(&#34;prix_weight&#34;, prix_weight.to_numpy().flatten())
+
+        # eer_weight calculation
+        imp = self.calibration_database.get_data(&#39;^IMP\(&#39;, self.calibration_year).to_numpy()
+        imp = imp.reshape((self.sym_data.non_electricity_generation_goods_count,
+                           self.sym_data.regions_count,
+                           self.sym_data.regions_count))
+        # Sum across sectors (given in axis 0 of the numpy 3D array)
+        # to give the total for each region/region combination
+        imp = np.sum(imp, axis=0)
+        imp_totals = np.sum(imp, axis=1)
+        # TODO: Geoff says: Someone with better knowledge of numpy arrays
+        # should eliminate at least one transpose in the line below.
+        imp = np.transpose(np.transpose(imp) / imp_totals)
+        eer_weight = pd.DataFrame(imp)
+        eer_weight.index = self.sym_data.regions_members
+        eer_weight.columns = self.sym_data.regions_members
+        self._all_parameters[&#34;eer_weight&#34;] = eer_weight
+        self.insert_parameter(&#34;eer_weight&#34;, eer_weight.to_numpy().flatten())
+
+    def __set_other_parameters(self):
+        &#34;&#34;&#34;
+        transgdp - transfers per unit of GDP - set to zeros.
+
+        mongdp - coefficient on money-demanded in
+        the equation for total wealth for a region
+
+        TODO: Determine if makeinv is being computed as described in the SYM documentation.
+        The Ox implementation is being replicated at the moment but the makeinv table is
+        not aligned to the way it is described in the SYM documentation.
+
+        makeinv - Supposed to be the inverse of the make table but
+        currently being set up as rows of 1s in a log matrix of zeros.
+
+        &#34;&#34;&#34;
+
+        # transgdp - done.
+        transgdp = self.zeros(rows=1, cols=self.sym_data.regions_count)
+        self._all_parameters[&#34;transgdp&#34;] = transgdp
+        self.insert_parameter(&#34;transgdp&#34;, transgdp.to_numpy().flatten())
+
+        # mongdp
+        mongdp = self.zeros(rows=1, cols=self.sym_data.regions_count)
+        self._all_parameters[&#34;mongdp&#34;] = mongdp
+        self.insert_parameter(&#34;mongdp&#34;, mongdp.to_numpy().flatten())
+
+        # TODO: implement makeinv calculation
+        sector_count = self.sym_data.sectors_count
+        makeinv = self.zeros(rows=(sector_count * sector_count),
+                             cols=self.sym_data.regions_count)
+        unit_vector = self.zeros(rows=1,
+                                 cols=self.sym_data.regions_count) + 1
+        for i in range(sector_count):
+            row_index = i*(sector_count)+i
+            makeinv.iloc[row_index, :] = unit_vector
+            i = i + 1
+        self._all_parameters[&#34;makeinv&#34;] = makeinv
+        self.insert_parameter(&#34;makeinv&#34;, makeinv.to_numpy().flatten())
+
+    def __set_emissions_parameters(self):
+        &#34;&#34;&#34;
+        Set the values of the emissions parameters.
+        TODO: These parameters need more detailed descriptions in SYM.
+        carcoef - carbon emissions coefficients
+        btucoef - emissions coefficients, energy
+        gwhcoef - gigawatt hours electricity per annum
+        &#34;&#34;&#34;
+
+        if self.sym_data.electricity_generation_goods_count == 0:
+
+            carcoef: pd.DataFrame = self.zeros(rows=self.sym_data.sectors_count, cols=self.sym_data.regions_count)
+            self._all_parameters[&#34;carcoef&#34;] = carcoef
+            self.insert_parameter(&#34;carcoef&#34;, carcoef.to_numpy().flatten())
+
+            btucoef: pd.DataFrame = self.zeros(rows=self.sym_data.sectors_count, cols=self.sym_data.regions_count)
+            self._all_parameters[&#34;btucoef&#34;] = btucoef
+            self.insert_parameter(&#34;btucoef&#34;, btucoef.to_numpy().flatten())
+
+            return
+
+        # Now for the non-zero setting of the emissions parameters.
+        e_coal: np.ndarray = self.calibration_database.get_data(&#39;^ECOL\(&#39;, self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+        e_oil: np.ndarray = self.calibration_database.get_data(&#39;^EOIL\(&#39;, self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+        e_gas: np.ndarray = self.calibration_database.get_data(&#39;^EGAS\(&#39;, self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+
+        b_coal: np.ndarray = self.calibration_database.get_data(&#39;^BCOL\(&#39;, self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+        b_oil: np.ndarray = self.calibration_database.get_data(&#39;^BOIL\(&#39;, self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+        b_gas: np.ndarray = self.calibration_database.get_data(&#39;^BGAS\(&#39;, self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+
+
+        # Keep as a pd.Dataframe instead of a np.ndarray so we can select by region later on.
+        lgdpn: pd.DataFrame = self.calibration_database.get_data(&#39;^LGDPN\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        lgdpn.index = self.sym_data.regions_members
+
+        carcoef: pd.DataFrame = self.zeros(rows=self.sym_data.sectors_count, cols=self.sym_data.regions_count)
+        carcoef.index = self.sym_data.goods_members
+        carcoef.columns = self.sym_data.regions_members
+
+        btucoef: pd.DataFrame = self.zeros(rows=self.sym_data.sectors_count, cols=self.sym_data.regions_count)
+        btucoef.index = self.sym_data.goods_members
+        btucoef.columns = self.sym_data.regions_members
+
+        for good in self.sym_data.non_electricity_generation_goods_members:
+
+            oup: np.ndarray = self.calibration_database.get_data(&#39;^OUP\({}&#39;.format(self.sym_data.sector_producing(good)), self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+            imq: np.ndarray = self.calibration_database.get_data(&#39;^IMQ\({}&#39;.format(good), self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+            exq: np.ndarray = self.calibration_database.get_data(&#39;^EXQ\({}&#39;.format(good), self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+
+            match good:
+                case self.sym_data.oil_sector_good:
+                    carcoef.loc[[good], :] = (e_oil / (10 * (oup + imq - exq) * lgdpn.to_numpy())).transpose()
+                    btucoef.loc[[good], :] = (b_oil / (10 * (oup + imq - exq) * lgdpn.to_numpy())).transpose()
+
+                case self.sym_data.gas_sector_good:
+                    carcoef.loc[[good], :] = (e_gas / (10 * (oup + imq - exq) * lgdpn.to_numpy())).transpose()
+                    btucoef.loc[[good], :] = (b_gas / (10 * (oup + imq - exq) * lgdpn.to_numpy())).transpose()
+
+                case self.sym_data.coal_sector_good:
+                    carcoef.loc[[good], :] = (e_coal / (10 * (oup + imq - exq) * lgdpn.to_numpy())).transpose()
+                    btucoef.loc[[good], :] = (b_coal / (10 * (oup + imq - exq) * lgdpn.to_numpy())).transpose()
+
+        self._all_parameters[&#34;carcoef&#34;] = carcoef
+        self.insert_parameter(&#34;carcoef&#34;, carcoef.to_numpy().flatten())
+        self._all_parameters[&#34;btucoef&#34;] = btucoef
+        self.insert_parameter(&#34;btucoef&#34;, btucoef.to_numpy().flatten())
+
+        # Electricity generation (setparsym line 643.)
+        gwhcoef: pd.DataFrame = self.zeros(rows=self.sym_data.sectors_count, cols=self.sym_data.regions_count)
+        gwhcoef.index = self.sym_data.goods_members
+        gwhcoef.columns = self.sym_data.regions_members
+
+        g_coal: np.ndarray = self.calibration_database.get_data(&#39;^GCOL\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        g_coal.index = self.sym_data.regions_members
+        g_gas: np.ndarray = self.calibration_database.get_data(&#39;^GGAS\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        g_gas.index = self.sym_data.regions_members
+        g_oil: np.ndarray = self.calibration_database.get_data(&#39;^GOIL\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        g_oil.index = self.sym_data.regions_members
+        g_nuclear: np.ndarray = self.calibration_database.get_data(&#39;^GNUC\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        g_nuclear.index = self.sym_data.regions_members
+        g_wind: np.ndarray = self.calibration_database.get_data(&#39;^GWIND\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        g_wind.index = self.sym_data.regions_members
+        g_solar: np.ndarray = self.calibration_database.get_data(&#39;^GSOLAR\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        g_solar.index = self.sym_data.regions_members
+        g_hydro: np.ndarray = self.calibration_database.get_data(&#39;^GHYDRO\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        g_hydro.index = self.sym_data.regions_members
+        g_other: np.ndarray = self.calibration_database.get_data(&#39;^GOTHER\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        g_other.index = self.sym_data.regions_members
+
+        g_all = pd.concat([g_coal, g_gas, g_oil, g_nuclear, g_wind, g_solar, g_hydro, g_other], axis=1)
+        g_all.columns = self.sym_data.electricity_generation_goods_members
+
+        for region in self.sym_data.regions_members:
+
+            total_electricity_generated_in_region = g_all.loc[region, :]
+
+            io_table: pd.DataFrame = self._io_data.io_table(region)
+
+            io_table_GDP = io_table.loc[:, [&#34;C&#34;, &#34;I&#34;, &#34;G&#34;, &#34;X&#34;]].to_numpy().sum()
+
+            # domestic use of output from each electricity generation sector
+            generation_goods = self.sym_data.electricity_generation_goods_members
+            domestic_uses = io_table.columns.to_list()
+            domestic_uses.remove(&#34;X&#34;)
+            domestic_uses.remove(&#34;M&#34;)
+            sub_io_table = io_table.loc[generation_goods, domestic_uses]
+            domestic_use_of_electricity = sub_io_table.sum(
+                axis=&#39;columns&#39;)
+
+            # Get the region&#39;s scalar float value for LGDPN in the base calibration year.
+            region_lgdpn = float(lgdpn.loc[region,:].values[0])
+
+            region_gwhcoef = (100 * total_electricity_generated_in_region) / (region_lgdpn * (domestic_use_of_electricity / io_table_GDP))
+
+            gwhcoef.loc[generation_goods, region] = region_gwhcoef.to_numpy().reshape((len(generation_goods), 1))
+
+        self._all_parameters[&#34;gwhcoef&#34;] = gwhcoef
+        self.insert_parameter(&#34;gwhcoef&#34;, gwhcoef.to_numpy().flatten())
+
+    def __set_cd(self, sigma_parameter: pd.DataFrame) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Converts dataframe to zeros/ones, with 1 for any value in the input
+        dataframe that is close enough to 1, and zero otherwise.
+        &#34;&#34;&#34;
+        result = ((sigma_parameter &gt; 0.99999) &amp; (sigma_parameter &lt; 1.00001))
+
+        # Multiply by 1 to convert Boolean values to integers
+        return (result * 1)
+
+    def insert_parameter(self, parameter_name: str, parameter_value_vector: np.ndarray):
+        &#34;&#34;&#34;
+        Inserts the vectorised set of values for a parameter into the full parameter values vector.
+        &#34;&#34;&#34;
+        row_indices: list[int] = [i for i, x in enumerate(self._parameter_base_names) if x == parameter_name]
+
+        if len(row_indices) == 0:
+            logging.warning(f&#34;Parameter {parameter_name} is created but not used in the model.&#34;)
+            return
+
+        if len(row_indices) != len(parameter_value_vector):
+            logging.error(
+                &#34;Expected {} values for parameter {} but received {} values&#34;.format(
+                    len(row_indices), parameter_name, len(parameter_value_vector)))
+            return
+
+        self._parameter_values.loc[row_indices, &#34;value&#34;] = parameter_value_vector</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="gcubed.model_parameters.parameters.Parameters"><code class="flex name class">
+<span>class <span class="ident">Parameters</span></span>
+<span>(</span><span>database: Database, base_year: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Manage loading, calculation and provision of model parameters.</p>
+<h2 id="properties">Properties</h2>
+<p>database: The model database</p>
+<p>TODO: Complete this listing of class properties and their explanations.
+_database: the dataframe containing the annual data for all variables.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Parameters(Base):
+    &#34;&#34;&#34;
+    Manage loading, calculation and provision of model parameters.
+
+    Properties:
+
+        database: The model database
+
+        TODO: Complete this listing of class properties and their explanations.
+        _database: the dataframe containing the annual data for all variables.
+
+    &#34;&#34;&#34;
+
+    def __init__(self, database: Database, base_year: int) -&gt; None:
+
+        logging.info(f&#34;Calibrating the model parameters&#34;)
+
+        assert database is not None
+        self._sym_data: SymData = database.sym_data
+        self._base_year = base_year
+        self._calibration_database: CalibrationDatabase = CalibrationDatabase(database=database, base_year=base_year)
+        self._io_data: IOData = IOData(sym_data = self.sym_data)
+
+        self._all_parameters: dict[str, dict[str, float]] = None
+        self._parameter_values: pd.DataFrame = None
+
+        # Build up dictionary of parameter values provided by the user.
+        self.__load_user_set_parameters()
+
+        # Configure all parameter values, using user-specified and computed parameters.
+        self.__configure_parameter_values()
+
+
+    def validate(self):
+        &#34;&#34;&#34;
+        Run from subclass initialisation after the subclass initialisation has completed.
+        Raise an exception if the parameter setting information is invalid
+        &#34;&#34;&#34;
+        assert self._all_parameters is not None
+        assert self._parameter_values is not None
+
+        # No parameter value remains null.
+        parameters_with_missing_values = self.parameter_values[self.parameter_values[&#39;value&#39;].isnull()].index.tolist()
+        if len(parameters_with_missing_values) &gt; 0:
+            logging.error(&#34;The following parameters have not been set:\n{}&#34;.format(parameters_with_missing_values))
+            raise Exception(f&#34;The model is not ready to run. The following parameters have missing values:\n{parameters_with_missing_values}&#34;)
+
+        # If there is an electricity distribution sector,
+        # then phi parameter has a row for each non-distribution sector
+        # otherwise there is a row for all sectors.
+        phi = self.parameter(&#34;phi&#34;)
+        if self.sym_data.energy_distribution_sectors_count &gt; 0:
+            assert len(
+                phi.index) == self.sym_data.non_energy_distribution_sectors_count
+        else:
+            assert len(
+                phi.index) == self.sym_data.sectors_count
+
+        # If the parameters include TCAX, then the SYM model must include the variable with the same name.
+        # TODO: enable these validations when adding optimal policy handling to stable manifold class.
+        # if self.EMZT is not None and isinstance(self.EMZT, pd.DataFrame):
+        #     assert self.TCAX  is not None
+        #     if not self.sym_data.has_variable(variable_name_prefix=&#34;EMZT&#34;):
+        #         logging.error(
+        #             &#34;The user parameters refer to EMZT but EMZT is not in the SYM model definition.&#34;)
+        # if self.TCAX is not None and isinstance(self.TCAX, pd.DataFrame):
+        #     assert self.EMZT is not None
+        #     if not self.sym_data.has_variable(variable_name_prefix=&#34;TCAX&#34;):
+        #         logging.error(
+        #             &#34;The user parameters refer to TCAX but TCAX is not in the SYM model definition.&#34;)
+
+        # Policy optimisation only allowed to be turned on 
+        # if the model parameters include TCAX and EMZT for all regions
+        # and both of those parameters are not zero for all regions.
+        # TODO: enable these validations when adding optimal policy handling to stable manifold class.
+        # TODO: Are there other constraints that should also be imposed (e.g. TCAX and EMZT should be 1 for same regions?)
+        if self.configuration.stable_manifold_use_policy_optimisation:
+            assert self.EMZT is not None
+            assert isinstance(self.EMZT , pd.DataFrame)
+            if self.EMZT.to_numpy().sum().sum() == 0:
+                raise Exception(&#34;You cannot set the model configuration to use optimal policy if EMZT (refer to the SYM variables documentation for the model) is all zeros or missing from the user set parameters.&#34;)
+            assert self.TCAX is not None
+            assert isinstance(self.TCAX, pd.DataFrame)
+            if self.TCAX.to_numpy().sum().sum() == 0:
+                raise Exception(&#34;You cannot set the model configuration to use optimal policy if TCAX (refer to the SYM variables documentation for the model) is all zeros or missing from the user set parameters.&#34;)
+
+    @property 
+    def sym_data(self) -&gt; SymData:
+        return self._sym_data
+
+    @property
+    def configuration(self) -&gt; ModelConfiguration:
+        return self.sym_data.configuration
+
+    @property
+    def calibration_database(self) -&gt; CalibrationDatabase:
+        return self._calibration_database
+
+    @property
+    def calibration_year(self) -&gt; int:
+        return self._base_year
+
+    @ property
+    def non_sym_parameter_names(self):
+        &#34;&#34;&#34;
+        Returns a tuple containing the names of parameters that are assigned values in 
+        the user-set parameter values by region but where those parameters are not
+        defined in the SYM model definition.
+        &#34;&#34;&#34;
+        return (&#34;discrate&#34;, &#34;TCAX&#34;, &#34;EMZT&#34;)
+
+    @ property
+    def all_parameters(self):
+        return self._all_parameters
+
+    def parameter(self, parameter_name: str) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Arguments:
+
+        parameter_name: The name of the parameter to return.
+
+        Return the value of the named parameter as a dataframe.
+
+        Raise an exception if the parameter is not available.
+        &#34;&#34;&#34;
+        if parameter_name in self.all_parameters:
+            return self.all_parameters[parameter_name]
+        raise Exception(f&#34;Parameter {parameter_name} is not set in the model.&#34;)
+
+    def has_parameter(self, parameter_name: str) -&gt; bool:
+        &#34;&#34;&#34;
+        Arguments:
+
+        parameter_name: The name of the parameter to return.
+
+        Return true iff the parameter is available and false otherwise.
+        &#34;&#34;&#34;
+        if not parameter_name in self.all_parameters:
+            return False
+        return True
+
+
+    @ property
+    def parameter_values(self):
+        &#34;&#34;&#34;
+        The vectorised parameter values in SYM model order as a data frame
+        indexed by the parameter name.
+        &#34;&#34;&#34;
+        return self._parameter_values
+
+    @ property
+    def parameter_values_vector(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Used when evaluating the model equations for linearisation.
+        &#34;&#34;&#34;
+        result: np.ndarray = self.parameter_values.value.to_numpy()
+        return result
+
+    @ property
+    def discrate(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Discount rates by region
+        &#34;&#34;&#34;
+        return self.all_parameters[&#34;discrate&#34;]
+
+    @ property
+    def TCAX(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        The TCAX parameter values are 1 for regions where the TCAX (unit tax on carbon)
+        is to be used for the region and 0 if it is not to be used for the region.
+        This feeds into the stable manifold calculation.
+        &#34;&#34;&#34;
+        return self.all_parameters[&#34;TCAX&#34;]
+
+    @ property
+    def EMZT(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        The EMZT parameter values are 1 for regions where the EMZT (carbon emissions)
+        is to be used for the region and 0 if it is not to be used for the region.
+        This feeds into the stable manifold calculation.
+        &#34;&#34;&#34;
+        return self.all_parameters[&#34;EMZT&#34;]
+
+
+    def __load_user_set_parameters(self):
+        &#34;&#34;&#34;
+        Loads the user-specified parameter values from the CSV file
+        listed in the model configuration.
+        &#34;&#34;&#34;
+
+        # Load the parameter values that are set by the user (not in code)
+        filename = self.configuration.parameters_file
+        if not os.path.isfile(filename):
+            raise Exception(&#34;setparameters file &#34; +
+                            filename + &#34; does not exist.&#34;)
+
+        # Load the data and drop the header row that was read in from the CSV file.
+        data: pd.DataFrame = pd.read_csv(filename, header=None)
+        data = data.iloc[1:, :]
+
+        # Read through the rows of the data, populating
+        # a parameter-name keyed dictionary of parameter values.
+        # Take care with parameters that have values spanning
+        # multiple rows. Just store them using the base name
+        # and with the value being the grid of associated values.
+        self._all_parameters: dict[str, pd.DataFrame] = dict()
+        key: str = None
+        values: pd.DataFrame = None
+
+        for row in data.itertuples(index=False):
+            name: str = row[0]
+
+            if isinstance(name, float):
+                raise Exception(f&#34;In the parameters CSV file, the parameter {name} should not have a float datatype. Is it missing?&#34;)
+
+            if name is None:
+                continue
+
+            if name == &#39;end&#39;:
+                if key is not None:
+                    values.columns = self.sym_data.regions_members
+                    self._all_parameters[key] = values
+                break
+
+            new_values = pd.DataFrame(row[1:])
+            new_values = pd.DataFrame.transpose(new_values)
+            new_values = new_values.astype(&#34;float&#34;)
+
+            if &#39;(&#39; in name:
+                name_parts: list = name.split(&#39;(&#39;)
+                base_name = name_parts[0]
+                if base_name != key:
+                    if key is not None:
+                        values.columns = self.sym_data.regions_members
+                        self._all_parameters[key] = values
+                    key = base_name
+                    values = new_values
+                else:
+                    values = pd.concat([values, new_values], ignore_index=True)
+                    values.reset_index()
+            else:
+                if key is not None:
+                    values.columns = self.sym_data.regions_members
+                    self._all_parameters[key] = values
+                key = None
+                values = None
+                new_values.columns = self.sym_data.regions_members
+                self._all_parameters[name] = new_values
+
+
+    def __configure_parameter_values(self):
+        &#34;&#34;&#34;
+        Associates a value with each parameter in the model.
+        Parameters are either set by the user or they
+        are computed.
+        &#34;&#34;&#34;
+        # Get the list of parameter names as the relevant column from var_map
+        parameter_details: pd.DataFrame = self.sym_data.var_map
+        parameter_details = self.sym_data.var_map[self.sym_data.var_map.var_type == &#34;par&#34;].copy()
+
+        # Add a column of missing values that will be filled in.
+        parameter_details[&#39;value&#39;] = np.nan
+        self._parameter_full_names = parameter_details.name.to_list()
+        self._parameter_base_names: list[str] = [re.sub(&#34;[\(\[].*?[\)\]]&#34;, &#34;&#34;, parameter_name) for parameter_name in self._parameter_full_names]
+        parameter_details = parameter_details.reset_index(drop=True)
+        self._parameter_values = parameter_details
+
+        # Incorporate information for the user-specified parameters.
+        self.__set_user_specified_parameters()
+
+        # Now set up the parameters that are determined programmatically (not by direct user input)
+        # Store them in the parameters dictionary as well as in the long vector of parameter values.
+        self.__set_a_matrix_parameters()
+        self.__set_investment_parameters()
+        self.__set_cd_parameters()
+        self.__set_delta_parameters()
+        self.__set_emissions_parameters()
+        self._set_weight_parameters()
+        self.__set_other_parameters()
+
+
+    def __set_user_specified_parameters(self):
+        &#34;&#34;&#34;
+        Set the values in the parameters.
+
+        The user set parameters are contained in a dictionary of dataframes.
+        Iterate this dictionary, vectorise the dataframe appropriately, and add the vectorised
+        values to the parameter_details value column.
+        &#34;&#34;&#34;
+        user_set_parameter_names = self._all_parameters.keys()
+        for user_set_parameter_name in user_set_parameter_names:
+
+            # Stack the transposed rows of the parameter value to store in dataframe.
+            user_set_parameter_value: pd.DataFrame = self._all_parameters[user_set_parameter_name]
+            assert user_set_parameter_value is not None
+
+            vectorised_parameter_value: np.ndarray = user_set_parameter_value.to_numpy().flatten()
+            vectorised_parameter_value = vectorised_parameter_value.reshape((len(vectorised_parameter_value), 1))
+            self.insert_parameter(user_set_parameter_name, vectorised_parameter_value)
+
+    def __set_a_matrix_parameters(self):
+        &#34;&#34;&#34;
+        aeye - Identity matrix.
+        ashr -
+        ainv - Inverse of (aeye - ashr)
+        &#34;&#34;&#34;
+        # aeye - Identity matrix
+        aeye: pd.DataFrame = pd.DataFrame(np.identity(self.sym_data.regions_count))
+        aeye.index = self.sym_data.regions_members
+        aeye.columns = self.sym_data.regions_members
+        self._all_parameters[&#34;aeye&#34;] = aeye
+        self.insert_parameter(&#34;aeye&#34;, aeye.to_numpy().flatten())
+
+        # ashr parameter - Supposed to be the asset split among currencies, for each region.
+        # TODO: Figure out why this approach to setting ashr makes sense. Figure out why this is a constant.
+        # Create the vector yra that is the value of YRATN(XX) for each region XX as given in the original data set
+        # The yra matrix is the values for YRATN in the base year?. (nominal? GDP ratios to USA)
+        # Replicate yra as a column vector, once for each region, to create a square matrix and then obtain its lower triangular matrix,
+        # (zeroing out the values above the main diagonal). Use the numpy tril function to get the lower triangular matrix.
+        # Subtract the lower triangular matrix from the original matrix to get zero everywhere except
+        # above the main diagonal.
+        # sum the columns of this resulting matrix.
+        # For each region, if its column total is above zero, divide all elements in the regions
+        # column of the resulting matrix by the column total to get the column to sum to 1.
+        # If the region&#39;s column total is zero, then set the first element in that column to 1
+        # implying that all future holdings of assets by the region described by that column will be in US dollars.
+        yra: np.ndarray = self.calibration_database.get_data(&#39;^YRATN\(&#39;, self.calibration_year).to_numpy()
+        ashr: np.ndarray = np.repeat(yra, self.sym_data.regions_count)
+        ashr = ashr.reshape((self.sym_data.regions_count,
+                             self.sym_data.regions_count))
+        ashr = ashr - np.tril(ashr, k=0)
+        column_totals = ashr.sum(axis=0)
+        # Divide by column totals, ensuring that we do not try to
+        # divide zero by zero. Use -1 in place of the zeros so we can find the zeros in the next step...
+        column_totals[column_totals == 0] = -1
+        ashr = ashr/column_totals
+        for i in range(1, self.sym_data.regions_count-1, 1):
+            if column_totals[i] == -1:
+                ashr[0][i] = 1
+        ashr = np.abs(ashr)
+        self._all_parameters[&#34;ashr&#34;] = ashr
+        self.insert_parameter(&#34;ashr&#34;, ashr.flatten())
+
+        # ainv parameter - matrix inverse of (aeye - ashr)
+        ainv: np.ndarray = np.linalg.inv(aeye - ashr)
+        # logging.debug(&#34;####### ainv&#34;)
+        # logging.debug(ainv)
+        self._all_parameters[&#34;ainv&#34;] = ainv
+        self.insert_parameter(&#34;ainv&#34;, ainv.flatten())
+
+    def __set_investment_parameters(self):
+        &#34;&#34;&#34;
+        base_jk parameter - base investment (J) divided by capital (K)
+        for the calibration year for each region/standard industry combination:
+
+        This corresponds to a matrix formed from elements
+        in each row of data provided in the calibration year database.
+        &#34;&#34;&#34;
+        inv: np.ndarray = self.calibration_database.get_data(&#39;^INV\(&#39;, self.calibration_year).to_numpy()
+        cap: np.ndarray = self.calibration_database.get_data(&#39;^CAP\(&#39;, self.calibration_year).to_numpy()
+        base_jk: np.ndarray = (inv / cap).reshape((self.sym_data.non_energy_distribution_sectors_count,self.sym_data.regions_count))
+        self._all_parameters[&#34;base_jk&#34;] = base_jk
+        self.insert_parameter(&#34;base_jk&#34;, base_jk.flatten())
+
+    def __set_cd_parameters(self):
+        &#34;&#34;&#34;
+        cd_*  parameters are all switches to flip between the
+        Constant Elasticity of Substitution (CES) production function
+        and the Cobb-Douglas production function.
+
+        A value of 1 means Cobb-Douglas and 0 means CES.
+
+        These parameters are all inferred from the supplied elasticities of
+        substitution. If the elasticities of substitution are close enough to 1
+        then the elasticity of substitution is effectively set to 1 by
+        working with the Cobb-Douglas function.
+        &#34;&#34;&#34;
+
+        sigma_parameter_names: list[str] = []
+        for parameter_name in self.all_parameters:
+            if parameter_name.startswith(&#34;sigma_&#34;):
+                sigma_parameter_names.append(parameter_name)
+
+        for sigma_parameter_name in sigma_parameter_names:
+            cd_parameter_name: str = sigma_parameter_name.replace(&#34;sigma_&#34;, &#34;cd_&#34;, 1)
+            cd_parameter_value = self.__set_cd(self._all_parameters[sigma_parameter_name])
+            self._all_parameters[cd_parameter_name] = cd_parameter_value
+            self.insert_parameter(cd_parameter_name, cd_parameter_value.to_numpy().flatten())
+
+    def __set_delta_parameters(self):
+        &#34;&#34;&#34;
+        TODO: Document the definitions of each of these parameters
+        and the economics behind their calibration.
+
+        delta_dom
+        delta_e
+        delta_m
+        delta_ff
+        delta_mH - C: consumption column of IO table
+        delta_mR - I: investment column of IO table
+        delta_mG - G: government column of IO table
+        delta_eH - C: consumption column of IO table - energy sectors
+        delta_eR - I: investment column of IO table - energy sectors
+        delta_eG - G: government column of IO table - energy sectors
+        delta_oG - C: consumption column of IO table
+        delta_oH - I: investment column of IO table
+        delta_oR - G: government column of IO table
+        &#34;&#34;&#34;
+
+        # delta_dom parameter - The ratio of OUY (composite supply) to
+        # OUP (domestic production), in the calibration year,
+        # for all the non-electricity generation sectors (g01, g02, ...).
+        # OUP is region AND sector based.
+        # OUY is region and good based.
+        oup: np.ndarray = self.calibration_database.get_data(&#39;^OUP\(&#39;, self.calibration_year).to_numpy()
+        oup = pd.DataFrame(oup.reshape(self.sym_data.goods_count, self.sym_data.regions_count))
+        oup.index = self.sym_data.goods_members
+        oup.columns = self.sym_data.regions_members
+        ouy: np.ndarray = self.calibration_database.get_data(&#39;^OUY\(&#39;, self.calibration_year).to_numpy()
+        ouy = pd.DataFrame(ouy.reshape(self.sym_data.goods_count, self.sym_data.regions_count))
+        ouy.index = self.sym_data.goods_members
+        ouy.columns = self.sym_data.regions_members
+        oup = oup.loc[self.sym_data.non_electricity_generation_goods_members, :]
+        ouy = ouy.loc[self.sym_data.non_electricity_generation_goods_members, :]
+        delta_dom = oup / ouy
+        self._all_parameters[&#34;delta_dom&#34;] = delta_dom
+        self.insert_parameter(&#34;delta_dom&#34;, delta_dom.to_numpy().flatten())
+
+        # Initialise the delta parameters that will be populated as we iterate the regions
+        delta_e: np.ndarray = None
+
+        delta_m: np.ndarray = None
+
+        delta_mH: pd.DataFrame = self.zeros(
+            rows=self.sym_data.non_energy_or_generation_goods_count, cols=self.sym_data.regions_count)
+        delta_mH.index = self.sym_data.non_energy_or_generation_goods_members
+        delta_mH.columns = self.sym_data.regions_members
+
+        delta_mR: pd.DataFrame = self.zeros(
+            rows=self.sym_data.non_energy_or_generation_goods_count, cols=self.sym_data.regions_count)
+        delta_mR.index = self.sym_data.non_energy_or_generation_goods_members
+        delta_mR.columns = self.sym_data.regions_members
+
+        delta_mG: pd.DataFrame = self.zeros(
+            rows=self.sym_data.non_energy_or_generation_goods_count, cols=self.sym_data.regions_count)
+        delta_mG.index = self.sym_data.non_energy_or_generation_goods_members
+        delta_mG.columns = self.sym_data.regions_members
+
+        delta_eG: pd.DataFrame = self.zeros(
+            rows=self.sym_data.energy_goods_count, cols=self.sym_data.regions_count)
+        delta_eG.index = self.sym_data.energy_goods_members
+        delta_eG.columns = self.sym_data.regions_members
+
+        delta_eH: pd.DataFrame = self.zeros(
+            rows=self.sym_data.energy_goods_count, cols=self.sym_data.regions_count)
+        delta_eH.index = self.sym_data.energy_goods_members
+        delta_eH.columns = self.sym_data.regions_members
+
+        delta_eR: pd.DataFrame = self.zeros(
+            rows=self.sym_data.energy_goods_count, cols=self.sym_data.regions_count)
+        delta_eR.index = self.sym_data.energy_goods_members
+        delta_eR.columns = self.sym_data.regions_members
+
+        delta_oH: pd.DataFrame = self.zeros(
+            rows=self.sym_data.factors_of_production_count, cols=self.sym_data.regions_count)
+        delta_oH.index = self.sym_data.factors_of_production_members
+        delta_oH.columns = self.sym_data.regions_members
+
+        delta_oR: pd.DataFrame = self.zeros(
+            rows=self.sym_data.factors_of_production_count, cols=self.sym_data.regions_count)
+        delta_oR.index = self.sym_data.factors_of_production_members
+        delta_oR.columns = self.sym_data.regions_members
+
+        delta_oG: pd.DataFrame = self.zeros(
+            rows=self.sym_data.factors_of_production_count, cols=self.sym_data.regions_count)
+        delta_oG.index = self.sym_data.factors_of_production_members
+        delta_oG.columns = self.sym_data.regions_members
+
+        # delta_o preparation
+        delta_o_rows: list[str] = self._io_data.io_table_inputs
+        delta_o_rows = [i for i in delta_o_rows if i not in self.sym_data.energy_distribution_sectors_members]
+        delta_o_rows = [i for i in delta_o_rows if i not in [self._io_data.io_table_tax]]
+        delta_oK: pd.DataFrame = self.zeros(rows=self.sym_data.non_energy_distribution_sectors_count, cols=self.sym_data.regions_count)
+        delta_oL: pd.DataFrame = self.zeros(rows=self.sym_data.non_energy_distribution_sectors_count, cols=self.sym_data.regions_count)
+        delta_oE: pd.DataFrame = self.zeros(rows=self.sym_data.non_energy_distribution_sectors_count, cols=self.sym_data.regions_count)
+        delta_oM: pd.DataFrame = self.zeros(rows=self.sym_data.non_energy_distribution_sectors_count, cols=self.sym_data.regions_count)
+        delta_oK.columns = self.sym_data.regions_members
+        delta_oL.columns = self.sym_data.regions_members
+        delta_oE.columns = self.sym_data.regions_members
+        delta_oM.columns = self.sym_data.regions_members
+        delta_oK.index = self.sym_data.non_energy_distribution_sectors_members
+        delta_oL.index = self.sym_data.non_energy_distribution_sectors_members
+        delta_oE.index = self.sym_data.non_energy_distribution_sectors_members
+        delta_oM.index = self.sym_data.non_energy_distribution_sectors_members
+
+        # Now calculate the delta parameters based on the IO tables.
+        for region in self.sym_data.regions_members:
+
+            io_table: pd.DataFrame = self._io_data.io_table(region)
+            if io_table is None:
+                raise Exception(f&#34;There is no IO table for region {region}&#34;)
+
+            # delta_e
+            if self.sym_data.energy_distribution_sectors_count &gt; 0:
+                delta_e_column_names = self.sym_data.non_energy_distribution_sectors_members
+            else:
+                delta_e_column_names = self.sym_data.sectors_members
+            delta_e_io_data = io_table.loc[self.sym_data.energy_goods_members,delta_e_column_names]
+            delta_e_io_data_totals = delta_e_io_data.sum()
+            delta_e_region = np.transpose((delta_e_io_data / delta_e_io_data_totals).to_numpy())
+            if delta_e is None:
+                delta_e = delta_e_region
+            else:
+                delta_e = np.vstack((delta_e, delta_e_region))
+
+           # delta_m
+            if self.sym_data.energy_goods_count &gt; 0:
+                delta_m_column_names = self.sym_data.non_energy_distribution_sectors_members
+            else:
+                delta_m_column_names = self.sym_data.sectors_members
+            delta_m_io_data = io_table.loc[self.sym_data.non_energy_goods_members,
+                                           delta_m_column_names]
+            delta_m_io_data_totals = delta_m_io_data.sum()
+            delta_m_region = delta_m_io_data / delta_m_io_data_totals
+            delta_m_region = pd.DataFrame(
+                np.transpose(delta_m_region.to_numpy()))
+            delta_m_region.index = delta_m_column_names
+            delta_m_region.columns = self.sym_data.non_energy_goods_members
+            delta_m_region_subset = delta_m_region.loc[:, self.sym_data.non_energy_or_generation_goods_members]
+            delta_m_region = delta_m_region_subset.to_numpy()
+            if delta_m is None:
+                delta_m = delta_m_region
+            else:
+                delta_m = np.vstack((delta_m, delta_m_region))
+
+            # delta_mH
+            delta_mH_intermediate: pd.DataFrame = io_table.loc[self.sym_data.non_energy_goods_members,&#34;C&#34;]
+            delta_mH_intermediate = delta_mH_intermediate / delta_mH_intermediate.sum()
+            delta_mH.loc[self.sym_data.non_energy_or_generation_goods_members,region] = delta_mH_intermediate
+
+            # delta_mR
+            delta_mR_intermediate: pd.DataFrame = io_table.loc[self.sym_data.non_energy_goods_members, &#34;I&#34;]
+            delta_mR_intermediate = delta_mR_intermediate / delta_mR_intermediate.sum()
+            delta_mR.loc[self.sym_data.non_energy_or_generation_goods_members, region] = delta_mR_intermediate
+
+            # delta_mG
+            delta_mG_intermediate: pd.DataFrame = io_table.loc[self.sym_data.non_energy_goods_members, &#34;G&#34;]
+            delta_mG_intermediate = delta_mG_intermediate / delta_mG_intermediate.sum()
+            delta_mG.loc[self.sym_data.non_energy_or_generation_goods_members, region] = delta_mG_intermediate
+
+            # delta_eH
+            delta_eH_intermediate: pd.DataFrame = io_table.loc[self.sym_data.energy_goods_members, &#34;C&#34;]
+            delta_eH_intermediate = delta_eH_intermediate / delta_eH_intermediate.sum()
+            delta_eH.loc[:, region] = delta_eH_intermediate.to_numpy()
+
+            # delta_eR
+            delta_eR_intermediate: pd.DataFrame = io_table.loc[self.sym_data.energy_goods_members, &#34;I&#34;].copy() * 1000000000
+            delta_eR_intermediate = delta_eR_intermediate / delta_eR_intermediate.sum()
+            delta_eR.loc[:, region] = delta_eR_intermediate.to_numpy()
+
+            # delta_eG
+            delta_eG_intermediate: pd.DataFrame = io_table.loc[self.sym_data.energy_goods_members, &#34;G&#34;]
+            delta_eG_intermediate = delta_eG_intermediate / delta_eG_intermediate.sum()
+            delta_eG.loc[:, region] = delta_eG_intermediate.to_numpy()
+
+            # delta_oH, delta_oR, delta_oG
+            non_tax_rows = io_table.index.to_list()
+            non_tax_rows.remove(&#34;TAX&#34;)
+
+            delta_oH_intermediate: pd.DataFrame = io_table.loc[non_tax_rows, &#34;C&#34;]
+            delta_oH_total = delta_oH_intermediate.sum()
+            delta_oH.loc[&#34;K&#34;, region] = delta_oH_intermediate[&#34;K&#34;] / delta_oH_total
+            delta_oH.loc[&#34;L&#34;, region] = delta_oH_intermediate[&#34;L&#34;] / delta_oH_total
+            delta_oH.loc[&#34;E&#34;, region] = delta_oH_intermediate[self.sym_data.energy_goods_members].sum() / delta_oH_total
+            delta_oH.loc[&#34;M&#34;, region] = delta_oH_intermediate[self.sym_data.non_energy_goods_members].sum() / delta_oH_total
+
+            delta_oR_intermediate: pd.DataFrame = io_table.loc[non_tax_rows, &#34;I&#34;]
+            delta_oR_total = delta_oR_intermediate.sum()
+            delta_oR.loc[&#34;K&#34;, region] = delta_oR_intermediate[&#34;K&#34;] / delta_oR_total
+            delta_oR.loc[&#34;L&#34;, region] = delta_oR_intermediate[&#34;L&#34;] / delta_oR_total
+            delta_oR.loc[&#34;E&#34;, region] = delta_oR_intermediate[self.sym_data.energy_goods_members].sum() / delta_oR_total
+            delta_oR.loc[&#34;M&#34;, region] = delta_oR_intermediate[self.sym_data.non_energy_goods_members].sum() / delta_oR_total
+
+            non_tax_rows.remove(&#34;K&#34;)
+            delta_oG_intermediate: pd.DataFrame = io_table.loc[non_tax_rows, &#34;G&#34;]
+            delta_oG_total = delta_oG_intermediate.sum()
+            delta_oG.loc[&#34;K&#34;, region] = 0 / delta_oG_total
+            delta_oG.loc[&#34;L&#34;, region] = delta_oG_intermediate[&#34;L&#34;] /  delta_oG_total
+            delta_oG.loc[&#34;E&#34;, region] = delta_oG_intermediate[self.sym_data.energy_goods_members].sum() / delta_oG_total
+            delta_oG.loc[&#34;M&#34;, region] = delta_oG_intermediate[self.sym_data.non_energy_goods_members].sum() / delta_oG_total
+
+            # delta_o (delta_oK, delta_oL, delta_oE, delta_oM) calculations
+            delta_o_denominators = io_table.loc[delta_o_rows,self.sym_data.non_energy_distribution_sectors_members].sum()
+            delta_oK_numerators = io_table.loc[self._io_data.io_table_capital,self.sym_data.non_energy_distribution_sectors_members]
+            delta_oK_region = delta_oK_numerators / delta_o_denominators
+            delta_oL_numerators = io_table.loc[self._io_data.io_table_labour,self.sym_data.non_energy_distribution_sectors_members]
+            delta_oL_region = delta_oL_numerators / delta_o_denominators
+            delta_oE_numerators = io_table.loc[self.sym_data.energy_goods_members,self.sym_data.non_energy_distribution_sectors_members].sum()
+            delta_oE_region = delta_oE_numerators / delta_o_denominators
+            delta_oM_numerators = io_table.loc[self.sym_data.non_energy_goods_members,self.sym_data.non_energy_distribution_sectors_members].sum()
+            delta_oM_region = delta_oM_numerators / delta_o_denominators
+
+            # Store the delta_o components
+            delta_oK.loc[:, region] = delta_oK_region.to_numpy()
+            delta_oL.loc[:, region] = delta_oL_region.to_numpy()
+            delta_oE.loc[:, region] = delta_oE_region.to_numpy()
+            delta_oM.loc[:, region] = delta_oM_region.to_numpy()
+
+        # Store all the delta parameters that were populated
+        # while iterating over the IO tables for the regions.
+
+        # Store delta_e
+        delta_e: pd.DataFrame = pd.DataFrame(delta_e)
+        delta_e.columns = self.sym_data.energy_goods_members
+        self._all_parameters[&#34;delta_e&#34;] = delta_e
+        self.insert_parameter(&#34;delta_e&#34;, delta_e.to_numpy().flatten())
+
+        # Store delta_m
+        delta_m: pd.DataFrame = pd.DataFrame(delta_m)
+        delta_m.columns = self.sym_data.non_energy_or_generation_goods_members
+        self._all_parameters[&#34;delta_m&#34;] = delta_m
+        self.insert_parameter(&#34;delta_m&#34;, delta_m.to_numpy().flatten())
+
+        # Store delta_mH
+        self._all_parameters[&#34;delta_mH&#34;] = delta_mH
+        self.insert_parameter(&#34;delta_mH&#34;, delta_mH.to_numpy().flatten())
+
+        # Store delta_mR
+        self._all_parameters[&#34;delta_mR&#34;] = delta_mR
+        self.insert_parameter(&#34;delta_mR&#34;, delta_mR.to_numpy().flatten())
+
+        # Store delta_mG
+        self._all_parameters[&#34;delta_mG&#34;] = delta_mG
+        self.insert_parameter(&#34;delta_mG&#34;, delta_mG.to_numpy().flatten())
+
+        # Store delta_eH
+        # Replace nan values due to division by zero, with zero.
+        delta_eH = delta_eH.fillna(0)
+        self._all_parameters[&#34;delta_eH&#34;] = delta_eH
+        self.insert_parameter(&#34;delta_eH&#34;, delta_eH.to_numpy().flatten())
+
+        # Store delta_eR
+        # Replace nan values due to division by zero, with zero.
+        delta_eR = delta_eR.fillna(0)
+        self._all_parameters[&#34;delta_eR&#34;] = delta_eR
+        self.insert_parameter(&#34;delta_eR&#34;, delta_eR.to_numpy().flatten())
+
+        # Store delta_eG
+        # Replace nan values due to division by zero, with zero.
+        delta_eG = delta_eG.fillna(0)
+        self._all_parameters[&#34;delta_eG&#34;] = delta_eG
+        self.insert_parameter(&#34;delta_eG&#34;, delta_eG.to_numpy().flatten())
+
+        # Store delta_oH
+        self._all_parameters[&#34;delta_oH&#34;] = delta_oH
+        self.insert_parameter(&#34;delta_oH&#34;, delta_oH.to_numpy().flatten())
+
+        # Store delta_oR
+        self._all_parameters[&#34;delta_oR&#34;] = delta_oR
+        self.insert_parameter(&#34;delta_oR&#34;, delta_oR.to_numpy().flatten())
+
+        # Store delta_oG
+        self._all_parameters[&#34;delta_oG&#34;] = delta_oG
+        self.insert_parameter(&#34;delta_oG&#34;, delta_oG.to_numpy().flatten())
+
+        # store delta_o
+        delta_o: pd.DataFrame = pd.DataFrame(np.vstack((delta_oK.to_numpy(), delta_oL.to_numpy(), delta_oE.to_numpy(), delta_oM.to_numpy())))
+        delta_o.columns = self.sym_data.regions_members
+        self.all_parameters[&#34;delta_o&#34;] = delta_o
+        self.insert_parameter(&#34;delta_o&#34;, delta_o.to_numpy().flatten())
+
+        # delta_ff calculation - very similar to eer_weight calculation!!!
+        # delta_ff foreign source weights in FF
+        imp = self.calibration_database.get_data(&#39;^IMP\(&#39;, self.calibration_year).to_numpy()
+        imp = imp.reshape((self.sym_data.non_electricity_generation_goods_count,
+                           self.sym_data.regions_count,
+                           self.sym_data.regions_count))
+
+        # Sum across sectors (given in axis 0 of the numpy 3D array)
+        # to give the total for each region/region combination
+        # produce the data in variable a as used in Ox implementation.
+        imp_totals = np.sum(imp, axis=2)
+
+        # Divide region to region data for each good by sum across to-regions - I think...
+        # This replicates the normalisation in the Ox implementation and vectorises in the same way...
+        # Geoff: I am sure we could do less transposing if I had good understanding of axis
+        # manipulation in Python numpy arrays.
+        delta_ff: np.ndarray = None
+        delta_ff_dataframe: pd.DataFrame = None
+        for good_index in range(self.sym_data.non_electricity_generation_goods_count):
+            imp[good_index, :, :] = np.transpose(imp[good_index, :, :]) / imp_totals[good_index, :]
+            if delta_ff is None:
+                delta_ff = np.transpose(imp[good_index, :, :]).flatten()
+                delta_ff_dataframe = imp[good_index, :, :]
+            else:
+                delta_ff_dataframe = np.vstack((delta_ff_dataframe, imp[good_index, :, :]))
+                delta_ff = np.hstack((delta_ff, np.transpose(imp[good_index, :, :]).flatten()))
+
+        delta_ff_dataframe = pd.DataFrame(delta_ff_dataframe)
+        delta_ff_dataframe.columns = self.sym_data.regions_members
+        self._all_parameters[&#34;delta_ff&#34;] = delta_ff_dataframe
+        delta_ff = np.transpose(delta_ff)
+        self.insert_parameter(&#34;delta_ff&#34;, delta_ff)
+
+    def _set_weight_parameters(self):
+        &#34;&#34;&#34;
+        prid_weight - Domestic production for each sector in a region.
+        as a fraction of total domestic production across all sectors
+        for that region.
+
+        prim_weight - DF imports by good type divided by
+        the value of imports in total at the destination.
+
+        prix_weight - Exports by non-electricity generating sector  as a fraction of region total exports
+        where exports are measured as a percentage of real GDP for the region.
+
+        eer_weight - trade weights, NEER (trade-weighted exch rate, FC/domestic) and REER (trade-weighted real exch rate, FC/domestic)
+
+        All of these parameters are set using data from the calibration year.
+        &#34;&#34;&#34;
+
+        # prid_weight calculation
+        oup: np.ndarray = self.calibration_database.get_data(&#39;^OUP\(&#39;, self.calibration_year)
+        oup_matrix = oup.to_numpy().reshape((self.sym_data.sectors_count, self.sym_data.regions_count))
+        oup_by_region = np.sum(oup_matrix, axis=0)
+        prid_weight = pd.DataFrame(oup_matrix / oup_by_region)
+        prid_weight.index = self.sym_data.sectors_members
+        prid_weight.columns = self.sym_data.regions_members
+        self._all_parameters[&#34;prid_weight&#34;] = prid_weight
+        self.insert_parameter(&#34;prid_weight&#34;, prid_weight.to_numpy().flatten())
+
+        # prim_weight calculation
+
+        imq: np.ndarray = self.calibration_database.get_data(&#39;^IMQ\(&#39;, self.calibration_year)
+        imq_matrix = imq.to_numpy().reshape((self.sym_data.non_electricity_generation_goods_count, self.sym_data.regions_count))
+
+        imqt: np.ndarray = self.calibration_database.get_data(&#39;^IMQT\(&#39;, self.calibration_year).to_numpy().reshape((1, self.sym_data.regions_count))
+        prim_weight = pd.DataFrame(imq_matrix / imqt)
+        prim_weight.index = self.sym_data.non_electricity_generation_goods_members
+        prim_weight.columns = self.sym_data.regions_members
+        self._all_parameters[&#34;prim_weight&#34;] = prim_weight
+        self.insert_parameter(&#34;prim_weight&#34;, prim_weight.to_numpy().flatten())
+
+        # prix_weight calculation
+        exq = self.calibration_database.get_data(&#39;^EXQ\(&#39;, self.calibration_year).to_numpy().reshape((self.sym_data.non_electricity_generation_goods_count, self.sym_data.regions_count))
+        exq_region_totals = np.sum(exq, axis=0)
+        prix_weight = pd.DataFrame(exq / exq_region_totals)
+        prix_weight.index = self.sym_data.non_electricity_generation_goods_members
+        prix_weight.columns = self.sym_data.regions_members
+        self._all_parameters[&#34;prix_weight&#34;] = prix_weight
+        self.insert_parameter(&#34;prix_weight&#34;, prix_weight.to_numpy().flatten())
+
+        # eer_weight calculation
+        imp = self.calibration_database.get_data(&#39;^IMP\(&#39;, self.calibration_year).to_numpy()
+        imp = imp.reshape((self.sym_data.non_electricity_generation_goods_count,
+                           self.sym_data.regions_count,
+                           self.sym_data.regions_count))
+        # Sum across sectors (given in axis 0 of the numpy 3D array)
+        # to give the total for each region/region combination
+        imp = np.sum(imp, axis=0)
+        imp_totals = np.sum(imp, axis=1)
+        # TODO: Geoff says: Someone with better knowledge of numpy arrays
+        # should eliminate at least one transpose in the line below.
+        imp = np.transpose(np.transpose(imp) / imp_totals)
+        eer_weight = pd.DataFrame(imp)
+        eer_weight.index = self.sym_data.regions_members
+        eer_weight.columns = self.sym_data.regions_members
+        self._all_parameters[&#34;eer_weight&#34;] = eer_weight
+        self.insert_parameter(&#34;eer_weight&#34;, eer_weight.to_numpy().flatten())
+
+    def __set_other_parameters(self):
+        &#34;&#34;&#34;
+        transgdp - transfers per unit of GDP - set to zeros.
+
+        mongdp - coefficient on money-demanded in
+        the equation for total wealth for a region
+
+        TODO: Determine if makeinv is being computed as described in the SYM documentation.
+        The Ox implementation is being replicated at the moment but the makeinv table is
+        not aligned to the way it is described in the SYM documentation.
+
+        makeinv - Supposed to be the inverse of the make table but
+        currently being set up as rows of 1s in a log matrix of zeros.
+
+        &#34;&#34;&#34;
+
+        # transgdp - done.
+        transgdp = self.zeros(rows=1, cols=self.sym_data.regions_count)
+        self._all_parameters[&#34;transgdp&#34;] = transgdp
+        self.insert_parameter(&#34;transgdp&#34;, transgdp.to_numpy().flatten())
+
+        # mongdp
+        mongdp = self.zeros(rows=1, cols=self.sym_data.regions_count)
+        self._all_parameters[&#34;mongdp&#34;] = mongdp
+        self.insert_parameter(&#34;mongdp&#34;, mongdp.to_numpy().flatten())
+
+        # TODO: implement makeinv calculation
+        sector_count = self.sym_data.sectors_count
+        makeinv = self.zeros(rows=(sector_count * sector_count),
+                             cols=self.sym_data.regions_count)
+        unit_vector = self.zeros(rows=1,
+                                 cols=self.sym_data.regions_count) + 1
+        for i in range(sector_count):
+            row_index = i*(sector_count)+i
+            makeinv.iloc[row_index, :] = unit_vector
+            i = i + 1
+        self._all_parameters[&#34;makeinv&#34;] = makeinv
+        self.insert_parameter(&#34;makeinv&#34;, makeinv.to_numpy().flatten())
+
+    def __set_emissions_parameters(self):
+        &#34;&#34;&#34;
+        Set the values of the emissions parameters.
+        TODO: These parameters need more detailed descriptions in SYM.
+        carcoef - carbon emissions coefficients
+        btucoef - emissions coefficients, energy
+        gwhcoef - gigawatt hours electricity per annum
+        &#34;&#34;&#34;
+
+        if self.sym_data.electricity_generation_goods_count == 0:
+
+            carcoef: pd.DataFrame = self.zeros(rows=self.sym_data.sectors_count, cols=self.sym_data.regions_count)
+            self._all_parameters[&#34;carcoef&#34;] = carcoef
+            self.insert_parameter(&#34;carcoef&#34;, carcoef.to_numpy().flatten())
+
+            btucoef: pd.DataFrame = self.zeros(rows=self.sym_data.sectors_count, cols=self.sym_data.regions_count)
+            self._all_parameters[&#34;btucoef&#34;] = btucoef
+            self.insert_parameter(&#34;btucoef&#34;, btucoef.to_numpy().flatten())
+
+            return
+
+        # Now for the non-zero setting of the emissions parameters.
+        e_coal: np.ndarray = self.calibration_database.get_data(&#39;^ECOL\(&#39;, self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+        e_oil: np.ndarray = self.calibration_database.get_data(&#39;^EOIL\(&#39;, self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+        e_gas: np.ndarray = self.calibration_database.get_data(&#39;^EGAS\(&#39;, self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+
+        b_coal: np.ndarray = self.calibration_database.get_data(&#39;^BCOL\(&#39;, self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+        b_oil: np.ndarray = self.calibration_database.get_data(&#39;^BOIL\(&#39;, self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+        b_gas: np.ndarray = self.calibration_database.get_data(&#39;^BGAS\(&#39;, self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+
+
+        # Keep as a pd.Dataframe instead of a np.ndarray so we can select by region later on.
+        lgdpn: pd.DataFrame = self.calibration_database.get_data(&#39;^LGDPN\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        lgdpn.index = self.sym_data.regions_members
+
+        carcoef: pd.DataFrame = self.zeros(rows=self.sym_data.sectors_count, cols=self.sym_data.regions_count)
+        carcoef.index = self.sym_data.goods_members
+        carcoef.columns = self.sym_data.regions_members
+
+        btucoef: pd.DataFrame = self.zeros(rows=self.sym_data.sectors_count, cols=self.sym_data.regions_count)
+        btucoef.index = self.sym_data.goods_members
+        btucoef.columns = self.sym_data.regions_members
+
+        for good in self.sym_data.non_electricity_generation_goods_members:
+
+            oup: np.ndarray = self.calibration_database.get_data(&#39;^OUP\({}&#39;.format(self.sym_data.sector_producing(good)), self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+            imq: np.ndarray = self.calibration_database.get_data(&#39;^IMQ\({}&#39;.format(good), self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+            exq: np.ndarray = self.calibration_database.get_data(&#39;^EXQ\({}&#39;.format(good), self.configuration.calibration_of_carbon_coefficients_year).to_numpy()
+
+            match good:
+                case self.sym_data.oil_sector_good:
+                    carcoef.loc[[good], :] = (e_oil / (10 * (oup + imq - exq) * lgdpn.to_numpy())).transpose()
+                    btucoef.loc[[good], :] = (b_oil / (10 * (oup + imq - exq) * lgdpn.to_numpy())).transpose()
+
+                case self.sym_data.gas_sector_good:
+                    carcoef.loc[[good], :] = (e_gas / (10 * (oup + imq - exq) * lgdpn.to_numpy())).transpose()
+                    btucoef.loc[[good], :] = (b_gas / (10 * (oup + imq - exq) * lgdpn.to_numpy())).transpose()
+
+                case self.sym_data.coal_sector_good:
+                    carcoef.loc[[good], :] = (e_coal / (10 * (oup + imq - exq) * lgdpn.to_numpy())).transpose()
+                    btucoef.loc[[good], :] = (b_coal / (10 * (oup + imq - exq) * lgdpn.to_numpy())).transpose()
+
+        self._all_parameters[&#34;carcoef&#34;] = carcoef
+        self.insert_parameter(&#34;carcoef&#34;, carcoef.to_numpy().flatten())
+        self._all_parameters[&#34;btucoef&#34;] = btucoef
+        self.insert_parameter(&#34;btucoef&#34;, btucoef.to_numpy().flatten())
+
+        # Electricity generation (setparsym line 643.)
+        gwhcoef: pd.DataFrame = self.zeros(rows=self.sym_data.sectors_count, cols=self.sym_data.regions_count)
+        gwhcoef.index = self.sym_data.goods_members
+        gwhcoef.columns = self.sym_data.regions_members
+
+        g_coal: np.ndarray = self.calibration_database.get_data(&#39;^GCOL\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        g_coal.index = self.sym_data.regions_members
+        g_gas: np.ndarray = self.calibration_database.get_data(&#39;^GGAS\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        g_gas.index = self.sym_data.regions_members
+        g_oil: np.ndarray = self.calibration_database.get_data(&#39;^GOIL\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        g_oil.index = self.sym_data.regions_members
+        g_nuclear: np.ndarray = self.calibration_database.get_data(&#39;^GNUC\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        g_nuclear.index = self.sym_data.regions_members
+        g_wind: np.ndarray = self.calibration_database.get_data(&#39;^GWIND\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        g_wind.index = self.sym_data.regions_members
+        g_solar: np.ndarray = self.calibration_database.get_data(&#39;^GSOLAR\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        g_solar.index = self.sym_data.regions_members
+        g_hydro: np.ndarray = self.calibration_database.get_data(&#39;^GHYDRO\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        g_hydro.index = self.sym_data.regions_members
+        g_other: np.ndarray = self.calibration_database.get_data(&#39;^GOTHER\(&#39;, self.configuration.calibration_of_carbon_coefficients_year)
+        g_other.index = self.sym_data.regions_members
+
+        g_all = pd.concat([g_coal, g_gas, g_oil, g_nuclear, g_wind, g_solar, g_hydro, g_other], axis=1)
+        g_all.columns = self.sym_data.electricity_generation_goods_members
+
+        for region in self.sym_data.regions_members:
+
+            total_electricity_generated_in_region = g_all.loc[region, :]
+
+            io_table: pd.DataFrame = self._io_data.io_table(region)
+
+            io_table_GDP = io_table.loc[:, [&#34;C&#34;, &#34;I&#34;, &#34;G&#34;, &#34;X&#34;]].to_numpy().sum()
+
+            # domestic use of output from each electricity generation sector
+            generation_goods = self.sym_data.electricity_generation_goods_members
+            domestic_uses = io_table.columns.to_list()
+            domestic_uses.remove(&#34;X&#34;)
+            domestic_uses.remove(&#34;M&#34;)
+            sub_io_table = io_table.loc[generation_goods, domestic_uses]
+            domestic_use_of_electricity = sub_io_table.sum(
+                axis=&#39;columns&#39;)
+
+            # Get the region&#39;s scalar float value for LGDPN in the base calibration year.
+            region_lgdpn = float(lgdpn.loc[region,:].values[0])
+
+            region_gwhcoef = (100 * total_electricity_generated_in_region) / (region_lgdpn * (domestic_use_of_electricity / io_table_GDP))
+
+            gwhcoef.loc[generation_goods, region] = region_gwhcoef.to_numpy().reshape((len(generation_goods), 1))
+
+        self._all_parameters[&#34;gwhcoef&#34;] = gwhcoef
+        self.insert_parameter(&#34;gwhcoef&#34;, gwhcoef.to_numpy().flatten())
+
+    def __set_cd(self, sigma_parameter: pd.DataFrame) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Converts dataframe to zeros/ones, with 1 for any value in the input
+        dataframe that is close enough to 1, and zero otherwise.
+        &#34;&#34;&#34;
+        result = ((sigma_parameter &gt; 0.99999) &amp; (sigma_parameter &lt; 1.00001))
+
+        # Multiply by 1 to convert Boolean values to integers
+        return (result * 1)
+
+    def insert_parameter(self, parameter_name: str, parameter_value_vector: np.ndarray):
+        &#34;&#34;&#34;
+        Inserts the vectorised set of values for a parameter into the full parameter values vector.
+        &#34;&#34;&#34;
+        row_indices: list[int] = [i for i, x in enumerate(self._parameter_base_names) if x == parameter_name]
+
+        if len(row_indices) == 0:
+            logging.warning(f&#34;Parameter {parameter_name} is created but not used in the model.&#34;)
+            return
+
+        if len(row_indices) != len(parameter_value_vector):
+            logging.error(
+                &#34;Expected {} values for parameter {} but received {} values&#34;.format(
+                    len(row_indices), parameter_name, len(parameter_value_vector)))
+            return
+
+        self._parameter_values.loc[row_indices, &#34;value&#34;] = parameter_value_vector</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="gcubed.base.Base" href="../base.html#gcubed.base.Base">Base</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="gcubed.model_parameters.20C.parameters_20C_169.Parameters20C169" href="20C/parameters_20C_169.html#gcubed.model_parameters.20C.parameters_20C_169.Parameters20C169">Parameters20C169</a></li>
+<li><a title="gcubed.model_parameters.20J.parameters_20J_164.Parameters20J164" href="20J/parameters_20J_164.html#gcubed.model_parameters.20J.parameters_20J_164.Parameters20J164">Parameters20J164</a></li>
+<li><a title="gcubed.model_parameters.20R.parameters_20R_170.Parameters20R170" href="20R/parameters_20R_170.html#gcubed.model_parameters.20R.parameters_20R_170.Parameters20R170">Parameters20R170</a></li>
+<li><a title="gcubed.model_parameters.2R.parameters_2R_164.Parameters2R164" href="2R/parameters_2R_164.html#gcubed.model_parameters.2R.parameters_2R_164.Parameters2R164">Parameters2R164</a></li>
+<li><a title="gcubed.model_parameters.2R.parameters_2R_170.Parameters2R170" href="2R/parameters_2R_170.html#gcubed.model_parameters.2R.parameters_2R_170.Parameters2R170">Parameters2R170</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="gcubed.model_parameters.parameters.Parameters.EMZT"><code class="name">var <span class="ident">EMZT</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>The EMZT parameter values are 1 for regions where the EMZT (carbon emissions)
+is to be used for the region and 0 if it is not to be used for the region.
+This feeds into the stable manifold calculation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@ property
+def EMZT(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    The EMZT parameter values are 1 for regions where the EMZT (carbon emissions)
+    is to be used for the region and 0 if it is not to be used for the region.
+    This feeds into the stable manifold calculation.
+    &#34;&#34;&#34;
+    return self.all_parameters[&#34;EMZT&#34;]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_parameters.parameters.Parameters.TCAX"><code class="name">var <span class="ident">TCAX</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>The TCAX parameter values are 1 for regions where the TCAX (unit tax on carbon)
+is to be used for the region and 0 if it is not to be used for the region.
+This feeds into the stable manifold calculation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@ property
+def TCAX(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    The TCAX parameter values are 1 for regions where the TCAX (unit tax on carbon)
+    is to be used for the region and 0 if it is not to be used for the region.
+    This feeds into the stable manifold calculation.
+    &#34;&#34;&#34;
+    return self.all_parameters[&#34;TCAX&#34;]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_parameters.parameters.Parameters.all_parameters"><code class="name">var <span class="ident">all_parameters</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@ property
+def all_parameters(self):
+    return self._all_parameters</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_parameters.parameters.Parameters.calibration_database"><code class="name">var <span class="ident">calibration_database</span> : <a title="gcubed.data.calibration_database.CalibrationDatabase" href="../data/calibration_database.html#gcubed.data.calibration_database.CalibrationDatabase">CalibrationDatabase</a></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def calibration_database(self) -&gt; CalibrationDatabase:
+    return self._calibration_database</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_parameters.parameters.Parameters.calibration_year"><code class="name">var <span class="ident">calibration_year</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def calibration_year(self) -&gt; int:
+    return self._base_year</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_parameters.parameters.Parameters.configuration"><code class="name">var <span class="ident">configuration</span> : <a title="gcubed.model_configuration.ModelConfiguration" href="../model_configuration.html#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def configuration(self) -&gt; ModelConfiguration:
+    return self.sym_data.configuration</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_parameters.parameters.Parameters.discrate"><code class="name">var <span class="ident">discrate</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Discount rates by region</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@ property
+def discrate(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Discount rates by region
+    &#34;&#34;&#34;
+    return self.all_parameters[&#34;discrate&#34;]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_parameters.parameters.Parameters.non_sym_parameter_names"><code class="name">var <span class="ident">non_sym_parameter_names</span></code></dt>
+<dd>
+<div class="desc"><p>Returns a tuple containing the names of parameters that are assigned values in
+the user-set parameter values by region but where those parameters are not
+defined in the SYM model definition.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@ property
+def non_sym_parameter_names(self):
+    &#34;&#34;&#34;
+    Returns a tuple containing the names of parameters that are assigned values in 
+    the user-set parameter values by region but where those parameters are not
+    defined in the SYM model definition.
+    &#34;&#34;&#34;
+    return (&#34;discrate&#34;, &#34;TCAX&#34;, &#34;EMZT&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_parameters.parameters.Parameters.parameter_values"><code class="name">var <span class="ident">parameter_values</span></code></dt>
+<dd>
+<div class="desc"><p>The vectorised parameter values in SYM model order as a data frame
+indexed by the parameter name.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@ property
+def parameter_values(self):
+    &#34;&#34;&#34;
+    The vectorised parameter values in SYM model order as a data frame
+    indexed by the parameter name.
+    &#34;&#34;&#34;
+    return self._parameter_values</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_parameters.parameters.Parameters.parameter_values_vector"><code class="name">var <span class="ident">parameter_values_vector</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>Used when evaluating the model equations for linearisation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@ property
+def parameter_values_vector(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Used when evaluating the model equations for linearisation.
+    &#34;&#34;&#34;
+    result: np.ndarray = self.parameter_values.value.to_numpy()
+    return result</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_parameters.parameters.Parameters.sym_data"><code class="name">var <span class="ident">sym_data</span> : <a title="gcubed.sym_data.SymData" href="../sym_data.html#gcubed.sym_data.SymData">SymData</a></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property 
+def sym_data(self) -&gt; SymData:
+    return self._sym_data</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="gcubed.model_parameters.parameters.Parameters.has_parameter"><code class="name flex">
+<span>def <span class="ident">has_parameter</span></span>(<span>self, parameter_name: str) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Arguments:</p>
+<p>parameter_name: The name of the parameter to return.</p>
+<p>Return true iff the parameter is available and false otherwise.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_parameter(self, parameter_name: str) -&gt; bool:
+    &#34;&#34;&#34;
+    Arguments:
+
+    parameter_name: The name of the parameter to return.
+
+    Return true iff the parameter is available and false otherwise.
+    &#34;&#34;&#34;
+    if not parameter_name in self.all_parameters:
+        return False
+    return True</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_parameters.parameters.Parameters.insert_parameter"><code class="name flex">
+<span>def <span class="ident">insert_parameter</span></span>(<span>self, parameter_name: str, parameter_value_vector: np.ndarray)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Inserts the vectorised set of values for a parameter into the full parameter values vector.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def insert_parameter(self, parameter_name: str, parameter_value_vector: np.ndarray):
+    &#34;&#34;&#34;
+    Inserts the vectorised set of values for a parameter into the full parameter values vector.
+    &#34;&#34;&#34;
+    row_indices: list[int] = [i for i, x in enumerate(self._parameter_base_names) if x == parameter_name]
+
+    if len(row_indices) == 0:
+        logging.warning(f&#34;Parameter {parameter_name} is created but not used in the model.&#34;)
+        return
+
+    if len(row_indices) != len(parameter_value_vector):
+        logging.error(
+            &#34;Expected {} values for parameter {} but received {} values&#34;.format(
+                len(row_indices), parameter_name, len(parameter_value_vector)))
+        return
+
+    self._parameter_values.loc[row_indices, &#34;value&#34;] = parameter_value_vector</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_parameters.parameters.Parameters.parameter"><code class="name flex">
+<span>def <span class="ident">parameter</span></span>(<span>self, parameter_name: str) ‑> pandas.core.frame.DataFrame</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Arguments:</p>
+<p>parameter_name: The name of the parameter to return.</p>
+<p>Return the value of the named parameter as a dataframe.</p>
+<p>Raise an exception if the parameter is not available.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parameter(self, parameter_name: str) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Arguments:
+
+    parameter_name: The name of the parameter to return.
+
+    Return the value of the named parameter as a dataframe.
+
+    Raise an exception if the parameter is not available.
+    &#34;&#34;&#34;
+    if parameter_name in self.all_parameters:
+        return self.all_parameters[parameter_name]
+    raise Exception(f&#34;Parameter {parameter_name} is not set in the model.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_parameters.parameters.Parameters.validate"><code class="name flex">
+<span>def <span class="ident">validate</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Run from subclass initialisation after the subclass initialisation has completed.
+Raise an exception if the parameter setting information is invalid</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def validate(self):
+    &#34;&#34;&#34;
+    Run from subclass initialisation after the subclass initialisation has completed.
+    Raise an exception if the parameter setting information is invalid
+    &#34;&#34;&#34;
+    assert self._all_parameters is not None
+    assert self._parameter_values is not None
+
+    # No parameter value remains null.
+    parameters_with_missing_values = self.parameter_values[self.parameter_values[&#39;value&#39;].isnull()].index.tolist()
+    if len(parameters_with_missing_values) &gt; 0:
+        logging.error(&#34;The following parameters have not been set:\n{}&#34;.format(parameters_with_missing_values))
+        raise Exception(f&#34;The model is not ready to run. The following parameters have missing values:\n{parameters_with_missing_values}&#34;)
+
+    # If there is an electricity distribution sector,
+    # then phi parameter has a row for each non-distribution sector
+    # otherwise there is a row for all sectors.
+    phi = self.parameter(&#34;phi&#34;)
+    if self.sym_data.energy_distribution_sectors_count &gt; 0:
+        assert len(
+            phi.index) == self.sym_data.non_energy_distribution_sectors_count
+    else:
+        assert len(
+            phi.index) == self.sym_data.sectors_count
+
+    # If the parameters include TCAX, then the SYM model must include the variable with the same name.
+    # TODO: enable these validations when adding optimal policy handling to stable manifold class.
+    # if self.EMZT is not None and isinstance(self.EMZT, pd.DataFrame):
+    #     assert self.TCAX  is not None
+    #     if not self.sym_data.has_variable(variable_name_prefix=&#34;EMZT&#34;):
+    #         logging.error(
+    #             &#34;The user parameters refer to EMZT but EMZT is not in the SYM model definition.&#34;)
+    # if self.TCAX is not None and isinstance(self.TCAX, pd.DataFrame):
+    #     assert self.EMZT is not None
+    #     if not self.sym_data.has_variable(variable_name_prefix=&#34;TCAX&#34;):
+    #         logging.error(
+    #             &#34;The user parameters refer to TCAX but TCAX is not in the SYM model definition.&#34;)
+
+    # Policy optimisation only allowed to be turned on 
+    # if the model parameters include TCAX and EMZT for all regions
+    # and both of those parameters are not zero for all regions.
+    # TODO: enable these validations when adding optimal policy handling to stable manifold class.
+    # TODO: Are there other constraints that should also be imposed (e.g. TCAX and EMZT should be 1 for same regions?)
+    if self.configuration.stable_manifold_use_policy_optimisation:
+        assert self.EMZT is not None
+        assert isinstance(self.EMZT , pd.DataFrame)
+        if self.EMZT.to_numpy().sum().sum() == 0:
+            raise Exception(&#34;You cannot set the model configuration to use optimal policy if EMZT (refer to the SYM variables documentation for the model) is all zeros or missing from the user set parameters.&#34;)
+        assert self.TCAX is not None
+        assert isinstance(self.TCAX, pd.DataFrame)
+        if self.TCAX.to_numpy().sum().sum() == 0:
+            raise Exception(&#34;You cannot set the model configuration to use optimal policy if TCAX (refer to the SYM variables documentation for the model) is all zeros or missing from the user set parameters.&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="gcubed.base.Base" href="../base.html#gcubed.base.Base">Base</a></b></code>:
+<ul class="hlist">
+<li><code><a title="gcubed.base.Base.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
+<li><code><a title="gcubed.base.Base.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.zeros" href="../base.html#gcubed.base.Base.zeros">zeros</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="gcubed.model_parameters" href="index.html">gcubed.model_parameters</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="gcubed.model_parameters.parameters.Parameters" href="#gcubed.model_parameters.parameters.Parameters">Parameters</a></code></h4>
+<ul class="">
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.EMZT" href="#gcubed.model_parameters.parameters.Parameters.EMZT">EMZT</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.TCAX" href="#gcubed.model_parameters.parameters.Parameters.TCAX">TCAX</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.all_parameters" href="#gcubed.model_parameters.parameters.Parameters.all_parameters">all_parameters</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.calibration_database" href="#gcubed.model_parameters.parameters.Parameters.calibration_database">calibration_database</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.calibration_year" href="#gcubed.model_parameters.parameters.Parameters.calibration_year">calibration_year</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.configuration" href="#gcubed.model_parameters.parameters.Parameters.configuration">configuration</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.discrate" href="#gcubed.model_parameters.parameters.Parameters.discrate">discrate</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.has_parameter" href="#gcubed.model_parameters.parameters.Parameters.has_parameter">has_parameter</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.insert_parameter" href="#gcubed.model_parameters.parameters.Parameters.insert_parameter">insert_parameter</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.non_sym_parameter_names" href="#gcubed.model_parameters.parameters.Parameters.non_sym_parameter_names">non_sym_parameter_names</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.parameter" href="#gcubed.model_parameters.parameters.Parameters.parameter">parameter</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.parameter_values" href="#gcubed.model_parameters.parameters.Parameters.parameter_values">parameter_values</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.parameter_values_vector" href="#gcubed.model_parameters.parameters.Parameters.parameter_values_vector">parameter_values_vector</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.sym_data" href="#gcubed.model_parameters.parameters.Parameters.sym_data">sym_data</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.validate" href="#gcubed.model_parameters.parameters.Parameters.validate">validate</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

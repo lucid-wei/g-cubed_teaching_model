@@ -1,0 +1,3355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>gcubed.sym_data API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>gcubed.sym_data</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ------------------------------------------------------------------
+# Purpose: Load and provide access to the data
+# produce by using SYM to process the model sym
+# definition.
+# Author: Geoff Shuetrim
+# ------------------------------------------------------------------
+
+from ast import match_case
+from concurrent.futures import process
+import logging
+import os
+import gcubed.constants as CONSTANTS
+from gcubed.model_configuration import ModelConfiguration
+import pandas as pd
+import regex as re
+
+
+class SymData:
+    &#34;&#34;&#34;
+    Properties:
+
+    var_info: variable and parameter information
+
+    var_map: more variable and parameter information
+
+    opt_map: more information about how variable and parameters are to be organised.
+
+    The model equations are expressed in terms of various vectors of variables.
+    Each vector is a different type of variable.
+    Note the naming conventions for the lefthand side (LHS) variable vectors:
+    a. x1l (the vector of state variables) X=S=State
+    b. j1l (the vector of costate or jump variables) J=C=Costate
+    c. zel (the endogenous variables LOGY, PRCT, PRID) 
+    d. z1l (the other endogenous variables)
+
+    These 4 vectors of variables are functions of:
+    1. x1r is right hand side (RHS) state variables
+    2. j1r is RHS costate or jump variables
+    3. zer is RHS endogenous variables LOGY, PRCT, PRID
+    4. exz is RHS the lead expected ze variables
+    5. yxr is RHS state variables lagged by 1 period
+    6. yjr is RHS costate variables lagged by 1 period
+    7. exo is exogenous variables (by definition only appearing on RHS)
+    8. z1r is RHS other endogenous variables.
+
+    &#34;&#34;&#34;
+
+    # Class properties reducing the need to instantiate these lists on each call.
+    _lhs_vector_names: list[str] = [&#34;x1l&#34;, &#34;j1l&#34;, &#34;zel&#34;, &#34;z1l&#34;]
+    _rhs_vector_names: list[str] = [&#34;x1r&#34;, &#34;j1r&#34;, &#34;zer&#34;, &#34;exz&#34;, &#34;yxr&#34;, &#34;yjr&#34;, &#34;exo&#34;, &#34;z1r&#34;]
+
+    _ssf_rhs_vector_names: list[str] = [&#34;exz&#34;, &#34;yxr&#34;, &#34;yjr&#34;, &#34;exo&#34;]
+
+    # Those vectors that are projected forward using the model
+    _projection_vector_names: list[str] = [&#34;x1l&#34;, &#34;j1l&#34;, &#34;zel&#34;, &#34;z1l&#34;, &#34;exo&#34;]
+
+    def matching_rhs_vector_name(self, lhs_vector_name: str) -&gt; str:
+        &#34;&#34;&#34;
+        Arguments:
+        lhs_vector_name the name of the LHS vector.
+        Returns the matching RHS vector name, replacing the last character, l, with an r.
+        &#34;&#34;&#34;
+        return f&#34;{lhs_vector_name[0:2]}r&#34;
+
+    def __init__(self, configuration: ModelConfiguration) -&gt; None:
+        assert isinstance(configuration, ModelConfiguration)
+        self._configuration = configuration
+
+        logging.info(&#34;Loading the model equation details produced by the SYM processor.&#34;)
+        logging.info(&#34;Loading the model varinfo.&#34;)
+        self.__load_varinfo()
+        logging.info(&#34;Loading the model varmap.&#34;)
+        self.__load_varmap()
+        logging.info(&#34;Loading the model optmap.&#34;)
+        self.__load_optmap()
+        logging.info(&#34;Loading the model summary.&#34;)
+        self.__load_model_summary()
+        logging.info(&#34;Loading the model sym summary.&#34;)
+        self.__summarise_sym_information()
+        logging.info(&#34;Loading varinfo/varmap combination.&#34;)
+        self.__combine_varinfo_varmap()
+        self.__validate()
+
+    @property
+    def configuration(self):
+        return self._configuration
+
+    @property
+    def var_info(self):
+        # TODO: Provide methods to look up the varinfo
+        # TODO: Make sure parameter attributes in SYM appear in this dataset in the last column.
+        return self._variable_information
+
+    @property
+    def var_map(self) -&gt; pd.DataFrame:
+        # TODO: Provide methods to look up the varmap
+        return self._variable_map
+
+    def varmap_variable_type(self, vector_name: str):
+        &#34;&#34;&#34;
+        Convert a vector name in the model to the varmap file variable type to lookup for
+        the varmap information associated with the vector.
+        &#34;&#34;&#34;
+        match vector_name:
+            case &#34;x1r&#34; | &#34;x1l&#34;:
+                return &#34;x1l&#34;
+            case &#34;yxr&#34;:
+                return &#34;x1l&#34;
+            case &#34;j1r&#34; | &#34;j1l&#34;:
+                return &#34;j1l&#34;
+            case &#34;yjr&#34;:
+                return &#34;j1l&#34;
+            case &#34;zer&#34; | &#34;zel&#34;:
+                return &#34;zel&#34;
+            case &#34;exz&#34;:
+                return &#34;zel&#34;
+            case &#34;z1r&#34; | &#34;z1l&#34;:
+                return &#34;z1l&#34;
+            case &#34;exo&#34;:
+                return &#34;exo&#34;
+            case _:  # LHS vector names.
+                raise Exception(f&#34;Requested varmap variable type for a vector {vector_name} that is not defined by the SYM processor.&#34;)
+
+    def projection_vector_for_variable(self, variable_name: str) -&gt; str:
+        &#34;&#34;&#34;
+        Arguments:
+
+        vector_name: The fully qualified name of the variable
+        
+        Returns the string ID of the projection vector that the variable is in.
+        &#34;&#34;&#34;
+        var_types: pd.Series = self.var_map.loc[[variable_name], &#39;var_type&#39;]
+        if len(var_types) == 0:
+            raise Exception(f&#34;{variable_name} is not declared in the SYM model.&#34;)
+        vector_name = var_types.values[0]
+        return self.varmap_variable_type(vector_name=vector_name)
+
+    @property
+    def opt_map(self) -&gt; pd.DataFrame:
+        return self._optmap
+
+    @property
+    def sym_sets(self) -&gt; dict:
+        &#34;&#34;&#34;
+        Mapping from set name to set members list
+        &#34;&#34;&#34;
+        return self._sym_sets
+
+    def __set_members(self, set_name: str) -&gt; list[str]:
+        if set_name in self.sym_sets:
+            return self.sym_sets[set_name].copy()
+        return list()
+
+    def __set_members_count(self, set_name: str) -&gt; int:
+        members = self.__set_members(set_name)
+        if members:
+            return len(members)
+        return 0
+
+    @property
+    def goods_members(self) -&gt; list[str]:
+        return self.__set_members(&#34;goods&#34;)
+
+    @property
+    def goods_count(self) -&gt; int:
+        return self.__set_members_count(&#39;goods&#39;)
+
+    @property
+    def energy_goods_members(self) -&gt; list[str]:
+        return self.__set_members(&#34;goods_e&#34;)
+
+    @property  # numener # g01 for version R of the model
+    def energy_goods_count(self) -&gt; int:
+        return self.__set_members_count(&#39;goods_e&#39;)
+
+    @property
+    def electricity_generation_goods_members(self) -&gt; list[str]:
+        return self.__set_members(&#34;goods_g&#34;)
+
+    @property
+    def electricity_generation_goods_count(self) -&gt; int:
+        return self.__set_members_count(&#39;goods_g&#39;)
+
+    @property
+    def non_energy_goods_members(self) -&gt; list[str]:
+        all_goods_members = self.goods_members
+        energy_members = self.energy_goods_members
+        result = [x for x in all_goods_members if x not in energy_members]
+        return result
+
+    @property
+    def non_energy_goods_count(self) -&gt; int:
+        return len(self.non_energy_goods_members)
+
+    @property
+    def non_electricity_generation_goods_members(self) -&gt; list[str]:
+        all_goods_members = self.goods_members
+        generation_members = self.electricity_generation_goods_members
+        result = [x for x in all_goods_members if x not in generation_members]
+        return result
+
+    @property
+    def non_electricity_generation_goods_count(self) -&gt; int:
+        return len(self.non_electricity_generation_goods_members)
+
+    @property
+    def non_energy_or_generation_goods_members(self) -&gt; list[str]:
+        result = [
+            x for x in self.goods_members if x not in self.energy_goods_members]
+        result = [
+            x for x in result if x not in self.electricity_generation_goods_members]
+        return result
+
+    @property
+    def non_energy_or_generation_goods_count(self) -&gt; int:
+        return len(self.non_energy_or_generation_goods_members)
+
+    @property
+    def capital_sectors_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        sector Y, the capital producing sector
+        sector Z, the household capital producing sector
+        &#34;&#34;&#34;
+        return [&#34;Y&#34;, &#34;Z&#34;]
+
+    @property
+    def all_sectors_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        Returns the set of members defined in the model SYM file
+        plus sector Y, the capital producing sector
+        and sector Z, the household capital producing sector.
+        These sectors, Y and Z, are common to all model versions.
+        &#34;&#34;&#34;
+        result = self.__set_members(&#34;sectors&#34;)
+        for capital_sector in self.capital_sectors_members:
+            result.append(capital_sector)
+        return result
+
+    @property
+    def sectors_members(self) -&gt; list[str]:
+        return self.__set_members(&#34;sectors&#34;)
+
+    @property  # numsect # a01,a02 for version R of the model
+    def sectors_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        Returns N: the number of sectors defined in the SYM file (a01 ...aN).
+        &#34;&#34;&#34;
+        return self.__set_members_count(&#39;sectors&#39;)
+
+    @property  # numsect # a01,a02, Y and Z for version R of the model
+    def all_sectors_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        Returns N+2: the number of sectors defined in the SYM file (a01 ...aN) + the Y and the Z sectors.
+        &#34;&#34;&#34;
+        return len(self.all_sectors_members)
+
+    @property
+    def non_energy_or_generation_sectors_members(self) -&gt; list[str]:
+        return self.sectors_producing(self.non_energy_or_generation_goods_members)
+
+    @property
+    def energy_distribution_sectors_members(self) -&gt; list[str]:
+        return self.__set_members(&#39;sec_ed&#39;)
+
+    @property
+    def energy_distribution_sectors_count(self) -&gt; int:
+        return self.__set_members_count(&#39;sec_ed&#39;)
+
+    @property
+    def non_energy_distribution_sectors_members(self) -&gt; list[str]:
+        return self.__set_members(&#39;sec_std&#39;)
+
+    # Note that if there is no electricity distribution sectors, then distribution is lumped in with
+    # the more broadly defined energy sector(s).
+    @property  # numsecstd
+    def non_energy_distribution_sectors_count(self) -&gt; int:
+        return self.__set_members_count(&#39;sec_std&#39;)
+
+    @property
+    def regions_members(self) -&gt; list[str]:
+        return self.__set_members(
+            &#34;regions&#34;)
+
+    @property  # countopt
+    def regions_count(self) -&gt; int:
+        return self.__set_members_count(&#39;regions&#39;)
+
+    @property
+    def us_region(self) -&gt; str:
+        return self.regions_members[0]
+
+    @property
+    def gas_sector_good(self) -&gt; str:
+        &#34;&#34;&#34;
+        Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+
+        Model version J has 5 energy sectors: gas and gas utilities are aggregated and
+        the gas emissions are applied to gas utilities a02 producing good g02.
+        &#34;&#34;&#34;
+        match self.configuration.version:
+            case &#39;2R&#39;:
+                return None
+            case &#39;20R&#39; |&#39;20J&#39; | &#39;20C&#39; | &#39;6G&#39;:
+                return self.goods_members[1]
+            case _:
+                raise Exception(f&#34;GCubed does not yet support model version {self.configuration.version}.&#34;)
+
+    @property
+    def oil_sector_good(self) -&gt; str:
+        &#34;&#34;&#34;
+        Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+
+        Model version J has 5 energy sectors: gas and gas utilities are aggregated and
+        the gas emissions are applied to gas utilities a03 producing good g03.
+        &#34;&#34;&#34;
+
+        match self.configuration.version:
+            case &#39;2R&#39;:
+                return None
+            case &#39;20R&#39; |&#39;20J&#39; | &#39;20C&#39; | &#39;6G&#39;:
+                return self.goods_members[2]
+            case _:
+                raise Exception(f&#34;GCubed does not yet support model version {self.configuration.version}.&#34;)
+
+    @property
+    def coal_sector_good(self) -&gt; str:
+        &#34;&#34;&#34;
+        Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+
+        Model version J has 5 energy sectors: gas and gas utilities are aggregated and
+        the gas emissions are applied to gas utilities a04 producing good g04.
+        &#34;&#34;&#34;
+        match self.configuration.version:
+            case &#39;2R&#39;:
+                return None
+            case &#39;20R&#39; |&#39;20J&#39; | &#39;20C&#39; | &#39;6G&#39;:
+                return self.goods_members[3]
+            case _:
+                raise Exception(f&#34;GCubed does not yet support model version {self.configuration.version}.&#34;)
+
+    @property
+    def sector_prefix(self) -&gt; str:
+        return self.sectors_members[0][0]
+
+    @property
+    def good_prefix(self) -&gt; str:
+        return self.goods_members[0][0]
+
+    def sector_producing(self, good: str) -&gt; str:
+        return (self.sector_prefix + good[1:])
+
+    def sectors_producing(self, goods: list[str]) -&gt; str:
+        return [self.sector_producing(x) for x in goods]
+
+    def good_produced_by(self, sector: str) -&gt; str:
+        return (self.good_prefix + sector[1:])
+
+    def goods_produced_by(self, sectors: list[str]) -&gt; str:
+        return [self.good_produced_by(x) for x in sectors]
+
+    def __vector_length(self, vector_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        Provides access to information about the lengths of various vectors
+        used in the model based on SYM information.
+        &#34;&#34;&#34;
+        return self._vector_length[vector_name]
+
+    @property  # nxg
+    def exogenous_variable_count(self):
+        return self.__vector_length(&#34;exogenous_variables&#34;)
+
+    @property  # nz and nz1
+    def endogenous_variable_count(self):
+        return self.__vector_length(&#34;endogenous_variables&#34;)
+
+    @property  # nez
+    def expected_endogenous_variable_count(self):
+        return self.__vector_length(&#34;expected_endogenous_variables&#34;)
+
+    @property  # njm
+    def jump_variable_count(self):
+        return self.__vector_length(&#34;jump_variables&#34;)
+
+    @property  # nst
+    def state_variable_count(self):
+        return self.__vector_length(&#34;state_variables&#34;)
+
+    @property  # npar
+    def parameter_count(self):
+        return self.__vector_length(&#34;parameters&#34;)
+
+    @property  # swtch
+    def swtch(self) -&gt; tuple[bool]:
+        &#34;&#34;&#34;
+        Return a tuple of boolean values used to track various types of variables in the model.
+        In the Ox implementation these are ones and zeros.
+        &#34;&#34;&#34;
+        return (
+            self.jump_variable_count == 0,
+            self.exogenous_variable_count == 0,
+            self.expected_endogenous_variable_count == 0,
+            False,
+            self.jump_variable_count == 0,
+            False)
+
+    @property  # dimenson Note the spelling error in the Ox variable name.
+    def dimension(self):
+        return (0,
+                self.parameter_count,
+                self.state_variable_count,
+                max(self.jump_variable_count, 1),
+                max(self.exogenous_variable_count, 1),
+                self.endogenous_variable_count,
+                max(self.expected_endogenous_variable_count, 1),
+                0)
+
+    # TODO: Remove this convenience method once the re-implementation is done.
+    @property
+    def dimenson(self):
+        return self.dimension()
+
+    @property
+    # TODO: Consider adding these factors of production (K,L,E,M) to the
+    # SYM model definition so they are not hard-coded.
+    def factors_of_production_members(self) -&gt; list[str]:
+        return (&#34;K&#34;, &#34;L&#34;, &#34;E&#34;, &#34;M&#34;)
+
+    @property
+    def factors_of_production_count(self) -&gt; int:
+        return len(self.factors_of_production_members)
+
+    @property
+    def lhs_vector_names(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        Note the naming conventions for the lefthand side (LHS) variable vectors:
+        a. x1l (the vector of state variables) X=S=State
+        b. j1l (the vector of costate or jump variables) J=C=Costate
+        c. zel (the endogenous variables LOGY, PRCT, PRID) 
+        d. z1l (the other endogenous variables)
+        &#34;&#34;&#34;
+        return SymData._lhs_vector_names
+
+    @property
+    def rhs_vector_names(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        1. S - state - x1r is right hand side (RHS) state variables
+        2. J - jump - j1r is RHS costate or jump variables
+        3. R - ? - zer is special RHS endogenous variables LOGY, PRCT, PRID that also appear as expected next-period values on the RHS of the equations.
+        4. exz is RHS the lead expected R (Expected value in next period of R)
+        5.  S_{t-1} yxr is RHS state variables lagged by 1 period
+        6. yjr is RHS costate variables lagged by 1 period
+        7. exo is exogenous variables (by definition only appearing on RHS)
+        8. z1r is RHS other endogenous variables.
+        &#34;&#34;&#34;
+        return SymData._rhs_vector_names
+
+    @property
+    def ssf_rhs_vector_names(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        4. exz is RHS the lead expected endogenous variables (Expected value in next period of a subset of the endogenous variables)
+        5. yxr is RHS state variables lagged by 1 period
+        6. yjr is RHS costate variables lagged by 1 period
+        7. exo is exogenous variables (by definition only appearing on RHS)
+        &#34;&#34;&#34;
+        return SymData._ssf_rhs_vector_names
+
+    @property
+    def projection_vector_names(self) -&gt; list[str]:
+        return SymData._projection_vector_names
+
+    def vector_length(self, vector_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        Argument:
+
+        vector_name: The 3 character acronym identifying the LHS or RHS vector in the model.
+
+        Returns the integer length of the specified vector.
+        &#34;&#34;&#34;
+        match vector_name:
+
+            case &#34;z1l&#34; | &#34;z1r&#34;:
+                return self.endogenous_variable_count
+
+            case &#34;x1l&#34; | &#34;x1r&#34; | &#34;yxr&#34;:
+                return self.state_variable_count
+
+            case &#34;j1l&#34; | &#34;j1r&#34; | &#34;yjr&#34;:
+                return self.jump_variable_count
+
+            case &#34;zel&#34; | &#34;zer&#34; | &#34;exz&#34;:
+                return self.expected_endogenous_variable_count
+
+            case &#34;exo&#34;:
+                return self.exogenous_variable_count
+
+            case _:
+                raise Exception(
+                    &#34;No vector length available for the vector named {}&#34;.format(vector_name))
+
+    def vector_variable_names(self, vector_name: str) -&gt; list[str]:
+        &#34;&#34;&#34;
+        Arguments:
+        vector_name: the name of the vector
+
+        Returns the SYM ordered fully articulated variable names for the
+        variables in the given model vector.
+
+        This is useful for labelling the rows/columns of dataframes containing 
+        linear model partial derivatives, and SSF matrices.
+        &#34;&#34;&#34;
+        variable_type: str = self.varmap_variable_type(vector_name=vector_name)
+        matching_var_type: pd.Series = self.var_map.var_type == variable_type
+        result: pd.DataFrame = self.var_map.loc[matching_var_type, [&#39;name&#39;, &#39;sequence&#39;]].sort_values(&#39;sequence&#39;)
+        return result.name.to_list()
+
+    @property
+    def no_exogenous_variables(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Used in place of the swtch variable in the Ox implementation.
+        &#34;&#34;&#34;
+        return self.vector_length(&#34;exo&#34;) == 0
+
+    @property
+    def no_jump_variables(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Used in place of the swtch variable in the Ox implementation.
+        &#34;&#34;&#34;
+        return self.vector_length(&#34;j1r&#34;) == 0
+
+    @property
+    def no_expected_exogenous_variables(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Used in place of the swtch variable in the Ox implementation.
+        &#34;&#34;&#34;
+        return self.vector_length(&#34;zer&#34;) == 0
+
+    def __load_varmap(self):
+        filename: str = self.configuration.varmap_file
+        if not os.path.isfile(filename):
+            raise Exception(&#34;Could not load parameter listing from &#34; +
+                            filename + &#34; because the file does not exist.&#34;)
+        data: pd.DataFrame = pd.read_csv(filename, header=None)
+        data.columns = [&#39;name&#39;, &#39;code&#39;, &#39;var_type&#39;, &#39;sequence&#39;, &#39;name_with_no_punctuation&#39;]
+        data.index = data.name
+        self._variable_map = data
+
+    def __load_varinfo(self):
+        filename: str = self.configuration.variables_info_file
+        if not os.path.isfile(filename):
+            raise Exception(&#34;Could not load varinfo from &#34; +
+                            filename + &#34; because the file does not exist.&#34;)
+        data: pd.DataFrame = pd.read_csv(filename, header=None)
+        data.columns = [&#34;name&#34;, &#34;size&#34;, &#34;var_type&#34;,
+                        &#34;units&#34;, &#34;description&#34;, &#34;attributes&#34;]
+        data.index = data.iloc[:, 0]
+        self._variable_information = data
+
+    def __load_optmap(self):
+        # TODO: What are the columns of optmap csv file? See column names
+        # set below to determine which ones are not yet understood.
+        filename: str = self.configuration.opt_map_file
+        if not os.path.isfile(filename):
+            raise Exception(&#34;Could not load optmap from &#34; +
+                            filename + &#34; because the file does not exist.&#34;)
+        data: pd.DataFrame = pd.read_csv(filename, header=None)
+        data.columns = [&#34;some_integer&#34;, &#34;name_index_combo&#34;, &#34;vector_name&#34;,
+                        &#34;vector_index&#34;, &#34;variable_base_name&#34;]
+        self._optmap = data
+
+    def __load_model_summary(self):
+
+        # Initialise this dictionary.
+        self._sym_sets: dict[str, list[str]] = dict()
+
+        filename: str = self.configuration.model_summary_file
+        if not os.path.isfile(filename):
+            raise Exception(&#34;Could not load model summary from &#34; +
+                            filename + &#34; because the file does not exist.&#34;)
+
+        # Find all sets and store their name and members in a dictionary of lists,
+        # where each list of set members is in the same order as specified in the
+        # SYM model definition.
+        file = open(filename, &#39;r&#39;)
+        lines = file.readlines()
+
+        processing_sets = False
+        set_name = None
+        set_members = None
+
+        for line in lines:
+
+            if line.isspace():
+                set_name = None
+                set_members = None
+
+            if &#39;Parameters:&#39; in line:
+                break
+
+            if &#39;Sets:&#39; in line:
+                processing_sets = True
+                continue
+
+            if processing_sets:
+                stripped_line = line.strip()
+                if stripped_line:
+                    if set_name is None:
+                        set_name = stripped_line
+                        continue
+                    else:
+                        if not line.startswith(&#34;         &#34;):
+                            continue
+                        if set_members is None:
+                            set_members: list[str] = stripped_line.split(
+                                &#39;,&#39;)
+                        else:
+                            set_members.extend(stripped_line.split(&#39;,&#39;))
+                        if set_members:
+                            set_members = [x for x in set_members if x.strip()]
+                        self._sym_sets[set_name] = set_members
+                        continue
+
+    def __summarise_sym_information(self):
+        &#34;&#34;&#34;
+        Analyses the data loaded from the files produced by SYM to populate
+        a variety of constants that determine model dimensions etc.
+        &#34;&#34;&#34;
+        data: dict[str, any] = dict()
+        data[&#34;parameters&#34;] = self.__get_vector_size_by_type(
+            [&#34;par&#34;])  # npar in Ox
+        data[&#34;state_variables&#34;] = self.__get_vector_size_by_type(
+            [&#34;sta&#34;, &#34;stl&#34;])  # nst in Ox
+        data[&#34;jump_variables&#34;] = self.__get_vector_size_by_type([
+            &#34;cos&#34;])  # njm in Ox: for costate variables
+        data[&#34;expected_endogenous_variables&#34;] = self.__get_vector_size_by_type([
+            &#34;ets&#34;])  # nez in Ox
+        data[&#34;exogenous_variables&#34;] = self.__get_vector_size_by_type([
+            &#34;exo&#34;])  # nxg in Ox
+        data[&#34;endogenous_variables&#34;] = self.__get_vector_size_by_type([
+            &#34;end&#34;])  # nz and nz1 in Ox
+
+        self._vector_length = data
+
+    @property
+    def parameter_name_prefixes(self) -&gt; list[str]:
+        full_parameter_names = (self._variable_information.loc[self._variable_information[&#34;var_type&#34;].isin(
+            [&#34;par&#34;]), &#34;name&#34;]).to_list()
+        parameter_name_prefixes = [re.sub(r&#39;^([^\(]+)($|\(.+$)&#39;, &#39;\g&lt;1&gt;&#39;, full_parameter_name)
+                                   for full_parameter_name in full_parameter_names]
+        return parameter_name_prefixes
+
+    def __get_vector_size_by_type(self, types: list[str]):
+        &#34;&#34;&#34;
+        TODO: Write unit tests for this functionality.
+        Determine the length of various vectors used by the model.
+
+        Arguments:
+
+        self: The model
+
+        types: a list of types of variables (or parameters)
+
+        Return the sum of the size of each entry in the variable information table with a type matching any of
+        the members of the types list.
+        &#34;&#34;&#34;
+        return self._variable_information.loc[self._variable_information[&#34;var_type&#34;].isin(types), &#34;size&#34;].sum()
+
+    def __validate(self):
+
+        # Validate regions
+        if self.regions_count &lt; 2:
+            raise Exception(&#34;The model needs to include at least 2 regions.&#34;)
+        for region in self.regions_members:
+            if not (region[0] == region[1] and region[0].isupper()):
+                raise Exception(
+                    &#34;The region code must be a pair of identical upper-case letters, not &#34; + region)
+
+        # Validate goods
+        if self.goods_count &lt; 2:
+            raise Exception(&#34;The model needs to include at least 2 goods.&#34;)
+
+        # Validate sectors
+        if self.sectors_count &lt; 2:
+            raise Exception(&#34;The model needs to include at least 2 sectors.&#34;)
+        if self.goods_count != self.sectors_count:
+            logging.error(f&#34;The goods are:\n{self.goods_members}&#34;)
+            logging.error(f&#34;The sectors are:\n{self.sectors_members}&#34;)
+            raise Exception(f&#34;The number of &#39;goods&#39;, {self.goods_count}, must be equal to the number of sectors, {self.sectors_count}.&#34;)
+
+        match self.configuration.version:
+            case &#34;2R&#34;:
+                assert self.sectors_count == 2
+            case &#34;6G&#34;:
+                assert self.sectors_count == 6
+            case &#34;20J&#34; | &#34;20C&#34; | &#34;20R&#34;:
+                assert self.sectors_count == 20
+            case _:
+                assert self.sectors_count &gt; 6
+
+        # Validate equation vector lengths for LHS and RHS vectors
+        assert len(self.lhs_vector_names) == 4
+        assert len(self.rhs_vector_names) == 8
+
+    def has_variables(self, variable_name_prefix: str) -&gt; bool:
+        &#34;&#34;&#34;
+        Returns true iff the SYM model definition includes a variable with the given root name.
+        &#34;&#34;&#34;
+        return self.var_map.name.str.startswith(variable_name_prefix).any()
+
+    def has_variable(self, variable_name: str) -&gt; bool:
+        &#34;&#34;&#34;
+        Returns true iff the SYM model definition includes a variable with the given complete name including
+        the set qualifier in round brackets.
+        &#34;&#34;&#34;
+        return (self.var_map.name == variable_name).any()
+
+    def variable_index(self, vector_name: str, variable_name: str) -&gt; int:
+        variable_type: str = self.varmap_variable_type(vector_name=vector_name)
+        type_matches: list[bool] = self.var_map.var_type == variable_type
+        name_matches: list[bool] = self.var_map.name == variable_name
+        result = self.var_map.loc[type_matches &amp; name_matches, &#39;sequence&#39;]
+        if len(result) == 0:
+            raise Exception(
+                f&#34;The variable name, {variable_name} is not defined in the SYM model as part of vector {vector_name}.&#34;)
+        if len(result) != 1:
+            raise Exception(
+                f&#34;The variable name, {variable_name} must be unique within the SYM model to retrieve its unique index.&#34;)
+        return int(result.values[0])
+
+    def variable_units(self, vector_name: str, variable_name_prefix: str) -&gt; int:
+        &#34;&#34;&#34;
+        Arguments:
+
+        variable_name_prefix: The prefix is the set of characters up to but not including the 
+        round bracket that starts the full qualification of the variable based on the sets it is
+        defined over.
+
+        e.g. use SHL for SHL(region,sector)
+
+        Returns the units of measurement for the variable identified by the prefix.
+        true iff the SYM model definition includes a variable with the given complete name including
+        the set qualifier in round brackets.
+        &#34;&#34;&#34;
+        variable_type: str = self.varmap_variable_type(vector_name=vector_name)
+        type_matches: list[bool] = self.var_info.var_type == variable_type
+        name_matches: list[bool] = self.var_info.name.str.startswith(f&#34;{variable_name_prefix}(&#34;)
+        result = self.var_info.loc[type_matches &amp; name_matches, &#39;units&#39;]
+        if len(result) == 0:
+            raise Exception(
+                f&#34;The variable name prefix, {variable_name_prefix}, is not defined in the SYM model as part of vector {vector_name}.&#34;)
+        if len(result) != 1:
+            raise Exception(
+                f&#34;The variable name prefix, {variable_name_prefix}, must be unique within the SYM model to retrieve its unique index.&#34;)
+        return str(result)
+
+    @property
+    def intertemporal_constant_variables(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Provide access to the information about the variables that are associated with intertemporal constants.
+
+        The intertemporal constants are used to ensure that jump variables equal to their observed values in the year
+        where there is available data (typically the base projection year, one year before the start of projections).
+
+        An intertemporal constant is also used in each WAGE equation to ensure that real interest rates align with nominal 
+        interest rates less expected inflation in the next year.
+
+        Return a dataframe containing a row per variable that has an intertemporal constant in its equation.
+        The dataframe has the following columns:
+        - &#39;name&#39; variable name (complete with set identifiers for region/sector etc.)
+        - &#39;var_type&#39; variable type (the associated LHS vector name)
+        - &#39;sequence&#39; the index of the variable in the associated vector
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_intertemporal_constant_variables&#39;):
+            return self._intertemporal_constant_variables
+
+        matches: pd.Series = self.var_map.var_type == &#39;j1l&#39;
+        result: pd.DataFrame = self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]
+
+        # Check for the existence of any variables with the given name prefixes and add them 
+        # to the results if they are defined in the SYM model.
+        for (prefix, vector_name) in CONSTANTS.NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES:
+            matches: pd.Series = self.var_map.name.str.startswith(f&#34;{prefix}(&#34;) &amp; (self.var_map.var_type == vector_name)
+            result: pd.DataFrame = pd.concat([result, self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]])            
+
+        result = result.loc[result.name != CONSTANTS.REXC_FOR_USA, :]
+
+        result.index = result.name
+
+        self._intertemporal_constant_variables = result
+        return self._intertemporal_constant_variables
+
+    @property
+    def variables_adjusted_by_intertemporal_constants(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Provide access to the information about the variables that have their values adjusted 
+        by the intertemporal constants. Note that this list is slightly different from the 
+        list of variables that have intertemporal constants added to their equations in the model
+        to match up model projections with observed values at the start of the projections because
+        a constant is added to the WAGE equation but it is used to adjust the WAGE equation in a way
+        that leads to the required expected price inflation rate.
+
+        Return a dataframe containing a row per variable that has an intertemporal constant in its equation.
+        The dataframe has the following columns:
+        - &#39;name&#39; variable name (complete with set identifiers for region/sector etc.)
+        - &#39;var_type&#39; variable type (the associated LHS vector name)
+        - &#39;sequence&#39; the index of the variable in the associated vector
+        &#34;&#34;&#34;
+
+        if hasattr(self, &#39;_variables_adjusted_by_intertemporal_constants&#39;):
+            return self._variables_adjusted_by_intertemporal_constants
+
+        matches: pd.Series = self.var_map.var_type == &#39;j1l&#39;
+        result: pd.DataFrame = self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]
+
+        # Check for the existence of any variables with the given name prefixes and add them
+        # to the results if they are defined in the SYM model.
+        for (prefix, vector_name) in CONSTANTS.NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES:
+            matches: pd.Series = self.var_map.name.str.startswith(f&#34;{prefix}(&#34;) &amp; (self.var_map.var_type == vector_name)
+            result: pd.DataFrame = pd.concat([result, self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]])
+
+        result = result.loc[result.name != CONSTANTS.REXC_FOR_USA, :]
+
+        result.index = result.name
+
+        result.index = result.name
+
+        self._variables_adjusted_by_intertemporal_constants = result
+        return self._variables_adjusted_by_intertemporal_constants
+
+    def __combine_varinfo_varmap(self):
+        &#34;&#34;&#34;
+        To combine the information in the varmap and in the varinfo files generated by sym so that
+        we have a single dataframe, indexed by variable name and with a column for each of:
+        -Variable name with all set identifiers e.g. GDPN(UU)
+        -Variable name prefix e.g. GDPN
+        -Variable units as specified in the varinfo. 
+        -&#39;publication_units&#39; - the units code to use when publishing variable projections.
+        -Variable description
+        -Projection vector that the variable is associated with (j1l, x1l, z1l, zel or exo).
+        -Index of the variable in its projection vector (the sequence number accessible from the varmap).
+        -Column indicating if it has an intertemporal constant in its equation. Column should be a missing value if not
+            and the index of the intertemporal constant if it is.
+        -Column indicating if it is the target of an intertemporal constant adjustment. Column should be a missing value if not
+            and the index of the intertemporal constant if it is.
+        &#34;&#34;&#34;
+
+        # Get the variable name prefix (everything up to the set specifiers in round brackets - if it exists)
+        prefix = self.var_info[&#39;name&#39;].apply(lambda x: x.split(&#34;(&#34;)[0]) # Remove everything from first ( onwards in the variable name.
+        dict_units = dict(zip(prefix, self.var_info[&#39;units&#39;]))
+        dict_desc = dict(zip(prefix, self.var_info[&#39;description&#39;]))
+        dict_var_type = dict(zip(prefix, self.var_info[&#39;var_type&#39;]))
+        self._combined_variable_summary = pd.DataFrame(index=self.var_map.index, columns=[&#39;prefix&#39;, &#39;units&#39;, &#39;description&#39;, &#39;var_type&#39;, &#39;is_intertemp&#39;, &#39;is_adjusted&#39;])
+        self._combined_variable_summary[[&#39;name&#39;, &#39;vector_code&#39;, &#39;vector&#39;, &#39;sequence&#39;]] = self.var_map[[&#39;name&#39;, &#39;code&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]
+        self._combined_variable_summary.loc[:, &#39;prefix&#39;] = self._combined_variable_summary[&#39;name&#39;].apply(lambda x: x[:x.find(&#39;(&#39;)])
+        self._combined_variable_summary.loc[:, &#39;units&#39;] = self._combined_variable_summary[&#39;prefix&#39;].apply(lambda x: dict_units[x])
+        self._combined_variable_summary.loc[:, &#39;description&#39;] = self._combined_variable_summary[&#39;prefix&#39;].apply(lambda x: dict_desc[x])
+        self._combined_variable_summary.loc[:, &#39;var_type&#39;] = self._combined_variable_summary[&#39;prefix&#39;].apply(lambda x: dict_var_type[x])
+        self._combined_variable_summary.reset_index(drop=True, inplace=True)  # avoid duplicate index
+
+        # Eliminate the parameter entries - we are only interested in the variables.
+        self._combined_variable_summary = self._combined_variable_summary.loc[self._combined_variable_summary.var_type != &#39;par&#39;,:]
+
+        # Eliminate redundant vector types
+        self._combined_variable_summary = self._combined_variable_summary.loc[self._combined_variable_summary.vector != &#39;x1r&#39;, :]
+        self._combined_variable_summary = self._combined_variable_summary.loc[self._combined_variable_summary.vector != &#39;z1r&#39;, :]
+        self._combined_variable_summary = self._combined_variable_summary.loc[self._combined_variable_summary.vector != &#39;j1r&#39;, :]
+        self._combined_variable_summary = self._combined_variable_summary.loc[self._combined_variable_summary.vector != &#39;zer&#39;, :]
+        self._combined_variable_summary = self._combined_variable_summary.loc[self._combined_variable_summary.vector != &#39;yjr&#39;, :]
+        self._combined_variable_summary = self._combined_variable_summary.loc[self._combined_variable_summary.vector != &#39;yxr&#39;, :]
+        self._combined_variable_summary = self._combined_variable_summary.loc[self._combined_variable_summary.vector != &#39;exz&#39;, :]
+
+        # Set the index of the combined variable summary dataframe to be the variable names (with set specifiers)
+        self._combined_variable_summary.index = self._combined_variable_summary.name
+
+        # Add a boolean column that is true iff the variable has an intertemporal constant
+        self._combined_variable_summary[&#39;is_intertemp&#39;] = False
+        self._combined_variable_summary.loc[self.intertemporal_constant_variables.index, &#39;is_intertemp&#39;] = True
+
+        # Add a boolean column that is true iff the variable has its initial value adjusted to observed value by an intertemporal constant
+        self._combined_variable_summary[&#39;is_adjusted&#39;] = False
+        self._combined_variable_summary.loc[self.variables_adjusted_by_intertemporal_constants.index, &#39;is_adjusted&#39;] = True
+
+        # Create the publication units column
+        self._combined_variable_summary[&#39;publication_units&#39;] = self._combined_variable_summary.loc[:, &#39;units&#39;]
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;usgdp&#39;, &#39;publication_units&#39;] = &#39;$US Bil&#39;
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;gdp&#39;, &#39;publication_units&#39;] = &#39;$US Bil&#39;
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;mmtusgdp&#39;, &#39;publication_units&#39;] = &#39;mmt&#39;
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;mmtgdp&#39;, &#39;publication_units&#39;] = &#39;mmt&#39;
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;btuusgdp&#39;, &#39;publication_units&#39;] = &#39;btu&#39;
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;btugdp&#39;, &#39;publication_units&#39;] = &#39;btu&#39;
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;gwhgdp&#39;, &#39;publication_units&#39;] = &#39;gwh&#39;
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;del&#39;, &#39;publication_units&#39;] = &#39;del&#39;
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;pct&#39;, &#39;publication_units&#39;] = &#39;pct&#39;
+
+        # # Slow and now obsolete code - iterating rows of the summary data.
+        # for ind, row in self._combined_variable_summary.iterrows():
+            
+        #     # if not self.intertemporal_constant_variables.loc[
+        #     #     (self.intertemporal_constant_variables[[&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]] == row[
+        #     #         [&#39;name&#39;, &#39;vector&#39;, &#39;sequence&#39;]].to_numpy()).all(axis=1)
+        #     # ].empty:
+        #     #     self._combined_variable_summary.loc[ind, &#39;is_intertemp&#39;] = self._combined_variable_summary.loc[ind, &#39;sequence&#39;]
+
+        #     # if not self.variables_adjusted_by_intertemporal_constants.loc[
+        #     #     (self.variables_adjusted_by_intertemporal_constants[[&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]] == row[
+        #     #         [&#39;name&#39;, &#39;vector&#39;, &#39;sequence&#39;]].to_numpy()).all(axis=1)
+        #     # ].empty:
+        #     #     self._combined_variable_summary.loc[ind, &#39;is_adjusted&#39;] = self._combined_variable_summary.loc[
+        #     #         ind, &#39;sequence&#39;]
+
+        #     # Generate the column of units for the variables that will be used when 
+        #     # their projections are converted to publication form.
+        #     match row.loc[&#39;units&#39;]:
+        #         case &#39;usgdp&#39; | &#39;gdp&#39;:
+        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;$US Bil&#39;
+        #         case &#39;mmtusgdp&#39; | &#39;mmtgdp&#39;:
+        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;mmt&#39;
+        #         case &#39;btuusgdp&#39; | &#39;btugdp&#39;:
+        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;btu&#39;
+        #         case &#39;gwhgdp&#39; | &#39;gwh&#39;:
+        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;gwh&#39;
+        #         case &#39;del&#39;:
+        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;pct&#39;
+        #         case &#39;pct&#39;:
+        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;Index&#39;
+        #         case &#39;cent&#39; | &#39;btu&#39; | &#39;mmt&#39; | &#39;dollar&#39;:
+        #             pass
+        #         case _:
+        #             logging.warning(f&#34;Could not convert database unit, {row.loc[&#39;units&#39;]}, to a publication unit for {row.loc[&#39;name&#39;]}.&#34;)
+
+        # self._combined_variable_summary = self._combined_variable_summary[[
+        #     &#39;name&#39;, &#39;prefix&#39;, &#39;units&#39;, &#39;publication_units&#39;, &#39;description&#39;, &#39;var_type&#39;, &#39;vector_code&#39;, &#39;vector&#39;, &#39;sequence&#39;, &#39;is_intertemp&#39;, &#39;is_adjusted&#39;]]
+
+    @property
+    def combined_variable_summary(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Return the combined variable summary data.
+        This should be used to drive a lot of the 
+        variable filtering throughout the model.
+        The columns of this summary dataframe are:
+        &#39;name&#39; - the full name of the variable
+        &#39;prefix&#39; - the name prefix - up to the open bracket.
+        &#39;units&#39; - the units code
+        &#39;publication_units&#39; - the units code to use when publishing variable projections.
+        &#39;description&#39; - the description
+        &#39;var_type&#39; - one of:
+            par = parameter
+            ets = expected endogenous variable? TODO: Check what ets means
+            end = endogenous
+            sta = state
+            stl = lead state variable? TODO: Check what stl var type means.
+            exo = exogenous
+            cos = costate or jump
+        &#39;vector_code&#39; - the vector name and index combination
+        &#39;vector&#39; - the vector name z1l, yxr, exo etc.
+        &#39;sequence&#39; - the index in the vector that corresponds to the variable.
+        &#39;is_intertemp&#39; - the index of the variable in the vector of intertemporal constants (or NaN)
+        &#39;is_adjusted&#39; - the index of the variable in the vector of variables being adjusted by intertemporal constants (or NaN)
+        &#34;&#34;&#34;
+        return self._combined_variable_summary</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="gcubed.sym_data.SymData"><code class="flex name class">
+<span>class <span class="ident">SymData</span></span>
+<span>(</span><span>configuration: <a title="gcubed.model_configuration.ModelConfiguration" href="model_configuration.html#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Properties:</p>
+<p>var_info: variable and parameter information</p>
+<p>var_map: more variable and parameter information</p>
+<p>opt_map: more information about how variable and parameters are to be organised.</p>
+<p>The model equations are expressed in terms of various vectors of variables.
+Each vector is a different type of variable.
+Note the naming conventions for the lefthand side (LHS) variable vectors:
+a. x1l (the vector of state variables) X=S=State
+b. j1l (the vector of costate or jump variables) J=C=Costate
+c. zel (the endogenous variables LOGY, PRCT, PRID)
+d. z1l (the other endogenous variables)</p>
+<p>These 4 vectors of variables are functions of:
+1. x1r is right hand side (RHS) state variables
+2. j1r is RHS costate or jump variables
+3. zer is RHS endogenous variables LOGY, PRCT, PRID
+4. exz is RHS the lead expected ze variables
+5. yxr is RHS state variables lagged by 1 period
+6. yjr is RHS costate variables lagged by 1 period
+7. exo is exogenous variables (by definition only appearing on RHS)
+8. z1r is RHS other endogenous variables.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SymData:
+    &#34;&#34;&#34;
+    Properties:
+
+    var_info: variable and parameter information
+
+    var_map: more variable and parameter information
+
+    opt_map: more information about how variable and parameters are to be organised.
+
+    The model equations are expressed in terms of various vectors of variables.
+    Each vector is a different type of variable.
+    Note the naming conventions for the lefthand side (LHS) variable vectors:
+    a. x1l (the vector of state variables) X=S=State
+    b. j1l (the vector of costate or jump variables) J=C=Costate
+    c. zel (the endogenous variables LOGY, PRCT, PRID) 
+    d. z1l (the other endogenous variables)
+
+    These 4 vectors of variables are functions of:
+    1. x1r is right hand side (RHS) state variables
+    2. j1r is RHS costate or jump variables
+    3. zer is RHS endogenous variables LOGY, PRCT, PRID
+    4. exz is RHS the lead expected ze variables
+    5. yxr is RHS state variables lagged by 1 period
+    6. yjr is RHS costate variables lagged by 1 period
+    7. exo is exogenous variables (by definition only appearing on RHS)
+    8. z1r is RHS other endogenous variables.
+
+    &#34;&#34;&#34;
+
+    # Class properties reducing the need to instantiate these lists on each call.
+    _lhs_vector_names: list[str] = [&#34;x1l&#34;, &#34;j1l&#34;, &#34;zel&#34;, &#34;z1l&#34;]
+    _rhs_vector_names: list[str] = [&#34;x1r&#34;, &#34;j1r&#34;, &#34;zer&#34;, &#34;exz&#34;, &#34;yxr&#34;, &#34;yjr&#34;, &#34;exo&#34;, &#34;z1r&#34;]
+
+    _ssf_rhs_vector_names: list[str] = [&#34;exz&#34;, &#34;yxr&#34;, &#34;yjr&#34;, &#34;exo&#34;]
+
+    # Those vectors that are projected forward using the model
+    _projection_vector_names: list[str] = [&#34;x1l&#34;, &#34;j1l&#34;, &#34;zel&#34;, &#34;z1l&#34;, &#34;exo&#34;]
+
+    def matching_rhs_vector_name(self, lhs_vector_name: str) -&gt; str:
+        &#34;&#34;&#34;
+        Arguments:
+        lhs_vector_name the name of the LHS vector.
+        Returns the matching RHS vector name, replacing the last character, l, with an r.
+        &#34;&#34;&#34;
+        return f&#34;{lhs_vector_name[0:2]}r&#34;
+
+    def __init__(self, configuration: ModelConfiguration) -&gt; None:
+        assert isinstance(configuration, ModelConfiguration)
+        self._configuration = configuration
+
+        logging.info(&#34;Loading the model equation details produced by the SYM processor.&#34;)
+        logging.info(&#34;Loading the model varinfo.&#34;)
+        self.__load_varinfo()
+        logging.info(&#34;Loading the model varmap.&#34;)
+        self.__load_varmap()
+        logging.info(&#34;Loading the model optmap.&#34;)
+        self.__load_optmap()
+        logging.info(&#34;Loading the model summary.&#34;)
+        self.__load_model_summary()
+        logging.info(&#34;Loading the model sym summary.&#34;)
+        self.__summarise_sym_information()
+        logging.info(&#34;Loading varinfo/varmap combination.&#34;)
+        self.__combine_varinfo_varmap()
+        self.__validate()
+
+    @property
+    def configuration(self):
+        return self._configuration
+
+    @property
+    def var_info(self):
+        # TODO: Provide methods to look up the varinfo
+        # TODO: Make sure parameter attributes in SYM appear in this dataset in the last column.
+        return self._variable_information
+
+    @property
+    def var_map(self) -&gt; pd.DataFrame:
+        # TODO: Provide methods to look up the varmap
+        return self._variable_map
+
+    def varmap_variable_type(self, vector_name: str):
+        &#34;&#34;&#34;
+        Convert a vector name in the model to the varmap file variable type to lookup for
+        the varmap information associated with the vector.
+        &#34;&#34;&#34;
+        match vector_name:
+            case &#34;x1r&#34; | &#34;x1l&#34;:
+                return &#34;x1l&#34;
+            case &#34;yxr&#34;:
+                return &#34;x1l&#34;
+            case &#34;j1r&#34; | &#34;j1l&#34;:
+                return &#34;j1l&#34;
+            case &#34;yjr&#34;:
+                return &#34;j1l&#34;
+            case &#34;zer&#34; | &#34;zel&#34;:
+                return &#34;zel&#34;
+            case &#34;exz&#34;:
+                return &#34;zel&#34;
+            case &#34;z1r&#34; | &#34;z1l&#34;:
+                return &#34;z1l&#34;
+            case &#34;exo&#34;:
+                return &#34;exo&#34;
+            case _:  # LHS vector names.
+                raise Exception(f&#34;Requested varmap variable type for a vector {vector_name} that is not defined by the SYM processor.&#34;)
+
+    def projection_vector_for_variable(self, variable_name: str) -&gt; str:
+        &#34;&#34;&#34;
+        Arguments:
+
+        vector_name: The fully qualified name of the variable
+        
+        Returns the string ID of the projection vector that the variable is in.
+        &#34;&#34;&#34;
+        var_types: pd.Series = self.var_map.loc[[variable_name], &#39;var_type&#39;]
+        if len(var_types) == 0:
+            raise Exception(f&#34;{variable_name} is not declared in the SYM model.&#34;)
+        vector_name = var_types.values[0]
+        return self.varmap_variable_type(vector_name=vector_name)
+
+    @property
+    def opt_map(self) -&gt; pd.DataFrame:
+        return self._optmap
+
+    @property
+    def sym_sets(self) -&gt; dict:
+        &#34;&#34;&#34;
+        Mapping from set name to set members list
+        &#34;&#34;&#34;
+        return self._sym_sets
+
+    def __set_members(self, set_name: str) -&gt; list[str]:
+        if set_name in self.sym_sets:
+            return self.sym_sets[set_name].copy()
+        return list()
+
+    def __set_members_count(self, set_name: str) -&gt; int:
+        members = self.__set_members(set_name)
+        if members:
+            return len(members)
+        return 0
+
+    @property
+    def goods_members(self) -&gt; list[str]:
+        return self.__set_members(&#34;goods&#34;)
+
+    @property
+    def goods_count(self) -&gt; int:
+        return self.__set_members_count(&#39;goods&#39;)
+
+    @property
+    def energy_goods_members(self) -&gt; list[str]:
+        return self.__set_members(&#34;goods_e&#34;)
+
+    @property  # numener # g01 for version R of the model
+    def energy_goods_count(self) -&gt; int:
+        return self.__set_members_count(&#39;goods_e&#39;)
+
+    @property
+    def electricity_generation_goods_members(self) -&gt; list[str]:
+        return self.__set_members(&#34;goods_g&#34;)
+
+    @property
+    def electricity_generation_goods_count(self) -&gt; int:
+        return self.__set_members_count(&#39;goods_g&#39;)
+
+    @property
+    def non_energy_goods_members(self) -&gt; list[str]:
+        all_goods_members = self.goods_members
+        energy_members = self.energy_goods_members
+        result = [x for x in all_goods_members if x not in energy_members]
+        return result
+
+    @property
+    def non_energy_goods_count(self) -&gt; int:
+        return len(self.non_energy_goods_members)
+
+    @property
+    def non_electricity_generation_goods_members(self) -&gt; list[str]:
+        all_goods_members = self.goods_members
+        generation_members = self.electricity_generation_goods_members
+        result = [x for x in all_goods_members if x not in generation_members]
+        return result
+
+    @property
+    def non_electricity_generation_goods_count(self) -&gt; int:
+        return len(self.non_electricity_generation_goods_members)
+
+    @property
+    def non_energy_or_generation_goods_members(self) -&gt; list[str]:
+        result = [
+            x for x in self.goods_members if x not in self.energy_goods_members]
+        result = [
+            x for x in result if x not in self.electricity_generation_goods_members]
+        return result
+
+    @property
+    def non_energy_or_generation_goods_count(self) -&gt; int:
+        return len(self.non_energy_or_generation_goods_members)
+
+    @property
+    def capital_sectors_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        sector Y, the capital producing sector
+        sector Z, the household capital producing sector
+        &#34;&#34;&#34;
+        return [&#34;Y&#34;, &#34;Z&#34;]
+
+    @property
+    def all_sectors_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        Returns the set of members defined in the model SYM file
+        plus sector Y, the capital producing sector
+        and sector Z, the household capital producing sector.
+        These sectors, Y and Z, are common to all model versions.
+        &#34;&#34;&#34;
+        result = self.__set_members(&#34;sectors&#34;)
+        for capital_sector in self.capital_sectors_members:
+            result.append(capital_sector)
+        return result
+
+    @property
+    def sectors_members(self) -&gt; list[str]:
+        return self.__set_members(&#34;sectors&#34;)
+
+    @property  # numsect # a01,a02 for version R of the model
+    def sectors_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        Returns N: the number of sectors defined in the SYM file (a01 ...aN).
+        &#34;&#34;&#34;
+        return self.__set_members_count(&#39;sectors&#39;)
+
+    @property  # numsect # a01,a02, Y and Z for version R of the model
+    def all_sectors_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        Returns N+2: the number of sectors defined in the SYM file (a01 ...aN) + the Y and the Z sectors.
+        &#34;&#34;&#34;
+        return len(self.all_sectors_members)
+
+    @property
+    def non_energy_or_generation_sectors_members(self) -&gt; list[str]:
+        return self.sectors_producing(self.non_energy_or_generation_goods_members)
+
+    @property
+    def energy_distribution_sectors_members(self) -&gt; list[str]:
+        return self.__set_members(&#39;sec_ed&#39;)
+
+    @property
+    def energy_distribution_sectors_count(self) -&gt; int:
+        return self.__set_members_count(&#39;sec_ed&#39;)
+
+    @property
+    def non_energy_distribution_sectors_members(self) -&gt; list[str]:
+        return self.__set_members(&#39;sec_std&#39;)
+
+    # Note that if there is no electricity distribution sectors, then distribution is lumped in with
+    # the more broadly defined energy sector(s).
+    @property  # numsecstd
+    def non_energy_distribution_sectors_count(self) -&gt; int:
+        return self.__set_members_count(&#39;sec_std&#39;)
+
+    @property
+    def regions_members(self) -&gt; list[str]:
+        return self.__set_members(
+            &#34;regions&#34;)
+
+    @property  # countopt
+    def regions_count(self) -&gt; int:
+        return self.__set_members_count(&#39;regions&#39;)
+
+    @property
+    def us_region(self) -&gt; str:
+        return self.regions_members[0]
+
+    @property
+    def gas_sector_good(self) -&gt; str:
+        &#34;&#34;&#34;
+        Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+
+        Model version J has 5 energy sectors: gas and gas utilities are aggregated and
+        the gas emissions are applied to gas utilities a02 producing good g02.
+        &#34;&#34;&#34;
+        match self.configuration.version:
+            case &#39;2R&#39;:
+                return None
+            case &#39;20R&#39; |&#39;20J&#39; | &#39;20C&#39; | &#39;6G&#39;:
+                return self.goods_members[1]
+            case _:
+                raise Exception(f&#34;GCubed does not yet support model version {self.configuration.version}.&#34;)
+
+    @property
+    def oil_sector_good(self) -&gt; str:
+        &#34;&#34;&#34;
+        Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+
+        Model version J has 5 energy sectors: gas and gas utilities are aggregated and
+        the gas emissions are applied to gas utilities a03 producing good g03.
+        &#34;&#34;&#34;
+
+        match self.configuration.version:
+            case &#39;2R&#39;:
+                return None
+            case &#39;20R&#39; |&#39;20J&#39; | &#39;20C&#39; | &#39;6G&#39;:
+                return self.goods_members[2]
+            case _:
+                raise Exception(f&#34;GCubed does not yet support model version {self.configuration.version}.&#34;)
+
+    @property
+    def coal_sector_good(self) -&gt; str:
+        &#34;&#34;&#34;
+        Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+
+        Model version J has 5 energy sectors: gas and gas utilities are aggregated and
+        the gas emissions are applied to gas utilities a04 producing good g04.
+        &#34;&#34;&#34;
+        match self.configuration.version:
+            case &#39;2R&#39;:
+                return None
+            case &#39;20R&#39; |&#39;20J&#39; | &#39;20C&#39; | &#39;6G&#39;:
+                return self.goods_members[3]
+            case _:
+                raise Exception(f&#34;GCubed does not yet support model version {self.configuration.version}.&#34;)
+
+    @property
+    def sector_prefix(self) -&gt; str:
+        return self.sectors_members[0][0]
+
+    @property
+    def good_prefix(self) -&gt; str:
+        return self.goods_members[0][0]
+
+    def sector_producing(self, good: str) -&gt; str:
+        return (self.sector_prefix + good[1:])
+
+    def sectors_producing(self, goods: list[str]) -&gt; str:
+        return [self.sector_producing(x) for x in goods]
+
+    def good_produced_by(self, sector: str) -&gt; str:
+        return (self.good_prefix + sector[1:])
+
+    def goods_produced_by(self, sectors: list[str]) -&gt; str:
+        return [self.good_produced_by(x) for x in sectors]
+
+    def __vector_length(self, vector_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        Provides access to information about the lengths of various vectors
+        used in the model based on SYM information.
+        &#34;&#34;&#34;
+        return self._vector_length[vector_name]
+
+    @property  # nxg
+    def exogenous_variable_count(self):
+        return self.__vector_length(&#34;exogenous_variables&#34;)
+
+    @property  # nz and nz1
+    def endogenous_variable_count(self):
+        return self.__vector_length(&#34;endogenous_variables&#34;)
+
+    @property  # nez
+    def expected_endogenous_variable_count(self):
+        return self.__vector_length(&#34;expected_endogenous_variables&#34;)
+
+    @property  # njm
+    def jump_variable_count(self):
+        return self.__vector_length(&#34;jump_variables&#34;)
+
+    @property  # nst
+    def state_variable_count(self):
+        return self.__vector_length(&#34;state_variables&#34;)
+
+    @property  # npar
+    def parameter_count(self):
+        return self.__vector_length(&#34;parameters&#34;)
+
+    @property  # swtch
+    def swtch(self) -&gt; tuple[bool]:
+        &#34;&#34;&#34;
+        Return a tuple of boolean values used to track various types of variables in the model.
+        In the Ox implementation these are ones and zeros.
+        &#34;&#34;&#34;
+        return (
+            self.jump_variable_count == 0,
+            self.exogenous_variable_count == 0,
+            self.expected_endogenous_variable_count == 0,
+            False,
+            self.jump_variable_count == 0,
+            False)
+
+    @property  # dimenson Note the spelling error in the Ox variable name.
+    def dimension(self):
+        return (0,
+                self.parameter_count,
+                self.state_variable_count,
+                max(self.jump_variable_count, 1),
+                max(self.exogenous_variable_count, 1),
+                self.endogenous_variable_count,
+                max(self.expected_endogenous_variable_count, 1),
+                0)
+
+    # TODO: Remove this convenience method once the re-implementation is done.
+    @property
+    def dimenson(self):
+        return self.dimension()
+
+    @property
+    # TODO: Consider adding these factors of production (K,L,E,M) to the
+    # SYM model definition so they are not hard-coded.
+    def factors_of_production_members(self) -&gt; list[str]:
+        return (&#34;K&#34;, &#34;L&#34;, &#34;E&#34;, &#34;M&#34;)
+
+    @property
+    def factors_of_production_count(self) -&gt; int:
+        return len(self.factors_of_production_members)
+
+    @property
+    def lhs_vector_names(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        Note the naming conventions for the lefthand side (LHS) variable vectors:
+        a. x1l (the vector of state variables) X=S=State
+        b. j1l (the vector of costate or jump variables) J=C=Costate
+        c. zel (the endogenous variables LOGY, PRCT, PRID) 
+        d. z1l (the other endogenous variables)
+        &#34;&#34;&#34;
+        return SymData._lhs_vector_names
+
+    @property
+    def rhs_vector_names(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        1. S - state - x1r is right hand side (RHS) state variables
+        2. J - jump - j1r is RHS costate or jump variables
+        3. R - ? - zer is special RHS endogenous variables LOGY, PRCT, PRID that also appear as expected next-period values on the RHS of the equations.
+        4. exz is RHS the lead expected R (Expected value in next period of R)
+        5.  S_{t-1} yxr is RHS state variables lagged by 1 period
+        6. yjr is RHS costate variables lagged by 1 period
+        7. exo is exogenous variables (by definition only appearing on RHS)
+        8. z1r is RHS other endogenous variables.
+        &#34;&#34;&#34;
+        return SymData._rhs_vector_names
+
+    @property
+    def ssf_rhs_vector_names(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        4. exz is RHS the lead expected endogenous variables (Expected value in next period of a subset of the endogenous variables)
+        5. yxr is RHS state variables lagged by 1 period
+        6. yjr is RHS costate variables lagged by 1 period
+        7. exo is exogenous variables (by definition only appearing on RHS)
+        &#34;&#34;&#34;
+        return SymData._ssf_rhs_vector_names
+
+    @property
+    def projection_vector_names(self) -&gt; list[str]:
+        return SymData._projection_vector_names
+
+    def vector_length(self, vector_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        Argument:
+
+        vector_name: The 3 character acronym identifying the LHS or RHS vector in the model.
+
+        Returns the integer length of the specified vector.
+        &#34;&#34;&#34;
+        match vector_name:
+
+            case &#34;z1l&#34; | &#34;z1r&#34;:
+                return self.endogenous_variable_count
+
+            case &#34;x1l&#34; | &#34;x1r&#34; | &#34;yxr&#34;:
+                return self.state_variable_count
+
+            case &#34;j1l&#34; | &#34;j1r&#34; | &#34;yjr&#34;:
+                return self.jump_variable_count
+
+            case &#34;zel&#34; | &#34;zer&#34; | &#34;exz&#34;:
+                return self.expected_endogenous_variable_count
+
+            case &#34;exo&#34;:
+                return self.exogenous_variable_count
+
+            case _:
+                raise Exception(
+                    &#34;No vector length available for the vector named {}&#34;.format(vector_name))
+
+    def vector_variable_names(self, vector_name: str) -&gt; list[str]:
+        &#34;&#34;&#34;
+        Arguments:
+        vector_name: the name of the vector
+
+        Returns the SYM ordered fully articulated variable names for the
+        variables in the given model vector.
+
+        This is useful for labelling the rows/columns of dataframes containing 
+        linear model partial derivatives, and SSF matrices.
+        &#34;&#34;&#34;
+        variable_type: str = self.varmap_variable_type(vector_name=vector_name)
+        matching_var_type: pd.Series = self.var_map.var_type == variable_type
+        result: pd.DataFrame = self.var_map.loc[matching_var_type, [&#39;name&#39;, &#39;sequence&#39;]].sort_values(&#39;sequence&#39;)
+        return result.name.to_list()
+
+    @property
+    def no_exogenous_variables(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Used in place of the swtch variable in the Ox implementation.
+        &#34;&#34;&#34;
+        return self.vector_length(&#34;exo&#34;) == 0
+
+    @property
+    def no_jump_variables(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Used in place of the swtch variable in the Ox implementation.
+        &#34;&#34;&#34;
+        return self.vector_length(&#34;j1r&#34;) == 0
+
+    @property
+    def no_expected_exogenous_variables(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Used in place of the swtch variable in the Ox implementation.
+        &#34;&#34;&#34;
+        return self.vector_length(&#34;zer&#34;) == 0
+
+    def __load_varmap(self):
+        filename: str = self.configuration.varmap_file
+        if not os.path.isfile(filename):
+            raise Exception(&#34;Could not load parameter listing from &#34; +
+                            filename + &#34; because the file does not exist.&#34;)
+        data: pd.DataFrame = pd.read_csv(filename, header=None)
+        data.columns = [&#39;name&#39;, &#39;code&#39;, &#39;var_type&#39;, &#39;sequence&#39;, &#39;name_with_no_punctuation&#39;]
+        data.index = data.name
+        self._variable_map = data
+
+    def __load_varinfo(self):
+        filename: str = self.configuration.variables_info_file
+        if not os.path.isfile(filename):
+            raise Exception(&#34;Could not load varinfo from &#34; +
+                            filename + &#34; because the file does not exist.&#34;)
+        data: pd.DataFrame = pd.read_csv(filename, header=None)
+        data.columns = [&#34;name&#34;, &#34;size&#34;, &#34;var_type&#34;,
+                        &#34;units&#34;, &#34;description&#34;, &#34;attributes&#34;]
+        data.index = data.iloc[:, 0]
+        self._variable_information = data
+
+    def __load_optmap(self):
+        # TODO: What are the columns of optmap csv file? See column names
+        # set below to determine which ones are not yet understood.
+        filename: str = self.configuration.opt_map_file
+        if not os.path.isfile(filename):
+            raise Exception(&#34;Could not load optmap from &#34; +
+                            filename + &#34; because the file does not exist.&#34;)
+        data: pd.DataFrame = pd.read_csv(filename, header=None)
+        data.columns = [&#34;some_integer&#34;, &#34;name_index_combo&#34;, &#34;vector_name&#34;,
+                        &#34;vector_index&#34;, &#34;variable_base_name&#34;]
+        self._optmap = data
+
+    def __load_model_summary(self):
+
+        # Initialise this dictionary.
+        self._sym_sets: dict[str, list[str]] = dict()
+
+        filename: str = self.configuration.model_summary_file
+        if not os.path.isfile(filename):
+            raise Exception(&#34;Could not load model summary from &#34; +
+                            filename + &#34; because the file does not exist.&#34;)
+
+        # Find all sets and store their name and members in a dictionary of lists,
+        # where each list of set members is in the same order as specified in the
+        # SYM model definition.
+        file = open(filename, &#39;r&#39;)
+        lines = file.readlines()
+
+        processing_sets = False
+        set_name = None
+        set_members = None
+
+        for line in lines:
+
+            if line.isspace():
+                set_name = None
+                set_members = None
+
+            if &#39;Parameters:&#39; in line:
+                break
+
+            if &#39;Sets:&#39; in line:
+                processing_sets = True
+                continue
+
+            if processing_sets:
+                stripped_line = line.strip()
+                if stripped_line:
+                    if set_name is None:
+                        set_name = stripped_line
+                        continue
+                    else:
+                        if not line.startswith(&#34;         &#34;):
+                            continue
+                        if set_members is None:
+                            set_members: list[str] = stripped_line.split(
+                                &#39;,&#39;)
+                        else:
+                            set_members.extend(stripped_line.split(&#39;,&#39;))
+                        if set_members:
+                            set_members = [x for x in set_members if x.strip()]
+                        self._sym_sets[set_name] = set_members
+                        continue
+
+    def __summarise_sym_information(self):
+        &#34;&#34;&#34;
+        Analyses the data loaded from the files produced by SYM to populate
+        a variety of constants that determine model dimensions etc.
+        &#34;&#34;&#34;
+        data: dict[str, any] = dict()
+        data[&#34;parameters&#34;] = self.__get_vector_size_by_type(
+            [&#34;par&#34;])  # npar in Ox
+        data[&#34;state_variables&#34;] = self.__get_vector_size_by_type(
+            [&#34;sta&#34;, &#34;stl&#34;])  # nst in Ox
+        data[&#34;jump_variables&#34;] = self.__get_vector_size_by_type([
+            &#34;cos&#34;])  # njm in Ox: for costate variables
+        data[&#34;expected_endogenous_variables&#34;] = self.__get_vector_size_by_type([
+            &#34;ets&#34;])  # nez in Ox
+        data[&#34;exogenous_variables&#34;] = self.__get_vector_size_by_type([
+            &#34;exo&#34;])  # nxg in Ox
+        data[&#34;endogenous_variables&#34;] = self.__get_vector_size_by_type([
+            &#34;end&#34;])  # nz and nz1 in Ox
+
+        self._vector_length = data
+
+    @property
+    def parameter_name_prefixes(self) -&gt; list[str]:
+        full_parameter_names = (self._variable_information.loc[self._variable_information[&#34;var_type&#34;].isin(
+            [&#34;par&#34;]), &#34;name&#34;]).to_list()
+        parameter_name_prefixes = [re.sub(r&#39;^([^\(]+)($|\(.+$)&#39;, &#39;\g&lt;1&gt;&#39;, full_parameter_name)
+                                   for full_parameter_name in full_parameter_names]
+        return parameter_name_prefixes
+
+    def __get_vector_size_by_type(self, types: list[str]):
+        &#34;&#34;&#34;
+        TODO: Write unit tests for this functionality.
+        Determine the length of various vectors used by the model.
+
+        Arguments:
+
+        self: The model
+
+        types: a list of types of variables (or parameters)
+
+        Return the sum of the size of each entry in the variable information table with a type matching any of
+        the members of the types list.
+        &#34;&#34;&#34;
+        return self._variable_information.loc[self._variable_information[&#34;var_type&#34;].isin(types), &#34;size&#34;].sum()
+
+    def __validate(self):
+
+        # Validate regions
+        if self.regions_count &lt; 2:
+            raise Exception(&#34;The model needs to include at least 2 regions.&#34;)
+        for region in self.regions_members:
+            if not (region[0] == region[1] and region[0].isupper()):
+                raise Exception(
+                    &#34;The region code must be a pair of identical upper-case letters, not &#34; + region)
+
+        # Validate goods
+        if self.goods_count &lt; 2:
+            raise Exception(&#34;The model needs to include at least 2 goods.&#34;)
+
+        # Validate sectors
+        if self.sectors_count &lt; 2:
+            raise Exception(&#34;The model needs to include at least 2 sectors.&#34;)
+        if self.goods_count != self.sectors_count:
+            logging.error(f&#34;The goods are:\n{self.goods_members}&#34;)
+            logging.error(f&#34;The sectors are:\n{self.sectors_members}&#34;)
+            raise Exception(f&#34;The number of &#39;goods&#39;, {self.goods_count}, must be equal to the number of sectors, {self.sectors_count}.&#34;)
+
+        match self.configuration.version:
+            case &#34;2R&#34;:
+                assert self.sectors_count == 2
+            case &#34;6G&#34;:
+                assert self.sectors_count == 6
+            case &#34;20J&#34; | &#34;20C&#34; | &#34;20R&#34;:
+                assert self.sectors_count == 20
+            case _:
+                assert self.sectors_count &gt; 6
+
+        # Validate equation vector lengths for LHS and RHS vectors
+        assert len(self.lhs_vector_names) == 4
+        assert len(self.rhs_vector_names) == 8
+
+    def has_variables(self, variable_name_prefix: str) -&gt; bool:
+        &#34;&#34;&#34;
+        Returns true iff the SYM model definition includes a variable with the given root name.
+        &#34;&#34;&#34;
+        return self.var_map.name.str.startswith(variable_name_prefix).any()
+
+    def has_variable(self, variable_name: str) -&gt; bool:
+        &#34;&#34;&#34;
+        Returns true iff the SYM model definition includes a variable with the given complete name including
+        the set qualifier in round brackets.
+        &#34;&#34;&#34;
+        return (self.var_map.name == variable_name).any()
+
+    def variable_index(self, vector_name: str, variable_name: str) -&gt; int:
+        variable_type: str = self.varmap_variable_type(vector_name=vector_name)
+        type_matches: list[bool] = self.var_map.var_type == variable_type
+        name_matches: list[bool] = self.var_map.name == variable_name
+        result = self.var_map.loc[type_matches &amp; name_matches, &#39;sequence&#39;]
+        if len(result) == 0:
+            raise Exception(
+                f&#34;The variable name, {variable_name} is not defined in the SYM model as part of vector {vector_name}.&#34;)
+        if len(result) != 1:
+            raise Exception(
+                f&#34;The variable name, {variable_name} must be unique within the SYM model to retrieve its unique index.&#34;)
+        return int(result.values[0])
+
+    def variable_units(self, vector_name: str, variable_name_prefix: str) -&gt; int:
+        &#34;&#34;&#34;
+        Arguments:
+
+        variable_name_prefix: The prefix is the set of characters up to but not including the 
+        round bracket that starts the full qualification of the variable based on the sets it is
+        defined over.
+
+        e.g. use SHL for SHL(region,sector)
+
+        Returns the units of measurement for the variable identified by the prefix.
+        true iff the SYM model definition includes a variable with the given complete name including
+        the set qualifier in round brackets.
+        &#34;&#34;&#34;
+        variable_type: str = self.varmap_variable_type(vector_name=vector_name)
+        type_matches: list[bool] = self.var_info.var_type == variable_type
+        name_matches: list[bool] = self.var_info.name.str.startswith(f&#34;{variable_name_prefix}(&#34;)
+        result = self.var_info.loc[type_matches &amp; name_matches, &#39;units&#39;]
+        if len(result) == 0:
+            raise Exception(
+                f&#34;The variable name prefix, {variable_name_prefix}, is not defined in the SYM model as part of vector {vector_name}.&#34;)
+        if len(result) != 1:
+            raise Exception(
+                f&#34;The variable name prefix, {variable_name_prefix}, must be unique within the SYM model to retrieve its unique index.&#34;)
+        return str(result)
+
+    @property
+    def intertemporal_constant_variables(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Provide access to the information about the variables that are associated with intertemporal constants.
+
+        The intertemporal constants are used to ensure that jump variables equal to their observed values in the year
+        where there is available data (typically the base projection year, one year before the start of projections).
+
+        An intertemporal constant is also used in each WAGE equation to ensure that real interest rates align with nominal 
+        interest rates less expected inflation in the next year.
+
+        Return a dataframe containing a row per variable that has an intertemporal constant in its equation.
+        The dataframe has the following columns:
+        - &#39;name&#39; variable name (complete with set identifiers for region/sector etc.)
+        - &#39;var_type&#39; variable type (the associated LHS vector name)
+        - &#39;sequence&#39; the index of the variable in the associated vector
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_intertemporal_constant_variables&#39;):
+            return self._intertemporal_constant_variables
+
+        matches: pd.Series = self.var_map.var_type == &#39;j1l&#39;
+        result: pd.DataFrame = self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]
+
+        # Check for the existence of any variables with the given name prefixes and add them 
+        # to the results if they are defined in the SYM model.
+        for (prefix, vector_name) in CONSTANTS.NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES:
+            matches: pd.Series = self.var_map.name.str.startswith(f&#34;{prefix}(&#34;) &amp; (self.var_map.var_type == vector_name)
+            result: pd.DataFrame = pd.concat([result, self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]])            
+
+        result = result.loc[result.name != CONSTANTS.REXC_FOR_USA, :]
+
+        result.index = result.name
+
+        self._intertemporal_constant_variables = result
+        return self._intertemporal_constant_variables
+
+    @property
+    def variables_adjusted_by_intertemporal_constants(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Provide access to the information about the variables that have their values adjusted 
+        by the intertemporal constants. Note that this list is slightly different from the 
+        list of variables that have intertemporal constants added to their equations in the model
+        to match up model projections with observed values at the start of the projections because
+        a constant is added to the WAGE equation but it is used to adjust the WAGE equation in a way
+        that leads to the required expected price inflation rate.
+
+        Return a dataframe containing a row per variable that has an intertemporal constant in its equation.
+        The dataframe has the following columns:
+        - &#39;name&#39; variable name (complete with set identifiers for region/sector etc.)
+        - &#39;var_type&#39; variable type (the associated LHS vector name)
+        - &#39;sequence&#39; the index of the variable in the associated vector
+        &#34;&#34;&#34;
+
+        if hasattr(self, &#39;_variables_adjusted_by_intertemporal_constants&#39;):
+            return self._variables_adjusted_by_intertemporal_constants
+
+        matches: pd.Series = self.var_map.var_type == &#39;j1l&#39;
+        result: pd.DataFrame = self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]
+
+        # Check for the existence of any variables with the given name prefixes and add them
+        # to the results if they are defined in the SYM model.
+        for (prefix, vector_name) in CONSTANTS.NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES:
+            matches: pd.Series = self.var_map.name.str.startswith(f&#34;{prefix}(&#34;) &amp; (self.var_map.var_type == vector_name)
+            result: pd.DataFrame = pd.concat([result, self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]])
+
+        result = result.loc[result.name != CONSTANTS.REXC_FOR_USA, :]
+
+        result.index = result.name
+
+        result.index = result.name
+
+        self._variables_adjusted_by_intertemporal_constants = result
+        return self._variables_adjusted_by_intertemporal_constants
+
+    def __combine_varinfo_varmap(self):
+        &#34;&#34;&#34;
+        To combine the information in the varmap and in the varinfo files generated by sym so that
+        we have a single dataframe, indexed by variable name and with a column for each of:
+        -Variable name with all set identifiers e.g. GDPN(UU)
+        -Variable name prefix e.g. GDPN
+        -Variable units as specified in the varinfo. 
+        -&#39;publication_units&#39; - the units code to use when publishing variable projections.
+        -Variable description
+        -Projection vector that the variable is associated with (j1l, x1l, z1l, zel or exo).
+        -Index of the variable in its projection vector (the sequence number accessible from the varmap).
+        -Column indicating if it has an intertemporal constant in its equation. Column should be a missing value if not
+            and the index of the intertemporal constant if it is.
+        -Column indicating if it is the target of an intertemporal constant adjustment. Column should be a missing value if not
+            and the index of the intertemporal constant if it is.
+        &#34;&#34;&#34;
+
+        # Get the variable name prefix (everything up to the set specifiers in round brackets - if it exists)
+        prefix = self.var_info[&#39;name&#39;].apply(lambda x: x.split(&#34;(&#34;)[0]) # Remove everything from first ( onwards in the variable name.
+        dict_units = dict(zip(prefix, self.var_info[&#39;units&#39;]))
+        dict_desc = dict(zip(prefix, self.var_info[&#39;description&#39;]))
+        dict_var_type = dict(zip(prefix, self.var_info[&#39;var_type&#39;]))
+        self._combined_variable_summary = pd.DataFrame(index=self.var_map.index, columns=[&#39;prefix&#39;, &#39;units&#39;, &#39;description&#39;, &#39;var_type&#39;, &#39;is_intertemp&#39;, &#39;is_adjusted&#39;])
+        self._combined_variable_summary[[&#39;name&#39;, &#39;vector_code&#39;, &#39;vector&#39;, &#39;sequence&#39;]] = self.var_map[[&#39;name&#39;, &#39;code&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]
+        self._combined_variable_summary.loc[:, &#39;prefix&#39;] = self._combined_variable_summary[&#39;name&#39;].apply(lambda x: x[:x.find(&#39;(&#39;)])
+        self._combined_variable_summary.loc[:, &#39;units&#39;] = self._combined_variable_summary[&#39;prefix&#39;].apply(lambda x: dict_units[x])
+        self._combined_variable_summary.loc[:, &#39;description&#39;] = self._combined_variable_summary[&#39;prefix&#39;].apply(lambda x: dict_desc[x])
+        self._combined_variable_summary.loc[:, &#39;var_type&#39;] = self._combined_variable_summary[&#39;prefix&#39;].apply(lambda x: dict_var_type[x])
+        self._combined_variable_summary.reset_index(drop=True, inplace=True)  # avoid duplicate index
+
+        # Eliminate the parameter entries - we are only interested in the variables.
+        self._combined_variable_summary = self._combined_variable_summary.loc[self._combined_variable_summary.var_type != &#39;par&#39;,:]
+
+        # Eliminate redundant vector types
+        self._combined_variable_summary = self._combined_variable_summary.loc[self._combined_variable_summary.vector != &#39;x1r&#39;, :]
+        self._combined_variable_summary = self._combined_variable_summary.loc[self._combined_variable_summary.vector != &#39;z1r&#39;, :]
+        self._combined_variable_summary = self._combined_variable_summary.loc[self._combined_variable_summary.vector != &#39;j1r&#39;, :]
+        self._combined_variable_summary = self._combined_variable_summary.loc[self._combined_variable_summary.vector != &#39;zer&#39;, :]
+        self._combined_variable_summary = self._combined_variable_summary.loc[self._combined_variable_summary.vector != &#39;yjr&#39;, :]
+        self._combined_variable_summary = self._combined_variable_summary.loc[self._combined_variable_summary.vector != &#39;yxr&#39;, :]
+        self._combined_variable_summary = self._combined_variable_summary.loc[self._combined_variable_summary.vector != &#39;exz&#39;, :]
+
+        # Set the index of the combined variable summary dataframe to be the variable names (with set specifiers)
+        self._combined_variable_summary.index = self._combined_variable_summary.name
+
+        # Add a boolean column that is true iff the variable has an intertemporal constant
+        self._combined_variable_summary[&#39;is_intertemp&#39;] = False
+        self._combined_variable_summary.loc[self.intertemporal_constant_variables.index, &#39;is_intertemp&#39;] = True
+
+        # Add a boolean column that is true iff the variable has its initial value adjusted to observed value by an intertemporal constant
+        self._combined_variable_summary[&#39;is_adjusted&#39;] = False
+        self._combined_variable_summary.loc[self.variables_adjusted_by_intertemporal_constants.index, &#39;is_adjusted&#39;] = True
+
+        # Create the publication units column
+        self._combined_variable_summary[&#39;publication_units&#39;] = self._combined_variable_summary.loc[:, &#39;units&#39;]
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;usgdp&#39;, &#39;publication_units&#39;] = &#39;$US Bil&#39;
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;gdp&#39;, &#39;publication_units&#39;] = &#39;$US Bil&#39;
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;mmtusgdp&#39;, &#39;publication_units&#39;] = &#39;mmt&#39;
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;mmtgdp&#39;, &#39;publication_units&#39;] = &#39;mmt&#39;
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;btuusgdp&#39;, &#39;publication_units&#39;] = &#39;btu&#39;
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;btugdp&#39;, &#39;publication_units&#39;] = &#39;btu&#39;
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;gwhgdp&#39;, &#39;publication_units&#39;] = &#39;gwh&#39;
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;del&#39;, &#39;publication_units&#39;] = &#39;del&#39;
+        self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;pct&#39;, &#39;publication_units&#39;] = &#39;pct&#39;
+
+        # # Slow and now obsolete code - iterating rows of the summary data.
+        # for ind, row in self._combined_variable_summary.iterrows():
+            
+        #     # if not self.intertemporal_constant_variables.loc[
+        #     #     (self.intertemporal_constant_variables[[&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]] == row[
+        #     #         [&#39;name&#39;, &#39;vector&#39;, &#39;sequence&#39;]].to_numpy()).all(axis=1)
+        #     # ].empty:
+        #     #     self._combined_variable_summary.loc[ind, &#39;is_intertemp&#39;] = self._combined_variable_summary.loc[ind, &#39;sequence&#39;]
+
+        #     # if not self.variables_adjusted_by_intertemporal_constants.loc[
+        #     #     (self.variables_adjusted_by_intertemporal_constants[[&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]] == row[
+        #     #         [&#39;name&#39;, &#39;vector&#39;, &#39;sequence&#39;]].to_numpy()).all(axis=1)
+        #     # ].empty:
+        #     #     self._combined_variable_summary.loc[ind, &#39;is_adjusted&#39;] = self._combined_variable_summary.loc[
+        #     #         ind, &#39;sequence&#39;]
+
+        #     # Generate the column of units for the variables that will be used when 
+        #     # their projections are converted to publication form.
+        #     match row.loc[&#39;units&#39;]:
+        #         case &#39;usgdp&#39; | &#39;gdp&#39;:
+        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;$US Bil&#39;
+        #         case &#39;mmtusgdp&#39; | &#39;mmtgdp&#39;:
+        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;mmt&#39;
+        #         case &#39;btuusgdp&#39; | &#39;btugdp&#39;:
+        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;btu&#39;
+        #         case &#39;gwhgdp&#39; | &#39;gwh&#39;:
+        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;gwh&#39;
+        #         case &#39;del&#39;:
+        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;pct&#39;
+        #         case &#39;pct&#39;:
+        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;Index&#39;
+        #         case &#39;cent&#39; | &#39;btu&#39; | &#39;mmt&#39; | &#39;dollar&#39;:
+        #             pass
+        #         case _:
+        #             logging.warning(f&#34;Could not convert database unit, {row.loc[&#39;units&#39;]}, to a publication unit for {row.loc[&#39;name&#39;]}.&#34;)
+
+        # self._combined_variable_summary = self._combined_variable_summary[[
+        #     &#39;name&#39;, &#39;prefix&#39;, &#39;units&#39;, &#39;publication_units&#39;, &#39;description&#39;, &#39;var_type&#39;, &#39;vector_code&#39;, &#39;vector&#39;, &#39;sequence&#39;, &#39;is_intertemp&#39;, &#39;is_adjusted&#39;]]
+
+    @property
+    def combined_variable_summary(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Return the combined variable summary data.
+        This should be used to drive a lot of the 
+        variable filtering throughout the model.
+        The columns of this summary dataframe are:
+        &#39;name&#39; - the full name of the variable
+        &#39;prefix&#39; - the name prefix - up to the open bracket.
+        &#39;units&#39; - the units code
+        &#39;publication_units&#39; - the units code to use when publishing variable projections.
+        &#39;description&#39; - the description
+        &#39;var_type&#39; - one of:
+            par = parameter
+            ets = expected endogenous variable? TODO: Check what ets means
+            end = endogenous
+            sta = state
+            stl = lead state variable? TODO: Check what stl var type means.
+            exo = exogenous
+            cos = costate or jump
+        &#39;vector_code&#39; - the vector name and index combination
+        &#39;vector&#39; - the vector name z1l, yxr, exo etc.
+        &#39;sequence&#39; - the index in the vector that corresponds to the variable.
+        &#39;is_intertemp&#39; - the index of the variable in the vector of intertemporal constants (or NaN)
+        &#39;is_adjusted&#39; - the index of the variable in the vector of variables being adjusted by intertemporal constants (or NaN)
+        &#34;&#34;&#34;
+        return self._combined_variable_summary</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="gcubed.sym_data.SymData.all_sectors_count"><code class="name">var <span class="ident">all_sectors_count</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Returns N+2: the number of sectors defined in the SYM file (a01 &hellip;aN) + the Y and the Z sectors.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property  # numsect # a01,a02, Y and Z for version R of the model
+def all_sectors_count(self) -&gt; int:
+    &#34;&#34;&#34;
+    Returns N+2: the number of sectors defined in the SYM file (a01 ...aN) + the Y and the Z sectors.
+    &#34;&#34;&#34;
+    return len(self.all_sectors_members)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.all_sectors_members"><code class="name">var <span class="ident">all_sectors_members</span> : list[str]</code></dt>
+<dd>
+<div class="desc"><p>Returns the set of members defined in the model SYM file
+plus sector Y, the capital producing sector
+and sector Z, the household capital producing sector.
+These sectors, Y and Z, are common to all model versions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def all_sectors_members(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    Returns the set of members defined in the model SYM file
+    plus sector Y, the capital producing sector
+    and sector Z, the household capital producing sector.
+    These sectors, Y and Z, are common to all model versions.
+    &#34;&#34;&#34;
+    result = self.__set_members(&#34;sectors&#34;)
+    for capital_sector in self.capital_sectors_members:
+        result.append(capital_sector)
+    return result</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.capital_sectors_members"><code class="name">var <span class="ident">capital_sectors_members</span> : list[str]</code></dt>
+<dd>
+<div class="desc"><p>sector Y, the capital producing sector
+sector Z, the household capital producing sector</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def capital_sectors_members(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    sector Y, the capital producing sector
+    sector Z, the household capital producing sector
+    &#34;&#34;&#34;
+    return [&#34;Y&#34;, &#34;Z&#34;]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.coal_sector_good"><code class="name">var <span class="ident">coal_sector_good</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.</p>
+<p>Model version J has 5 energy sectors: gas and gas utilities are aggregated and
+the gas emissions are applied to gas utilities a04 producing good g04.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def coal_sector_good(self) -&gt; str:
+    &#34;&#34;&#34;
+    Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+
+    Model version J has 5 energy sectors: gas and gas utilities are aggregated and
+    the gas emissions are applied to gas utilities a04 producing good g04.
+    &#34;&#34;&#34;
+    match self.configuration.version:
+        case &#39;2R&#39;:
+            return None
+        case &#39;20R&#39; |&#39;20J&#39; | &#39;20C&#39; | &#39;6G&#39;:
+            return self.goods_members[3]
+        case _:
+            raise Exception(f&#34;GCubed does not yet support model version {self.configuration.version}.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.combined_variable_summary"><code class="name">var <span class="ident">combined_variable_summary</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Return the combined variable summary data.
+This should be used to drive a lot of the
+variable filtering throughout the model.
+The columns of this summary dataframe are:
+'name' - the full name of the variable
+'prefix' - the name prefix - up to the open bracket.
+'units' - the units code
+'publication_units' - the units code to use when publishing variable projections.
+'description' - the description
+'var_type' - one of:
+par = parameter
+ets = expected endogenous variable? TODO: Check what ets means
+end = endogenous
+sta = state
+stl = lead state variable? TODO: Check what stl var type means.
+exo = exogenous
+cos = costate or jump
+'vector_code' - the vector name and index combination
+'vector' - the vector name z1l, yxr, exo etc.
+'sequence' - the index in the vector that corresponds to the variable.
+'is_intertemp' - the index of the variable in the vector of intertemporal constants (or NaN)
+'is_adjusted' - the index of the variable in the vector of variables being adjusted by intertemporal constants (or NaN)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def combined_variable_summary(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Return the combined variable summary data.
+    This should be used to drive a lot of the 
+    variable filtering throughout the model.
+    The columns of this summary dataframe are:
+    &#39;name&#39; - the full name of the variable
+    &#39;prefix&#39; - the name prefix - up to the open bracket.
+    &#39;units&#39; - the units code
+    &#39;publication_units&#39; - the units code to use when publishing variable projections.
+    &#39;description&#39; - the description
+    &#39;var_type&#39; - one of:
+        par = parameter
+        ets = expected endogenous variable? TODO: Check what ets means
+        end = endogenous
+        sta = state
+        stl = lead state variable? TODO: Check what stl var type means.
+        exo = exogenous
+        cos = costate or jump
+    &#39;vector_code&#39; - the vector name and index combination
+    &#39;vector&#39; - the vector name z1l, yxr, exo etc.
+    &#39;sequence&#39; - the index in the vector that corresponds to the variable.
+    &#39;is_intertemp&#39; - the index of the variable in the vector of intertemporal constants (or NaN)
+    &#39;is_adjusted&#39; - the index of the variable in the vector of variables being adjusted by intertemporal constants (or NaN)
+    &#34;&#34;&#34;
+    return self._combined_variable_summary</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.configuration"><code class="name">var <span class="ident">configuration</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def configuration(self):
+    return self._configuration</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.dimension"><code class="name">var <span class="ident">dimension</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property  # dimenson Note the spelling error in the Ox variable name.
+def dimension(self):
+    return (0,
+            self.parameter_count,
+            self.state_variable_count,
+            max(self.jump_variable_count, 1),
+            max(self.exogenous_variable_count, 1),
+            self.endogenous_variable_count,
+            max(self.expected_endogenous_variable_count, 1),
+            0)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.dimenson"><code class="name">var <span class="ident">dimenson</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def dimenson(self):
+    return self.dimension()</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.electricity_generation_goods_count"><code class="name">var <span class="ident">electricity_generation_goods_count</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def electricity_generation_goods_count(self) -&gt; int:
+    return self.__set_members_count(&#39;goods_g&#39;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.electricity_generation_goods_members"><code class="name">var <span class="ident">electricity_generation_goods_members</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def electricity_generation_goods_members(self) -&gt; list[str]:
+    return self.__set_members(&#34;goods_g&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.endogenous_variable_count"><code class="name">var <span class="ident">endogenous_variable_count</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property  # nz and nz1
+def endogenous_variable_count(self):
+    return self.__vector_length(&#34;endogenous_variables&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.energy_distribution_sectors_count"><code class="name">var <span class="ident">energy_distribution_sectors_count</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def energy_distribution_sectors_count(self) -&gt; int:
+    return self.__set_members_count(&#39;sec_ed&#39;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.energy_distribution_sectors_members"><code class="name">var <span class="ident">energy_distribution_sectors_members</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def energy_distribution_sectors_members(self) -&gt; list[str]:
+    return self.__set_members(&#39;sec_ed&#39;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.energy_goods_count"><code class="name">var <span class="ident">energy_goods_count</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property  # numener # g01 for version R of the model
+def energy_goods_count(self) -&gt; int:
+    return self.__set_members_count(&#39;goods_e&#39;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.energy_goods_members"><code class="name">var <span class="ident">energy_goods_members</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def energy_goods_members(self) -&gt; list[str]:
+    return self.__set_members(&#34;goods_e&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.exogenous_variable_count"><code class="name">var <span class="ident">exogenous_variable_count</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property  # nxg
+def exogenous_variable_count(self):
+    return self.__vector_length(&#34;exogenous_variables&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.expected_endogenous_variable_count"><code class="name">var <span class="ident">expected_endogenous_variable_count</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property  # nez
+def expected_endogenous_variable_count(self):
+    return self.__vector_length(&#34;expected_endogenous_variables&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.factors_of_production_count"><code class="name">var <span class="ident">factors_of_production_count</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def factors_of_production_count(self) -&gt; int:
+    return len(self.factors_of_production_members)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.factors_of_production_members"><code class="name">var <span class="ident">factors_of_production_members</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+# TODO: Consider adding these factors of production (K,L,E,M) to the
+# SYM model definition so they are not hard-coded.
+def factors_of_production_members(self) -&gt; list[str]:
+    return (&#34;K&#34;, &#34;L&#34;, &#34;E&#34;, &#34;M&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.gas_sector_good"><code class="name">var <span class="ident">gas_sector_good</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.</p>
+<p>Model version J has 5 energy sectors: gas and gas utilities are aggregated and
+the gas emissions are applied to gas utilities a02 producing good g02.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def gas_sector_good(self) -&gt; str:
+    &#34;&#34;&#34;
+    Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+
+    Model version J has 5 energy sectors: gas and gas utilities are aggregated and
+    the gas emissions are applied to gas utilities a02 producing good g02.
+    &#34;&#34;&#34;
+    match self.configuration.version:
+        case &#39;2R&#39;:
+            return None
+        case &#39;20R&#39; |&#39;20J&#39; | &#39;20C&#39; | &#39;6G&#39;:
+            return self.goods_members[1]
+        case _:
+            raise Exception(f&#34;GCubed does not yet support model version {self.configuration.version}.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.good_prefix"><code class="name">var <span class="ident">good_prefix</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def good_prefix(self) -&gt; str:
+    return self.goods_members[0][0]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.goods_count"><code class="name">var <span class="ident">goods_count</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def goods_count(self) -&gt; int:
+    return self.__set_members_count(&#39;goods&#39;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.goods_members"><code class="name">var <span class="ident">goods_members</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def goods_members(self) -&gt; list[str]:
+    return self.__set_members(&#34;goods&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.intertemporal_constant_variables"><code class="name">var <span class="ident">intertemporal_constant_variables</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Provide access to the information about the variables that are associated with intertemporal constants.</p>
+<p>The intertemporal constants are used to ensure that jump variables equal to their observed values in the year
+where there is available data (typically the base projection year, one year before the start of projections).</p>
+<p>An intertemporal constant is also used in each WAGE equation to ensure that real interest rates align with nominal
+interest rates less expected inflation in the next year.</p>
+<p>Return a dataframe containing a row per variable that has an intertemporal constant in its equation.
+The dataframe has the following columns:
+- 'name' variable name (complete with set identifiers for region/sector etc.)
+- 'var_type' variable type (the associated LHS vector name)
+- 'sequence' the index of the variable in the associated vector</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def intertemporal_constant_variables(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Provide access to the information about the variables that are associated with intertemporal constants.
+
+    The intertemporal constants are used to ensure that jump variables equal to their observed values in the year
+    where there is available data (typically the base projection year, one year before the start of projections).
+
+    An intertemporal constant is also used in each WAGE equation to ensure that real interest rates align with nominal 
+    interest rates less expected inflation in the next year.
+
+    Return a dataframe containing a row per variable that has an intertemporal constant in its equation.
+    The dataframe has the following columns:
+    - &#39;name&#39; variable name (complete with set identifiers for region/sector etc.)
+    - &#39;var_type&#39; variable type (the associated LHS vector name)
+    - &#39;sequence&#39; the index of the variable in the associated vector
+    &#34;&#34;&#34;
+    if hasattr(self, &#39;_intertemporal_constant_variables&#39;):
+        return self._intertemporal_constant_variables
+
+    matches: pd.Series = self.var_map.var_type == &#39;j1l&#39;
+    result: pd.DataFrame = self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]
+
+    # Check for the existence of any variables with the given name prefixes and add them 
+    # to the results if they are defined in the SYM model.
+    for (prefix, vector_name) in CONSTANTS.NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES:
+        matches: pd.Series = self.var_map.name.str.startswith(f&#34;{prefix}(&#34;) &amp; (self.var_map.var_type == vector_name)
+        result: pd.DataFrame = pd.concat([result, self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]])            
+
+    result = result.loc[result.name != CONSTANTS.REXC_FOR_USA, :]
+
+    result.index = result.name
+
+    self._intertemporal_constant_variables = result
+    return self._intertemporal_constant_variables</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.jump_variable_count"><code class="name">var <span class="ident">jump_variable_count</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property  # njm
+def jump_variable_count(self):
+    return self.__vector_length(&#34;jump_variables&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.lhs_vector_names"><code class="name">var <span class="ident">lhs_vector_names</span> : list[str]</code></dt>
+<dd>
+<div class="desc"><p>Note the naming conventions for the lefthand side (LHS) variable vectors:
+a. x1l (the vector of state variables) X=S=State
+b. j1l (the vector of costate or jump variables) J=C=Costate
+c. zel (the endogenous variables LOGY, PRCT, PRID)
+d. z1l (the other endogenous variables)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def lhs_vector_names(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    Note the naming conventions for the lefthand side (LHS) variable vectors:
+    a. x1l (the vector of state variables) X=S=State
+    b. j1l (the vector of costate or jump variables) J=C=Costate
+    c. zel (the endogenous variables LOGY, PRCT, PRID) 
+    d. z1l (the other endogenous variables)
+    &#34;&#34;&#34;
+    return SymData._lhs_vector_names</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.no_exogenous_variables"><code class="name">var <span class="ident">no_exogenous_variables</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Used in place of the swtch variable in the Ox implementation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def no_exogenous_variables(self) -&gt; bool:
+    &#34;&#34;&#34;
+    Used in place of the swtch variable in the Ox implementation.
+    &#34;&#34;&#34;
+    return self.vector_length(&#34;exo&#34;) == 0</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.no_expected_exogenous_variables"><code class="name">var <span class="ident">no_expected_exogenous_variables</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Used in place of the swtch variable in the Ox implementation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def no_expected_exogenous_variables(self) -&gt; bool:
+    &#34;&#34;&#34;
+    Used in place of the swtch variable in the Ox implementation.
+    &#34;&#34;&#34;
+    return self.vector_length(&#34;zer&#34;) == 0</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.no_jump_variables"><code class="name">var <span class="ident">no_jump_variables</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Used in place of the swtch variable in the Ox implementation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def no_jump_variables(self) -&gt; bool:
+    &#34;&#34;&#34;
+    Used in place of the swtch variable in the Ox implementation.
+    &#34;&#34;&#34;
+    return self.vector_length(&#34;j1r&#34;) == 0</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.non_electricity_generation_goods_count"><code class="name">var <span class="ident">non_electricity_generation_goods_count</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def non_electricity_generation_goods_count(self) -&gt; int:
+    return len(self.non_electricity_generation_goods_members)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.non_electricity_generation_goods_members"><code class="name">var <span class="ident">non_electricity_generation_goods_members</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def non_electricity_generation_goods_members(self) -&gt; list[str]:
+    all_goods_members = self.goods_members
+    generation_members = self.electricity_generation_goods_members
+    result = [x for x in all_goods_members if x not in generation_members]
+    return result</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.non_energy_distribution_sectors_count"><code class="name">var <span class="ident">non_energy_distribution_sectors_count</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property  # numsecstd
+def non_energy_distribution_sectors_count(self) -&gt; int:
+    return self.__set_members_count(&#39;sec_std&#39;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.non_energy_distribution_sectors_members"><code class="name">var <span class="ident">non_energy_distribution_sectors_members</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def non_energy_distribution_sectors_members(self) -&gt; list[str]:
+    return self.__set_members(&#39;sec_std&#39;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.non_energy_goods_count"><code class="name">var <span class="ident">non_energy_goods_count</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def non_energy_goods_count(self) -&gt; int:
+    return len(self.non_energy_goods_members)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.non_energy_goods_members"><code class="name">var <span class="ident">non_energy_goods_members</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def non_energy_goods_members(self) -&gt; list[str]:
+    all_goods_members = self.goods_members
+    energy_members = self.energy_goods_members
+    result = [x for x in all_goods_members if x not in energy_members]
+    return result</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.non_energy_or_generation_goods_count"><code class="name">var <span class="ident">non_energy_or_generation_goods_count</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def non_energy_or_generation_goods_count(self) -&gt; int:
+    return len(self.non_energy_or_generation_goods_members)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.non_energy_or_generation_goods_members"><code class="name">var <span class="ident">non_energy_or_generation_goods_members</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def non_energy_or_generation_goods_members(self) -&gt; list[str]:
+    result = [
+        x for x in self.goods_members if x not in self.energy_goods_members]
+    result = [
+        x for x in result if x not in self.electricity_generation_goods_members]
+    return result</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.non_energy_or_generation_sectors_members"><code class="name">var <span class="ident">non_energy_or_generation_sectors_members</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def non_energy_or_generation_sectors_members(self) -&gt; list[str]:
+    return self.sectors_producing(self.non_energy_or_generation_goods_members)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.oil_sector_good"><code class="name">var <span class="ident">oil_sector_good</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.</p>
+<p>Model version J has 5 energy sectors: gas and gas utilities are aggregated and
+the gas emissions are applied to gas utilities a03 producing good g03.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def oil_sector_good(self) -&gt; str:
+    &#34;&#34;&#34;
+    Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+
+    Model version J has 5 energy sectors: gas and gas utilities are aggregated and
+    the gas emissions are applied to gas utilities a03 producing good g03.
+    &#34;&#34;&#34;
+
+    match self.configuration.version:
+        case &#39;2R&#39;:
+            return None
+        case &#39;20R&#39; |&#39;20J&#39; | &#39;20C&#39; | &#39;6G&#39;:
+            return self.goods_members[2]
+        case _:
+            raise Exception(f&#34;GCubed does not yet support model version {self.configuration.version}.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.opt_map"><code class="name">var <span class="ident">opt_map</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def opt_map(self) -&gt; pd.DataFrame:
+    return self._optmap</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.parameter_count"><code class="name">var <span class="ident">parameter_count</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property  # npar
+def parameter_count(self):
+    return self.__vector_length(&#34;parameters&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.parameter_name_prefixes"><code class="name">var <span class="ident">parameter_name_prefixes</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def parameter_name_prefixes(self) -&gt; list[str]:
+    full_parameter_names = (self._variable_information.loc[self._variable_information[&#34;var_type&#34;].isin(
+        [&#34;par&#34;]), &#34;name&#34;]).to_list()
+    parameter_name_prefixes = [re.sub(r&#39;^([^\(]+)($|\(.+$)&#39;, &#39;\g&lt;1&gt;&#39;, full_parameter_name)
+                               for full_parameter_name in full_parameter_names]
+    return parameter_name_prefixes</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.projection_vector_names"><code class="name">var <span class="ident">projection_vector_names</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def projection_vector_names(self) -&gt; list[str]:
+    return SymData._projection_vector_names</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.regions_count"><code class="name">var <span class="ident">regions_count</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property  # countopt
+def regions_count(self) -&gt; int:
+    return self.__set_members_count(&#39;regions&#39;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.regions_members"><code class="name">var <span class="ident">regions_members</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def regions_members(self) -&gt; list[str]:
+    return self.__set_members(
+        &#34;regions&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.rhs_vector_names"><code class="name">var <span class="ident">rhs_vector_names</span> : list[str]</code></dt>
+<dd>
+<div class="desc"><ol>
+<li>S - state - x1r is right hand side (RHS) state variables</li>
+<li>J - jump - j1r is RHS costate or jump variables</li>
+<li>R - ? - zer is special RHS endogenous variables LOGY, PRCT, PRID that also appear as expected next-period values on the RHS of the equations.</li>
+<li>exz is RHS the lead expected R (Expected value in next period of R)</li>
+<li>S_{t-1} yxr is RHS state variables lagged by 1 period</li>
+<li>yjr is RHS costate variables lagged by 1 period</li>
+<li>exo is exogenous variables (by definition only appearing on RHS)</li>
+<li>z1r is RHS other endogenous variables.</li>
+</ol></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def rhs_vector_names(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    1. S - state - x1r is right hand side (RHS) state variables
+    2. J - jump - j1r is RHS costate or jump variables
+    3. R - ? - zer is special RHS endogenous variables LOGY, PRCT, PRID that also appear as expected next-period values on the RHS of the equations.
+    4. exz is RHS the lead expected R (Expected value in next period of R)
+    5.  S_{t-1} yxr is RHS state variables lagged by 1 period
+    6. yjr is RHS costate variables lagged by 1 period
+    7. exo is exogenous variables (by definition only appearing on RHS)
+    8. z1r is RHS other endogenous variables.
+    &#34;&#34;&#34;
+    return SymData._rhs_vector_names</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.sector_prefix"><code class="name">var <span class="ident">sector_prefix</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sector_prefix(self) -&gt; str:
+    return self.sectors_members[0][0]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.sectors_count"><code class="name">var <span class="ident">sectors_count</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Returns N: the number of sectors defined in the SYM file (a01 &hellip;aN).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property  # numsect # a01,a02 for version R of the model
+def sectors_count(self) -&gt; int:
+    &#34;&#34;&#34;
+    Returns N: the number of sectors defined in the SYM file (a01 ...aN).
+    &#34;&#34;&#34;
+    return self.__set_members_count(&#39;sectors&#39;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.sectors_members"><code class="name">var <span class="ident">sectors_members</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sectors_members(self) -&gt; list[str]:
+    return self.__set_members(&#34;sectors&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.ssf_rhs_vector_names"><code class="name">var <span class="ident">ssf_rhs_vector_names</span> : list[str]</code></dt>
+<dd>
+<div class="desc"><ol>
+<li>exz is RHS the lead expected endogenous variables (Expected value in next period of a subset of the endogenous variables)</li>
+<li>yxr is RHS state variables lagged by 1 period</li>
+<li>yjr is RHS costate variables lagged by 1 period</li>
+<li>exo is exogenous variables (by definition only appearing on RHS)</li>
+</ol></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def ssf_rhs_vector_names(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    4. exz is RHS the lead expected endogenous variables (Expected value in next period of a subset of the endogenous variables)
+    5. yxr is RHS state variables lagged by 1 period
+    6. yjr is RHS costate variables lagged by 1 period
+    7. exo is exogenous variables (by definition only appearing on RHS)
+    &#34;&#34;&#34;
+    return SymData._ssf_rhs_vector_names</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.state_variable_count"><code class="name">var <span class="ident">state_variable_count</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property  # nst
+def state_variable_count(self):
+    return self.__vector_length(&#34;state_variables&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.swtch"><code class="name">var <span class="ident">swtch</span> : tuple[bool]</code></dt>
+<dd>
+<div class="desc"><p>Return a tuple of boolean values used to track various types of variables in the model.
+In the Ox implementation these are ones and zeros.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property  # swtch
+def swtch(self) -&gt; tuple[bool]:
+    &#34;&#34;&#34;
+    Return a tuple of boolean values used to track various types of variables in the model.
+    In the Ox implementation these are ones and zeros.
+    &#34;&#34;&#34;
+    return (
+        self.jump_variable_count == 0,
+        self.exogenous_variable_count == 0,
+        self.expected_endogenous_variable_count == 0,
+        False,
+        self.jump_variable_count == 0,
+        False)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.sym_sets"><code class="name">var <span class="ident">sym_sets</span> : dict</code></dt>
+<dd>
+<div class="desc"><p>Mapping from set name to set members list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sym_sets(self) -&gt; dict:
+    &#34;&#34;&#34;
+    Mapping from set name to set members list
+    &#34;&#34;&#34;
+    return self._sym_sets</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.us_region"><code class="name">var <span class="ident">us_region</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def us_region(self) -&gt; str:
+    return self.regions_members[0]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.var_info"><code class="name">var <span class="ident">var_info</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def var_info(self):
+    # TODO: Provide methods to look up the varinfo
+    # TODO: Make sure parameter attributes in SYM appear in this dataset in the last column.
+    return self._variable_information</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.var_map"><code class="name">var <span class="ident">var_map</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def var_map(self) -&gt; pd.DataFrame:
+    # TODO: Provide methods to look up the varmap
+    return self._variable_map</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.variables_adjusted_by_intertemporal_constants"><code class="name">var <span class="ident">variables_adjusted_by_intertemporal_constants</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Provide access to the information about the variables that have their values adjusted
+by the intertemporal constants. Note that this list is slightly different from the
+list of variables that have intertemporal constants added to their equations in the model
+to match up model projections with observed values at the start of the projections because
+a constant is added to the WAGE equation but it is used to adjust the WAGE equation in a way
+that leads to the required expected price inflation rate.</p>
+<p>Return a dataframe containing a row per variable that has an intertemporal constant in its equation.
+The dataframe has the following columns:
+- 'name' variable name (complete with set identifiers for region/sector etc.)
+- 'var_type' variable type (the associated LHS vector name)
+- 'sequence' the index of the variable in the associated vector</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def variables_adjusted_by_intertemporal_constants(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Provide access to the information about the variables that have their values adjusted 
+    by the intertemporal constants. Note that this list is slightly different from the 
+    list of variables that have intertemporal constants added to their equations in the model
+    to match up model projections with observed values at the start of the projections because
+    a constant is added to the WAGE equation but it is used to adjust the WAGE equation in a way
+    that leads to the required expected price inflation rate.
+
+    Return a dataframe containing a row per variable that has an intertemporal constant in its equation.
+    The dataframe has the following columns:
+    - &#39;name&#39; variable name (complete with set identifiers for region/sector etc.)
+    - &#39;var_type&#39; variable type (the associated LHS vector name)
+    - &#39;sequence&#39; the index of the variable in the associated vector
+    &#34;&#34;&#34;
+
+    if hasattr(self, &#39;_variables_adjusted_by_intertemporal_constants&#39;):
+        return self._variables_adjusted_by_intertemporal_constants
+
+    matches: pd.Series = self.var_map.var_type == &#39;j1l&#39;
+    result: pd.DataFrame = self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]
+
+    # Check for the existence of any variables with the given name prefixes and add them
+    # to the results if they are defined in the SYM model.
+    for (prefix, vector_name) in CONSTANTS.NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES:
+        matches: pd.Series = self.var_map.name.str.startswith(f&#34;{prefix}(&#34;) &amp; (self.var_map.var_type == vector_name)
+        result: pd.DataFrame = pd.concat([result, self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]])
+
+    result = result.loc[result.name != CONSTANTS.REXC_FOR_USA, :]
+
+    result.index = result.name
+
+    result.index = result.name
+
+    self._variables_adjusted_by_intertemporal_constants = result
+    return self._variables_adjusted_by_intertemporal_constants</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="gcubed.sym_data.SymData.good_produced_by"><code class="name flex">
+<span>def <span class="ident">good_produced_by</span></span>(<span>self, sector: str) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def good_produced_by(self, sector: str) -&gt; str:
+    return (self.good_prefix + sector[1:])</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.goods_produced_by"><code class="name flex">
+<span>def <span class="ident">goods_produced_by</span></span>(<span>self, sectors: list[str]) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def goods_produced_by(self, sectors: list[str]) -&gt; str:
+    return [self.good_produced_by(x) for x in sectors]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.has_variable"><code class="name flex">
+<span>def <span class="ident">has_variable</span></span>(<span>self, variable_name: str) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns true iff the SYM model definition includes a variable with the given complete name including
+the set qualifier in round brackets.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_variable(self, variable_name: str) -&gt; bool:
+    &#34;&#34;&#34;
+    Returns true iff the SYM model definition includes a variable with the given complete name including
+    the set qualifier in round brackets.
+    &#34;&#34;&#34;
+    return (self.var_map.name == variable_name).any()</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.has_variables"><code class="name flex">
+<span>def <span class="ident">has_variables</span></span>(<span>self, variable_name_prefix: str) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns true iff the SYM model definition includes a variable with the given root name.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_variables(self, variable_name_prefix: str) -&gt; bool:
+    &#34;&#34;&#34;
+    Returns true iff the SYM model definition includes a variable with the given root name.
+    &#34;&#34;&#34;
+    return self.var_map.name.str.startswith(variable_name_prefix).any()</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.matching_rhs_vector_name"><code class="name flex">
+<span>def <span class="ident">matching_rhs_vector_name</span></span>(<span>self, lhs_vector_name: str) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Arguments:
+lhs_vector_name the name of the LHS vector.
+Returns the matching RHS vector name, replacing the last character, l, with an r.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def matching_rhs_vector_name(self, lhs_vector_name: str) -&gt; str:
+    &#34;&#34;&#34;
+    Arguments:
+    lhs_vector_name the name of the LHS vector.
+    Returns the matching RHS vector name, replacing the last character, l, with an r.
+    &#34;&#34;&#34;
+    return f&#34;{lhs_vector_name[0:2]}r&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.projection_vector_for_variable"><code class="name flex">
+<span>def <span class="ident">projection_vector_for_variable</span></span>(<span>self, variable_name: str) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Arguments:</p>
+<p>vector_name: The fully qualified name of the variable</p>
+<p>Returns the string ID of the projection vector that the variable is in.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def projection_vector_for_variable(self, variable_name: str) -&gt; str:
+    &#34;&#34;&#34;
+    Arguments:
+
+    vector_name: The fully qualified name of the variable
+    
+    Returns the string ID of the projection vector that the variable is in.
+    &#34;&#34;&#34;
+    var_types: pd.Series = self.var_map.loc[[variable_name], &#39;var_type&#39;]
+    if len(var_types) == 0:
+        raise Exception(f&#34;{variable_name} is not declared in the SYM model.&#34;)
+    vector_name = var_types.values[0]
+    return self.varmap_variable_type(vector_name=vector_name)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.sector_producing"><code class="name flex">
+<span>def <span class="ident">sector_producing</span></span>(<span>self, good: str) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sector_producing(self, good: str) -&gt; str:
+    return (self.sector_prefix + good[1:])</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.sectors_producing"><code class="name flex">
+<span>def <span class="ident">sectors_producing</span></span>(<span>self, goods: list[str]) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sectors_producing(self, goods: list[str]) -&gt; str:
+    return [self.sector_producing(x) for x in goods]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.variable_index"><code class="name flex">
+<span>def <span class="ident">variable_index</span></span>(<span>self, vector_name: str, variable_name: str) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def variable_index(self, vector_name: str, variable_name: str) -&gt; int:
+    variable_type: str = self.varmap_variable_type(vector_name=vector_name)
+    type_matches: list[bool] = self.var_map.var_type == variable_type
+    name_matches: list[bool] = self.var_map.name == variable_name
+    result = self.var_map.loc[type_matches &amp; name_matches, &#39;sequence&#39;]
+    if len(result) == 0:
+        raise Exception(
+            f&#34;The variable name, {variable_name} is not defined in the SYM model as part of vector {vector_name}.&#34;)
+    if len(result) != 1:
+        raise Exception(
+            f&#34;The variable name, {variable_name} must be unique within the SYM model to retrieve its unique index.&#34;)
+    return int(result.values[0])</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.variable_units"><code class="name flex">
+<span>def <span class="ident">variable_units</span></span>(<span>self, vector_name: str, variable_name_prefix: str) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Arguments:</p>
+<p>variable_name_prefix: The prefix is the set of characters up to but not including the
+round bracket that starts the full qualification of the variable based on the sets it is
+defined over.</p>
+<p>e.g. use SHL for SHL(region,sector)</p>
+<p>Returns the units of measurement for the variable identified by the prefix.
+true iff the SYM model definition includes a variable with the given complete name including
+the set qualifier in round brackets.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def variable_units(self, vector_name: str, variable_name_prefix: str) -&gt; int:
+    &#34;&#34;&#34;
+    Arguments:
+
+    variable_name_prefix: The prefix is the set of characters up to but not including the 
+    round bracket that starts the full qualification of the variable based on the sets it is
+    defined over.
+
+    e.g. use SHL for SHL(region,sector)
+
+    Returns the units of measurement for the variable identified by the prefix.
+    true iff the SYM model definition includes a variable with the given complete name including
+    the set qualifier in round brackets.
+    &#34;&#34;&#34;
+    variable_type: str = self.varmap_variable_type(vector_name=vector_name)
+    type_matches: list[bool] = self.var_info.var_type == variable_type
+    name_matches: list[bool] = self.var_info.name.str.startswith(f&#34;{variable_name_prefix}(&#34;)
+    result = self.var_info.loc[type_matches &amp; name_matches, &#39;units&#39;]
+    if len(result) == 0:
+        raise Exception(
+            f&#34;The variable name prefix, {variable_name_prefix}, is not defined in the SYM model as part of vector {vector_name}.&#34;)
+    if len(result) != 1:
+        raise Exception(
+            f&#34;The variable name prefix, {variable_name_prefix}, must be unique within the SYM model to retrieve its unique index.&#34;)
+    return str(result)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.varmap_variable_type"><code class="name flex">
+<span>def <span class="ident">varmap_variable_type</span></span>(<span>self, vector_name: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert a vector name in the model to the varmap file variable type to lookup for
+the varmap information associated with the vector.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def varmap_variable_type(self, vector_name: str):
+    &#34;&#34;&#34;
+    Convert a vector name in the model to the varmap file variable type to lookup for
+    the varmap information associated with the vector.
+    &#34;&#34;&#34;
+    match vector_name:
+        case &#34;x1r&#34; | &#34;x1l&#34;:
+            return &#34;x1l&#34;
+        case &#34;yxr&#34;:
+            return &#34;x1l&#34;
+        case &#34;j1r&#34; | &#34;j1l&#34;:
+            return &#34;j1l&#34;
+        case &#34;yjr&#34;:
+            return &#34;j1l&#34;
+        case &#34;zer&#34; | &#34;zel&#34;:
+            return &#34;zel&#34;
+        case &#34;exz&#34;:
+            return &#34;zel&#34;
+        case &#34;z1r&#34; | &#34;z1l&#34;:
+            return &#34;z1l&#34;
+        case &#34;exo&#34;:
+            return &#34;exo&#34;
+        case _:  # LHS vector names.
+            raise Exception(f&#34;Requested varmap variable type for a vector {vector_name} that is not defined by the SYM processor.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.vector_length"><code class="name flex">
+<span>def <span class="ident">vector_length</span></span>(<span>self, vector_name: str) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Argument:</p>
+<p>vector_name: The 3 character acronym identifying the LHS or RHS vector in the model.</p>
+<p>Returns the integer length of the specified vector.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vector_length(self, vector_name: str) -&gt; int:
+    &#34;&#34;&#34;
+    Argument:
+
+    vector_name: The 3 character acronym identifying the LHS or RHS vector in the model.
+
+    Returns the integer length of the specified vector.
+    &#34;&#34;&#34;
+    match vector_name:
+
+        case &#34;z1l&#34; | &#34;z1r&#34;:
+            return self.endogenous_variable_count
+
+        case &#34;x1l&#34; | &#34;x1r&#34; | &#34;yxr&#34;:
+            return self.state_variable_count
+
+        case &#34;j1l&#34; | &#34;j1r&#34; | &#34;yjr&#34;:
+            return self.jump_variable_count
+
+        case &#34;zel&#34; | &#34;zer&#34; | &#34;exz&#34;:
+            return self.expected_endogenous_variable_count
+
+        case &#34;exo&#34;:
+            return self.exogenous_variable_count
+
+        case _:
+            raise Exception(
+                &#34;No vector length available for the vector named {}&#34;.format(vector_name))</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.vector_variable_names"><code class="name flex">
+<span>def <span class="ident">vector_variable_names</span></span>(<span>self, vector_name: str) ‑> list[str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Arguments:
+vector_name: the name of the vector</p>
+<p>Returns the SYM ordered fully articulated variable names for the
+variables in the given model vector.</p>
+<p>This is useful for labelling the rows/columns of dataframes containing
+linear model partial derivatives, and SSF matrices.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vector_variable_names(self, vector_name: str) -&gt; list[str]:
+    &#34;&#34;&#34;
+    Arguments:
+    vector_name: the name of the vector
+
+    Returns the SYM ordered fully articulated variable names for the
+    variables in the given model vector.
+
+    This is useful for labelling the rows/columns of dataframes containing 
+    linear model partial derivatives, and SSF matrices.
+    &#34;&#34;&#34;
+    variable_type: str = self.varmap_variable_type(vector_name=vector_name)
+    matching_var_type: pd.Series = self.var_map.var_type == variable_type
+    result: pd.DataFrame = self.var_map.loc[matching_var_type, [&#39;name&#39;, &#39;sequence&#39;]].sort_values(&#39;sequence&#39;)
+    return result.name.to_list()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="gcubed" href="index.html">gcubed</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="gcubed.sym_data.SymData" href="#gcubed.sym_data.SymData">SymData</a></code></h4>
+<ul class="">
+<li><code><a title="gcubed.sym_data.SymData.all_sectors_count" href="#gcubed.sym_data.SymData.all_sectors_count">all_sectors_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.all_sectors_members" href="#gcubed.sym_data.SymData.all_sectors_members">all_sectors_members</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.capital_sectors_members" href="#gcubed.sym_data.SymData.capital_sectors_members">capital_sectors_members</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.coal_sector_good" href="#gcubed.sym_data.SymData.coal_sector_good">coal_sector_good</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.combined_variable_summary" href="#gcubed.sym_data.SymData.combined_variable_summary">combined_variable_summary</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.configuration" href="#gcubed.sym_data.SymData.configuration">configuration</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.dimension" href="#gcubed.sym_data.SymData.dimension">dimension</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.dimenson" href="#gcubed.sym_data.SymData.dimenson">dimenson</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.electricity_generation_goods_count" href="#gcubed.sym_data.SymData.electricity_generation_goods_count">electricity_generation_goods_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.electricity_generation_goods_members" href="#gcubed.sym_data.SymData.electricity_generation_goods_members">electricity_generation_goods_members</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.endogenous_variable_count" href="#gcubed.sym_data.SymData.endogenous_variable_count">endogenous_variable_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.energy_distribution_sectors_count" href="#gcubed.sym_data.SymData.energy_distribution_sectors_count">energy_distribution_sectors_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.energy_distribution_sectors_members" href="#gcubed.sym_data.SymData.energy_distribution_sectors_members">energy_distribution_sectors_members</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.energy_goods_count" href="#gcubed.sym_data.SymData.energy_goods_count">energy_goods_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.energy_goods_members" href="#gcubed.sym_data.SymData.energy_goods_members">energy_goods_members</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.exogenous_variable_count" href="#gcubed.sym_data.SymData.exogenous_variable_count">exogenous_variable_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.expected_endogenous_variable_count" href="#gcubed.sym_data.SymData.expected_endogenous_variable_count">expected_endogenous_variable_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.factors_of_production_count" href="#gcubed.sym_data.SymData.factors_of_production_count">factors_of_production_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.factors_of_production_members" href="#gcubed.sym_data.SymData.factors_of_production_members">factors_of_production_members</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.gas_sector_good" href="#gcubed.sym_data.SymData.gas_sector_good">gas_sector_good</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.good_prefix" href="#gcubed.sym_data.SymData.good_prefix">good_prefix</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.good_produced_by" href="#gcubed.sym_data.SymData.good_produced_by">good_produced_by</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.goods_count" href="#gcubed.sym_data.SymData.goods_count">goods_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.goods_members" href="#gcubed.sym_data.SymData.goods_members">goods_members</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.goods_produced_by" href="#gcubed.sym_data.SymData.goods_produced_by">goods_produced_by</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.has_variable" href="#gcubed.sym_data.SymData.has_variable">has_variable</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.has_variables" href="#gcubed.sym_data.SymData.has_variables">has_variables</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.intertemporal_constant_variables" href="#gcubed.sym_data.SymData.intertemporal_constant_variables">intertemporal_constant_variables</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.jump_variable_count" href="#gcubed.sym_data.SymData.jump_variable_count">jump_variable_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.lhs_vector_names" href="#gcubed.sym_data.SymData.lhs_vector_names">lhs_vector_names</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.matching_rhs_vector_name" href="#gcubed.sym_data.SymData.matching_rhs_vector_name">matching_rhs_vector_name</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.no_exogenous_variables" href="#gcubed.sym_data.SymData.no_exogenous_variables">no_exogenous_variables</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.no_expected_exogenous_variables" href="#gcubed.sym_data.SymData.no_expected_exogenous_variables">no_expected_exogenous_variables</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.no_jump_variables" href="#gcubed.sym_data.SymData.no_jump_variables">no_jump_variables</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.non_electricity_generation_goods_count" href="#gcubed.sym_data.SymData.non_electricity_generation_goods_count">non_electricity_generation_goods_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.non_electricity_generation_goods_members" href="#gcubed.sym_data.SymData.non_electricity_generation_goods_members">non_electricity_generation_goods_members</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.non_energy_distribution_sectors_count" href="#gcubed.sym_data.SymData.non_energy_distribution_sectors_count">non_energy_distribution_sectors_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.non_energy_distribution_sectors_members" href="#gcubed.sym_data.SymData.non_energy_distribution_sectors_members">non_energy_distribution_sectors_members</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.non_energy_goods_count" href="#gcubed.sym_data.SymData.non_energy_goods_count">non_energy_goods_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.non_energy_goods_members" href="#gcubed.sym_data.SymData.non_energy_goods_members">non_energy_goods_members</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.non_energy_or_generation_goods_count" href="#gcubed.sym_data.SymData.non_energy_or_generation_goods_count">non_energy_or_generation_goods_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.non_energy_or_generation_goods_members" href="#gcubed.sym_data.SymData.non_energy_or_generation_goods_members">non_energy_or_generation_goods_members</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.non_energy_or_generation_sectors_members" href="#gcubed.sym_data.SymData.non_energy_or_generation_sectors_members">non_energy_or_generation_sectors_members</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.oil_sector_good" href="#gcubed.sym_data.SymData.oil_sector_good">oil_sector_good</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.opt_map" href="#gcubed.sym_data.SymData.opt_map">opt_map</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.parameter_count" href="#gcubed.sym_data.SymData.parameter_count">parameter_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.parameter_name_prefixes" href="#gcubed.sym_data.SymData.parameter_name_prefixes">parameter_name_prefixes</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.projection_vector_for_variable" href="#gcubed.sym_data.SymData.projection_vector_for_variable">projection_vector_for_variable</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.projection_vector_names" href="#gcubed.sym_data.SymData.projection_vector_names">projection_vector_names</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.regions_count" href="#gcubed.sym_data.SymData.regions_count">regions_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.regions_members" href="#gcubed.sym_data.SymData.regions_members">regions_members</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.rhs_vector_names" href="#gcubed.sym_data.SymData.rhs_vector_names">rhs_vector_names</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.sector_prefix" href="#gcubed.sym_data.SymData.sector_prefix">sector_prefix</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.sector_producing" href="#gcubed.sym_data.SymData.sector_producing">sector_producing</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.sectors_count" href="#gcubed.sym_data.SymData.sectors_count">sectors_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.sectors_members" href="#gcubed.sym_data.SymData.sectors_members">sectors_members</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.sectors_producing" href="#gcubed.sym_data.SymData.sectors_producing">sectors_producing</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.ssf_rhs_vector_names" href="#gcubed.sym_data.SymData.ssf_rhs_vector_names">ssf_rhs_vector_names</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.state_variable_count" href="#gcubed.sym_data.SymData.state_variable_count">state_variable_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.swtch" href="#gcubed.sym_data.SymData.swtch">swtch</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.sym_sets" href="#gcubed.sym_data.SymData.sym_sets">sym_sets</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.us_region" href="#gcubed.sym_data.SymData.us_region">us_region</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.var_info" href="#gcubed.sym_data.SymData.var_info">var_info</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.var_map" href="#gcubed.sym_data.SymData.var_map">var_map</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.variable_index" href="#gcubed.sym_data.SymData.variable_index">variable_index</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.variable_units" href="#gcubed.sym_data.SymData.variable_units">variable_units</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.variables_adjusted_by_intertemporal_constants" href="#gcubed.sym_data.SymData.variables_adjusted_by_intertemporal_constants">variables_adjusted_by_intertemporal_constants</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.varmap_variable_type" href="#gcubed.sym_data.SymData.varmap_variable_type">varmap_variable_type</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.vector_length" href="#gcubed.sym_data.SymData.vector_length">vector_length</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.vector_variable_names" href="#gcubed.sym_data.SymData.vector_variable_names">vector_variable_names</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

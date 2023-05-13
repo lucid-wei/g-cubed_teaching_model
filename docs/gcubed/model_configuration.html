@@ -1,0 +1,2058 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>gcubed.model_configuration API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>gcubed.model_configuration</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ------------------------------------------------------------------
+# Purpose: Definition of the model details class.
+# Author: Geoff Shuetrim
+# ------------------------------------------------------------------
+
+import logging
+import pandas as pd
+import numpy as np
+import os
+import os.path
+import sys
+import importlib
+from gcubed.base import Base
+
+
+class ModelConfiguration(Base):
+
+    &#34;&#34;&#34;
+    Provides access to model configuration details.
+    &#34;&#34;&#34;
+
+    def __init__(self, configuration_file: str) -&gt; None:
+        &#34;&#34;&#34;
+        Initialises the model details from a modified version of the CSV files
+        used by G-cubed. The information in the file is a subset of the information
+        in the modeldetails.csv file and a subset of the information that is stored
+        in the baseinfo.csv file.
+
+        Arguments:
+            configuration_file: the relative path to the model configuration file.
+        &#34;&#34;&#34;
+
+        if not configuration_file:
+            raise Exception(&#34;A configuration file is required to create a model.&#34;)
+
+        if not os.path.isfile(configuration_file):
+            raise Exception(f&#34;Configuration file {configuration_file} does not exist.&#34;)
+
+        # Get the directory that contains the model configuration and other related files.
+        self._model_directory = os.path.dirname(os.path.realpath(configuration_file))
+
+        data: pd.DataFrame = pd.read_csv(configuration_file, header=None)
+        self.load_configuration_details(configuration_details = data)
+        self.validate()
+
+        logging.info(f&#34;Preparing to use model {self.version} {self.number}.&#34;)
+
+        if __class__.DOING_DETAILED_DEBUG:
+            logging.info(&#34;Verbose debugging information will be logged.&#34;)
+            np.set_printoptions(suppress=False, formatter={&#39;float&#39;: lambda x: &#34;{0:0.12f}&#34;.format(x)})
+            pd.set_option(&#39;display.max_rows&#39;, None)
+            pd.set_option(&#39;display.max_columns&#39;, None)
+            pd.set_option(&#39;display.width&#39;, 2000)
+
+    @property
+    def model_directory(self):
+        return f&#34;{self._model_directory}/&#34;
+    
+    @property
+    def data_directory(self):
+        return f&#34;{self.model_directory}data/&#34;
+
+    @property
+    def sym_directory(self):
+        return f&#34;{self.model_directory}sym/&#34;
+
+    @property
+    def ox_directory(self):
+        return f&#34;{self.model_directory}ox/&#34;
+
+    @property
+    def build_directory(self):
+        return f&#34;{self.model_directory}build/&#34;
+
+    @property
+    def benchmarking_reports_directory(self):
+        return f&#34;{self.model_directory}benchmarking/&#34;
+
+    @property
+    def python_reports_directory(self):
+        return f&#34;{self.model_directory}python/&#34;
+
+    @property
+    def simulations_directory(self) -&gt; str:
+        return f&#34;{self.model_directory}simulations/&#34;
+
+    @property
+    def version(self):
+        &#34;&#34;&#34;
+        The model type - a number plus single letter string, where number represents sectors, letter for regions.
+        - 2R is the 2 region/2 sector model
+        - 20R is the 2 region/20 sector model
+        - 20J is the 10 region/20 sector model used for carbon emissions modelling
+        &#34;&#34;&#34;
+        return self._version
+
+    @property
+    def number(self):
+        &#34;&#34;&#34;
+        The model build number
+        &#34;&#34;&#34;
+        return self._number
+
+    @property
+    def sym_input_file(self):
+        &#34;&#34;&#34;
+        The name of the file to process with the sym processor.
+        &#34;&#34;&#34;
+        return &#34;{}{}&#34;.format(self.sym_directory, self._sym_input_file)
+
+    @property
+    def sym_output_filename_prefix(self):
+        &#34;&#34;&#34;
+        The equations Python module that is imported by the Lineariser.
+        &#34;&#34;&#34;
+        return &#34;model_{}_{}&#34;.format(self.version, self.number)
+
+    @property
+    def fully_qualified_equations_module_name(self):
+        &#34;&#34;&#34;
+        The fully qualified module name required to import the 
+        SYM generated Python equations module.
+        &#34;&#34;&#34;
+        return f&#34;model.{self.version}.{self.number}.sym.{self.sym_output_filename_prefix}&#34;
+
+    @property
+    def equations_python_module_file(self):
+        return &#34;{}{}.py&#34;.format(self.sym_directory, self.sym_output_filename_prefix)
+
+    @property
+    def sym_output_file_path_and_prefix(self):
+        return &#34;{}{}&#34;.format(self.sym_directory, self.sym_output_filename_prefix)
+
+    @property
+    def varmap_file(self):
+        return &#34;{}_varmap.csv&#34;.format(self.sym_output_file_path_and_prefix)
+
+    @property
+    def eqnmap_file(self):
+        &#34;&#34;&#34;
+        The file containing a listing of left and right hand side variables
+        in the model equations. the LHS variable comes first, as a name of
+        the vector (column 1), and the index in that vector (column 2). Then each
+        RHS variable appears, again as the vector name in column 2 and the index
+        in that vector in column 2.
+
+        This information is used to populate a dictionary with keys being the vector
+        and index tuple for each RHS variable and the value being a list of of
+        vector name, vector index tuples, one for each equation that the RHS variable 
+        occurs in. That dictionary then drives the equation evaluations used in model
+        linearisation.
+        &#34;&#34;&#34;
+        return f&#34;{self.sym_output_file_path_and_prefix}_eqnmap.csv&#34;
+
+    @property
+    def variables_info_file(self):
+        return f&#34;{self.sym_output_file_path_and_prefix}_varinfo.csv&#34;
+
+    @property
+    def opt_map_file(self):
+        return f&#34;{self.sym_output_file_path_and_prefix}_optmap.csv&#34;
+
+    @property
+    def model_summary_file(self):
+        return f&#34;{self.sym_output_file_path_and_prefix}.lis&#34;
+
+    @property
+    def database_file(self):
+        return f&#34;{self.data_directory}{self._database_file}&#34;
+
+    @property
+    def io_table_file(self):
+        return f&#34;{self.data_directory}{self._io_table_file}&#34;
+
+    @property
+    def parameters_file(self):
+        return f&#34;{self.data_directory}{self._parameters_file}&#34;
+
+    @property
+    def productivity_file(self):
+        return f&#34;{self.data_directory}{self._productivity_file}&#34;
+
+    @property
+    def population_file(self):
+        return f&#34;{self.data_directory}{self._population_file}&#34;
+
+    @property
+    def aeei_file(self):
+        return f&#34;{self.data_directory}{self._aeei_file}&#34;
+
+    @property
+    def linearisation_year(self):
+        return self._linearisation_year
+
+    @property
+    def calibration_year(self):
+        return self._calibration_year
+
+    @property
+    def calibration_of_carbon_coefficients_year(self):
+        return self._calibration_of_carbon_coefficients_year
+
+    @property
+    def first_available_year(self):
+        &#34;&#34;&#34;
+        The first year of actual data that is available to us in the database file.
+        &#34;&#34;&#34;
+        return self._first_available_year
+
+    @property
+    def last_available_year(self):
+        &#34;&#34;&#34;
+        The last year of actual data that is available to us in the database file.
+        &#34;&#34;&#34;
+        return self._last_available_year
+
+    @property
+    def base_year(self):
+        &#34;&#34;&#34;
+        The year in which all indices are based at 1 (so their log values are 0).
+        This is currently required to be the same as the start_year but we may relax that.
+        &#34;&#34;&#34;
+        return self._base_year
+
+    @property
+    def start_year(self):
+        &#34;&#34;&#34;
+        The first year to include in the analysis that will produce projections.
+        TODO: Can this be made redundant, given the start_projection_year and the base_year?
+        &#34;&#34;&#34;
+        return self._start_year
+
+    @property
+    def start_projection_year(self):
+        &#34;&#34;&#34;
+        Corresponds to the start_year specified in the Ox build/baseinfo.csv file.
+        This is currently required to be start_year+1.
+        &#34;&#34;&#34;
+        return self._start_projection_year
+
+    @property
+    def projection_base_year(self):
+        &#34;&#34;&#34;
+        Base year for index variables in the database used for projections.
+        &#34;&#34;&#34;
+        return self._projection_base_year
+
+    @property
+    def end_year(self):
+        &#34;&#34;&#34;
+        The last year for which data will be projected.
+        &#34;&#34;&#34;
+        return self._end_year
+
+    @property
+    def start_to_base_years(self) -&gt; list[int]:
+        return range(self.start_year, self.base_year+1)
+
+    @property
+    def start_to_base_year_column_labels(self) -&gt; list[str]:
+        return [str(x) for x in self.start_to_base_years]
+
+    @property
+    def base_to_end_years(self) -&gt; list[int]:
+        return range(self.base_year, self.end_year+1)
+
+    @property
+    def base_to_end_year_column_labels(self) -&gt; list[str]:
+        return [str(x) for x in self.base_to_end_years]
+
+    @property
+    def start_to_end_years(self) -&gt; list[int]:
+        return range(self.start_year, self.end_year+1)
+
+    @property
+    def start_to_end_year_column_labels(self) -&gt; list[str]:
+        return [str(x) for x in self.start_to_end_years]
+
+    @property
+    def projection_years(self) -&gt; list[int]:
+        return range(self.start_projection_year, self.end_year+1)
+
+    @property
+    def base_and_projection_years(self) -&gt; list[int]:
+        return range(self.projection_base_year, self.end_year+1)
+
+    @property
+    def projection_years_column_labels(self) -&gt; list[str]:
+        return [str(x) for x in self.projection_years]
+
+    @property
+    def base_and_projection_years_column_labels(self) -&gt; list[str]:
+        return [str(x) for x in self.base_and_projection_years]
+
+    @property
+    def projection_year_count(self) -&gt; int:
+        return (self.end_year - self.start_projection_year + 1)
+
+    @property
+    def base_and_projection_year_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        Returns the number of years that projections are done for plus one for the base projection
+        year that is the year before the start of the projection years.
+        &#34;&#34;&#34;
+        return (self.end_year - self.projection_base_year + 1)
+
+    @property
+    def available_years(self) -&gt; list[int]:
+        return range(self.first_available_year, self.last_available_year+1)
+
+    @property
+    def available_years_column_labels(self) -&gt; list[str]:
+        return [str(x) for x in self.available_years]
+
+    @property
+    def all_years(self) -&gt; list[int]:
+        &#34;&#34;&#34;
+        Returns all years from the first year with data in the database
+        to the last year of the projections horizon. This is used for the
+        publishable projections that includes the actual data and the projections.
+        &#34;&#34;&#34;
+        return range(self.first_available_year, self.end_year+1)
+
+    @property
+    def all_year_count(self) -&gt; int:
+        return (self.end_year - self.first_available_year + 1)
+
+    def available_years_column_labels(self) -&gt; list[str]:
+        return [str(x) for x in self.all_years]
+
+    @property
+    def stable_manifold_use_policy_optimisation(self):
+        &#34;&#34;&#34;
+        Set to 1 if the stable manifold is calculated while
+        allowing (monetary?) policy to optimise according to 
+        a set of policy objectives and set to 0 otherwise.
+
+        Note that this can only be set to 1 if the model parameters
+        include a TCAX and an EMZT
+        &#34;&#34;&#34;
+        return self._stable_manifold_use_policy_optimisation
+
+    @property
+    def stable_manifold_tolerance(self):
+        return self._stable_manifold_tolerance
+
+    @property
+    def stable_manifold_maximum_iterations(self):
+        return self._stable_manifold_maximum_iterations
+
+    @property
+    def neutral_real_interest_rate(self):
+        &#34;&#34;&#34;
+        Used for linearising the model and for projections.
+
+        Returns the global neutral real interest rate.
+        &#34;&#34;&#34;
+        return self._neutral_real_interest_rate
+
+    def load_configuration_details(self, configuration_details: pd.DataFrame):
+        &#34;&#34;&#34;
+        The detail identifier is in the first column.
+        The detail value is in the second column.
+        Other columns are ignored.
+        &#34;&#34;&#34;
+
+        for row in configuration_details.itertuples(index=False):
+            match row[0]:
+                case &#34;Version&#34;:
+                    self._version = row[1]
+                case &#34;Number&#34;:
+                    self._number = row[1]
+                case &#34;Debugging&#34;:
+                    self.__class__.DOING_DETAILED_DEBUG = (int(row[1]) == 1)
+                case &#34;SymInputFile&#34;:
+                    self._sym_input_file = row[1]
+                case &#34;UserParameters&#34;:
+                    self._parameters_file = row[1]
+                case &#34;IOTables&#34;:
+                    self._io_table_file = row[1]
+                case &#34;Database&#34;:
+                    self._database_file = row[1]
+                case &#34;Productivity&#34;:
+                    self._productivity_file = row[1]
+                case &#34;Population&#34;:
+                    self._population_file = row[1]
+                case &#34;AutonomousEnergyEfficiencyImprovement&#34;:
+                    self._aeei_file = row[1]
+                case &#34;LinearisationYear&#34;:
+                    self._linearisation_year = int(row[1])
+                case &#34;CalibrationYear&#34;:
+                    self._calibration_year = int(row[1])
+                case &#34;CalibrationOfCarbonCoefficientsYear&#34;:
+                    self._calibration_of_carbon_coefficients_year = int(row[1])
+                case &#34;FirstAvailableYear&#34;:
+                    self._first_available_year = int(row[1])
+                case &#34;LastAvailableYear&#34;:
+                    self._last_available_year = int(row[1])
+                case &#34;BaseYear&#34;:
+                    self._base_year = int(row[1])
+                case &#34;ProjectionBaseYear&#34;:
+                    self._projection_base_year = int(row[1])
+                case &#34;StartYear&#34;:
+                    self._start_year = int(row[1])
+                case &#34;StartProjectionYear&#34;:
+                    self._start_projection_year = int(row[1])
+                case &#34;EndYear&#34;:
+                    self._end_year = int(row[1])
+                case &#34;StableManifoldUsePolicyOptimisation&#34;:
+                    self._stable_manifold_use_policy_optimisation = float(row[1])
+                case &#34;StableManifoldTolerance&#34;:
+                    self._stable_manifold_tolerance = float(row[1])
+                case &#34;StableManifoldMaximumIterations&#34;:
+                    self._stable_manifold_maximum_iterations = int(row[1])
+                case &#34;NeutralRealInterestRate&#34;:
+                    self._neutral_real_interest_rate = float(row[1])
+                case _:
+                    raise Exception(f&#34;Configuration parameter {row[0]} is not recognised.&#34;)
+
+    def validate(self):
+
+        # Check we have a model version and a model build number.
+        assert self.version is not None
+        assert self.number is not None
+
+        # Check that all of the files named in the configuration exist.
+        if not os.path.isfile(self.sym_input_file):
+            raise Exception(f&#34;Could not find the sym_input_file: {self.sym_input_file}&#34;)
+        if not os.path.isfile(self.varmap_file):
+            raise Exception(f&#34;Could not find the varmap file generated by the SYM processor: {self.varmap_file}&#34;)
+        assert os.path.isfile(self.varmap_file)
+        assert os.path.isfile(self.eqnmap_file)
+        assert os.path.isfile(self.variables_info_file)
+        assert os.path.isfile(self.opt_map_file)
+        assert os.path.isfile(self.model_summary_file)
+        assert os.path.isfile(self.equations_python_module_file)
+
+        assert os.path.isfile(self.database_file)
+        assert os.path.isfile(self.io_table_file)
+        assert os.path.isfile(self.parameters_file)
+
+        assert os.path.isfile(self.productivity_file)
+        assert os.path.isfile(self.population_file)
+
+        sys.path.append(self.sym_directory)
+        equations_module = importlib.import_module(self.sym_output_filename_prefix)
+        assert equations_module is not None
+        assert getattr(equations_module, &#34;Equations&#34;) is not None
+
+        assert self.first_available_year &gt; 1900
+        assert self.last_available_year &lt; 2050
+
+        assert self.start_year &gt;= self.first_available_year
+        assert self.start_year &lt; self.end_year
+
+        assert self.base_year &gt;= self.first_available_year
+        assert self.base_year &lt;= self.last_available_year
+
+        assert self.calibration_year &gt;= self.first_available_year
+        assert self.calibration_year &lt;= self.last_available_year
+
+        assert self.projection_base_year &gt;= self.start_year
+        assert self.projection_base_year &lt;= self.end_year
+
+        assert self.start_projection_year &gt; self.start_year
+        assert self.start_projection_year &lt; self.end_year
+        
+        if self.stable_manifold_use_policy_optimisation:
+            raise Exception(&#34;Stable manifold determination in conjunction with policy optimisation is not yet implemented.&#34;)
+
+        if self.stable_manifold_tolerance &gt; 0.0001:
+            raise Exception(&#34;The convergence tolerance when searching for the stable manifold must be less than 1e-4.&#34;)
+
+        if self.stable_manifold_maximum_iterations &lt; 100:
+            raise Exception(&#34;You must allow for at least 100 iterations in converging to the stable manifold&#34;)
+        
+    def shift_forward(self, steps:int):
+        &#34;&#34;&#34;
+        Adjusts this model configuration by incrementing the start and base years for the projection by steps.
+
+        This shift operation is used to roll the model forward by steps years.
+        &#34;&#34;&#34;
+        self._projection_base_year += steps
+        self._start_projection_year += steps
+        self._linearisation_year = self.projection_base_year
+        </code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="gcubed.model_configuration.ModelConfiguration"><code class="flex name class">
+<span>class <span class="ident">ModelConfiguration</span></span>
+<span>(</span><span>configuration_file: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Provides access to model configuration details.</p>
+<p>Initialises the model details from a modified version of the CSV files
+used by G-cubed. The information in the file is a subset of the information
+in the modeldetails.csv file and a subset of the information that is stored
+in the baseinfo.csv file.</p>
+<h2 id="arguments">Arguments</h2>
+<p>configuration_file: the relative path to the model configuration file.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ModelConfiguration(Base):
+
+    &#34;&#34;&#34;
+    Provides access to model configuration details.
+    &#34;&#34;&#34;
+
+    def __init__(self, configuration_file: str) -&gt; None:
+        &#34;&#34;&#34;
+        Initialises the model details from a modified version of the CSV files
+        used by G-cubed. The information in the file is a subset of the information
+        in the modeldetails.csv file and a subset of the information that is stored
+        in the baseinfo.csv file.
+
+        Arguments:
+            configuration_file: the relative path to the model configuration file.
+        &#34;&#34;&#34;
+
+        if not configuration_file:
+            raise Exception(&#34;A configuration file is required to create a model.&#34;)
+
+        if not os.path.isfile(configuration_file):
+            raise Exception(f&#34;Configuration file {configuration_file} does not exist.&#34;)
+
+        # Get the directory that contains the model configuration and other related files.
+        self._model_directory = os.path.dirname(os.path.realpath(configuration_file))
+
+        data: pd.DataFrame = pd.read_csv(configuration_file, header=None)
+        self.load_configuration_details(configuration_details = data)
+        self.validate()
+
+        logging.info(f&#34;Preparing to use model {self.version} {self.number}.&#34;)
+
+        if __class__.DOING_DETAILED_DEBUG:
+            logging.info(&#34;Verbose debugging information will be logged.&#34;)
+            np.set_printoptions(suppress=False, formatter={&#39;float&#39;: lambda x: &#34;{0:0.12f}&#34;.format(x)})
+            pd.set_option(&#39;display.max_rows&#39;, None)
+            pd.set_option(&#39;display.max_columns&#39;, None)
+            pd.set_option(&#39;display.width&#39;, 2000)
+
+    @property
+    def model_directory(self):
+        return f&#34;{self._model_directory}/&#34;
+    
+    @property
+    def data_directory(self):
+        return f&#34;{self.model_directory}data/&#34;
+
+    @property
+    def sym_directory(self):
+        return f&#34;{self.model_directory}sym/&#34;
+
+    @property
+    def ox_directory(self):
+        return f&#34;{self.model_directory}ox/&#34;
+
+    @property
+    def build_directory(self):
+        return f&#34;{self.model_directory}build/&#34;
+
+    @property
+    def benchmarking_reports_directory(self):
+        return f&#34;{self.model_directory}benchmarking/&#34;
+
+    @property
+    def python_reports_directory(self):
+        return f&#34;{self.model_directory}python/&#34;
+
+    @property
+    def simulations_directory(self) -&gt; str:
+        return f&#34;{self.model_directory}simulations/&#34;
+
+    @property
+    def version(self):
+        &#34;&#34;&#34;
+        The model type - a number plus single letter string, where number represents sectors, letter for regions.
+        - 2R is the 2 region/2 sector model
+        - 20R is the 2 region/20 sector model
+        - 20J is the 10 region/20 sector model used for carbon emissions modelling
+        &#34;&#34;&#34;
+        return self._version
+
+    @property
+    def number(self):
+        &#34;&#34;&#34;
+        The model build number
+        &#34;&#34;&#34;
+        return self._number
+
+    @property
+    def sym_input_file(self):
+        &#34;&#34;&#34;
+        The name of the file to process with the sym processor.
+        &#34;&#34;&#34;
+        return &#34;{}{}&#34;.format(self.sym_directory, self._sym_input_file)
+
+    @property
+    def sym_output_filename_prefix(self):
+        &#34;&#34;&#34;
+        The equations Python module that is imported by the Lineariser.
+        &#34;&#34;&#34;
+        return &#34;model_{}_{}&#34;.format(self.version, self.number)
+
+    @property
+    def fully_qualified_equations_module_name(self):
+        &#34;&#34;&#34;
+        The fully qualified module name required to import the 
+        SYM generated Python equations module.
+        &#34;&#34;&#34;
+        return f&#34;model.{self.version}.{self.number}.sym.{self.sym_output_filename_prefix}&#34;
+
+    @property
+    def equations_python_module_file(self):
+        return &#34;{}{}.py&#34;.format(self.sym_directory, self.sym_output_filename_prefix)
+
+    @property
+    def sym_output_file_path_and_prefix(self):
+        return &#34;{}{}&#34;.format(self.sym_directory, self.sym_output_filename_prefix)
+
+    @property
+    def varmap_file(self):
+        return &#34;{}_varmap.csv&#34;.format(self.sym_output_file_path_and_prefix)
+
+    @property
+    def eqnmap_file(self):
+        &#34;&#34;&#34;
+        The file containing a listing of left and right hand side variables
+        in the model equations. the LHS variable comes first, as a name of
+        the vector (column 1), and the index in that vector (column 2). Then each
+        RHS variable appears, again as the vector name in column 2 and the index
+        in that vector in column 2.
+
+        This information is used to populate a dictionary with keys being the vector
+        and index tuple for each RHS variable and the value being a list of of
+        vector name, vector index tuples, one for each equation that the RHS variable 
+        occurs in. That dictionary then drives the equation evaluations used in model
+        linearisation.
+        &#34;&#34;&#34;
+        return f&#34;{self.sym_output_file_path_and_prefix}_eqnmap.csv&#34;
+
+    @property
+    def variables_info_file(self):
+        return f&#34;{self.sym_output_file_path_and_prefix}_varinfo.csv&#34;
+
+    @property
+    def opt_map_file(self):
+        return f&#34;{self.sym_output_file_path_and_prefix}_optmap.csv&#34;
+
+    @property
+    def model_summary_file(self):
+        return f&#34;{self.sym_output_file_path_and_prefix}.lis&#34;
+
+    @property
+    def database_file(self):
+        return f&#34;{self.data_directory}{self._database_file}&#34;
+
+    @property
+    def io_table_file(self):
+        return f&#34;{self.data_directory}{self._io_table_file}&#34;
+
+    @property
+    def parameters_file(self):
+        return f&#34;{self.data_directory}{self._parameters_file}&#34;
+
+    @property
+    def productivity_file(self):
+        return f&#34;{self.data_directory}{self._productivity_file}&#34;
+
+    @property
+    def population_file(self):
+        return f&#34;{self.data_directory}{self._population_file}&#34;
+
+    @property
+    def aeei_file(self):
+        return f&#34;{self.data_directory}{self._aeei_file}&#34;
+
+    @property
+    def linearisation_year(self):
+        return self._linearisation_year
+
+    @property
+    def calibration_year(self):
+        return self._calibration_year
+
+    @property
+    def calibration_of_carbon_coefficients_year(self):
+        return self._calibration_of_carbon_coefficients_year
+
+    @property
+    def first_available_year(self):
+        &#34;&#34;&#34;
+        The first year of actual data that is available to us in the database file.
+        &#34;&#34;&#34;
+        return self._first_available_year
+
+    @property
+    def last_available_year(self):
+        &#34;&#34;&#34;
+        The last year of actual data that is available to us in the database file.
+        &#34;&#34;&#34;
+        return self._last_available_year
+
+    @property
+    def base_year(self):
+        &#34;&#34;&#34;
+        The year in which all indices are based at 1 (so their log values are 0).
+        This is currently required to be the same as the start_year but we may relax that.
+        &#34;&#34;&#34;
+        return self._base_year
+
+    @property
+    def start_year(self):
+        &#34;&#34;&#34;
+        The first year to include in the analysis that will produce projections.
+        TODO: Can this be made redundant, given the start_projection_year and the base_year?
+        &#34;&#34;&#34;
+        return self._start_year
+
+    @property
+    def start_projection_year(self):
+        &#34;&#34;&#34;
+        Corresponds to the start_year specified in the Ox build/baseinfo.csv file.
+        This is currently required to be start_year+1.
+        &#34;&#34;&#34;
+        return self._start_projection_year
+
+    @property
+    def projection_base_year(self):
+        &#34;&#34;&#34;
+        Base year for index variables in the database used for projections.
+        &#34;&#34;&#34;
+        return self._projection_base_year
+
+    @property
+    def end_year(self):
+        &#34;&#34;&#34;
+        The last year for which data will be projected.
+        &#34;&#34;&#34;
+        return self._end_year
+
+    @property
+    def start_to_base_years(self) -&gt; list[int]:
+        return range(self.start_year, self.base_year+1)
+
+    @property
+    def start_to_base_year_column_labels(self) -&gt; list[str]:
+        return [str(x) for x in self.start_to_base_years]
+
+    @property
+    def base_to_end_years(self) -&gt; list[int]:
+        return range(self.base_year, self.end_year+1)
+
+    @property
+    def base_to_end_year_column_labels(self) -&gt; list[str]:
+        return [str(x) for x in self.base_to_end_years]
+
+    @property
+    def start_to_end_years(self) -&gt; list[int]:
+        return range(self.start_year, self.end_year+1)
+
+    @property
+    def start_to_end_year_column_labels(self) -&gt; list[str]:
+        return [str(x) for x in self.start_to_end_years]
+
+    @property
+    def projection_years(self) -&gt; list[int]:
+        return range(self.start_projection_year, self.end_year+1)
+
+    @property
+    def base_and_projection_years(self) -&gt; list[int]:
+        return range(self.projection_base_year, self.end_year+1)
+
+    @property
+    def projection_years_column_labels(self) -&gt; list[str]:
+        return [str(x) for x in self.projection_years]
+
+    @property
+    def base_and_projection_years_column_labels(self) -&gt; list[str]:
+        return [str(x) for x in self.base_and_projection_years]
+
+    @property
+    def projection_year_count(self) -&gt; int:
+        return (self.end_year - self.start_projection_year + 1)
+
+    @property
+    def base_and_projection_year_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        Returns the number of years that projections are done for plus one for the base projection
+        year that is the year before the start of the projection years.
+        &#34;&#34;&#34;
+        return (self.end_year - self.projection_base_year + 1)
+
+    @property
+    def available_years(self) -&gt; list[int]:
+        return range(self.first_available_year, self.last_available_year+1)
+
+    @property
+    def available_years_column_labels(self) -&gt; list[str]:
+        return [str(x) for x in self.available_years]
+
+    @property
+    def all_years(self) -&gt; list[int]:
+        &#34;&#34;&#34;
+        Returns all years from the first year with data in the database
+        to the last year of the projections horizon. This is used for the
+        publishable projections that includes the actual data and the projections.
+        &#34;&#34;&#34;
+        return range(self.first_available_year, self.end_year+1)
+
+    @property
+    def all_year_count(self) -&gt; int:
+        return (self.end_year - self.first_available_year + 1)
+
+    def available_years_column_labels(self) -&gt; list[str]:
+        return [str(x) for x in self.all_years]
+
+    @property
+    def stable_manifold_use_policy_optimisation(self):
+        &#34;&#34;&#34;
+        Set to 1 if the stable manifold is calculated while
+        allowing (monetary?) policy to optimise according to 
+        a set of policy objectives and set to 0 otherwise.
+
+        Note that this can only be set to 1 if the model parameters
+        include a TCAX and an EMZT
+        &#34;&#34;&#34;
+        return self._stable_manifold_use_policy_optimisation
+
+    @property
+    def stable_manifold_tolerance(self):
+        return self._stable_manifold_tolerance
+
+    @property
+    def stable_manifold_maximum_iterations(self):
+        return self._stable_manifold_maximum_iterations
+
+    @property
+    def neutral_real_interest_rate(self):
+        &#34;&#34;&#34;
+        Used for linearising the model and for projections.
+
+        Returns the global neutral real interest rate.
+        &#34;&#34;&#34;
+        return self._neutral_real_interest_rate
+
+    def load_configuration_details(self, configuration_details: pd.DataFrame):
+        &#34;&#34;&#34;
+        The detail identifier is in the first column.
+        The detail value is in the second column.
+        Other columns are ignored.
+        &#34;&#34;&#34;
+
+        for row in configuration_details.itertuples(index=False):
+            match row[0]:
+                case &#34;Version&#34;:
+                    self._version = row[1]
+                case &#34;Number&#34;:
+                    self._number = row[1]
+                case &#34;Debugging&#34;:
+                    self.__class__.DOING_DETAILED_DEBUG = (int(row[1]) == 1)
+                case &#34;SymInputFile&#34;:
+                    self._sym_input_file = row[1]
+                case &#34;UserParameters&#34;:
+                    self._parameters_file = row[1]
+                case &#34;IOTables&#34;:
+                    self._io_table_file = row[1]
+                case &#34;Database&#34;:
+                    self._database_file = row[1]
+                case &#34;Productivity&#34;:
+                    self._productivity_file = row[1]
+                case &#34;Population&#34;:
+                    self._population_file = row[1]
+                case &#34;AutonomousEnergyEfficiencyImprovement&#34;:
+                    self._aeei_file = row[1]
+                case &#34;LinearisationYear&#34;:
+                    self._linearisation_year = int(row[1])
+                case &#34;CalibrationYear&#34;:
+                    self._calibration_year = int(row[1])
+                case &#34;CalibrationOfCarbonCoefficientsYear&#34;:
+                    self._calibration_of_carbon_coefficients_year = int(row[1])
+                case &#34;FirstAvailableYear&#34;:
+                    self._first_available_year = int(row[1])
+                case &#34;LastAvailableYear&#34;:
+                    self._last_available_year = int(row[1])
+                case &#34;BaseYear&#34;:
+                    self._base_year = int(row[1])
+                case &#34;ProjectionBaseYear&#34;:
+                    self._projection_base_year = int(row[1])
+                case &#34;StartYear&#34;:
+                    self._start_year = int(row[1])
+                case &#34;StartProjectionYear&#34;:
+                    self._start_projection_year = int(row[1])
+                case &#34;EndYear&#34;:
+                    self._end_year = int(row[1])
+                case &#34;StableManifoldUsePolicyOptimisation&#34;:
+                    self._stable_manifold_use_policy_optimisation = float(row[1])
+                case &#34;StableManifoldTolerance&#34;:
+                    self._stable_manifold_tolerance = float(row[1])
+                case &#34;StableManifoldMaximumIterations&#34;:
+                    self._stable_manifold_maximum_iterations = int(row[1])
+                case &#34;NeutralRealInterestRate&#34;:
+                    self._neutral_real_interest_rate = float(row[1])
+                case _:
+                    raise Exception(f&#34;Configuration parameter {row[0]} is not recognised.&#34;)
+
+    def validate(self):
+
+        # Check we have a model version and a model build number.
+        assert self.version is not None
+        assert self.number is not None
+
+        # Check that all of the files named in the configuration exist.
+        if not os.path.isfile(self.sym_input_file):
+            raise Exception(f&#34;Could not find the sym_input_file: {self.sym_input_file}&#34;)
+        if not os.path.isfile(self.varmap_file):
+            raise Exception(f&#34;Could not find the varmap file generated by the SYM processor: {self.varmap_file}&#34;)
+        assert os.path.isfile(self.varmap_file)
+        assert os.path.isfile(self.eqnmap_file)
+        assert os.path.isfile(self.variables_info_file)
+        assert os.path.isfile(self.opt_map_file)
+        assert os.path.isfile(self.model_summary_file)
+        assert os.path.isfile(self.equations_python_module_file)
+
+        assert os.path.isfile(self.database_file)
+        assert os.path.isfile(self.io_table_file)
+        assert os.path.isfile(self.parameters_file)
+
+        assert os.path.isfile(self.productivity_file)
+        assert os.path.isfile(self.population_file)
+
+        sys.path.append(self.sym_directory)
+        equations_module = importlib.import_module(self.sym_output_filename_prefix)
+        assert equations_module is not None
+        assert getattr(equations_module, &#34;Equations&#34;) is not None
+
+        assert self.first_available_year &gt; 1900
+        assert self.last_available_year &lt; 2050
+
+        assert self.start_year &gt;= self.first_available_year
+        assert self.start_year &lt; self.end_year
+
+        assert self.base_year &gt;= self.first_available_year
+        assert self.base_year &lt;= self.last_available_year
+
+        assert self.calibration_year &gt;= self.first_available_year
+        assert self.calibration_year &lt;= self.last_available_year
+
+        assert self.projection_base_year &gt;= self.start_year
+        assert self.projection_base_year &lt;= self.end_year
+
+        assert self.start_projection_year &gt; self.start_year
+        assert self.start_projection_year &lt; self.end_year
+        
+        if self.stable_manifold_use_policy_optimisation:
+            raise Exception(&#34;Stable manifold determination in conjunction with policy optimisation is not yet implemented.&#34;)
+
+        if self.stable_manifold_tolerance &gt; 0.0001:
+            raise Exception(&#34;The convergence tolerance when searching for the stable manifold must be less than 1e-4.&#34;)
+
+        if self.stable_manifold_maximum_iterations &lt; 100:
+            raise Exception(&#34;You must allow for at least 100 iterations in converging to the stable manifold&#34;)
+        
+    def shift_forward(self, steps:int):
+        &#34;&#34;&#34;
+        Adjusts this model configuration by incrementing the start and base years for the projection by steps.
+
+        This shift operation is used to roll the model forward by steps years.
+        &#34;&#34;&#34;
+        self._projection_base_year += steps
+        self._start_projection_year += steps
+        self._linearisation_year = self.projection_base_year</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="gcubed.base.Base" href="base.html#gcubed.base.Base">Base</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="gcubed.model_configuration.ModelConfiguration.aeei_file"><code class="name">var <span class="ident">aeei_file</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def aeei_file(self):
+    return f&#34;{self.data_directory}{self._aeei_file}&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.all_year_count"><code class="name">var <span class="ident">all_year_count</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def all_year_count(self) -&gt; int:
+    return (self.end_year - self.first_available_year + 1)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.all_years"><code class="name">var <span class="ident">all_years</span> : list[int]</code></dt>
+<dd>
+<div class="desc"><p>Returns all years from the first year with data in the database
+to the last year of the projections horizon. This is used for the
+publishable projections that includes the actual data and the projections.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def all_years(self) -&gt; list[int]:
+    &#34;&#34;&#34;
+    Returns all years from the first year with data in the database
+    to the last year of the projections horizon. This is used for the
+    publishable projections that includes the actual data and the projections.
+    &#34;&#34;&#34;
+    return range(self.first_available_year, self.end_year+1)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.available_years"><code class="name">var <span class="ident">available_years</span> : list[int]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def available_years(self) -&gt; list[int]:
+    return range(self.first_available_year, self.last_available_year+1)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.base_and_projection_year_count"><code class="name">var <span class="ident">base_and_projection_year_count</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Returns the number of years that projections are done for plus one for the base projection
+year that is the year before the start of the projection years.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def base_and_projection_year_count(self) -&gt; int:
+    &#34;&#34;&#34;
+    Returns the number of years that projections are done for plus one for the base projection
+    year that is the year before the start of the projection years.
+    &#34;&#34;&#34;
+    return (self.end_year - self.projection_base_year + 1)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.base_and_projection_years"><code class="name">var <span class="ident">base_and_projection_years</span> : list[int]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def base_and_projection_years(self) -&gt; list[int]:
+    return range(self.projection_base_year, self.end_year+1)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.base_and_projection_years_column_labels"><code class="name">var <span class="ident">base_and_projection_years_column_labels</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def base_and_projection_years_column_labels(self) -&gt; list[str]:
+    return [str(x) for x in self.base_and_projection_years]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.base_to_end_year_column_labels"><code class="name">var <span class="ident">base_to_end_year_column_labels</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def base_to_end_year_column_labels(self) -&gt; list[str]:
+    return [str(x) for x in self.base_to_end_years]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.base_to_end_years"><code class="name">var <span class="ident">base_to_end_years</span> : list[int]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def base_to_end_years(self) -&gt; list[int]:
+    return range(self.base_year, self.end_year+1)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.base_year"><code class="name">var <span class="ident">base_year</span></code></dt>
+<dd>
+<div class="desc"><p>The year in which all indices are based at 1 (so their log values are 0).
+This is currently required to be the same as the start_year but we may relax that.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def base_year(self):
+    &#34;&#34;&#34;
+    The year in which all indices are based at 1 (so their log values are 0).
+    This is currently required to be the same as the start_year but we may relax that.
+    &#34;&#34;&#34;
+    return self._base_year</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.benchmarking_reports_directory"><code class="name">var <span class="ident">benchmarking_reports_directory</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def benchmarking_reports_directory(self):
+    return f&#34;{self.model_directory}benchmarking/&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.build_directory"><code class="name">var <span class="ident">build_directory</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def build_directory(self):
+    return f&#34;{self.model_directory}build/&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.calibration_of_carbon_coefficients_year"><code class="name">var <span class="ident">calibration_of_carbon_coefficients_year</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def calibration_of_carbon_coefficients_year(self):
+    return self._calibration_of_carbon_coefficients_year</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.calibration_year"><code class="name">var <span class="ident">calibration_year</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def calibration_year(self):
+    return self._calibration_year</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.data_directory"><code class="name">var <span class="ident">data_directory</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def data_directory(self):
+    return f&#34;{self.model_directory}data/&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.database_file"><code class="name">var <span class="ident">database_file</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def database_file(self):
+    return f&#34;{self.data_directory}{self._database_file}&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.end_year"><code class="name">var <span class="ident">end_year</span></code></dt>
+<dd>
+<div class="desc"><p>The last year for which data will be projected.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def end_year(self):
+    &#34;&#34;&#34;
+    The last year for which data will be projected.
+    &#34;&#34;&#34;
+    return self._end_year</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.eqnmap_file"><code class="name">var <span class="ident">eqnmap_file</span></code></dt>
+<dd>
+<div class="desc"><p>The file containing a listing of left and right hand side variables
+in the model equations. the LHS variable comes first, as a name of
+the vector (column 1), and the index in that vector (column 2). Then each
+RHS variable appears, again as the vector name in column 2 and the index
+in that vector in column 2.</p>
+<p>This information is used to populate a dictionary with keys being the vector
+and index tuple for each RHS variable and the value being a list of of
+vector name, vector index tuples, one for each equation that the RHS variable
+occurs in. That dictionary then drives the equation evaluations used in model
+linearisation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def eqnmap_file(self):
+    &#34;&#34;&#34;
+    The file containing a listing of left and right hand side variables
+    in the model equations. the LHS variable comes first, as a name of
+    the vector (column 1), and the index in that vector (column 2). Then each
+    RHS variable appears, again as the vector name in column 2 and the index
+    in that vector in column 2.
+
+    This information is used to populate a dictionary with keys being the vector
+    and index tuple for each RHS variable and the value being a list of of
+    vector name, vector index tuples, one for each equation that the RHS variable 
+    occurs in. That dictionary then drives the equation evaluations used in model
+    linearisation.
+    &#34;&#34;&#34;
+    return f&#34;{self.sym_output_file_path_and_prefix}_eqnmap.csv&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.equations_python_module_file"><code class="name">var <span class="ident">equations_python_module_file</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def equations_python_module_file(self):
+    return &#34;{}{}.py&#34;.format(self.sym_directory, self.sym_output_filename_prefix)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.first_available_year"><code class="name">var <span class="ident">first_available_year</span></code></dt>
+<dd>
+<div class="desc"><p>The first year of actual data that is available to us in the database file.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def first_available_year(self):
+    &#34;&#34;&#34;
+    The first year of actual data that is available to us in the database file.
+    &#34;&#34;&#34;
+    return self._first_available_year</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.fully_qualified_equations_module_name"><code class="name">var <span class="ident">fully_qualified_equations_module_name</span></code></dt>
+<dd>
+<div class="desc"><p>The fully qualified module name required to import the
+SYM generated Python equations module.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def fully_qualified_equations_module_name(self):
+    &#34;&#34;&#34;
+    The fully qualified module name required to import the 
+    SYM generated Python equations module.
+    &#34;&#34;&#34;
+    return f&#34;model.{self.version}.{self.number}.sym.{self.sym_output_filename_prefix}&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.io_table_file"><code class="name">var <span class="ident">io_table_file</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def io_table_file(self):
+    return f&#34;{self.data_directory}{self._io_table_file}&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.last_available_year"><code class="name">var <span class="ident">last_available_year</span></code></dt>
+<dd>
+<div class="desc"><p>The last year of actual data that is available to us in the database file.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def last_available_year(self):
+    &#34;&#34;&#34;
+    The last year of actual data that is available to us in the database file.
+    &#34;&#34;&#34;
+    return self._last_available_year</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.linearisation_year"><code class="name">var <span class="ident">linearisation_year</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def linearisation_year(self):
+    return self._linearisation_year</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.model_directory"><code class="name">var <span class="ident">model_directory</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def model_directory(self):
+    return f&#34;{self._model_directory}/&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.model_summary_file"><code class="name">var <span class="ident">model_summary_file</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def model_summary_file(self):
+    return f&#34;{self.sym_output_file_path_and_prefix}.lis&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.neutral_real_interest_rate"><code class="name">var <span class="ident">neutral_real_interest_rate</span></code></dt>
+<dd>
+<div class="desc"><p>Used for linearising the model and for projections.</p>
+<p>Returns the global neutral real interest rate.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def neutral_real_interest_rate(self):
+    &#34;&#34;&#34;
+    Used for linearising the model and for projections.
+
+    Returns the global neutral real interest rate.
+    &#34;&#34;&#34;
+    return self._neutral_real_interest_rate</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.number"><code class="name">var <span class="ident">number</span></code></dt>
+<dd>
+<div class="desc"><p>The model build number</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def number(self):
+    &#34;&#34;&#34;
+    The model build number
+    &#34;&#34;&#34;
+    return self._number</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.opt_map_file"><code class="name">var <span class="ident">opt_map_file</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def opt_map_file(self):
+    return f&#34;{self.sym_output_file_path_and_prefix}_optmap.csv&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.ox_directory"><code class="name">var <span class="ident">ox_directory</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def ox_directory(self):
+    return f&#34;{self.model_directory}ox/&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.parameters_file"><code class="name">var <span class="ident">parameters_file</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def parameters_file(self):
+    return f&#34;{self.data_directory}{self._parameters_file}&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.population_file"><code class="name">var <span class="ident">population_file</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def population_file(self):
+    return f&#34;{self.data_directory}{self._population_file}&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.productivity_file"><code class="name">var <span class="ident">productivity_file</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def productivity_file(self):
+    return f&#34;{self.data_directory}{self._productivity_file}&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.projection_base_year"><code class="name">var <span class="ident">projection_base_year</span></code></dt>
+<dd>
+<div class="desc"><p>Base year for index variables in the database used for projections.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def projection_base_year(self):
+    &#34;&#34;&#34;
+    Base year for index variables in the database used for projections.
+    &#34;&#34;&#34;
+    return self._projection_base_year</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.projection_year_count"><code class="name">var <span class="ident">projection_year_count</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def projection_year_count(self) -&gt; int:
+    return (self.end_year - self.start_projection_year + 1)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.projection_years"><code class="name">var <span class="ident">projection_years</span> : list[int]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def projection_years(self) -&gt; list[int]:
+    return range(self.start_projection_year, self.end_year+1)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.projection_years_column_labels"><code class="name">var <span class="ident">projection_years_column_labels</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def projection_years_column_labels(self) -&gt; list[str]:
+    return [str(x) for x in self.projection_years]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.python_reports_directory"><code class="name">var <span class="ident">python_reports_directory</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def python_reports_directory(self):
+    return f&#34;{self.model_directory}python/&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.simulations_directory"><code class="name">var <span class="ident">simulations_directory</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def simulations_directory(self) -&gt; str:
+    return f&#34;{self.model_directory}simulations/&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.stable_manifold_maximum_iterations"><code class="name">var <span class="ident">stable_manifold_maximum_iterations</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def stable_manifold_maximum_iterations(self):
+    return self._stable_manifold_maximum_iterations</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.stable_manifold_tolerance"><code class="name">var <span class="ident">stable_manifold_tolerance</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def stable_manifold_tolerance(self):
+    return self._stable_manifold_tolerance</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.stable_manifold_use_policy_optimisation"><code class="name">var <span class="ident">stable_manifold_use_policy_optimisation</span></code></dt>
+<dd>
+<div class="desc"><p>Set to 1 if the stable manifold is calculated while
+allowing (monetary?) policy to optimise according to
+a set of policy objectives and set to 0 otherwise.</p>
+<p>Note that this can only be set to 1 if the model parameters
+include a TCAX and an EMZT</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def stable_manifold_use_policy_optimisation(self):
+    &#34;&#34;&#34;
+    Set to 1 if the stable manifold is calculated while
+    allowing (monetary?) policy to optimise according to 
+    a set of policy objectives and set to 0 otherwise.
+
+    Note that this can only be set to 1 if the model parameters
+    include a TCAX and an EMZT
+    &#34;&#34;&#34;
+    return self._stable_manifold_use_policy_optimisation</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.start_projection_year"><code class="name">var <span class="ident">start_projection_year</span></code></dt>
+<dd>
+<div class="desc"><p>Corresponds to the start_year specified in the Ox build/baseinfo.csv file.
+This is currently required to be start_year+1.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def start_projection_year(self):
+    &#34;&#34;&#34;
+    Corresponds to the start_year specified in the Ox build/baseinfo.csv file.
+    This is currently required to be start_year+1.
+    &#34;&#34;&#34;
+    return self._start_projection_year</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.start_to_base_year_column_labels"><code class="name">var <span class="ident">start_to_base_year_column_labels</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def start_to_base_year_column_labels(self) -&gt; list[str]:
+    return [str(x) for x in self.start_to_base_years]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.start_to_base_years"><code class="name">var <span class="ident">start_to_base_years</span> : list[int]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def start_to_base_years(self) -&gt; list[int]:
+    return range(self.start_year, self.base_year+1)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.start_to_end_year_column_labels"><code class="name">var <span class="ident">start_to_end_year_column_labels</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def start_to_end_year_column_labels(self) -&gt; list[str]:
+    return [str(x) for x in self.start_to_end_years]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.start_to_end_years"><code class="name">var <span class="ident">start_to_end_years</span> : list[int]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def start_to_end_years(self) -&gt; list[int]:
+    return range(self.start_year, self.end_year+1)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.start_year"><code class="name">var <span class="ident">start_year</span></code></dt>
+<dd>
+<div class="desc"><p>The first year to include in the analysis that will produce projections.
+TODO: Can this be made redundant, given the start_projection_year and the base_year?</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def start_year(self):
+    &#34;&#34;&#34;
+    The first year to include in the analysis that will produce projections.
+    TODO: Can this be made redundant, given the start_projection_year and the base_year?
+    &#34;&#34;&#34;
+    return self._start_year</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.sym_directory"><code class="name">var <span class="ident">sym_directory</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sym_directory(self):
+    return f&#34;{self.model_directory}sym/&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.sym_input_file"><code class="name">var <span class="ident">sym_input_file</span></code></dt>
+<dd>
+<div class="desc"><p>The name of the file to process with the sym processor.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sym_input_file(self):
+    &#34;&#34;&#34;
+    The name of the file to process with the sym processor.
+    &#34;&#34;&#34;
+    return &#34;{}{}&#34;.format(self.sym_directory, self._sym_input_file)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.sym_output_file_path_and_prefix"><code class="name">var <span class="ident">sym_output_file_path_and_prefix</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sym_output_file_path_and_prefix(self):
+    return &#34;{}{}&#34;.format(self.sym_directory, self.sym_output_filename_prefix)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.sym_output_filename_prefix"><code class="name">var <span class="ident">sym_output_filename_prefix</span></code></dt>
+<dd>
+<div class="desc"><p>The equations Python module that is imported by the Lineariser.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sym_output_filename_prefix(self):
+    &#34;&#34;&#34;
+    The equations Python module that is imported by the Lineariser.
+    &#34;&#34;&#34;
+    return &#34;model_{}_{}&#34;.format(self.version, self.number)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.variables_info_file"><code class="name">var <span class="ident">variables_info_file</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def variables_info_file(self):
+    return f&#34;{self.sym_output_file_path_and_prefix}_varinfo.csv&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.varmap_file"><code class="name">var <span class="ident">varmap_file</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def varmap_file(self):
+    return &#34;{}_varmap.csv&#34;.format(self.sym_output_file_path_and_prefix)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.version"><code class="name">var <span class="ident">version</span></code></dt>
+<dd>
+<div class="desc"><p>The model type - a number plus single letter string, where number represents sectors, letter for regions.
+- 2R is the 2 region/2 sector model
+- 20R is the 2 region/20 sector model
+- 20J is the 10 region/20 sector model used for carbon emissions modelling</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def version(self):
+    &#34;&#34;&#34;
+    The model type - a number plus single letter string, where number represents sectors, letter for regions.
+    - 2R is the 2 region/2 sector model
+    - 20R is the 2 region/20 sector model
+    - 20J is the 10 region/20 sector model used for carbon emissions modelling
+    &#34;&#34;&#34;
+    return self._version</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="gcubed.model_configuration.ModelConfiguration.available_years_column_labels"><code class="name flex">
+<span>def <span class="ident">available_years_column_labels</span></span>(<span>self) ‑> list[str]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def available_years_column_labels(self) -&gt; list[str]:
+    return [str(x) for x in self.all_years]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.load_configuration_details"><code class="name flex">
+<span>def <span class="ident">load_configuration_details</span></span>(<span>self, configuration_details: pandas.core.frame.DataFrame)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The detail identifier is in the first column.
+The detail value is in the second column.
+Other columns are ignored.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_configuration_details(self, configuration_details: pd.DataFrame):
+    &#34;&#34;&#34;
+    The detail identifier is in the first column.
+    The detail value is in the second column.
+    Other columns are ignored.
+    &#34;&#34;&#34;
+
+    for row in configuration_details.itertuples(index=False):
+        match row[0]:
+            case &#34;Version&#34;:
+                self._version = row[1]
+            case &#34;Number&#34;:
+                self._number = row[1]
+            case &#34;Debugging&#34;:
+                self.__class__.DOING_DETAILED_DEBUG = (int(row[1]) == 1)
+            case &#34;SymInputFile&#34;:
+                self._sym_input_file = row[1]
+            case &#34;UserParameters&#34;:
+                self._parameters_file = row[1]
+            case &#34;IOTables&#34;:
+                self._io_table_file = row[1]
+            case &#34;Database&#34;:
+                self._database_file = row[1]
+            case &#34;Productivity&#34;:
+                self._productivity_file = row[1]
+            case &#34;Population&#34;:
+                self._population_file = row[1]
+            case &#34;AutonomousEnergyEfficiencyImprovement&#34;:
+                self._aeei_file = row[1]
+            case &#34;LinearisationYear&#34;:
+                self._linearisation_year = int(row[1])
+            case &#34;CalibrationYear&#34;:
+                self._calibration_year = int(row[1])
+            case &#34;CalibrationOfCarbonCoefficientsYear&#34;:
+                self._calibration_of_carbon_coefficients_year = int(row[1])
+            case &#34;FirstAvailableYear&#34;:
+                self._first_available_year = int(row[1])
+            case &#34;LastAvailableYear&#34;:
+                self._last_available_year = int(row[1])
+            case &#34;BaseYear&#34;:
+                self._base_year = int(row[1])
+            case &#34;ProjectionBaseYear&#34;:
+                self._projection_base_year = int(row[1])
+            case &#34;StartYear&#34;:
+                self._start_year = int(row[1])
+            case &#34;StartProjectionYear&#34;:
+                self._start_projection_year = int(row[1])
+            case &#34;EndYear&#34;:
+                self._end_year = int(row[1])
+            case &#34;StableManifoldUsePolicyOptimisation&#34;:
+                self._stable_manifold_use_policy_optimisation = float(row[1])
+            case &#34;StableManifoldTolerance&#34;:
+                self._stable_manifold_tolerance = float(row[1])
+            case &#34;StableManifoldMaximumIterations&#34;:
+                self._stable_manifold_maximum_iterations = int(row[1])
+            case &#34;NeutralRealInterestRate&#34;:
+                self._neutral_real_interest_rate = float(row[1])
+            case _:
+                raise Exception(f&#34;Configuration parameter {row[0]} is not recognised.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.shift_forward"><code class="name flex">
+<span>def <span class="ident">shift_forward</span></span>(<span>self, steps: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Adjusts this model configuration by incrementing the start and base years for the projection by steps.</p>
+<p>This shift operation is used to roll the model forward by steps years.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def shift_forward(self, steps:int):
+    &#34;&#34;&#34;
+    Adjusts this model configuration by incrementing the start and base years for the projection by steps.
+
+    This shift operation is used to roll the model forward by steps years.
+    &#34;&#34;&#34;
+    self._projection_base_year += steps
+    self._start_projection_year += steps
+    self._linearisation_year = self.projection_base_year</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.validate"><code class="name flex">
+<span>def <span class="ident">validate</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def validate(self):
+
+    # Check we have a model version and a model build number.
+    assert self.version is not None
+    assert self.number is not None
+
+    # Check that all of the files named in the configuration exist.
+    if not os.path.isfile(self.sym_input_file):
+        raise Exception(f&#34;Could not find the sym_input_file: {self.sym_input_file}&#34;)
+    if not os.path.isfile(self.varmap_file):
+        raise Exception(f&#34;Could not find the varmap file generated by the SYM processor: {self.varmap_file}&#34;)
+    assert os.path.isfile(self.varmap_file)
+    assert os.path.isfile(self.eqnmap_file)
+    assert os.path.isfile(self.variables_info_file)
+    assert os.path.isfile(self.opt_map_file)
+    assert os.path.isfile(self.model_summary_file)
+    assert os.path.isfile(self.equations_python_module_file)
+
+    assert os.path.isfile(self.database_file)
+    assert os.path.isfile(self.io_table_file)
+    assert os.path.isfile(self.parameters_file)
+
+    assert os.path.isfile(self.productivity_file)
+    assert os.path.isfile(self.population_file)
+
+    sys.path.append(self.sym_directory)
+    equations_module = importlib.import_module(self.sym_output_filename_prefix)
+    assert equations_module is not None
+    assert getattr(equations_module, &#34;Equations&#34;) is not None
+
+    assert self.first_available_year &gt; 1900
+    assert self.last_available_year &lt; 2050
+
+    assert self.start_year &gt;= self.first_available_year
+    assert self.start_year &lt; self.end_year
+
+    assert self.base_year &gt;= self.first_available_year
+    assert self.base_year &lt;= self.last_available_year
+
+    assert self.calibration_year &gt;= self.first_available_year
+    assert self.calibration_year &lt;= self.last_available_year
+
+    assert self.projection_base_year &gt;= self.start_year
+    assert self.projection_base_year &lt;= self.end_year
+
+    assert self.start_projection_year &gt; self.start_year
+    assert self.start_projection_year &lt; self.end_year
+    
+    if self.stable_manifold_use_policy_optimisation:
+        raise Exception(&#34;Stable manifold determination in conjunction with policy optimisation is not yet implemented.&#34;)
+
+    if self.stable_manifold_tolerance &gt; 0.0001:
+        raise Exception(&#34;The convergence tolerance when searching for the stable manifold must be less than 1e-4.&#34;)
+
+    if self.stable_manifold_maximum_iterations &lt; 100:
+        raise Exception(&#34;You must allow for at least 100 iterations in converging to the stable manifold&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="gcubed.base.Base" href="base.html#gcubed.base.Base">Base</a></b></code>:
+<ul class="hlist">
+<li><code><a title="gcubed.base.Base.get_year_labels" href="base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
+<li><code><a title="gcubed.base.Base.load_data" href="base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.zeros" href="base.html#gcubed.base.Base.zeros">zeros</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="gcubed" href="index.html">gcubed</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="gcubed.model_configuration.ModelConfiguration" href="#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a></code></h4>
+<ul class="">
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.aeei_file" href="#gcubed.model_configuration.ModelConfiguration.aeei_file">aeei_file</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.all_year_count" href="#gcubed.model_configuration.ModelConfiguration.all_year_count">all_year_count</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.all_years" href="#gcubed.model_configuration.ModelConfiguration.all_years">all_years</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.available_years" href="#gcubed.model_configuration.ModelConfiguration.available_years">available_years</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.available_years_column_labels" href="#gcubed.model_configuration.ModelConfiguration.available_years_column_labels">available_years_column_labels</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.base_and_projection_year_count" href="#gcubed.model_configuration.ModelConfiguration.base_and_projection_year_count">base_and_projection_year_count</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.base_and_projection_years" href="#gcubed.model_configuration.ModelConfiguration.base_and_projection_years">base_and_projection_years</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.base_and_projection_years_column_labels" href="#gcubed.model_configuration.ModelConfiguration.base_and_projection_years_column_labels">base_and_projection_years_column_labels</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.base_to_end_year_column_labels" href="#gcubed.model_configuration.ModelConfiguration.base_to_end_year_column_labels">base_to_end_year_column_labels</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.base_to_end_years" href="#gcubed.model_configuration.ModelConfiguration.base_to_end_years">base_to_end_years</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.base_year" href="#gcubed.model_configuration.ModelConfiguration.base_year">base_year</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.benchmarking_reports_directory" href="#gcubed.model_configuration.ModelConfiguration.benchmarking_reports_directory">benchmarking_reports_directory</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.build_directory" href="#gcubed.model_configuration.ModelConfiguration.build_directory">build_directory</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.calibration_of_carbon_coefficients_year" href="#gcubed.model_configuration.ModelConfiguration.calibration_of_carbon_coefficients_year">calibration_of_carbon_coefficients_year</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.calibration_year" href="#gcubed.model_configuration.ModelConfiguration.calibration_year">calibration_year</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.data_directory" href="#gcubed.model_configuration.ModelConfiguration.data_directory">data_directory</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.database_file" href="#gcubed.model_configuration.ModelConfiguration.database_file">database_file</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.end_year" href="#gcubed.model_configuration.ModelConfiguration.end_year">end_year</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.eqnmap_file" href="#gcubed.model_configuration.ModelConfiguration.eqnmap_file">eqnmap_file</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.equations_python_module_file" href="#gcubed.model_configuration.ModelConfiguration.equations_python_module_file">equations_python_module_file</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.first_available_year" href="#gcubed.model_configuration.ModelConfiguration.first_available_year">first_available_year</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.fully_qualified_equations_module_name" href="#gcubed.model_configuration.ModelConfiguration.fully_qualified_equations_module_name">fully_qualified_equations_module_name</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.io_table_file" href="#gcubed.model_configuration.ModelConfiguration.io_table_file">io_table_file</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.last_available_year" href="#gcubed.model_configuration.ModelConfiguration.last_available_year">last_available_year</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.linearisation_year" href="#gcubed.model_configuration.ModelConfiguration.linearisation_year">linearisation_year</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.load_configuration_details" href="#gcubed.model_configuration.ModelConfiguration.load_configuration_details">load_configuration_details</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.model_directory" href="#gcubed.model_configuration.ModelConfiguration.model_directory">model_directory</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.model_summary_file" href="#gcubed.model_configuration.ModelConfiguration.model_summary_file">model_summary_file</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.neutral_real_interest_rate" href="#gcubed.model_configuration.ModelConfiguration.neutral_real_interest_rate">neutral_real_interest_rate</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.number" href="#gcubed.model_configuration.ModelConfiguration.number">number</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.opt_map_file" href="#gcubed.model_configuration.ModelConfiguration.opt_map_file">opt_map_file</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.ox_directory" href="#gcubed.model_configuration.ModelConfiguration.ox_directory">ox_directory</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.parameters_file" href="#gcubed.model_configuration.ModelConfiguration.parameters_file">parameters_file</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.population_file" href="#gcubed.model_configuration.ModelConfiguration.population_file">population_file</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.productivity_file" href="#gcubed.model_configuration.ModelConfiguration.productivity_file">productivity_file</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.projection_base_year" href="#gcubed.model_configuration.ModelConfiguration.projection_base_year">projection_base_year</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.projection_year_count" href="#gcubed.model_configuration.ModelConfiguration.projection_year_count">projection_year_count</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.projection_years" href="#gcubed.model_configuration.ModelConfiguration.projection_years">projection_years</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.projection_years_column_labels" href="#gcubed.model_configuration.ModelConfiguration.projection_years_column_labels">projection_years_column_labels</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.python_reports_directory" href="#gcubed.model_configuration.ModelConfiguration.python_reports_directory">python_reports_directory</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.shift_forward" href="#gcubed.model_configuration.ModelConfiguration.shift_forward">shift_forward</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.simulations_directory" href="#gcubed.model_configuration.ModelConfiguration.simulations_directory">simulations_directory</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.stable_manifold_maximum_iterations" href="#gcubed.model_configuration.ModelConfiguration.stable_manifold_maximum_iterations">stable_manifold_maximum_iterations</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.stable_manifold_tolerance" href="#gcubed.model_configuration.ModelConfiguration.stable_manifold_tolerance">stable_manifold_tolerance</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.stable_manifold_use_policy_optimisation" href="#gcubed.model_configuration.ModelConfiguration.stable_manifold_use_policy_optimisation">stable_manifold_use_policy_optimisation</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.start_projection_year" href="#gcubed.model_configuration.ModelConfiguration.start_projection_year">start_projection_year</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.start_to_base_year_column_labels" href="#gcubed.model_configuration.ModelConfiguration.start_to_base_year_column_labels">start_to_base_year_column_labels</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.start_to_base_years" href="#gcubed.model_configuration.ModelConfiguration.start_to_base_years">start_to_base_years</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.start_to_end_year_column_labels" href="#gcubed.model_configuration.ModelConfiguration.start_to_end_year_column_labels">start_to_end_year_column_labels</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.start_to_end_years" href="#gcubed.model_configuration.ModelConfiguration.start_to_end_years">start_to_end_years</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.start_year" href="#gcubed.model_configuration.ModelConfiguration.start_year">start_year</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.sym_directory" href="#gcubed.model_configuration.ModelConfiguration.sym_directory">sym_directory</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.sym_input_file" href="#gcubed.model_configuration.ModelConfiguration.sym_input_file">sym_input_file</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.sym_output_file_path_and_prefix" href="#gcubed.model_configuration.ModelConfiguration.sym_output_file_path_and_prefix">sym_output_file_path_and_prefix</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.sym_output_filename_prefix" href="#gcubed.model_configuration.ModelConfiguration.sym_output_filename_prefix">sym_output_filename_prefix</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.validate" href="#gcubed.model_configuration.ModelConfiguration.validate">validate</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.variables_info_file" href="#gcubed.model_configuration.ModelConfiguration.variables_info_file">variables_info_file</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.varmap_file" href="#gcubed.model_configuration.ModelConfiguration.varmap_file">varmap_file</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.version" href="#gcubed.model_configuration.ModelConfiguration.version">version</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

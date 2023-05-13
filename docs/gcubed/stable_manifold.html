@@ -1,0 +1,1815 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>gcubed.stable_manifold API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>gcubed.stable_manifold</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ------------------------------------------------------------------
+# Purpose: Compute the stable manifold.
+# Author: Geoff Shuetrim
+# ------------------------------------------------------------------
+import logging
+import sys
+import numpy as np
+import pandas as pd
+from gcubed.base import Base
+from gcubed.state_space_form import StateSpaceForm
+from gcubed.model import Model
+
+class StableManifold(Base):
+    &#34;&#34;&#34;
+    The algebra embodied in this class follows the second page of
+    https://www.msgpl.com.au/Manuals2021/GGGv20JManual/softwaremanual/algorithm.pdf
+    
+    For the gory details, see https://www.rba.gov.au/publications/rdp/1987/pdf/rdp8706.pdf
+
+    TODO: Add optimal policy features in phase 2.
+
+    This script produces rules for the evolution of model variables:
+
+    Using the vector names defined in the SYM processor:
+
+    The rule for the costate or jump variables has the form:
+    
+    J_t = H_1 X1_t + H_1 EXO_t + some linear function of EXO in all future periods.
+
+    The rule for the ZE vector of special endogenous variables has the form:
+
+    ZE_t = mu_1 X1_t + mu_4 EXO_t + some linear function of EXO in all future periods.
+
+    The rule for the state variables is:
+
+    X1_t = tau_1 X1_{t-1} + tau_2 J_{t-1} + tau_4 EXO_{t} + tau_7 EXO_{t-1}
+
+    The rule for the endogenous variables, Z1, is just the equation obtained when forming the SSF:
+
+    Z1_t = z1l_yxr_ssf X1_{t-1} + z1l_yjr_ssf J1_{t-1} + z1l_exz_ssf ZE_{t+1} + z1l_exo_ssf EXO_{t}
+
+    These rules are embodied in the coefficient matrices in each of them.
+
+    Iteration to convergence algorithm for the stable manifold:
+
+    Convergence criteria:
+    1. If there are no jump variables, just do a single iteration and stop.
+
+    Report progress for each iteration:
+    1. Check the average absolute error in the jump matrix, h1t
+    2. Check the average absolute error in the jump matrix, h2t
+    Cumulative errors are the average absolute values of the change in the elements 
+    in the matrix, considering mean(abs(H1tL - H1t)) and mean(abs(H2tL - H2t)).
+
+    Convergence has been reached if both of these average absolute errors are less than
+    the tolerance specified in the model configuration.
+    
+    Iterations update the H1 and H2 matrices until they stabilise:
+    H1
+    H2
+
+    Interim calculations in the iteration process produce the other coefficient matrices needed
+    for the other rules describing the path of model variables X1 and ZE.
+    &#34;&#34;&#34;
+
+    def __init__(self, state_space_form: StateSpaceForm) -&gt; None:
+
+        assert state_space_form is not None
+        self._state_space_form = state_space_form
+        self.solve()
+        self.__validate()
+        logging.info(&#34;The stable manifold has been found for the model.&#34;)
+
+    def __validate(self):
+        &#34;&#34;&#34;
+        TODO: Validate the setup to ensure we are ready to find the stable manifold.
+        &#34;&#34;&#34;
+        pass
+
+    @property
+    def ssf(self) -&gt; StateSpaceForm:
+        return self._state_space_form
+
+    @property
+    def model(self) -&gt; Model:
+        return self.ssf.model
+
+    def solve(self):
+        &#34;&#34;&#34;
+        Manage the iteration process, checking convergence criteria each time.
+        &#34;&#34;&#34;
+        self._iterations = 0
+        while (not self.converged) and (self._iterations &lt; self.model.configuration.stable_manifold_maximum_iterations):
+            self.__iterate()
+
+        if self.converged:
+
+            # Compute state updating matrices:
+            self._Anew = self.ssf.delta(&#34;x1l&#34;, &#34;yxr&#34;) + \
+                self.ssf.delta(&#34;x1l&#34;, &#34;yjr&#34;) @ self._H1t + \
+                self.ssf.delta(&#34;x1l&#34;, &#34;exz&#34;) @ self.mu1
+            self._Znew = self.ssf.delta(&#34;x1l&#34;, &#34;exo&#34;) + \
+                self.ssf.delta(&#34;x1l&#34;, &#34;yjr&#34;) @ self.H2 + \
+                self.ssf.delta(&#34;x1l&#34;, &#34;exz&#34;) @ self.mu2
+
+            # Check stability of solution.
+            self.analyse_eigenvalues()
+
+            return
+
+        raise Exception(f&#34;The search for a stable manifold reached the iteration limit {self.model.configuration.stable_manifold_maximum_iterations} without converging.&#34;)
+
+    def __iterate(self):
+        &#34;&#34;&#34;
+        Recall from sym_data.py, the naming conventions for the LHS variable vectors:
+        a. x1l (the vector of state variables) X=S=State
+        b. j1l (the vector of costate or jump variables) J=C=Costate
+        c. zel (the endogenous variables LOGY, PRCT, PRID) 
+        d. z1l (the other endogenous variables)
+
+        These 4 LHS vectors of variables are functions of:
+        1. x1r is right hand side (RHS) state variables
+        2. j1r is RHS costate or jump variables
+        3. zer is RHS endogenous variables LOGY, PRCT, PRID
+        4. exz is RHS the lead expected endogenous variables
+        5. yxr is RHS state variables lagged by 1 period
+        6. yjr is RHS costate variables lagged by 1 period
+        7. exo is exogenous variables (by definition only appearing on RHS)
+        8. z1r is RHS other endogenous variables.
+
+        &#34;&#34;&#34;
+
+        self._iterations += 1
+
+        np.set_printoptions(formatter={&#39;float&#39;: lambda x: &#34;{0:0.4f}&#34;.format(x)})
+        np.set_printoptions(suppress=True, linewidth=400)
+        np.set_printoptions(threshold=sys.maxsize)
+
+        if self._iterations == 1:
+
+            self._H1t = self.Gamma_jT @ (self.ssf.delta(&#34;j1l&#34;, &#34;exz&#34;) @ self.psi_rs + self.ssf.delta(&#34;j1l&#34;, &#34;yxr&#34;))
+            self._H2t = self.Gamma_jT @ (self.ssf.delta(&#34;j1l&#34;, &#34;exz&#34;) @ self.psi_rx + self.ssf.delta(&#34;j1l&#34;, &#34;exo&#34;))
+            self._M1t = self.psi_rs + self.psi_rj @ self._H1t
+            self._M2t = self.psi_rx + self.psi_rj @ self._H2t
+
+        else: 
+            # See section 5.2 of the model solution documentation.
+            self._H1t_lead = self._H1t
+            self._H2t_lead = self._H2t
+            self._M1t_lead = self._M1t
+            self._M2t_lead = self._M2t
+
+            # wvi in Ox
+            self._Gamma_st = np.linalg.inv(np.identity(self.model.sym_data.vector_length(&#34;x1l&#34;)) - self.ssf.delta(&#34;x1l&#34;, &#34;exz&#34;) @ self._M1t_lead)
+            
+            # th1t in Ox
+            self._tau_sst = self.Gamma_st @ self.ssf.delta(&#34;x1l&#34;, &#34;yxr&#34;) # s by s dimension
+
+            # th2t in Ox
+            self._tau_sjt = self.Gamma_st @ self.ssf.delta(&#34;x1l&#34;, &#34;yjr&#34;) # s by j dimension
+
+            # th4t in Ox
+            self._tau_sxt = self.Gamma_st @ self.ssf.delta(&#34;x1l&#34;, &#34;exo&#34;) # s by x dimension
+
+            # th6t in Ox
+            self._common_factor = self._H1t_lead - self.ssf.delta(&#34;j1l&#34;, &#34;exz&#34;) @ self._M1t_lead # j by s dimension
+
+            #fdeltinv in Ox
+            if self.model.sym_data.no_jump_variables:
+                self._Gamma_jt = 0
+            else:
+                self._Gamma_jt = np.linalg.inv(self.ssf.delta(&#34;j1l&#34;, &#34;yjr&#34;) - self.common_factor @ self._tau_sjt) # j by j dimension
+
+            self._H1t = self.Gamma_jt @ (self.common_factor @ self._tau_sst - self.ssf.delta(&#34;j1l&#34;, &#34;yxr&#34;)) # j by s dimension
+            self._H2t = self.Gamma_jt @ (self.common_factor @ self._tau_sxt - self.ssf.delta(&#34;j1l&#34;, &#34;exo&#34;)) # j by x dimension
+
+            # th1t = th1t + th2t * bt1t in Ox (s by s)
+            th1t: np.ndarray = self._tau_sst + self._tau_sjt @ self._H1t
+
+            # th4t = th4t + th2t * bt3t in Ox (s by x)
+            th4t: np.ndarray = self._tau_sxt + self._tau_sjt @ self._H2t
+
+            # mu1t = mu1tL * th1t in Ox (r by s) x (s by s) -&gt; (r by s)
+            self._mu1t = self._M1t_lead @ th1t
+
+            # mu4t = mu1tL * th4t in Ox (r by s) x (s by x) -&gt; (r by x)
+            self._mu2t = self._M1t_lead @ th4t
+
+            # Model solution equation 71.
+            self._M1t = self.ssf.delta(&#34;zel&#34;, &#34;yxr&#34;) + self.ssf.delta(&#34;zel&#34;, &#34;exz&#34;) @ self._mu1t +  self.ssf.delta(&#34;zel&#34;, &#34;yjr&#34;) @ self._H1t # r by s dimension
+
+            # Model solution equation 72.
+            self._M2t = self.ssf.delta(&#34;zel&#34;, &#34;exo&#34;) +  self.ssf.delta(&#34;zel&#34;, &#34;exz&#34;) @ self._mu2t +  self.ssf.delta(&#34;zel&#34;, &#34;yjr&#34;) @ self._H2t # r by x dimension
+
+    @property
+    def Gamma_rT(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 31.
+
+        Very close to an identity matrix for model version R.
+
+        Note that in Ox, the diagonal elements are slightly wrong, being left as 1.0 exactly when they should be 
+        slightly perturbed by the impact of the SSF matrix. Python does not have this problem.
+
+        &#34;&#34;&#34;
+        if not hasattr(self,&#39;_Gamma_rT&#39;):
+            self._Gamma_rT = np.linalg.inv(np.identity(self.model.sym_data.vector_length(&#34;zel&#34;)) - self.ssf.delta(&#34;zel&#34;, &#34;exz&#34;))
+        return self._Gamma_rT
+
+    @property
+    def psi_rs(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 32.
+        
+        Very similar to Ox for model version R.
+        
+        &#34;&#34;&#34;
+        return self.Gamma_rT @ self.ssf.delta(&#34;zel&#34;, &#34;yxr&#34;) 
+
+    @property
+    def psi_rj(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 33.
+
+        Different from Ox at second or third decimal place in model version R.
+        &#34;&#34;&#34;
+        return self.Gamma_rT @ self.ssf.delta(&#34;zel&#34;, &#34;yjr&#34;)
+
+    @property
+    def psi_rx(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 34.
+
+        Different from Ox at second or third decimal place in model version R.
+        &#34;&#34;&#34;
+        return self.Gamma_rT @ self.ssf.delta(&#34;zel&#34;, &#34;exo&#34;)
+
+
+    @property
+    def Gamma_jT(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See equation 37.
+        &#34;&#34;&#34;
+        if not hasattr(self,&#39;_Gamma_jT&#39;):
+            self._Gamma_jT = np.linalg.inv(np.identity(self.model.sym_data.vector_length(&#34;j1l&#34;)) - self.ssf.delta(&#34;j1l&#34;, &#34;yjr&#34;) - self.ssf.delta(&#34;j1l&#34;, &#34;exz&#34;) @ self.psi_rj)
+        return self._Gamma_jT
+
+    @property
+    def Gamma_st(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 52
+        Same as wvi in Ox implementation
+        &#34;&#34;&#34;
+        return self._Gamma_st
+
+    @property
+    def Gamma_jt(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 62
+        Same as fdeltainv in Ox implementation.
+        &#34;&#34;&#34;
+        return self._Gamma_jt
+
+    @property
+    def H1(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 63.
+        The matrix relating j1 (costate variables) to x1 (state variables) in the stable manifold
+        &#34;&#34;&#34;
+        if self._H1t is None:
+            raise Exception(&#34;The model has not yet been solved for the stable manifold so H1 is not available.&#34;)
+        # if not self.converged:
+        #     logging.warning(&#34;The search for the stable manifold has not converged.&#34;)
+        return self._H1t
+
+    @property
+    def H2(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 64.
+        The matrix relating j1 (costate variables) to exo (exogenous variables) in the stable manifold
+        &#34;&#34;&#34;
+        if self._H2t is None:
+            raise Exception(&#34;The model has not yet been solved for the stable manifold so H2 is not available.&#34;)
+        # if not self.converged:
+        #     logging.warning(&#34;The search for the stable manifold has not converged.&#34;)
+        return self._H2t
+
+    @property
+    def M1(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 71.
+        The matrix relating ze (expected endogenous variables) to x1 (state variables) in the stable manifold
+        &#34;&#34;&#34;
+        if self._M1t is None:
+            raise Exception(&#34;The model has not yet been solved for the stable manifold so M1 is not available.&#34;)
+        return self._M1t
+
+    @property
+    def M2(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 72.
+        The matrix relating ze (expected endogenous variables) to exo (exogenous variables) in the stable manifold
+        &#34;&#34;&#34;
+        if self._M2t is None:
+            raise Exception(&#34;The model has not yet been solved for the stable manifold so M2 is not available.&#34;)
+        return self._M2t
+
+    @property
+    def mu1(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 77.
+        The matrix relating time t expectations of endogenous variables in t+1 to state in period t.
+        &#34;&#34;&#34;
+        if self._mu1t is None:
+            raise Exception(
+                &#34;The model has not yet been solved for the stable manifold so mu1 is not available.&#34;)
+        return self._mu1t
+
+    @property
+    def mu2(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 78.
+        The matrix relating time t expectations of endogenous variables in t+1 to exogenous variables in period t.
+        &#34;&#34;&#34;
+        if self._mu2t is None:
+            raise Exception(
+                &#34;The model has not yet been solved for the stable manifold so mu2 is not available.&#34;)
+        return self._mu2t
+
+    @property
+    def M1_lead(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        The 1 period lead (t+1) for M1t
+        &#34;&#34;&#34;
+        if self._M1t_lead is None:
+            raise Exception(&#34;The model has not yet been solved for the stable manifold so M1_lead is not available.&#34;)
+        return self._M1t_lead
+
+    @property
+    def Anew(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 75.
+        The matrix relating endogenous state variables (x1) s_{t+1} to previous state variables (x1) s_{t}
+        &#34;&#34;&#34;
+        if not self.converged:
+            logging.warning(&#34;The search for the stable manifold has not converged.&#34;)
+        return self._Anew
+
+    @property
+    def Znew(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 75.
+        The matrix relating state variables (x1) s_{t+1} to previous exogenous variables (exo) x_{t}
+        This is used in the state variable projections.
+        &#34;&#34;&#34;
+        if not self.converged:
+            raise Exception(&#34;The search for the stable manifold has not converged.&#34;)
+        return self._Znew
+
+    @property
+    def H1_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Return a dataframe that labels the rows and columns of H1 with the relevant variables.
+        &#34;&#34;&#34;
+        result:pd.DataFrame = pd.DataFrame(self.H1.copy())
+        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;j1l&#39;)
+        result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
+        return result
+
+    @property
+    def H2_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Return a dataframe that labels the rows and columns of H2 with the relevant variables.
+        &#34;&#34;&#34;
+        result:pd.DataFrame = pd.DataFrame(self.H2.copy())
+        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;j1l&#39;)
+        result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;exo&#39;)
+        return result
+
+    @property
+    def M1_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Return a dataframe that labels the rows and columns of M1 with the relevant variables.
+        &#34;&#34;&#34;
+        result:pd.DataFrame = pd.DataFrame(self.M1.copy())
+        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;zel&#39;)
+        result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
+        return result
+
+    @property
+    def M2_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Return a dataframe that labels the rows and columns of M2 with the relevant variables.
+        &#34;&#34;&#34;
+        result:pd.DataFrame = pd.DataFrame(self.M2.copy())
+        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;zel&#39;)
+        result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;exo&#39;)
+        return result
+
+    @property
+    def Anew_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Return a dataframe that labels the rows and columns of Anew with the relevant variables.
+        &#34;&#34;&#34;
+        result:pd.DataFrame = pd.DataFrame(self.Anew.copy())
+        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;z1l&#39;)
+        result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
+        return result
+
+    @property
+    def Znew_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Return a dataframe that labels the rows and columns of Znew with the relevant variables.
+        &#34;&#34;&#34;
+        result:pd.DataFrame = pd.DataFrame(self.Znew.copy())
+        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;z1l&#39;)
+        result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;exo&#39;)
+        return result
+
+    @property
+    def tau_sst(self):
+        return self._tau_sst
+
+    @property
+    def tau_sjt(self):
+        &#34;&#34;&#34;
+        th2t in Ox
+        &#34;&#34;&#34;
+        return self._tau_sjt
+
+    @property
+    def tau_sxt(self):
+        return self._tau_sxt
+
+    @property
+    def common_factor(self):
+        &#34;&#34;&#34;
+        th6t in Ox
+        &#34;&#34;&#34;
+        return self._common_factor
+
+    @property
+    def eigenvalues(self) -&gt; np.ndarray:
+        return np.linalg.eigvals(self._Anew)
+
+    def analyse_eigenvalues(self):
+        eigenvalue_modulos = np.abs(self.eigenvalues)
+        self._roots_outside_unit_circle = sum(eigenvalue_modulos &gt; 1.001)
+        self._unit_roots = sum( ~(self.roots_outside_unit_circle) and eigenvalue_modulos &gt; 0.999999999 )
+        if self.solution_is_stable:
+            logging.info(f&#34;All roots are on or inside the unit circle, indicating stability of the solution.&#34;)
+        else:
+            raise Exception(f&#34;There are {self.roots_outside_unit_circle} roots outside the unit circle. All eigenvalues must be on or inside the unit circle for stability.&#34;)
+
+    @property
+    def unit_roots(self) -&gt; int:
+        &#34;&#34;&#34;
+        Return the number of unit roots.
+        &#34;&#34;&#34;
+        return self._unit_roots
+
+    @property
+    def roots_outside_unit_circle(self) -&gt; int:
+        &#34;&#34;&#34;
+        Return the number of roots outside the unit circle.
+        &#34;&#34;&#34;
+        return self._roots_outside_unit_circle
+
+    @property
+    def solution_is_stable(self) -&gt; bool:
+        return (self.roots_outside_unit_circle == 0)
+
+    @property
+    def converged(self) -&gt; bool:
+        if self._iterations is None:
+            return False
+        if self._iterations &lt; 2:
+            return False
+        if self.H1_changed:
+            return False
+        if self.H2_changed:
+            return False
+        return True
+
+    @property
+    def H1_changed(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Check to see if there is an alteration in H1 in the last iteration.
+        &#34;&#34;&#34;
+        average_deviation = np.average(np.abs(self._H1t_lead-self._H1t),axis=None)
+        # logging.info(f&#34;The average H1 change = {average_deviation}&#34;)
+        return  average_deviation &gt; self.model.configuration.stable_manifold_tolerance
+
+    @property
+    def H2_changed(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Check to see if there is an alteration in H2 in the last iteration.
+        &#34;&#34;&#34;
+        average_deviation = np.average(np.abs(self._H2t_lead-self._H2t), axis=None)
+        # logging.info(f&#34;The average H2 change = {average_deviation}&#34;)
+        return average_deviation &gt; self.model.configuration.stable_manifold_tolerance</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="gcubed.stable_manifold.StableManifold"><code class="flex name class">
+<span>class <span class="ident">StableManifold</span></span>
+<span>(</span><span>state_space_form: <a title="gcubed.state_space_form.StateSpaceForm" href="state_space_form.html#gcubed.state_space_form.StateSpaceForm">StateSpaceForm</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The algebra embodied in this class follows the second page of
+<a href="https://www.msgpl.com.au/Manuals2021/GGGv20JManual/softwaremanual/algorithm.pdf">https://www.msgpl.com.au/Manuals2021/GGGv20JManual/softwaremanual/algorithm.pdf</a></p>
+<p>For the gory details, see <a href="https://www.rba.gov.au/publications/rdp/1987/pdf/rdp8706.pdf">https://www.rba.gov.au/publications/rdp/1987/pdf/rdp8706.pdf</a></p>
+<p>TODO: Add optimal policy features in phase 2.</p>
+<p>This script produces rules for the evolution of model variables:</p>
+<p>Using the vector names defined in the SYM processor:</p>
+<p>The rule for the costate or jump variables has the form:</p>
+<p>J_t = H_1 X1_t + H_1 EXO_t + some linear function of EXO in all future periods.</p>
+<p>The rule for the ZE vector of special endogenous variables has the form:</p>
+<p>ZE_t = mu_1 X1_t + mu_4 EXO_t + some linear function of EXO in all future periods.</p>
+<p>The rule for the state variables is:</p>
+<p>X1_t = tau_1 X1_{t-1} + tau_2 J_{t-1} + tau_4 EXO_{t} + tau_7 EXO_{t-1}</p>
+<p>The rule for the endogenous variables, Z1, is just the equation obtained when forming the SSF:</p>
+<p>Z1_t = z1l_yxr_ssf X1_{t-1} + z1l_yjr_ssf J1_{t-1} + z1l_exz_ssf ZE_{t+1} + z1l_exo_ssf EXO_{t}</p>
+<p>These rules are embodied in the coefficient matrices in each of them.</p>
+<p>Iteration to convergence algorithm for the stable manifold:</p>
+<p>Convergence criteria:
+1. If there are no jump variables, just do a single iteration and stop.</p>
+<p>Report progress for each iteration:
+1. Check the average absolute error in the jump matrix, h1t
+2. Check the average absolute error in the jump matrix, h2t
+Cumulative errors are the average absolute values of the change in the elements
+in the matrix, considering mean(abs(H1tL - H1t)) and mean(abs(H2tL - H2t)).</p>
+<p>Convergence has been reached if both of these average absolute errors are less than
+the tolerance specified in the model configuration.</p>
+<p>Iterations update the H1 and H2 matrices until they stabilise:
+H1
+H2</p>
+<p>Interim calculations in the iteration process produce the other coefficient matrices needed
+for the other rules describing the path of model variables X1 and ZE.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StableManifold(Base):
+    &#34;&#34;&#34;
+    The algebra embodied in this class follows the second page of
+    https://www.msgpl.com.au/Manuals2021/GGGv20JManual/softwaremanual/algorithm.pdf
+    
+    For the gory details, see https://www.rba.gov.au/publications/rdp/1987/pdf/rdp8706.pdf
+
+    TODO: Add optimal policy features in phase 2.
+
+    This script produces rules for the evolution of model variables:
+
+    Using the vector names defined in the SYM processor:
+
+    The rule for the costate or jump variables has the form:
+    
+    J_t = H_1 X1_t + H_1 EXO_t + some linear function of EXO in all future periods.
+
+    The rule for the ZE vector of special endogenous variables has the form:
+
+    ZE_t = mu_1 X1_t + mu_4 EXO_t + some linear function of EXO in all future periods.
+
+    The rule for the state variables is:
+
+    X1_t = tau_1 X1_{t-1} + tau_2 J_{t-1} + tau_4 EXO_{t} + tau_7 EXO_{t-1}
+
+    The rule for the endogenous variables, Z1, is just the equation obtained when forming the SSF:
+
+    Z1_t = z1l_yxr_ssf X1_{t-1} + z1l_yjr_ssf J1_{t-1} + z1l_exz_ssf ZE_{t+1} + z1l_exo_ssf EXO_{t}
+
+    These rules are embodied in the coefficient matrices in each of them.
+
+    Iteration to convergence algorithm for the stable manifold:
+
+    Convergence criteria:
+    1. If there are no jump variables, just do a single iteration and stop.
+
+    Report progress for each iteration:
+    1. Check the average absolute error in the jump matrix, h1t
+    2. Check the average absolute error in the jump matrix, h2t
+    Cumulative errors are the average absolute values of the change in the elements 
+    in the matrix, considering mean(abs(H1tL - H1t)) and mean(abs(H2tL - H2t)).
+
+    Convergence has been reached if both of these average absolute errors are less than
+    the tolerance specified in the model configuration.
+    
+    Iterations update the H1 and H2 matrices until they stabilise:
+    H1
+    H2
+
+    Interim calculations in the iteration process produce the other coefficient matrices needed
+    for the other rules describing the path of model variables X1 and ZE.
+    &#34;&#34;&#34;
+
+    def __init__(self, state_space_form: StateSpaceForm) -&gt; None:
+
+        assert state_space_form is not None
+        self._state_space_form = state_space_form
+        self.solve()
+        self.__validate()
+        logging.info(&#34;The stable manifold has been found for the model.&#34;)
+
+    def __validate(self):
+        &#34;&#34;&#34;
+        TODO: Validate the setup to ensure we are ready to find the stable manifold.
+        &#34;&#34;&#34;
+        pass
+
+    @property
+    def ssf(self) -&gt; StateSpaceForm:
+        return self._state_space_form
+
+    @property
+    def model(self) -&gt; Model:
+        return self.ssf.model
+
+    def solve(self):
+        &#34;&#34;&#34;
+        Manage the iteration process, checking convergence criteria each time.
+        &#34;&#34;&#34;
+        self._iterations = 0
+        while (not self.converged) and (self._iterations &lt; self.model.configuration.stable_manifold_maximum_iterations):
+            self.__iterate()
+
+        if self.converged:
+
+            # Compute state updating matrices:
+            self._Anew = self.ssf.delta(&#34;x1l&#34;, &#34;yxr&#34;) + \
+                self.ssf.delta(&#34;x1l&#34;, &#34;yjr&#34;) @ self._H1t + \
+                self.ssf.delta(&#34;x1l&#34;, &#34;exz&#34;) @ self.mu1
+            self._Znew = self.ssf.delta(&#34;x1l&#34;, &#34;exo&#34;) + \
+                self.ssf.delta(&#34;x1l&#34;, &#34;yjr&#34;) @ self.H2 + \
+                self.ssf.delta(&#34;x1l&#34;, &#34;exz&#34;) @ self.mu2
+
+            # Check stability of solution.
+            self.analyse_eigenvalues()
+
+            return
+
+        raise Exception(f&#34;The search for a stable manifold reached the iteration limit {self.model.configuration.stable_manifold_maximum_iterations} without converging.&#34;)
+
+    def __iterate(self):
+        &#34;&#34;&#34;
+        Recall from sym_data.py, the naming conventions for the LHS variable vectors:
+        a. x1l (the vector of state variables) X=S=State
+        b. j1l (the vector of costate or jump variables) J=C=Costate
+        c. zel (the endogenous variables LOGY, PRCT, PRID) 
+        d. z1l (the other endogenous variables)
+
+        These 4 LHS vectors of variables are functions of:
+        1. x1r is right hand side (RHS) state variables
+        2. j1r is RHS costate or jump variables
+        3. zer is RHS endogenous variables LOGY, PRCT, PRID
+        4. exz is RHS the lead expected endogenous variables
+        5. yxr is RHS state variables lagged by 1 period
+        6. yjr is RHS costate variables lagged by 1 period
+        7. exo is exogenous variables (by definition only appearing on RHS)
+        8. z1r is RHS other endogenous variables.
+
+        &#34;&#34;&#34;
+
+        self._iterations += 1
+
+        np.set_printoptions(formatter={&#39;float&#39;: lambda x: &#34;{0:0.4f}&#34;.format(x)})
+        np.set_printoptions(suppress=True, linewidth=400)
+        np.set_printoptions(threshold=sys.maxsize)
+
+        if self._iterations == 1:
+
+            self._H1t = self.Gamma_jT @ (self.ssf.delta(&#34;j1l&#34;, &#34;exz&#34;) @ self.psi_rs + self.ssf.delta(&#34;j1l&#34;, &#34;yxr&#34;))
+            self._H2t = self.Gamma_jT @ (self.ssf.delta(&#34;j1l&#34;, &#34;exz&#34;) @ self.psi_rx + self.ssf.delta(&#34;j1l&#34;, &#34;exo&#34;))
+            self._M1t = self.psi_rs + self.psi_rj @ self._H1t
+            self._M2t = self.psi_rx + self.psi_rj @ self._H2t
+
+        else: 
+            # See section 5.2 of the model solution documentation.
+            self._H1t_lead = self._H1t
+            self._H2t_lead = self._H2t
+            self._M1t_lead = self._M1t
+            self._M2t_lead = self._M2t
+
+            # wvi in Ox
+            self._Gamma_st = np.linalg.inv(np.identity(self.model.sym_data.vector_length(&#34;x1l&#34;)) - self.ssf.delta(&#34;x1l&#34;, &#34;exz&#34;) @ self._M1t_lead)
+            
+            # th1t in Ox
+            self._tau_sst = self.Gamma_st @ self.ssf.delta(&#34;x1l&#34;, &#34;yxr&#34;) # s by s dimension
+
+            # th2t in Ox
+            self._tau_sjt = self.Gamma_st @ self.ssf.delta(&#34;x1l&#34;, &#34;yjr&#34;) # s by j dimension
+
+            # th4t in Ox
+            self._tau_sxt = self.Gamma_st @ self.ssf.delta(&#34;x1l&#34;, &#34;exo&#34;) # s by x dimension
+
+            # th6t in Ox
+            self._common_factor = self._H1t_lead - self.ssf.delta(&#34;j1l&#34;, &#34;exz&#34;) @ self._M1t_lead # j by s dimension
+
+            #fdeltinv in Ox
+            if self.model.sym_data.no_jump_variables:
+                self._Gamma_jt = 0
+            else:
+                self._Gamma_jt = np.linalg.inv(self.ssf.delta(&#34;j1l&#34;, &#34;yjr&#34;) - self.common_factor @ self._tau_sjt) # j by j dimension
+
+            self._H1t = self.Gamma_jt @ (self.common_factor @ self._tau_sst - self.ssf.delta(&#34;j1l&#34;, &#34;yxr&#34;)) # j by s dimension
+            self._H2t = self.Gamma_jt @ (self.common_factor @ self._tau_sxt - self.ssf.delta(&#34;j1l&#34;, &#34;exo&#34;)) # j by x dimension
+
+            # th1t = th1t + th2t * bt1t in Ox (s by s)
+            th1t: np.ndarray = self._tau_sst + self._tau_sjt @ self._H1t
+
+            # th4t = th4t + th2t * bt3t in Ox (s by x)
+            th4t: np.ndarray = self._tau_sxt + self._tau_sjt @ self._H2t
+
+            # mu1t = mu1tL * th1t in Ox (r by s) x (s by s) -&gt; (r by s)
+            self._mu1t = self._M1t_lead @ th1t
+
+            # mu4t = mu1tL * th4t in Ox (r by s) x (s by x) -&gt; (r by x)
+            self._mu2t = self._M1t_lead @ th4t
+
+            # Model solution equation 71.
+            self._M1t = self.ssf.delta(&#34;zel&#34;, &#34;yxr&#34;) + self.ssf.delta(&#34;zel&#34;, &#34;exz&#34;) @ self._mu1t +  self.ssf.delta(&#34;zel&#34;, &#34;yjr&#34;) @ self._H1t # r by s dimension
+
+            # Model solution equation 72.
+            self._M2t = self.ssf.delta(&#34;zel&#34;, &#34;exo&#34;) +  self.ssf.delta(&#34;zel&#34;, &#34;exz&#34;) @ self._mu2t +  self.ssf.delta(&#34;zel&#34;, &#34;yjr&#34;) @ self._H2t # r by x dimension
+
+    @property
+    def Gamma_rT(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 31.
+
+        Very close to an identity matrix for model version R.
+
+        Note that in Ox, the diagonal elements are slightly wrong, being left as 1.0 exactly when they should be 
+        slightly perturbed by the impact of the SSF matrix. Python does not have this problem.
+
+        &#34;&#34;&#34;
+        if not hasattr(self,&#39;_Gamma_rT&#39;):
+            self._Gamma_rT = np.linalg.inv(np.identity(self.model.sym_data.vector_length(&#34;zel&#34;)) - self.ssf.delta(&#34;zel&#34;, &#34;exz&#34;))
+        return self._Gamma_rT
+
+    @property
+    def psi_rs(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 32.
+        
+        Very similar to Ox for model version R.
+        
+        &#34;&#34;&#34;
+        return self.Gamma_rT @ self.ssf.delta(&#34;zel&#34;, &#34;yxr&#34;) 
+
+    @property
+    def psi_rj(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 33.
+
+        Different from Ox at second or third decimal place in model version R.
+        &#34;&#34;&#34;
+        return self.Gamma_rT @ self.ssf.delta(&#34;zel&#34;, &#34;yjr&#34;)
+
+    @property
+    def psi_rx(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 34.
+
+        Different from Ox at second or third decimal place in model version R.
+        &#34;&#34;&#34;
+        return self.Gamma_rT @ self.ssf.delta(&#34;zel&#34;, &#34;exo&#34;)
+
+
+    @property
+    def Gamma_jT(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See equation 37.
+        &#34;&#34;&#34;
+        if not hasattr(self,&#39;_Gamma_jT&#39;):
+            self._Gamma_jT = np.linalg.inv(np.identity(self.model.sym_data.vector_length(&#34;j1l&#34;)) - self.ssf.delta(&#34;j1l&#34;, &#34;yjr&#34;) - self.ssf.delta(&#34;j1l&#34;, &#34;exz&#34;) @ self.psi_rj)
+        return self._Gamma_jT
+
+    @property
+    def Gamma_st(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 52
+        Same as wvi in Ox implementation
+        &#34;&#34;&#34;
+        return self._Gamma_st
+
+    @property
+    def Gamma_jt(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 62
+        Same as fdeltainv in Ox implementation.
+        &#34;&#34;&#34;
+        return self._Gamma_jt
+
+    @property
+    def H1(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 63.
+        The matrix relating j1 (costate variables) to x1 (state variables) in the stable manifold
+        &#34;&#34;&#34;
+        if self._H1t is None:
+            raise Exception(&#34;The model has not yet been solved for the stable manifold so H1 is not available.&#34;)
+        # if not self.converged:
+        #     logging.warning(&#34;The search for the stable manifold has not converged.&#34;)
+        return self._H1t
+
+    @property
+    def H2(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 64.
+        The matrix relating j1 (costate variables) to exo (exogenous variables) in the stable manifold
+        &#34;&#34;&#34;
+        if self._H2t is None:
+            raise Exception(&#34;The model has not yet been solved for the stable manifold so H2 is not available.&#34;)
+        # if not self.converged:
+        #     logging.warning(&#34;The search for the stable manifold has not converged.&#34;)
+        return self._H2t
+
+    @property
+    def M1(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 71.
+        The matrix relating ze (expected endogenous variables) to x1 (state variables) in the stable manifold
+        &#34;&#34;&#34;
+        if self._M1t is None:
+            raise Exception(&#34;The model has not yet been solved for the stable manifold so M1 is not available.&#34;)
+        return self._M1t
+
+    @property
+    def M2(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 72.
+        The matrix relating ze (expected endogenous variables) to exo (exogenous variables) in the stable manifold
+        &#34;&#34;&#34;
+        if self._M2t is None:
+            raise Exception(&#34;The model has not yet been solved for the stable manifold so M2 is not available.&#34;)
+        return self._M2t
+
+    @property
+    def mu1(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 77.
+        The matrix relating time t expectations of endogenous variables in t+1 to state in period t.
+        &#34;&#34;&#34;
+        if self._mu1t is None:
+            raise Exception(
+                &#34;The model has not yet been solved for the stable manifold so mu1 is not available.&#34;)
+        return self._mu1t
+
+    @property
+    def mu2(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 78.
+        The matrix relating time t expectations of endogenous variables in t+1 to exogenous variables in period t.
+        &#34;&#34;&#34;
+        if self._mu2t is None:
+            raise Exception(
+                &#34;The model has not yet been solved for the stable manifold so mu2 is not available.&#34;)
+        return self._mu2t
+
+    @property
+    def M1_lead(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        The 1 period lead (t+1) for M1t
+        &#34;&#34;&#34;
+        if self._M1t_lead is None:
+            raise Exception(&#34;The model has not yet been solved for the stable manifold so M1_lead is not available.&#34;)
+        return self._M1t_lead
+
+    @property
+    def Anew(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 75.
+        The matrix relating endogenous state variables (x1) s_{t+1} to previous state variables (x1) s_{t}
+        &#34;&#34;&#34;
+        if not self.converged:
+            logging.warning(&#34;The search for the stable manifold has not converged.&#34;)
+        return self._Anew
+
+    @property
+    def Znew(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        See the model solution documentation equation 75.
+        The matrix relating state variables (x1) s_{t+1} to previous exogenous variables (exo) x_{t}
+        This is used in the state variable projections.
+        &#34;&#34;&#34;
+        if not self.converged:
+            raise Exception(&#34;The search for the stable manifold has not converged.&#34;)
+        return self._Znew
+
+    @property
+    def H1_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Return a dataframe that labels the rows and columns of H1 with the relevant variables.
+        &#34;&#34;&#34;
+        result:pd.DataFrame = pd.DataFrame(self.H1.copy())
+        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;j1l&#39;)
+        result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
+        return result
+
+    @property
+    def H2_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Return a dataframe that labels the rows and columns of H2 with the relevant variables.
+        &#34;&#34;&#34;
+        result:pd.DataFrame = pd.DataFrame(self.H2.copy())
+        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;j1l&#39;)
+        result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;exo&#39;)
+        return result
+
+    @property
+    def M1_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Return a dataframe that labels the rows and columns of M1 with the relevant variables.
+        &#34;&#34;&#34;
+        result:pd.DataFrame = pd.DataFrame(self.M1.copy())
+        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;zel&#39;)
+        result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
+        return result
+
+    @property
+    def M2_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Return a dataframe that labels the rows and columns of M2 with the relevant variables.
+        &#34;&#34;&#34;
+        result:pd.DataFrame = pd.DataFrame(self.M2.copy())
+        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;zel&#39;)
+        result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;exo&#39;)
+        return result
+
+    @property
+    def Anew_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Return a dataframe that labels the rows and columns of Anew with the relevant variables.
+        &#34;&#34;&#34;
+        result:pd.DataFrame = pd.DataFrame(self.Anew.copy())
+        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;z1l&#39;)
+        result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
+        return result
+
+    @property
+    def Znew_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Return a dataframe that labels the rows and columns of Znew with the relevant variables.
+        &#34;&#34;&#34;
+        result:pd.DataFrame = pd.DataFrame(self.Znew.copy())
+        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;z1l&#39;)
+        result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;exo&#39;)
+        return result
+
+    @property
+    def tau_sst(self):
+        return self._tau_sst
+
+    @property
+    def tau_sjt(self):
+        &#34;&#34;&#34;
+        th2t in Ox
+        &#34;&#34;&#34;
+        return self._tau_sjt
+
+    @property
+    def tau_sxt(self):
+        return self._tau_sxt
+
+    @property
+    def common_factor(self):
+        &#34;&#34;&#34;
+        th6t in Ox
+        &#34;&#34;&#34;
+        return self._common_factor
+
+    @property
+    def eigenvalues(self) -&gt; np.ndarray:
+        return np.linalg.eigvals(self._Anew)
+
+    def analyse_eigenvalues(self):
+        eigenvalue_modulos = np.abs(self.eigenvalues)
+        self._roots_outside_unit_circle = sum(eigenvalue_modulos &gt; 1.001)
+        self._unit_roots = sum( ~(self.roots_outside_unit_circle) and eigenvalue_modulos &gt; 0.999999999 )
+        if self.solution_is_stable:
+            logging.info(f&#34;All roots are on or inside the unit circle, indicating stability of the solution.&#34;)
+        else:
+            raise Exception(f&#34;There are {self.roots_outside_unit_circle} roots outside the unit circle. All eigenvalues must be on or inside the unit circle for stability.&#34;)
+
+    @property
+    def unit_roots(self) -&gt; int:
+        &#34;&#34;&#34;
+        Return the number of unit roots.
+        &#34;&#34;&#34;
+        return self._unit_roots
+
+    @property
+    def roots_outside_unit_circle(self) -&gt; int:
+        &#34;&#34;&#34;
+        Return the number of roots outside the unit circle.
+        &#34;&#34;&#34;
+        return self._roots_outside_unit_circle
+
+    @property
+    def solution_is_stable(self) -&gt; bool:
+        return (self.roots_outside_unit_circle == 0)
+
+    @property
+    def converged(self) -&gt; bool:
+        if self._iterations is None:
+            return False
+        if self._iterations &lt; 2:
+            return False
+        if self.H1_changed:
+            return False
+        if self.H2_changed:
+            return False
+        return True
+
+    @property
+    def H1_changed(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Check to see if there is an alteration in H1 in the last iteration.
+        &#34;&#34;&#34;
+        average_deviation = np.average(np.abs(self._H1t_lead-self._H1t),axis=None)
+        # logging.info(f&#34;The average H1 change = {average_deviation}&#34;)
+        return  average_deviation &gt; self.model.configuration.stable_manifold_tolerance
+
+    @property
+    def H2_changed(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Check to see if there is an alteration in H2 in the last iteration.
+        &#34;&#34;&#34;
+        average_deviation = np.average(np.abs(self._H2t_lead-self._H2t), axis=None)
+        # logging.info(f&#34;The average H2 change = {average_deviation}&#34;)
+        return average_deviation &gt; self.model.configuration.stable_manifold_tolerance</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="gcubed.base.Base" href="base.html#gcubed.base.Base">Base</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="gcubed.stable_manifold.StableManifold.Anew"><code class="name">var <span class="ident">Anew</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>See the model solution documentation equation 75.
+The matrix relating endogenous state variables (x1) s_{t+1} to previous state variables (x1) s_{t}</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Anew(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    See the model solution documentation equation 75.
+    The matrix relating endogenous state variables (x1) s_{t+1} to previous state variables (x1) s_{t}
+    &#34;&#34;&#34;
+    if not self.converged:
+        logging.warning(&#34;The search for the stable manifold has not converged.&#34;)
+    return self._Anew</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.Anew_as_dataframe"><code class="name">var <span class="ident">Anew_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Return a dataframe that labels the rows and columns of Anew with the relevant variables.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Anew_as_dataframe(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Return a dataframe that labels the rows and columns of Anew with the relevant variables.
+    &#34;&#34;&#34;
+    result:pd.DataFrame = pd.DataFrame(self.Anew.copy())
+    result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;z1l&#39;)
+    result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
+    return result</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.Gamma_jT"><code class="name">var <span class="ident">Gamma_jT</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>See equation 37.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Gamma_jT(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    See equation 37.
+    &#34;&#34;&#34;
+    if not hasattr(self,&#39;_Gamma_jT&#39;):
+        self._Gamma_jT = np.linalg.inv(np.identity(self.model.sym_data.vector_length(&#34;j1l&#34;)) - self.ssf.delta(&#34;j1l&#34;, &#34;yjr&#34;) - self.ssf.delta(&#34;j1l&#34;, &#34;exz&#34;) @ self.psi_rj)
+    return self._Gamma_jT</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.Gamma_jt"><code class="name">var <span class="ident">Gamma_jt</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>See the model solution documentation equation 62
+Same as fdeltainv in Ox implementation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Gamma_jt(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    See the model solution documentation equation 62
+    Same as fdeltainv in Ox implementation.
+    &#34;&#34;&#34;
+    return self._Gamma_jt</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.Gamma_rT"><code class="name">var <span class="ident">Gamma_rT</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>See the model solution documentation equation 31.</p>
+<p>Very close to an identity matrix for model version R.</p>
+<p>Note that in Ox, the diagonal elements are slightly wrong, being left as 1.0 exactly when they should be
+slightly perturbed by the impact of the SSF matrix. Python does not have this problem.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Gamma_rT(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    See the model solution documentation equation 31.
+
+    Very close to an identity matrix for model version R.
+
+    Note that in Ox, the diagonal elements are slightly wrong, being left as 1.0 exactly when they should be 
+    slightly perturbed by the impact of the SSF matrix. Python does not have this problem.
+
+    &#34;&#34;&#34;
+    if not hasattr(self,&#39;_Gamma_rT&#39;):
+        self._Gamma_rT = np.linalg.inv(np.identity(self.model.sym_data.vector_length(&#34;zel&#34;)) - self.ssf.delta(&#34;zel&#34;, &#34;exz&#34;))
+    return self._Gamma_rT</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.Gamma_st"><code class="name">var <span class="ident">Gamma_st</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>See the model solution documentation equation 52
+Same as wvi in Ox implementation</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Gamma_st(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    See the model solution documentation equation 52
+    Same as wvi in Ox implementation
+    &#34;&#34;&#34;
+    return self._Gamma_st</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.H1"><code class="name">var <span class="ident">H1</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>See the model solution documentation equation 63.
+The matrix relating j1 (costate variables) to x1 (state variables) in the stable manifold</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def H1(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    See the model solution documentation equation 63.
+    The matrix relating j1 (costate variables) to x1 (state variables) in the stable manifold
+    &#34;&#34;&#34;
+    if self._H1t is None:
+        raise Exception(&#34;The model has not yet been solved for the stable manifold so H1 is not available.&#34;)
+    # if not self.converged:
+    #     logging.warning(&#34;The search for the stable manifold has not converged.&#34;)
+    return self._H1t</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.H1_as_dataframe"><code class="name">var <span class="ident">H1_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Return a dataframe that labels the rows and columns of H1 with the relevant variables.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def H1_as_dataframe(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Return a dataframe that labels the rows and columns of H1 with the relevant variables.
+    &#34;&#34;&#34;
+    result:pd.DataFrame = pd.DataFrame(self.H1.copy())
+    result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;j1l&#39;)
+    result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
+    return result</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.H1_changed"><code class="name">var <span class="ident">H1_changed</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Check to see if there is an alteration in H1 in the last iteration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def H1_changed(self) -&gt; bool:
+    &#34;&#34;&#34;
+    Check to see if there is an alteration in H1 in the last iteration.
+    &#34;&#34;&#34;
+    average_deviation = np.average(np.abs(self._H1t_lead-self._H1t),axis=None)
+    # logging.info(f&#34;The average H1 change = {average_deviation}&#34;)
+    return  average_deviation &gt; self.model.configuration.stable_manifold_tolerance</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.H2"><code class="name">var <span class="ident">H2</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>See the model solution documentation equation 64.
+The matrix relating j1 (costate variables) to exo (exogenous variables) in the stable manifold</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def H2(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    See the model solution documentation equation 64.
+    The matrix relating j1 (costate variables) to exo (exogenous variables) in the stable manifold
+    &#34;&#34;&#34;
+    if self._H2t is None:
+        raise Exception(&#34;The model has not yet been solved for the stable manifold so H2 is not available.&#34;)
+    # if not self.converged:
+    #     logging.warning(&#34;The search for the stable manifold has not converged.&#34;)
+    return self._H2t</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.H2_as_dataframe"><code class="name">var <span class="ident">H2_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Return a dataframe that labels the rows and columns of H2 with the relevant variables.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def H2_as_dataframe(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Return a dataframe that labels the rows and columns of H2 with the relevant variables.
+    &#34;&#34;&#34;
+    result:pd.DataFrame = pd.DataFrame(self.H2.copy())
+    result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;j1l&#39;)
+    result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;exo&#39;)
+    return result</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.H2_changed"><code class="name">var <span class="ident">H2_changed</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Check to see if there is an alteration in H2 in the last iteration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def H2_changed(self) -&gt; bool:
+    &#34;&#34;&#34;
+    Check to see if there is an alteration in H2 in the last iteration.
+    &#34;&#34;&#34;
+    average_deviation = np.average(np.abs(self._H2t_lead-self._H2t), axis=None)
+    # logging.info(f&#34;The average H2 change = {average_deviation}&#34;)
+    return average_deviation &gt; self.model.configuration.stable_manifold_tolerance</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.M1"><code class="name">var <span class="ident">M1</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>See the model solution documentation equation 71.
+The matrix relating ze (expected endogenous variables) to x1 (state variables) in the stable manifold</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def M1(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    See the model solution documentation equation 71.
+    The matrix relating ze (expected endogenous variables) to x1 (state variables) in the stable manifold
+    &#34;&#34;&#34;
+    if self._M1t is None:
+        raise Exception(&#34;The model has not yet been solved for the stable manifold so M1 is not available.&#34;)
+    return self._M1t</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.M1_as_dataframe"><code class="name">var <span class="ident">M1_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Return a dataframe that labels the rows and columns of M1 with the relevant variables.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def M1_as_dataframe(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Return a dataframe that labels the rows and columns of M1 with the relevant variables.
+    &#34;&#34;&#34;
+    result:pd.DataFrame = pd.DataFrame(self.M1.copy())
+    result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;zel&#39;)
+    result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
+    return result</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.M1_lead"><code class="name">var <span class="ident">M1_lead</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>The 1 period lead (t+1) for M1t</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def M1_lead(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    The 1 period lead (t+1) for M1t
+    &#34;&#34;&#34;
+    if self._M1t_lead is None:
+        raise Exception(&#34;The model has not yet been solved for the stable manifold so M1_lead is not available.&#34;)
+    return self._M1t_lead</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.M2"><code class="name">var <span class="ident">M2</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>See the model solution documentation equation 72.
+The matrix relating ze (expected endogenous variables) to exo (exogenous variables) in the stable manifold</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def M2(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    See the model solution documentation equation 72.
+    The matrix relating ze (expected endogenous variables) to exo (exogenous variables) in the stable manifold
+    &#34;&#34;&#34;
+    if self._M2t is None:
+        raise Exception(&#34;The model has not yet been solved for the stable manifold so M2 is not available.&#34;)
+    return self._M2t</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.M2_as_dataframe"><code class="name">var <span class="ident">M2_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Return a dataframe that labels the rows and columns of M2 with the relevant variables.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def M2_as_dataframe(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Return a dataframe that labels the rows and columns of M2 with the relevant variables.
+    &#34;&#34;&#34;
+    result:pd.DataFrame = pd.DataFrame(self.M2.copy())
+    result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;zel&#39;)
+    result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;exo&#39;)
+    return result</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.Znew"><code class="name">var <span class="ident">Znew</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>See the model solution documentation equation 75.
+The matrix relating state variables (x1) s_{t+1} to previous exogenous variables (exo) x_{t}
+This is used in the state variable projections.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Znew(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    See the model solution documentation equation 75.
+    The matrix relating state variables (x1) s_{t+1} to previous exogenous variables (exo) x_{t}
+    This is used in the state variable projections.
+    &#34;&#34;&#34;
+    if not self.converged:
+        raise Exception(&#34;The search for the stable manifold has not converged.&#34;)
+    return self._Znew</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.Znew_as_dataframe"><code class="name">var <span class="ident">Znew_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Return a dataframe that labels the rows and columns of Znew with the relevant variables.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Znew_as_dataframe(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Return a dataframe that labels the rows and columns of Znew with the relevant variables.
+    &#34;&#34;&#34;
+    result:pd.DataFrame = pd.DataFrame(self.Znew.copy())
+    result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;z1l&#39;)
+    result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;exo&#39;)
+    return result</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.common_factor"><code class="name">var <span class="ident">common_factor</span></code></dt>
+<dd>
+<div class="desc"><p>th6t in Ox</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def common_factor(self):
+    &#34;&#34;&#34;
+    th6t in Ox
+    &#34;&#34;&#34;
+    return self._common_factor</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.converged"><code class="name">var <span class="ident">converged</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def converged(self) -&gt; bool:
+    if self._iterations is None:
+        return False
+    if self._iterations &lt; 2:
+        return False
+    if self.H1_changed:
+        return False
+    if self.H2_changed:
+        return False
+    return True</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.eigenvalues"><code class="name">var <span class="ident">eigenvalues</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def eigenvalues(self) -&gt; np.ndarray:
+    return np.linalg.eigvals(self._Anew)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.model"><code class="name">var <span class="ident">model</span> : <a title="gcubed.model.Model" href="model.html#gcubed.model.Model">Model</a></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def model(self) -&gt; Model:
+    return self.ssf.model</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.mu1"><code class="name">var <span class="ident">mu1</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>See the model solution documentation equation 77.
+The matrix relating time t expectations of endogenous variables in t+1 to state in period t.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def mu1(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    See the model solution documentation equation 77.
+    The matrix relating time t expectations of endogenous variables in t+1 to state in period t.
+    &#34;&#34;&#34;
+    if self._mu1t is None:
+        raise Exception(
+            &#34;The model has not yet been solved for the stable manifold so mu1 is not available.&#34;)
+    return self._mu1t</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.mu2"><code class="name">var <span class="ident">mu2</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>See the model solution documentation equation 78.
+The matrix relating time t expectations of endogenous variables in t+1 to exogenous variables in period t.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def mu2(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    See the model solution documentation equation 78.
+    The matrix relating time t expectations of endogenous variables in t+1 to exogenous variables in period t.
+    &#34;&#34;&#34;
+    if self._mu2t is None:
+        raise Exception(
+            &#34;The model has not yet been solved for the stable manifold so mu2 is not available.&#34;)
+    return self._mu2t</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.psi_rj"><code class="name">var <span class="ident">psi_rj</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>See the model solution documentation equation 33.</p>
+<p>Different from Ox at second or third decimal place in model version R.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def psi_rj(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    See the model solution documentation equation 33.
+
+    Different from Ox at second or third decimal place in model version R.
+    &#34;&#34;&#34;
+    return self.Gamma_rT @ self.ssf.delta(&#34;zel&#34;, &#34;yjr&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.psi_rs"><code class="name">var <span class="ident">psi_rs</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>See the model solution documentation equation 32.</p>
+<p>Very similar to Ox for model version R.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def psi_rs(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    See the model solution documentation equation 32.
+    
+    Very similar to Ox for model version R.
+    
+    &#34;&#34;&#34;
+    return self.Gamma_rT @ self.ssf.delta(&#34;zel&#34;, &#34;yxr&#34;) </code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.psi_rx"><code class="name">var <span class="ident">psi_rx</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>See the model solution documentation equation 34.</p>
+<p>Different from Ox at second or third decimal place in model version R.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def psi_rx(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    See the model solution documentation equation 34.
+
+    Different from Ox at second or third decimal place in model version R.
+    &#34;&#34;&#34;
+    return self.Gamma_rT @ self.ssf.delta(&#34;zel&#34;, &#34;exo&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.roots_outside_unit_circle"><code class="name">var <span class="ident">roots_outside_unit_circle</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Return the number of roots outside the unit circle.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def roots_outside_unit_circle(self) -&gt; int:
+    &#34;&#34;&#34;
+    Return the number of roots outside the unit circle.
+    &#34;&#34;&#34;
+    return self._roots_outside_unit_circle</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.solution_is_stable"><code class="name">var <span class="ident">solution_is_stable</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def solution_is_stable(self) -&gt; bool:
+    return (self.roots_outside_unit_circle == 0)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.ssf"><code class="name">var <span class="ident">ssf</span> : <a title="gcubed.state_space_form.StateSpaceForm" href="state_space_form.html#gcubed.state_space_form.StateSpaceForm">StateSpaceForm</a></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def ssf(self) -&gt; StateSpaceForm:
+    return self._state_space_form</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.tau_sjt"><code class="name">var <span class="ident">tau_sjt</span></code></dt>
+<dd>
+<div class="desc"><p>th2t in Ox</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def tau_sjt(self):
+    &#34;&#34;&#34;
+    th2t in Ox
+    &#34;&#34;&#34;
+    return self._tau_sjt</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.tau_sst"><code class="name">var <span class="ident">tau_sst</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def tau_sst(self):
+    return self._tau_sst</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.tau_sxt"><code class="name">var <span class="ident">tau_sxt</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def tau_sxt(self):
+    return self._tau_sxt</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.unit_roots"><code class="name">var <span class="ident">unit_roots</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Return the number of unit roots.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def unit_roots(self) -&gt; int:
+    &#34;&#34;&#34;
+    Return the number of unit roots.
+    &#34;&#34;&#34;
+    return self._unit_roots</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="gcubed.stable_manifold.StableManifold.analyse_eigenvalues"><code class="name flex">
+<span>def <span class="ident">analyse_eigenvalues</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def analyse_eigenvalues(self):
+    eigenvalue_modulos = np.abs(self.eigenvalues)
+    self._roots_outside_unit_circle = sum(eigenvalue_modulos &gt; 1.001)
+    self._unit_roots = sum( ~(self.roots_outside_unit_circle) and eigenvalue_modulos &gt; 0.999999999 )
+    if self.solution_is_stable:
+        logging.info(f&#34;All roots are on or inside the unit circle, indicating stability of the solution.&#34;)
+    else:
+        raise Exception(f&#34;There are {self.roots_outside_unit_circle} roots outside the unit circle. All eigenvalues must be on or inside the unit circle for stability.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.stable_manifold.StableManifold.solve"><code class="name flex">
+<span>def <span class="ident">solve</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Manage the iteration process, checking convergence criteria each time.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve(self):
+    &#34;&#34;&#34;
+    Manage the iteration process, checking convergence criteria each time.
+    &#34;&#34;&#34;
+    self._iterations = 0
+    while (not self.converged) and (self._iterations &lt; self.model.configuration.stable_manifold_maximum_iterations):
+        self.__iterate()
+
+    if self.converged:
+
+        # Compute state updating matrices:
+        self._Anew = self.ssf.delta(&#34;x1l&#34;, &#34;yxr&#34;) + \
+            self.ssf.delta(&#34;x1l&#34;, &#34;yjr&#34;) @ self._H1t + \
+            self.ssf.delta(&#34;x1l&#34;, &#34;exz&#34;) @ self.mu1
+        self._Znew = self.ssf.delta(&#34;x1l&#34;, &#34;exo&#34;) + \
+            self.ssf.delta(&#34;x1l&#34;, &#34;yjr&#34;) @ self.H2 + \
+            self.ssf.delta(&#34;x1l&#34;, &#34;exz&#34;) @ self.mu2
+
+        # Check stability of solution.
+        self.analyse_eigenvalues()
+
+        return
+
+    raise Exception(f&#34;The search for a stable manifold reached the iteration limit {self.model.configuration.stable_manifold_maximum_iterations} without converging.&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="gcubed.base.Base" href="base.html#gcubed.base.Base">Base</a></b></code>:
+<ul class="hlist">
+<li><code><a title="gcubed.base.Base.get_year_labels" href="base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
+<li><code><a title="gcubed.base.Base.load_data" href="base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.zeros" href="base.html#gcubed.base.Base.zeros">zeros</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="gcubed" href="index.html">gcubed</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="gcubed.stable_manifold.StableManifold" href="#gcubed.stable_manifold.StableManifold">StableManifold</a></code></h4>
+<ul class="">
+<li><code><a title="gcubed.stable_manifold.StableManifold.Anew" href="#gcubed.stable_manifold.StableManifold.Anew">Anew</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.Anew_as_dataframe" href="#gcubed.stable_manifold.StableManifold.Anew_as_dataframe">Anew_as_dataframe</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.Gamma_jT" href="#gcubed.stable_manifold.StableManifold.Gamma_jT">Gamma_jT</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.Gamma_jt" href="#gcubed.stable_manifold.StableManifold.Gamma_jt">Gamma_jt</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.Gamma_rT" href="#gcubed.stable_manifold.StableManifold.Gamma_rT">Gamma_rT</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.Gamma_st" href="#gcubed.stable_manifold.StableManifold.Gamma_st">Gamma_st</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.H1" href="#gcubed.stable_manifold.StableManifold.H1">H1</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.H1_as_dataframe" href="#gcubed.stable_manifold.StableManifold.H1_as_dataframe">H1_as_dataframe</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.H1_changed" href="#gcubed.stable_manifold.StableManifold.H1_changed">H1_changed</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.H2" href="#gcubed.stable_manifold.StableManifold.H2">H2</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.H2_as_dataframe" href="#gcubed.stable_manifold.StableManifold.H2_as_dataframe">H2_as_dataframe</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.H2_changed" href="#gcubed.stable_manifold.StableManifold.H2_changed">H2_changed</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.M1" href="#gcubed.stable_manifold.StableManifold.M1">M1</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.M1_as_dataframe" href="#gcubed.stable_manifold.StableManifold.M1_as_dataframe">M1_as_dataframe</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.M1_lead" href="#gcubed.stable_manifold.StableManifold.M1_lead">M1_lead</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.M2" href="#gcubed.stable_manifold.StableManifold.M2">M2</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.M2_as_dataframe" href="#gcubed.stable_manifold.StableManifold.M2_as_dataframe">M2_as_dataframe</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.Znew" href="#gcubed.stable_manifold.StableManifold.Znew">Znew</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.Znew_as_dataframe" href="#gcubed.stable_manifold.StableManifold.Znew_as_dataframe">Znew_as_dataframe</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.analyse_eigenvalues" href="#gcubed.stable_manifold.StableManifold.analyse_eigenvalues">analyse_eigenvalues</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.common_factor" href="#gcubed.stable_manifold.StableManifold.common_factor">common_factor</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.converged" href="#gcubed.stable_manifold.StableManifold.converged">converged</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.eigenvalues" href="#gcubed.stable_manifold.StableManifold.eigenvalues">eigenvalues</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.model" href="#gcubed.stable_manifold.StableManifold.model">model</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.mu1" href="#gcubed.stable_manifold.StableManifold.mu1">mu1</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.mu2" href="#gcubed.stable_manifold.StableManifold.mu2">mu2</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.psi_rj" href="#gcubed.stable_manifold.StableManifold.psi_rj">psi_rj</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.psi_rs" href="#gcubed.stable_manifold.StableManifold.psi_rs">psi_rs</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.psi_rx" href="#gcubed.stable_manifold.StableManifold.psi_rx">psi_rx</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.roots_outside_unit_circle" href="#gcubed.stable_manifold.StableManifold.roots_outside_unit_circle">roots_outside_unit_circle</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.solution_is_stable" href="#gcubed.stable_manifold.StableManifold.solution_is_stable">solution_is_stable</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.solve" href="#gcubed.stable_manifold.StableManifold.solve">solve</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.ssf" href="#gcubed.stable_manifold.StableManifold.ssf">ssf</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.tau_sjt" href="#gcubed.stable_manifold.StableManifold.tau_sjt">tau_sjt</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.tau_sst" href="#gcubed.stable_manifold.StableManifold.tau_sst">tau_sst</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.tau_sxt" href="#gcubed.stable_manifold.StableManifold.tau_sxt">tau_sxt</a></code></li>
+<li><code><a title="gcubed.stable_manifold.StableManifold.unit_roots" href="#gcubed.stable_manifold.StableManifold.unit_roots">unit_roots</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

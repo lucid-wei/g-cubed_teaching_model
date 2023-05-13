@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>gcubed.io_data API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>gcubed.io_data</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ------------------------------------------------------------------
+# Purpose: Manage loading and provision of IO table information.
+# Author: Geoff Shuetrim
+# ------------------------------------------------------------------
+
+from __future__ import annotations
+import logging
+import os
+import re
+import pandas as pd
+import numpy as np
+from gcubed.base import Base
+from gcubed.model_configuration import ModelConfiguration
+from gcubed.sym_data import SymData
+
+
+class IOData(Base):
+    &#34;&#34;&#34;
+    Encapsulates all of the information about the IO data used by a Model.
+
+    Properties:
+
+        TODO: Complete this listing of class properties and their explanations.
+        _database: the dataframe containing the annual data for all variables.
+
+    &#34;&#34;&#34;
+
+    def __init__(self, sym_data: SymData) -&gt; None:
+
+
+        assert sym_data is not None
+        assert isinstance(sym_data, SymData)
+        self._sym_data = sym_data
+        logging.info(f&#34;Loading IO tables from {self.sym_data.configuration.io_table_file}&#34;)
+        self.__load_io_tables()
+        self.__validate()
+
+    @property
+    def sym_data(self):
+        return self._sym_data
+
+    def __load_io_tables(self):
+        &#34;&#34;&#34;
+        Loads the IO tables into a dictionary of dataframes.
+        The keys are the region identifier.
+        Each dataframe contains the IO table for the associated region.
+        The dataframes have row and column names that correspond to the
+        sectors.
+        &#34;&#34;&#34;
+        filename: str = self.sym_data.configuration.io_table_file
+        if not os.path.isfile(filename):
+            raise Exception(&#34;Could not load IO tables from &#34; +
+                            filename + &#34; because the file does not exist.&#34;)
+
+        # Load the raw IO tables data into a single dataframe ready to parse into 
+        # separate tables for the various regions.
+        data: pd.DataFrame = pd.read_csv(filename, header=None)
+
+        # Label the columns of the raw IO table dataframe
+        columns = self.io_table_uses
+        columns.insert(0,&#34;row_labels&#34;)
+        data.columns = columns
+
+        # Get the table names - one for each region
+        regions: list[str] = self.sym_data.regions_members
+        table_rows = len(self.io_table_inputs)
+        table_columns = len(self.io_table_uses)
+
+        # Load the table for each region into the dictionary of IO tables.
+        self._io_tables = dict()
+        for region in regions:
+
+            # Make sure the data source has an IO table for the region
+            if not region in data.row_labels.values:
+                raise Exception(f&#34;Region {region} does not have IO table data in {filename}&#34;)
+
+            # Get the data for the table
+            io_table_heading_row: int = int(data.index[data.row_labels == region].to_list()[0])
+            io_table: pd.DataFrame = data.iloc[(io_table_heading_row + 1):(io_table_heading_row+1+table_rows), 1:(table_columns+1)].copy()
+            io_table = io_table.astype(float)
+            io_table.index = self.io_table_inputs
+            io_table.columns=self.io_table_uses
+
+            # Store the table in the dictionary of IO tables, one for each region
+            self._io_tables[region] = io_table
+
+    def io_table(self, region: str) -&gt; pd.DataFrame:
+        if region in self._io_tables:
+            return self._io_tables[region]
+        raise Exception(&#34;There is no IO table defined for &#34; + region)
+
+    def has_io_table(self, region: str) -&gt; bool:
+        return region in self._io_tables
+
+    @ property
+    def io_table_inputs(self):
+        &#34;&#34;&#34;
+        Returns the row names for each region&#39;s IO table.
+        &#34;&#34;&#34;
+        input_names = self.sym_data.goods_members
+        input_names.extend(
+            [self.io_table_labour, self.io_table_capital, self.io_table_tax])
+        return input_names
+
+    @ property
+    def io_table_tax(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns the tax row label.
+        &#34;&#34;&#34;
+        return &#34;TAX&#34;
+
+    @ property
+    def io_table_labour(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns the labour row label.
+        &#34;&#34;&#34;
+        return &#34;L&#34;
+
+    @ property
+    def io_table_capital(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns the capital row label.
+        &#34;&#34;&#34;
+        return &#34;K&#34;
+
+    @ property
+    def io_table_consumption(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns the consumption column label.
+        &#34;&#34;&#34;
+        return &#34;C&#34;
+
+    @ property
+    def io_table_investment(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns the investment column label.
+        &#34;&#34;&#34;
+        return &#34;I&#34;
+
+    @ property
+    def io_table_government(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns the government spending column label.
+        &#34;&#34;&#34;
+        return &#34;G&#34;
+
+    @ property
+    def io_table_exports(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns the exports column label.
+        &#34;&#34;&#34;
+        return &#34;X&#34;
+
+    @ property
+    def io_table_imports(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns the imports column label.
+        &#34;&#34;&#34;
+        return &#34;M&#34;
+
+    @ property
+    def io_table_uses(self):
+        &#34;&#34;&#34;
+        Returns the column names for each region&#39;s IO table.
+        &#34;&#34;&#34;
+        use_names = self.sym_data.sectors_members
+        # TODO: Figure out how to interpret the first column.
+        use_names.extend([self.io_table_consumption, self.io_table_investment,
+                         self.io_table_government, self.io_table_exports, self.io_table_imports])
+        return use_names
+
+    def __validate(self):
+        &#34;&#34;&#34;
+        Raise an exception if the IO data is invalid
+        &#34;&#34;&#34;
+        pass</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="gcubed.io_data.IOData"><code class="flex name class">
+<span>class <span class="ident">IOData</span></span>
+<span>(</span><span>sym_data: SymData)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Encapsulates all of the information about the IO data used by a Model.</p>
+<h2 id="properties">Properties</h2>
+<p>TODO: Complete this listing of class properties and their explanations.
+_database: the dataframe containing the annual data for all variables.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class IOData(Base):
+    &#34;&#34;&#34;
+    Encapsulates all of the information about the IO data used by a Model.
+
+    Properties:
+
+        TODO: Complete this listing of class properties and their explanations.
+        _database: the dataframe containing the annual data for all variables.
+
+    &#34;&#34;&#34;
+
+    def __init__(self, sym_data: SymData) -&gt; None:
+
+
+        assert sym_data is not None
+        assert isinstance(sym_data, SymData)
+        self._sym_data = sym_data
+        logging.info(f&#34;Loading IO tables from {self.sym_data.configuration.io_table_file}&#34;)
+        self.__load_io_tables()
+        self.__validate()
+
+    @property
+    def sym_data(self):
+        return self._sym_data
+
+    def __load_io_tables(self):
+        &#34;&#34;&#34;
+        Loads the IO tables into a dictionary of dataframes.
+        The keys are the region identifier.
+        Each dataframe contains the IO table for the associated region.
+        The dataframes have row and column names that correspond to the
+        sectors.
+        &#34;&#34;&#34;
+        filename: str = self.sym_data.configuration.io_table_file
+        if not os.path.isfile(filename):
+            raise Exception(&#34;Could not load IO tables from &#34; +
+                            filename + &#34; because the file does not exist.&#34;)
+
+        # Load the raw IO tables data into a single dataframe ready to parse into 
+        # separate tables for the various regions.
+        data: pd.DataFrame = pd.read_csv(filename, header=None)
+
+        # Label the columns of the raw IO table dataframe
+        columns = self.io_table_uses
+        columns.insert(0,&#34;row_labels&#34;)
+        data.columns = columns
+
+        # Get the table names - one for each region
+        regions: list[str] = self.sym_data.regions_members
+        table_rows = len(self.io_table_inputs)
+        table_columns = len(self.io_table_uses)
+
+        # Load the table for each region into the dictionary of IO tables.
+        self._io_tables = dict()
+        for region in regions:
+
+            # Make sure the data source has an IO table for the region
+            if not region in data.row_labels.values:
+                raise Exception(f&#34;Region {region} does not have IO table data in {filename}&#34;)
+
+            # Get the data for the table
+            io_table_heading_row: int = int(data.index[data.row_labels == region].to_list()[0])
+            io_table: pd.DataFrame = data.iloc[(io_table_heading_row + 1):(io_table_heading_row+1+table_rows), 1:(table_columns+1)].copy()
+            io_table = io_table.astype(float)
+            io_table.index = self.io_table_inputs
+            io_table.columns=self.io_table_uses
+
+            # Store the table in the dictionary of IO tables, one for each region
+            self._io_tables[region] = io_table
+
+    def io_table(self, region: str) -&gt; pd.DataFrame:
+        if region in self._io_tables:
+            return self._io_tables[region]
+        raise Exception(&#34;There is no IO table defined for &#34; + region)
+
+    def has_io_table(self, region: str) -&gt; bool:
+        return region in self._io_tables
+
+    @ property
+    def io_table_inputs(self):
+        &#34;&#34;&#34;
+        Returns the row names for each region&#39;s IO table.
+        &#34;&#34;&#34;
+        input_names = self.sym_data.goods_members
+        input_names.extend(
+            [self.io_table_labour, self.io_table_capital, self.io_table_tax])
+        return input_names
+
+    @ property
+    def io_table_tax(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns the tax row label.
+        &#34;&#34;&#34;
+        return &#34;TAX&#34;
+
+    @ property
+    def io_table_labour(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns the labour row label.
+        &#34;&#34;&#34;
+        return &#34;L&#34;
+
+    @ property
+    def io_table_capital(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns the capital row label.
+        &#34;&#34;&#34;
+        return &#34;K&#34;
+
+    @ property
+    def io_table_consumption(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns the consumption column label.
+        &#34;&#34;&#34;
+        return &#34;C&#34;
+
+    @ property
+    def io_table_investment(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns the investment column label.
+        &#34;&#34;&#34;
+        return &#34;I&#34;
+
+    @ property
+    def io_table_government(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns the government spending column label.
+        &#34;&#34;&#34;
+        return &#34;G&#34;
+
+    @ property
+    def io_table_exports(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns the exports column label.
+        &#34;&#34;&#34;
+        return &#34;X&#34;
+
+    @ property
+    def io_table_imports(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns the imports column label.
+        &#34;&#34;&#34;
+        return &#34;M&#34;
+
+    @ property
+    def io_table_uses(self):
+        &#34;&#34;&#34;
+        Returns the column names for each region&#39;s IO table.
+        &#34;&#34;&#34;
+        use_names = self.sym_data.sectors_members
+        # TODO: Figure out how to interpret the first column.
+        use_names.extend([self.io_table_consumption, self.io_table_investment,
+                         self.io_table_government, self.io_table_exports, self.io_table_imports])
+        return use_names
+
+    def __validate(self):
+        &#34;&#34;&#34;
+        Raise an exception if the IO data is invalid
+        &#34;&#34;&#34;
+        pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="gcubed.base.Base" href="base.html#gcubed.base.Base">Base</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="gcubed.io_data.IOData.io_table_capital"><code class="name">var <span class="ident">io_table_capital</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Returns the capital row label.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@ property
+def io_table_capital(self) -&gt; str:
+    &#34;&#34;&#34;
+    Returns the capital row label.
+    &#34;&#34;&#34;
+    return &#34;K&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.io_data.IOData.io_table_consumption"><code class="name">var <span class="ident">io_table_consumption</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Returns the consumption column label.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@ property
+def io_table_consumption(self) -&gt; str:
+    &#34;&#34;&#34;
+    Returns the consumption column label.
+    &#34;&#34;&#34;
+    return &#34;C&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.io_data.IOData.io_table_exports"><code class="name">var <span class="ident">io_table_exports</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Returns the exports column label.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@ property
+def io_table_exports(self) -&gt; str:
+    &#34;&#34;&#34;
+    Returns the exports column label.
+    &#34;&#34;&#34;
+    return &#34;X&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.io_data.IOData.io_table_government"><code class="name">var <span class="ident">io_table_government</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Returns the government spending column label.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@ property
+def io_table_government(self) -&gt; str:
+    &#34;&#34;&#34;
+    Returns the government spending column label.
+    &#34;&#34;&#34;
+    return &#34;G&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.io_data.IOData.io_table_imports"><code class="name">var <span class="ident">io_table_imports</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Returns the imports column label.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@ property
+def io_table_imports(self) -&gt; str:
+    &#34;&#34;&#34;
+    Returns the imports column label.
+    &#34;&#34;&#34;
+    return &#34;M&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.io_data.IOData.io_table_inputs"><code class="name">var <span class="ident">io_table_inputs</span></code></dt>
+<dd>
+<div class="desc"><p>Returns the row names for each region's IO table.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@ property
+def io_table_inputs(self):
+    &#34;&#34;&#34;
+    Returns the row names for each region&#39;s IO table.
+    &#34;&#34;&#34;
+    input_names = self.sym_data.goods_members
+    input_names.extend(
+        [self.io_table_labour, self.io_table_capital, self.io_table_tax])
+    return input_names</code></pre>
+</details>
+</dd>
+<dt id="gcubed.io_data.IOData.io_table_investment"><code class="name">var <span class="ident">io_table_investment</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Returns the investment column label.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@ property
+def io_table_investment(self) -&gt; str:
+    &#34;&#34;&#34;
+    Returns the investment column label.
+    &#34;&#34;&#34;
+    return &#34;I&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.io_data.IOData.io_table_labour"><code class="name">var <span class="ident">io_table_labour</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Returns the labour row label.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@ property
+def io_table_labour(self) -&gt; str:
+    &#34;&#34;&#34;
+    Returns the labour row label.
+    &#34;&#34;&#34;
+    return &#34;L&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.io_data.IOData.io_table_tax"><code class="name">var <span class="ident">io_table_tax</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Returns the tax row label.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@ property
+def io_table_tax(self) -&gt; str:
+    &#34;&#34;&#34;
+    Returns the tax row label.
+    &#34;&#34;&#34;
+    return &#34;TAX&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.io_data.IOData.io_table_uses"><code class="name">var <span class="ident">io_table_uses</span></code></dt>
+<dd>
+<div class="desc"><p>Returns the column names for each region's IO table.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@ property
+def io_table_uses(self):
+    &#34;&#34;&#34;
+    Returns the column names for each region&#39;s IO table.
+    &#34;&#34;&#34;
+    use_names = self.sym_data.sectors_members
+    # TODO: Figure out how to interpret the first column.
+    use_names.extend([self.io_table_consumption, self.io_table_investment,
+                     self.io_table_government, self.io_table_exports, self.io_table_imports])
+    return use_names</code></pre>
+</details>
+</dd>
+<dt id="gcubed.io_data.IOData.sym_data"><code class="name">var <span class="ident">sym_data</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sym_data(self):
+    return self._sym_data</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="gcubed.io_data.IOData.has_io_table"><code class="name flex">
+<span>def <span class="ident">has_io_table</span></span>(<span>self, region: str) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_io_table(self, region: str) -&gt; bool:
+    return region in self._io_tables</code></pre>
+</details>
+</dd>
+<dt id="gcubed.io_data.IOData.io_table"><code class="name flex">
+<span>def <span class="ident">io_table</span></span>(<span>self, region: str) ‑> pandas.core.frame.DataFrame</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def io_table(self, region: str) -&gt; pd.DataFrame:
+    if region in self._io_tables:
+        return self._io_tables[region]
+    raise Exception(&#34;There is no IO table defined for &#34; + region)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="gcubed.base.Base" href="base.html#gcubed.base.Base">Base</a></b></code>:
+<ul class="hlist">
+<li><code><a title="gcubed.base.Base.get_year_labels" href="base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
+<li><code><a title="gcubed.base.Base.load_data" href="base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.zeros" href="base.html#gcubed.base.Base.zeros">zeros</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="gcubed" href="index.html">gcubed</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="gcubed.io_data.IOData" href="#gcubed.io_data.IOData">IOData</a></code></h4>
+<ul class="">
+<li><code><a title="gcubed.io_data.IOData.has_io_table" href="#gcubed.io_data.IOData.has_io_table">has_io_table</a></code></li>
+<li><code><a title="gcubed.io_data.IOData.io_table" href="#gcubed.io_data.IOData.io_table">io_table</a></code></li>
+<li><code><a title="gcubed.io_data.IOData.io_table_capital" href="#gcubed.io_data.IOData.io_table_capital">io_table_capital</a></code></li>
+<li><code><a title="gcubed.io_data.IOData.io_table_consumption" href="#gcubed.io_data.IOData.io_table_consumption">io_table_consumption</a></code></li>
+<li><code><a title="gcubed.io_data.IOData.io_table_exports" href="#gcubed.io_data.IOData.io_table_exports">io_table_exports</a></code></li>
+<li><code><a title="gcubed.io_data.IOData.io_table_government" href="#gcubed.io_data.IOData.io_table_government">io_table_government</a></code></li>
+<li><code><a title="gcubed.io_data.IOData.io_table_imports" href="#gcubed.io_data.IOData.io_table_imports">io_table_imports</a></code></li>
+<li><code><a title="gcubed.io_data.IOData.io_table_inputs" href="#gcubed.io_data.IOData.io_table_inputs">io_table_inputs</a></code></li>
+<li><code><a title="gcubed.io_data.IOData.io_table_investment" href="#gcubed.io_data.IOData.io_table_investment">io_table_investment</a></code></li>
+<li><code><a title="gcubed.io_data.IOData.io_table_labour" href="#gcubed.io_data.IOData.io_table_labour">io_table_labour</a></code></li>
+<li><code><a title="gcubed.io_data.IOData.io_table_tax" href="#gcubed.io_data.IOData.io_table_tax">io_table_tax</a></code></li>
+<li><code><a title="gcubed.io_data.IOData.io_table_uses" href="#gcubed.io_data.IOData.io_table_uses">io_table_uses</a></code></li>
+<li><code><a title="gcubed.io_data.IOData.sym_data" href="#gcubed.io_data.IOData.sym_data">sym_data</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
