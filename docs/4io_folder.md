@@ -2,7 +2,7 @@
 layout: default
 nav_order: 4
 ---
-# Navigation Structure
+# The G-Cubed model IO folder
 {: .no_toc }
 
 <details open markdown="block">
@@ -14,7 +14,7 @@ nav_order: 4
 {:toc}
 </details>
 
-# The G-Cubed model IO folder
+
 
 The G-Cubed model requires a number of files to run. These files are organised into a folder with a set of subfolders. The gcubed package will load these files and produce certain outputs into this folder.  
 
@@ -132,11 +132,11 @@ The details of each field is shown below.
 
 Usually information in this file does not need to be changed.
 
-## The data folder and its contents
+### The data folder and its contents
 
 The data folder contains the CSV data files defining the model, including:
 
-### DATABASE.csv
+#### DATABASE.csv
 
 Is DATAvR2018.csv for model 2R164. 
 
@@ -145,7 +145,7 @@ descriptions, units of measurement, and country/region code.
 
 More detailed definitions of the variables are in 
 
-### IOTABLES.csv
+#### IOTABLES.csv
 
 Is IOTABLESvR2011.csv for model 2R164.
 
@@ -177,19 +177,19 @@ When firms buy investment goods they by a package good from sector Y that goes i
 Households draw a return from the capital stock that is in sector Z. It is in fact the outcome of their investment decisions on durable goods.   
 They carry many of the parameter names used in other sectors but they are not traded.
 
-### SETPARAMETERS.csv <a id="setparameters"></a>
+#### SETPARAMETERS.csv <a id="setparameters"></a>
 
 This file contains user-defined parameters.  
 More information on parameters please check [related model definitions section](3model_definitions.md#parameters).
 
-### POPULATION.csv
+#### POPULATION.csv
 
 The modpop.csv records annual population growth rates data for all regions, expressed such that a value of 1 is a 1% growth rate.
 
 This data is supposed to be generated from the [GTAP database](https://www.gtap.agecon.purdue.edu/databases/) and already processed,
 users usually do not need to change. 
 
-### PRODUCTIVITY.csv
+#### PRODUCTIVITY.csv
 
 The prodmat.csv file specifies productivity growth rates for all years in the projection.
 It contains:  
@@ -201,20 +201,20 @@ It contains:
 The processed population data are then combined with processed productivity data to calculate the effective labour productivity,
 defined as AL: the product of labour and productivity as per Solow-Swan.
 
-### AEEINEW.csv
+#### AEEINEW.csv
 
 The aeeinew.csv file records data on Autonomous energy efficiency improvement.  
 See McKibbin and Wilcoxen (2013) [A global approach to energy and environment: the G-Cubed model](https://www.researchgate.net/publication/285239562_A_global_approach_to_energy_and_environment_the_G-Cubed_model) for details of AEEI.
 
 
-## The simulations folder and its contents
+### The simulations folder and its contents
 
 The simulations folder contains one folder for each simulation experiment being conducted with the model.
 
 The experiment folder names are user-determined. Each experiment folder contains an experiment design CSV file that configures the experiment, documenting
 the layers of adjustments to variables that are to be applied in specific years through the projections.
 
-## The sym folder and its contents
+### The sym folder and its contents
 
 The sym folder stores machine generated contents that are used by the gcubed python module (.py, .lis and .csv files) and 
 the [model definitions information page](../model_2R_164/sym/model_2R_164.html).

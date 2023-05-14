@@ -1,6 +1,7 @@
 ---
 layout: default
 nav_order: 3
+toc: true
 ---
 # [Model definitions](../model_2R_164/sym/model_2R_164.html)
 
