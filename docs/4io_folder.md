@@ -65,34 +65,30 @@ The details of each field is shown below.
 <style>
     table {
         width: 100%;
+        table-layout: fixed;
     }
     
     th:nth-child(1),
     td:nth-child(1) {
         width: 10%;
-        word-wrap: break-word;
     }
     
     th:nth-child(2),
     td:nth-child(2) {
         width: 10%;
-        word-wrap: break-word;
     }
     
     th:nth-child(3),
     td:nth-child(3) {
         width: 10%;
-        word-wrap: break-word;
     }
     th:nth-child(4),
     td:nth-child(4) {
         width: 30%;
-        word-wrap: break-word;
     }
     th:nth-child(5),
     td:nth-child(5) {
         width: 40%;
-        word-wrap: break-word;
     }
 </style>
 
