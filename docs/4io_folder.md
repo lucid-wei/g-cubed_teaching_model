@@ -2,6 +2,17 @@
 layout: default
 nav_order: 4
 ---
+# Navigation Structure
+{: .no_toc }
+
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+- TOC
+{:toc}
+</details>
 
 # The G-Cubed model IO folder
 
@@ -59,7 +70,7 @@ The model version and the model number need to match their values in the CONFIGU
 The configuration2R164.csv defines which files gcubed python module needs to read from, which years gcubed uses for its algorithms, 
 and a few other configurable options during its calculation.
 
-This file is loaded by [gcubed.model_configuration.ModelConfiguration.load_configuration_details](./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.load_configuration_details). 
+This file is loaded by [gcubed.model_configuration.ModelConfiguration.load_configuration_details](./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.load_configuration_details) during running. 
 The details of each field is shown below.
 
 <style>
