@@ -1,12 +1,11 @@
 ---
 layout: default
 nav_order: 3
-toc: true
 ---
 # [Model definitions](../model_2R_164/sym/model_2R_164.html)
 
 The model definitions for this particular model version can be found in 
-[this link](../model_2R_164/sym/model_2R_164.html), which includes definitions of sets, variables, parameters and equations.
+[this link or the one above](../model_2R_164/sym/model_2R_164.html), which includes definitions of sets, variables, parameters and equations.
 
 This file will be referenced a lot when you design your own simulations. But before reading the model definitions, 
 a few conventions should be kept in mind to understand that file:
