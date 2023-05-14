@@ -1,0 +1,1274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>gcubed.linearisation.model_solver API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>gcubed.linearisation.model_solver</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ------------------------------------------------------------------
+# Purpose: Find a point that solves the equations in the model.
+# Author: Geoff Shuetrim
+# ------------------------------------------------------------------
+import logging
+import sys
+import importlib
+import pandas as pd
+import numpy as np
+from scipy.optimize import least_squares
+from scipy.sparse import csr_matrix, identity
+from gcubed.data.gdp_scaled_database import GDPScaledDatabase
+from gcubed.model import Model
+from gcubed.base import Base
+import gcubed.constants as CONSTANTS
+
+class ModelSolver(Base):
+    &#34;&#34;&#34;
+
+    ### Overview
+
+    The solver finds a point (a value for each variable in the model)
+    that simultaneously solves the nonlinear equations 
+    in the model, taking as given the values for the vectors:
+    - yxr
+    - yjr
+    - exz
+    - exo
+
+    If a solution can be found, it will be values for the
+    following vectors:
+    - x1r
+    - j1r
+    - zer
+    - z1r
+
+    The process will be:
+    1. Set up database
+    2. Populate all vectors using database values for the linearisation year.
+    3. Rearrange the model equations so that we can solve for all vectors by evaluating all 
+    of the model equations and then take the RHS of the equation
+
+    TODO: Implement based on logic in TestLinearisationRootFindingModel2R164
+
+    &#34;&#34;&#34;
+
+
+    def __init__(self, model: Model, linearisation_year: int ):
+
+        self._solution_found = False
+        
+        assert model is not None
+        self._model: Model = model
+
+        assert linearisation_year  is not None
+        assert linearisation_year &gt;= model.configuration.original_projection_base_year
+        assert linearisation_year &lt; model.configuration.end_year
+        self._linearisation_year = linearisation_year
+
+
+        self.database = GDPScaledDatabase(database=self.model.database, base_year=self.model.configuration.calibration_year)
+        self._parameters = self.model.parameters.parameter_values_vector
+
+        # Set up the RHS vectors for the model using data for the linearisation year.
+        self.__load_rhs_vectors(linearisation_year=self.model.configuration.calibration_year)
+
+        # Set up the LHS vectors as vectors of zeros.
+        self.__configure_lhs_vectors()
+
+        self.__load_equation_map()
+
+        sys.path.append(self.configuration.sym_directory)
+        equations_module = importlib.import_module(self.sym_output_filename_prefix)
+        equations_class = getattr(equations_module, &#34;Equations&#34;)
+        self.equations = equations_class(x1l=self._x1l,
+                                          j1l=self._j1l,
+                                          zel=self._zel,
+                                          z1l=self._z1l,
+                                          x1r=self._x1r,
+                                          j1r=self._j1r,
+                                          z1r=self._z1r,
+                                          zer=self._zer,
+                                          yjr=self._yjr,
+                                          yxr=self._yxr,
+                                          exo=self._exo,
+                                          exz=self._exz,
+                                          par=self._parameters)
+
+        # Calculate the original LHS values for all equations.
+        self.__compute_lhs_vectors()
+
+        # Store the original LHS vector result values to use in final reports for comparison purposes.
+        for lhs_vector_name in self.model.sym_data.lhs_vector_names:
+            setattr(self, f&#34;_original_{lhs_vector_name}&#34;, getattr(self, f&#34;_{lhs_vector_name}&#34;).copy())
+
+        self._iteration_count = 0
+
+        self._solution_found = self.__find_solution()
+
+    @property
+    def model(self) -&gt; Model:
+        &#34;&#34;&#34;
+        Model: The model that needs a solution to linearise around.
+        &#34;&#34;&#34;
+        return self._model
+
+    @property
+    def linearisation_year(self) -&gt; int:
+        &#34;&#34;&#34;
+        int: The return value, the 4 digit linearisation year.
+        &#34;&#34;&#34;
+        return self._linearisation_year
+
+    @property
+    def solution_found(self) -&gt; bool:
+        &#34;&#34;&#34;
+        bool: True if the model solution has been found and False otherwise.
+        &#34;&#34;&#34;
+        return self._solution_found
+
+
+    def __load_equation_map(self):
+        &#34;&#34;&#34;
+        Uses the eqnmap output from the sym processor to create a map from each
+        RHS variable (vector + index combination) to the equations that include
+        that variable on the RHS.
+
+        This map ensures we only have to evaluate the relevant equations when computing
+        the partial derivatives of the model equations when considering each RHS variable.
+
+        The equations map is a map from RHS variable identifiers to LHS equation identifiers.
+        Each RHS and LHS identifier is a tuple: a string, identifying the vector
+        name (eg: x1l or zer) and an integer, identifying the string index.
+        &#34;&#34;&#34;
+
+        # The RHS vectors relevant to this problem.
+        rhs_vectors_of_interest: tuple[str] = [&#39;x1r&#39;, &#39;j1r&#39;, &#39;zer&#39;, &#39;z1r&#39;]
+
+        # Initialise the equations map
+        self.equations_map: dict[tuple[str, int], list[tuple[str, int]]] = dict()
+
+        # Load the raw data and remove entries for parameters.
+        rows: pd.DataFrame = pd.read_csv(self.model.configuration.eqnmap_file, header=None)
+        rows.columns = [&#39;name&#39;, &#39;number&#39;]
+        # Remove &#39;par&#39; RHS entries - they are not needed.
+        rows = rows.loc[~(rows.name == &#39;par&#39;), :]
+
+        lhs: tuple[str, int] = None
+        rhs: tuple[str, int] = None
+
+        # Set of variables on LHS
+        lhs_set: set[tuple[str, int]] = set()
+
+        # Set of LHS variables that are found on the RHS
+        rhs_set: set[tuple[str, int]] = set()
+
+        for row in rows.itertuples(index=False):
+
+            if row[0].endswith(&#39;l&#39;):
+                lhs = (row[0], int(row[1]))
+                lhs_set.add(lhs)
+                rhs = None
+                continue
+
+            if (row[0]) in rhs_vectors_of_interest:
+                rhs = (row[0], int(row[1]))
+                if rhs not in rhs_set:
+                    rhs_set.add((row[0][:-1] + &#39;l&#39;, int(row[1])))
+
+            if rhs is None:
+                continue
+
+            if rhs in self.equations_map:
+                self.equations_map[rhs].append(lhs)
+            else:
+                self.equations_map[rhs] = [lhs]
+
+        # Get the set of LHS variables that are also RHS variables - these are the equations to focus on.
+        self.lhs_variables_to_ignore: set[tuple[str, int]] = lhs_set.difference(rhs_set)
+        self.lhs_variables_to_adjust: set[tuple[str, int]] = lhs_set.intersection(rhs_set)
+        logging.info(f&#34;LHS={len(lhs_set)} LHS variables to ignore={len(self.lhs_variables_to_ignore)}, LHS variables to adjust={len(self.lhs_variables_to_adjust)}&#34;)
+
+        # The list of LHS variables that may need to be adjusted to get a model solution to linearise around
+        self.lhs_variables = list(sorted(self.lhs_variables_to_adjust, key=lambda x: (x[0], x[1])))
+
+        # Make variable-order lookups order 1 using a dictionary.
+        self.lhs_variables_indices: dict[tuple[str,int], int] = dict()
+        i = 0
+        for lhs_variable in self.lhs_variables:
+            self.lhs_variables_indices[lhs_variable] = i
+            i += 1
+
+        # Get a matching list of variable names and vector names and indices.
+        for lhs_vector_name in self.model.sym_data.lhs_vector_names:
+            setattr(self,f&#34;_{lhs_vector_name}_names&#34;, self.model.sym_data.vector_variable_names(vector_name=lhs_vector_name))
+        self.lhs_variable_names: list[str] = []
+        for lhs_variable in self.lhs_variables:
+            self.lhs_variable_names.append(getattr(self,f&#34;_{lhs_variable[0]}_names&#34;)[lhs_variable[1]])
+
+        df = pd.DataFrame(self.lhs_variables,columns=[&#39;vector&#39;,&#39;index&#39;])
+        df[&#39;name&#39;] = self.lhs_variable_names
+
+        self.lower_bounds = np.zeros(len(self.lhs_variable_names)) - np.Inf
+        self.upper_bounds = np.zeros(len(self.lhs_variable_names)) + np.Inf
+
+        self.lower_bounds[2] = 0.03
+        self.lower_bounds[3] = 0.03
+
+        # logging.debug(df)
+
+    def index_of(self, variable:tuple[str,int]) -&gt; int:
+        &#34;&#34;&#34;
+        Args:
+            variable (tuple[str,int]): The vector and index pair that
+            identifies the variable.
+
+       ### Returns
+            int: The return value, equal to the index of the variable
+            in the vector of variables that we are adjusting to find 
+            a model solution.
+        &#34;&#34;&#34;
+        return self.lhs_variables_indices[variable]
+
+    def __configure_lhs_vectors(self):
+        &#34;&#34;&#34;
+        Create the LHS vectors that are used by the model equations
+        as properties of this model solver.
+
+        Initialise the newly created LHS vectors with zeros.
+
+        These vector properties will be populated whenever the model 
+        equations are run.
+        &#34;&#34;&#34;
+        for vector_name in self.model.sym_data.lhs_vector_names:
+            setattr(self, &#34;_{}&#34;.format(vector_name), np.zeros(
+                shape=(self.model.sym_data.vector_length(vector_name=vector_name), 1), dtype=float))
+
+    def __load_rhs_vectors(self, linearisation_year: int):
+        &#34;&#34;&#34;
+        Create and set values for the RHS vectors that are used by the 
+        model equations.
+
+        Do not create vectors if they have no variables (are zero length).
+
+        We initialise the RHS vectors with database values from the 
+        linearisation base year or the lead/lag from that year.
+
+        All 8 RHS vectors are populated. As LHS values are computed from the 
+        model equations, the RHS versions of those LHS vectors will be updated.
+        That process will underpin the numeric search for a model solution near
+        the data values from the linearisation year.
+
+        Args:
+        linearisation_year (int): The (YYYY format) year for which the 
+        model is being linearised. This determines the data that is retrieved
+        from the database to populate the RHS vectors.
+        &#34;&#34;&#34;
+        for vector_name in self.model.sym_data.rhs_vector_names:
+            rhs_vector:pd.DataFrame = self.database.rhs_vector_value(vector_name=vector_name, year=linearisation_year, use_neutral_real_interest_rate=True)
+            if rhs_vector is not None:
+                setattr(self, f&#34;_{vector_name}&#34;, rhs_vector)
+                # Save the original value of the vector for comparison purposes.
+                setattr(self, f&#34;_original_{vector_name}&#34;, rhs_vector.copy())
+
+    def __compute_lhs_vectors(self):
+        &#34;&#34;&#34;
+        Evaluates each of the equations in the model, updating the
+        associated LHS value in the LHS vector properties of the model
+        solver instance.
+        &#34;&#34;&#34;
+        if self.equations is None:
+            raise Exception(&#34;The model equations have not been loaded by the model solver.&#34;)
+        
+        for lhs_vector_name in self.model.sym_data.lhs_vector_names:
+            lhs_vector = getattr(self, f&#34;_{lhs_vector_name}&#34;)
+            for lhs_index in range(len(lhs_vector)):
+                function_name = f&#34;{lhs_vector_name}_{lhs_index}&#34;
+                if hasattr(self.equations, function_name):
+                    func = getattr(self.equations, function_name)
+                    func()
+
+
+
+    def __find_solution(self) -&gt; bool:
+        &#34;&#34;&#34;
+        The solver looks for roots of the objective function using the least squares
+        method documented as part of the scientific python package.
+        https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.least_squares.html
+        
+        It finds a solution to the nonlinear model equations using an explicit 
+        Jacobian calculation. The sparsity of the Jacobian is taken into account.
+
+        This function has two sub-functions, the objective function that defines
+        the objective used by the least squares solver ad the jacobian function that
+        efficiently computes the necessary Jacobian for each iteration.
+
+        The process is to call the scientific python least_squares function passing in
+        these two functions as well as starting values for the variables being adjusted 
+        to find a full model solution.
+
+        The set of variables being adjusted are determined during the loading of the model
+        equation map. Only those variables that occur on the LHS of one equation and the RHS 
+        of any other equation in the model need to be adjusted to find a model solution.
+
+        Once a solution is obtained, those values for the variables being adjusted are 
+        mapped back into the complete RHS vectors of the model. The LHS vectors of the
+        model are already populated with the full model solution by the solver.
+
+        These LHS and RHS vector values are then exposed as model solver properties and they
+        can be accessed as vector values around which the model can be linearised.
+
+       ### Returns
+
+        bool: True if the model could be solved and False otherwise.
+
+        &#34;&#34;&#34;
+
+        def objective_function(x: np.ndarray) -&gt; np.ndarray:
+            &#34;&#34;&#34;
+            The objective function passed as an input to the least squares
+            algorithm.
+
+            Steps:
+            1. 
+            # Use the input x vector to set those elements of the RHS vectors 
+            that are being adjusted to find a model solution. The variables in the 
+            x vector are in the same order as the lhs_variables list.
+
+            2. 
+            Evaluate just those equations in the model that are associated with
+            the variables that are being adjusted to find a model solution.
+
+            3.
+            # From the LHS vector properties of the model solver (that have been updated
+            by evaluation of the model equations), get the values of each of the variables 
+            that are being adjusted to find a model solution and place them in a vector
+            that reflects the model RHS. Call this vector the result.
+
+            4. Compute the return vector for the objective function:
+            x - result.
+            When this difference between x and the result of the equation evaluations
+            is equal to zero for all equations, then a model solution has been found.
+
+            Args:
+            x (np.ndarray): The vector of values being used to evaluate the objective function.
+            These are the LHS vector values that need to be adjusted to find a model solution.
+
+            This objective function implements the model equations to be solved so that we get 
+            (model LHS - model RHS) = 0
+
+           ### Returns
+            np.ndarray: The return value, the vector (model LHS - model RHS), evaluated at the
+            input x, for the vector of equations associated with those variables in the model 
+            that the solver is adjusting.
+            &#34;&#34;&#34;
+
+            # Step 1.
+            i = 0
+            for lhs_variable in self.lhs_variables:
+                match lhs_variable[0]:
+                    case &#39;x1l&#39;:
+                        self._x1r[lhs_variable[1]] = x[i]
+                    case &#39;j1l&#39;:
+                        self._j1r[lhs_variable[1]] = x[i]
+                    case &#39;zel&#39;:
+                        self._zer[lhs_variable[1]] = x[i]
+                    case &#39;z1l&#39;:
+                        self._z1r[lhs_variable[1]] = x[i]
+                i += 1
+
+            # Step 2.
+            for lhs_variable in self.lhs_variables:
+                function_name = f&#34;{lhs_variable[0]}_{lhs_variable[1]}&#34;
+                if hasattr(self.equations, function_name):
+                    func = getattr(self.equations, function_name)
+                    func()
+
+            # Step 3.
+            result: np.ndarray = np.zeros((len(self.lhs_variables),))
+            i = 0
+            for lhs_variable in self.lhs_variables:
+                match lhs_variable[0]:
+                    case &#39;x1l&#39;:
+                        result[i] = self._x1l[lhs_variable[1]]
+                    case &#39;j1l&#39;:
+                        result[i] = self._j1l[lhs_variable[1]]
+                    case &#39;zel&#39;:
+                        result[i] = self._zel[lhs_variable[1]]
+                    case &#39;z1l&#39;:
+                        result[i] = self._z1l[lhs_variable[1]]
+                i += 1
+
+            # Step 4.
+            result = x - result
+
+            logging.info(f&#34;Maximum absolute discrepancy = {np.abs(result).max()}&#34;)
+
+            return result
+
+        def jacobian(x) -&gt; csr_matrix:
+            &#34;&#34;&#34;
+            The function that calculates the square Jacobian at the 
+            given set of values. the Jacobian is square, having a row for
+            each equation associated with a LHS variable that is being solved
+            for and a column for each of those variables also.
+            
+            This function is passed as an input to the least squares algorithm.
+
+            Steps:
+
+            0.
+            Initialise the jacobian matrix, setting all values to zero initially.
+
+            1. 
+            # Use the input x vector to set those elements of the RHS vectors 
+            that are being adjusted to find a model solution. The variables in the 
+            x vector are in the same order as the lhs_variables list.
+
+            2. 
+            Compute the numerical derivative element in the Jacobian for
+            each of the adjusting variables that occurs on the RHS of
+            an equation that is being used by the solver to find a model solution.
+
+            Args:
+            x (np.ndarray): The vector of values being used to evaluate the objective function.
+            These are the LHS vector values that need to be adjusted to find a model solution.
+
+            This objective function implements the model equations to be solved so that we get 
+            (model LHS - model RHS) = 0
+
+           ### Returns
+            csr_matrix: The return value, the sparse matrix representing the Jacobian.
+            &#34;&#34;&#34;
+
+            # Step 0.
+            result: csr_matrix = identity(len(x), format=&#39;csr&#39;)
+
+            # Step 1.
+            i = 0
+            for lhs_variable in self.lhs_variables:
+                match lhs_variable[0]:
+                    case &#39;x1l&#39;:
+                        self._x1r[lhs_variable[1]] = x[i]
+                    case &#39;j1l&#39;:
+                        self._j1r[lhs_variable[1]] = x[i]
+                    case &#39;zel&#39;:
+                        self._zer[lhs_variable[1]] = x[i]
+                    case &#39;z1l&#39;:
+                        self._z1r[lhs_variable[1]] = x[i]
+                i += 1
+
+            # Step 2.
+            for rhs_variable in self.lhs_variables:
+                jacobian_col_index: int = self.index_of(rhs_variable)
+                rhs_vector_name: str = rhs_variable[0][:-1] + &#39;r&#39;
+                rhs_vector_index: int = rhs_variable[1]
+                original_value: float = getattr(self, f&#34;_{rhs_vector_name}&#34;)[rhs_vector_index]
+                # Get each equation that the RHS variable contributes to and approximate the partial derivative.
+                for lhs_variable in self.equations_map[(rhs_vector_name, rhs_vector_index)]:
+                    if lhs_variable not in self.lhs_variables:
+                        continue
+                    jacobian_row_index: int = self.index_of(lhs_variable)
+                    lhs_vector_name: str = lhs_variable[0]
+                    lhs_vector_index: int = lhs_variable[1]
+
+                    # Compute reference value
+                    func = getattr(self.equations, f&#34;{lhs_vector_name}_{lhs_vector_index}&#34;)
+                    func()
+                    reference_value: float = getattr(self, f&#34;_{lhs_vector_name}&#34;)[lhs_vector_index]
+
+                    # Compute perturbed value
+                    getattr(self, f&#34;_{rhs_vector_name}&#34;)[rhs_vector_index] = original_value + CONSTANTS.delta
+                    func()
+                    perturbed_value: float = getattr(self, f&#34;_{lhs_vector_name}&#34;)[lhs_vector_index]
+
+                    # Reset the RHS variable value
+                    getattr(self, f&#34;_{rhs_vector_name}&#34;)[rhs_vector_index] = original_value
+
+                    # Approximate the partial derivative
+                    partial_derivative: float = ((perturbed_value - reference_value) / CONSTANTS.delta)
+
+                    # logging.debug(f&#34;Partials derivative of {lhs_variable}  wrt {(rhs_vector_name, rhs_vector_index)} = {partial_derivative}&#34;)
+
+                    # Store the partial derivative
+                    result[jacobian_row_index, jacobian_col_index] -= partial_derivative
+
+            self._iteration_count += 1
+            logging.info(f&#34;computed the jacobian for iteration {self._iteration_count}&#34;)
+            return result
+
+        start_x: np.ndarray = np.zeros((len(self.lhs_variables),))
+        i = 0
+        for lhs_variable in self.lhs_variables:
+            match lhs_variable[0]:
+                case &#39;x1l&#39;:
+                    start_x[i] =self._x1r[lhs_variable[1]]
+                case &#39;j1l&#39;:
+                    start_x[i] =self._j1r[lhs_variable[1]]
+                case &#39;zel&#39;:
+                    start_x[i] =self._zer[lhs_variable[1]]
+                case &#39;z1l&#39;:
+                    start_x[i] =self._z1r[lhs_variable[1]]
+            i += 1
+
+        logging.info(&#34;Starting the least-squares solver using an explicit Jacobian&#34;)
+        solver_results = least_squares(fun=objective_function, x0=start_x, jac=jacobian)
+        
+        logging.info(f&#34;Maximum change in linearisation value for variables: {np.abs(solver_results.x - start_x).max()}&#34;)
+
+        # Set the RHS values of the adjusted LHS variables.
+        i = 0
+        for lhs_variable in self.lhs_variables:
+            match lhs_variable[0]:
+                case &#39;x1l&#39;:
+                    self._x1r[lhs_variable[1]] = solver_results.x[i]
+                case &#39;j1l&#39;:
+                    self._j1r[lhs_variable[1]] = solver_results.x[i]
+                case &#39;zel&#39;:
+                    self._zer[lhs_variable[1]] = solver_results.x[i]
+                case &#39;z1l&#39;:
+                    self._z1r[lhs_variable[1]] = solver_results.x[i]
+            i += 1
+
+        # Evaluate all of the equations to get the model - solving set of variable values to get LHS vectors that are a root of the equation system.
+        self.__compute_lhs_vectors()
+        
+        # Copy LHS results to use as RHS inputs.
+        for lhs_vector_name in self.model.sym_data.lhs_vector_names:
+            rhs_vector_name = lhs_vector_name[:-1]+&#39;r&#39;
+            setattr(self, f&#34;_{rhs_vector_name}&#34;, getattr(self, f&#34;_{lhs_vector_name}&#34;).copy())
+            setattr(self, f&#34;_solution_{lhs_vector_name}&#34;, getattr(self, f&#34;_{lhs_vector_name}&#34;).copy())
+
+        # Evaluate all of the equations to get the model - solving set of variable values to get LHS vectors that are a root of the equation system.
+        self.__compute_lhs_vectors()
+
+        # Generate CSV reports
+        for lhs_vector_name in self.model.sym_data.lhs_vector_names:
+            rhs_vector_name: str = lhs_vector_name[:-1]+ &#39;r&#39;
+            data: pd.DataFrame = pd.DataFrame(np.hstack(( getattr(self, f&#34;_original_{lhs_vector_name}&#34;),  getattr(self, f&#34;_original_{rhs_vector_name}&#34;), getattr(self, f&#34;_solution_{lhs_vector_name}&#34;), getattr(self, f&#34;_{lhs_vector_name}&#34;) )))
+            data.index = self.model.sym_data.vector_variable_names(vector_name=rhs_vector_name)
+            data.columns = [&#39;LHS original&#39;, &#39;RHS original&#39;, &#39;RHS/LHS adjusted&#39;, &#39;RHS/LHS iteration test&#39;]
+            data.to_csv(f&#34;{self.model.configuration.benchmarking_reports_directory}{rhs_vector_name} adjusted linearisation values.csv&#34;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="gcubed.linearisation.model_solver.ModelSolver"><code class="flex name class">
+<span>class <span class="ident">ModelSolver</span></span>
+<span>(</span><span>model: <a title="gcubed.model.Model" href="../model.html#gcubed.model.Model">Model</a>, linearisation_year: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>The solver finds a point (a value for each variable in the model)
+that simultaneously solves the nonlinear equations
+in the model, taking as given the values for the vectors:
+- yxr
+- yjr
+- exz
+- exo</p>
+<p>If a solution can be found, it will be values for the
+following vectors:
+- x1r
+- j1r
+- zer
+- z1r</p>
+<p>The process will be:
+1. Set up database
+2. Populate all vectors using database values for the linearisation year.
+3. Rearrange the model equations so that we can solve for all vectors by evaluating all
+of the model equations and then take the RHS of the equation</p>
+<p>TODO: Implement based on logic in TestLinearisationRootFindingModel2R164</p>
+<h3 id="constructor">Constructor</h3>
+<p>Does constructor operations required by all classes that inherit from this base class.</p>
+<p>These currently just set up numpy array print options.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ModelSolver(Base):
+    &#34;&#34;&#34;
+
+    ### Overview
+
+    The solver finds a point (a value for each variable in the model)
+    that simultaneously solves the nonlinear equations 
+    in the model, taking as given the values for the vectors:
+    - yxr
+    - yjr
+    - exz
+    - exo
+
+    If a solution can be found, it will be values for the
+    following vectors:
+    - x1r
+    - j1r
+    - zer
+    - z1r
+
+    The process will be:
+    1. Set up database
+    2. Populate all vectors using database values for the linearisation year.
+    3. Rearrange the model equations so that we can solve for all vectors by evaluating all 
+    of the model equations and then take the RHS of the equation
+
+    TODO: Implement based on logic in TestLinearisationRootFindingModel2R164
+
+    &#34;&#34;&#34;
+
+
+    def __init__(self, model: Model, linearisation_year: int ):
+
+        self._solution_found = False
+        
+        assert model is not None
+        self._model: Model = model
+
+        assert linearisation_year  is not None
+        assert linearisation_year &gt;= model.configuration.original_projection_base_year
+        assert linearisation_year &lt; model.configuration.end_year
+        self._linearisation_year = linearisation_year
+
+
+        self.database = GDPScaledDatabase(database=self.model.database, base_year=self.model.configuration.calibration_year)
+        self._parameters = self.model.parameters.parameter_values_vector
+
+        # Set up the RHS vectors for the model using data for the linearisation year.
+        self.__load_rhs_vectors(linearisation_year=self.model.configuration.calibration_year)
+
+        # Set up the LHS vectors as vectors of zeros.
+        self.__configure_lhs_vectors()
+
+        self.__load_equation_map()
+
+        sys.path.append(self.configuration.sym_directory)
+        equations_module = importlib.import_module(self.sym_output_filename_prefix)
+        equations_class = getattr(equations_module, &#34;Equations&#34;)
+        self.equations = equations_class(x1l=self._x1l,
+                                          j1l=self._j1l,
+                                          zel=self._zel,
+                                          z1l=self._z1l,
+                                          x1r=self._x1r,
+                                          j1r=self._j1r,
+                                          z1r=self._z1r,
+                                          zer=self._zer,
+                                          yjr=self._yjr,
+                                          yxr=self._yxr,
+                                          exo=self._exo,
+                                          exz=self._exz,
+                                          par=self._parameters)
+
+        # Calculate the original LHS values for all equations.
+        self.__compute_lhs_vectors()
+
+        # Store the original LHS vector result values to use in final reports for comparison purposes.
+        for lhs_vector_name in self.model.sym_data.lhs_vector_names:
+            setattr(self, f&#34;_original_{lhs_vector_name}&#34;, getattr(self, f&#34;_{lhs_vector_name}&#34;).copy())
+
+        self._iteration_count = 0
+
+        self._solution_found = self.__find_solution()
+
+    @property
+    def model(self) -&gt; Model:
+        &#34;&#34;&#34;
+        Model: The model that needs a solution to linearise around.
+        &#34;&#34;&#34;
+        return self._model
+
+    @property
+    def linearisation_year(self) -&gt; int:
+        &#34;&#34;&#34;
+        int: The return value, the 4 digit linearisation year.
+        &#34;&#34;&#34;
+        return self._linearisation_year
+
+    @property
+    def solution_found(self) -&gt; bool:
+        &#34;&#34;&#34;
+        bool: True if the model solution has been found and False otherwise.
+        &#34;&#34;&#34;
+        return self._solution_found
+
+
+    def __load_equation_map(self):
+        &#34;&#34;&#34;
+        Uses the eqnmap output from the sym processor to create a map from each
+        RHS variable (vector + index combination) to the equations that include
+        that variable on the RHS.
+
+        This map ensures we only have to evaluate the relevant equations when computing
+        the partial derivatives of the model equations when considering each RHS variable.
+
+        The equations map is a map from RHS variable identifiers to LHS equation identifiers.
+        Each RHS and LHS identifier is a tuple: a string, identifying the vector
+        name (eg: x1l or zer) and an integer, identifying the string index.
+        &#34;&#34;&#34;
+
+        # The RHS vectors relevant to this problem.
+        rhs_vectors_of_interest: tuple[str] = [&#39;x1r&#39;, &#39;j1r&#39;, &#39;zer&#39;, &#39;z1r&#39;]
+
+        # Initialise the equations map
+        self.equations_map: dict[tuple[str, int], list[tuple[str, int]]] = dict()
+
+        # Load the raw data and remove entries for parameters.
+        rows: pd.DataFrame = pd.read_csv(self.model.configuration.eqnmap_file, header=None)
+        rows.columns = [&#39;name&#39;, &#39;number&#39;]
+        # Remove &#39;par&#39; RHS entries - they are not needed.
+        rows = rows.loc[~(rows.name == &#39;par&#39;), :]
+
+        lhs: tuple[str, int] = None
+        rhs: tuple[str, int] = None
+
+        # Set of variables on LHS
+        lhs_set: set[tuple[str, int]] = set()
+
+        # Set of LHS variables that are found on the RHS
+        rhs_set: set[tuple[str, int]] = set()
+
+        for row in rows.itertuples(index=False):
+
+            if row[0].endswith(&#39;l&#39;):
+                lhs = (row[0], int(row[1]))
+                lhs_set.add(lhs)
+                rhs = None
+                continue
+
+            if (row[0]) in rhs_vectors_of_interest:
+                rhs = (row[0], int(row[1]))
+                if rhs not in rhs_set:
+                    rhs_set.add((row[0][:-1] + &#39;l&#39;, int(row[1])))
+
+            if rhs is None:
+                continue
+
+            if rhs in self.equations_map:
+                self.equations_map[rhs].append(lhs)
+            else:
+                self.equations_map[rhs] = [lhs]
+
+        # Get the set of LHS variables that are also RHS variables - these are the equations to focus on.
+        self.lhs_variables_to_ignore: set[tuple[str, int]] = lhs_set.difference(rhs_set)
+        self.lhs_variables_to_adjust: set[tuple[str, int]] = lhs_set.intersection(rhs_set)
+        logging.info(f&#34;LHS={len(lhs_set)} LHS variables to ignore={len(self.lhs_variables_to_ignore)}, LHS variables to adjust={len(self.lhs_variables_to_adjust)}&#34;)
+
+        # The list of LHS variables that may need to be adjusted to get a model solution to linearise around
+        self.lhs_variables = list(sorted(self.lhs_variables_to_adjust, key=lambda x: (x[0], x[1])))
+
+        # Make variable-order lookups order 1 using a dictionary.
+        self.lhs_variables_indices: dict[tuple[str,int], int] = dict()
+        i = 0
+        for lhs_variable in self.lhs_variables:
+            self.lhs_variables_indices[lhs_variable] = i
+            i += 1
+
+        # Get a matching list of variable names and vector names and indices.
+        for lhs_vector_name in self.model.sym_data.lhs_vector_names:
+            setattr(self,f&#34;_{lhs_vector_name}_names&#34;, self.model.sym_data.vector_variable_names(vector_name=lhs_vector_name))
+        self.lhs_variable_names: list[str] = []
+        for lhs_variable in self.lhs_variables:
+            self.lhs_variable_names.append(getattr(self,f&#34;_{lhs_variable[0]}_names&#34;)[lhs_variable[1]])
+
+        df = pd.DataFrame(self.lhs_variables,columns=[&#39;vector&#39;,&#39;index&#39;])
+        df[&#39;name&#39;] = self.lhs_variable_names
+
+        self.lower_bounds = np.zeros(len(self.lhs_variable_names)) - np.Inf
+        self.upper_bounds = np.zeros(len(self.lhs_variable_names)) + np.Inf
+
+        self.lower_bounds[2] = 0.03
+        self.lower_bounds[3] = 0.03
+
+        # logging.debug(df)
+
+    def index_of(self, variable:tuple[str,int]) -&gt; int:
+        &#34;&#34;&#34;
+        Args:
+            variable (tuple[str,int]): The vector and index pair that
+            identifies the variable.
+
+       ### Returns
+            int: The return value, equal to the index of the variable
+            in the vector of variables that we are adjusting to find 
+            a model solution.
+        &#34;&#34;&#34;
+        return self.lhs_variables_indices[variable]
+
+    def __configure_lhs_vectors(self):
+        &#34;&#34;&#34;
+        Create the LHS vectors that are used by the model equations
+        as properties of this model solver.
+
+        Initialise the newly created LHS vectors with zeros.
+
+        These vector properties will be populated whenever the model 
+        equations are run.
+        &#34;&#34;&#34;
+        for vector_name in self.model.sym_data.lhs_vector_names:
+            setattr(self, &#34;_{}&#34;.format(vector_name), np.zeros(
+                shape=(self.model.sym_data.vector_length(vector_name=vector_name), 1), dtype=float))
+
+    def __load_rhs_vectors(self, linearisation_year: int):
+        &#34;&#34;&#34;
+        Create and set values for the RHS vectors that are used by the 
+        model equations.
+
+        Do not create vectors if they have no variables (are zero length).
+
+        We initialise the RHS vectors with database values from the 
+        linearisation base year or the lead/lag from that year.
+
+        All 8 RHS vectors are populated. As LHS values are computed from the 
+        model equations, the RHS versions of those LHS vectors will be updated.
+        That process will underpin the numeric search for a model solution near
+        the data values from the linearisation year.
+
+        Args:
+        linearisation_year (int): The (YYYY format) year for which the 
+        model is being linearised. This determines the data that is retrieved
+        from the database to populate the RHS vectors.
+        &#34;&#34;&#34;
+        for vector_name in self.model.sym_data.rhs_vector_names:
+            rhs_vector:pd.DataFrame = self.database.rhs_vector_value(vector_name=vector_name, year=linearisation_year, use_neutral_real_interest_rate=True)
+            if rhs_vector is not None:
+                setattr(self, f&#34;_{vector_name}&#34;, rhs_vector)
+                # Save the original value of the vector for comparison purposes.
+                setattr(self, f&#34;_original_{vector_name}&#34;, rhs_vector.copy())
+
+    def __compute_lhs_vectors(self):
+        &#34;&#34;&#34;
+        Evaluates each of the equations in the model, updating the
+        associated LHS value in the LHS vector properties of the model
+        solver instance.
+        &#34;&#34;&#34;
+        if self.equations is None:
+            raise Exception(&#34;The model equations have not been loaded by the model solver.&#34;)
+        
+        for lhs_vector_name in self.model.sym_data.lhs_vector_names:
+            lhs_vector = getattr(self, f&#34;_{lhs_vector_name}&#34;)
+            for lhs_index in range(len(lhs_vector)):
+                function_name = f&#34;{lhs_vector_name}_{lhs_index}&#34;
+                if hasattr(self.equations, function_name):
+                    func = getattr(self.equations, function_name)
+                    func()
+
+
+
+    def __find_solution(self) -&gt; bool:
+        &#34;&#34;&#34;
+        The solver looks for roots of the objective function using the least squares
+        method documented as part of the scientific python package.
+        https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.least_squares.html
+        
+        It finds a solution to the nonlinear model equations using an explicit 
+        Jacobian calculation. The sparsity of the Jacobian is taken into account.
+
+        This function has two sub-functions, the objective function that defines
+        the objective used by the least squares solver ad the jacobian function that
+        efficiently computes the necessary Jacobian for each iteration.
+
+        The process is to call the scientific python least_squares function passing in
+        these two functions as well as starting values for the variables being adjusted 
+        to find a full model solution.
+
+        The set of variables being adjusted are determined during the loading of the model
+        equation map. Only those variables that occur on the LHS of one equation and the RHS 
+        of any other equation in the model need to be adjusted to find a model solution.
+
+        Once a solution is obtained, those values for the variables being adjusted are 
+        mapped back into the complete RHS vectors of the model. The LHS vectors of the
+        model are already populated with the full model solution by the solver.
+
+        These LHS and RHS vector values are then exposed as model solver properties and they
+        can be accessed as vector values around which the model can be linearised.
+
+       ### Returns
+
+        bool: True if the model could be solved and False otherwise.
+
+        &#34;&#34;&#34;
+
+        def objective_function(x: np.ndarray) -&gt; np.ndarray:
+            &#34;&#34;&#34;
+            The objective function passed as an input to the least squares
+            algorithm.
+
+            Steps:
+            1. 
+            # Use the input x vector to set those elements of the RHS vectors 
+            that are being adjusted to find a model solution. The variables in the 
+            x vector are in the same order as the lhs_variables list.
+
+            2. 
+            Evaluate just those equations in the model that are associated with
+            the variables that are being adjusted to find a model solution.
+
+            3.
+            # From the LHS vector properties of the model solver (that have been updated
+            by evaluation of the model equations), get the values of each of the variables 
+            that are being adjusted to find a model solution and place them in a vector
+            that reflects the model RHS. Call this vector the result.
+
+            4. Compute the return vector for the objective function:
+            x - result.
+            When this difference between x and the result of the equation evaluations
+            is equal to zero for all equations, then a model solution has been found.
+
+            Args:
+            x (np.ndarray): The vector of values being used to evaluate the objective function.
+            These are the LHS vector values that need to be adjusted to find a model solution.
+
+            This objective function implements the model equations to be solved so that we get 
+            (model LHS - model RHS) = 0
+
+           ### Returns
+            np.ndarray: The return value, the vector (model LHS - model RHS), evaluated at the
+            input x, for the vector of equations associated with those variables in the model 
+            that the solver is adjusting.
+            &#34;&#34;&#34;
+
+            # Step 1.
+            i = 0
+            for lhs_variable in self.lhs_variables:
+                match lhs_variable[0]:
+                    case &#39;x1l&#39;:
+                        self._x1r[lhs_variable[1]] = x[i]
+                    case &#39;j1l&#39;:
+                        self._j1r[lhs_variable[1]] = x[i]
+                    case &#39;zel&#39;:
+                        self._zer[lhs_variable[1]] = x[i]
+                    case &#39;z1l&#39;:
+                        self._z1r[lhs_variable[1]] = x[i]
+                i += 1
+
+            # Step 2.
+            for lhs_variable in self.lhs_variables:
+                function_name = f&#34;{lhs_variable[0]}_{lhs_variable[1]}&#34;
+                if hasattr(self.equations, function_name):
+                    func = getattr(self.equations, function_name)
+                    func()
+
+            # Step 3.
+            result: np.ndarray = np.zeros((len(self.lhs_variables),))
+            i = 0
+            for lhs_variable in self.lhs_variables:
+                match lhs_variable[0]:
+                    case &#39;x1l&#39;:
+                        result[i] = self._x1l[lhs_variable[1]]
+                    case &#39;j1l&#39;:
+                        result[i] = self._j1l[lhs_variable[1]]
+                    case &#39;zel&#39;:
+                        result[i] = self._zel[lhs_variable[1]]
+                    case &#39;z1l&#39;:
+                        result[i] = self._z1l[lhs_variable[1]]
+                i += 1
+
+            # Step 4.
+            result = x - result
+
+            logging.info(f&#34;Maximum absolute discrepancy = {np.abs(result).max()}&#34;)
+
+            return result
+
+        def jacobian(x) -&gt; csr_matrix:
+            &#34;&#34;&#34;
+            The function that calculates the square Jacobian at the 
+            given set of values. the Jacobian is square, having a row for
+            each equation associated with a LHS variable that is being solved
+            for and a column for each of those variables also.
+            
+            This function is passed as an input to the least squares algorithm.
+
+            Steps:
+
+            0.
+            Initialise the jacobian matrix, setting all values to zero initially.
+
+            1. 
+            # Use the input x vector to set those elements of the RHS vectors 
+            that are being adjusted to find a model solution. The variables in the 
+            x vector are in the same order as the lhs_variables list.
+
+            2. 
+            Compute the numerical derivative element in the Jacobian for
+            each of the adjusting variables that occurs on the RHS of
+            an equation that is being used by the solver to find a model solution.
+
+            Args:
+            x (np.ndarray): The vector of values being used to evaluate the objective function.
+            These are the LHS vector values that need to be adjusted to find a model solution.
+
+            This objective function implements the model equations to be solved so that we get 
+            (model LHS - model RHS) = 0
+
+           ### Returns
+            csr_matrix: The return value, the sparse matrix representing the Jacobian.
+            &#34;&#34;&#34;
+
+            # Step 0.
+            result: csr_matrix = identity(len(x), format=&#39;csr&#39;)
+
+            # Step 1.
+            i = 0
+            for lhs_variable in self.lhs_variables:
+                match lhs_variable[0]:
+                    case &#39;x1l&#39;:
+                        self._x1r[lhs_variable[1]] = x[i]
+                    case &#39;j1l&#39;:
+                        self._j1r[lhs_variable[1]] = x[i]
+                    case &#39;zel&#39;:
+                        self._zer[lhs_variable[1]] = x[i]
+                    case &#39;z1l&#39;:
+                        self._z1r[lhs_variable[1]] = x[i]
+                i += 1
+
+            # Step 2.
+            for rhs_variable in self.lhs_variables:
+                jacobian_col_index: int = self.index_of(rhs_variable)
+                rhs_vector_name: str = rhs_variable[0][:-1] + &#39;r&#39;
+                rhs_vector_index: int = rhs_variable[1]
+                original_value: float = getattr(self, f&#34;_{rhs_vector_name}&#34;)[rhs_vector_index]
+                # Get each equation that the RHS variable contributes to and approximate the partial derivative.
+                for lhs_variable in self.equations_map[(rhs_vector_name, rhs_vector_index)]:
+                    if lhs_variable not in self.lhs_variables:
+                        continue
+                    jacobian_row_index: int = self.index_of(lhs_variable)
+                    lhs_vector_name: str = lhs_variable[0]
+                    lhs_vector_index: int = lhs_variable[1]
+
+                    # Compute reference value
+                    func = getattr(self.equations, f&#34;{lhs_vector_name}_{lhs_vector_index}&#34;)
+                    func()
+                    reference_value: float = getattr(self, f&#34;_{lhs_vector_name}&#34;)[lhs_vector_index]
+
+                    # Compute perturbed value
+                    getattr(self, f&#34;_{rhs_vector_name}&#34;)[rhs_vector_index] = original_value + CONSTANTS.delta
+                    func()
+                    perturbed_value: float = getattr(self, f&#34;_{lhs_vector_name}&#34;)[lhs_vector_index]
+
+                    # Reset the RHS variable value
+                    getattr(self, f&#34;_{rhs_vector_name}&#34;)[rhs_vector_index] = original_value
+
+                    # Approximate the partial derivative
+                    partial_derivative: float = ((perturbed_value - reference_value) / CONSTANTS.delta)
+
+                    # logging.debug(f&#34;Partials derivative of {lhs_variable}  wrt {(rhs_vector_name, rhs_vector_index)} = {partial_derivative}&#34;)
+
+                    # Store the partial derivative
+                    result[jacobian_row_index, jacobian_col_index] -= partial_derivative
+
+            self._iteration_count += 1
+            logging.info(f&#34;computed the jacobian for iteration {self._iteration_count}&#34;)
+            return result
+
+        start_x: np.ndarray = np.zeros((len(self.lhs_variables),))
+        i = 0
+        for lhs_variable in self.lhs_variables:
+            match lhs_variable[0]:
+                case &#39;x1l&#39;:
+                    start_x[i] =self._x1r[lhs_variable[1]]
+                case &#39;j1l&#39;:
+                    start_x[i] =self._j1r[lhs_variable[1]]
+                case &#39;zel&#39;:
+                    start_x[i] =self._zer[lhs_variable[1]]
+                case &#39;z1l&#39;:
+                    start_x[i] =self._z1r[lhs_variable[1]]
+            i += 1
+
+        logging.info(&#34;Starting the least-squares solver using an explicit Jacobian&#34;)
+        solver_results = least_squares(fun=objective_function, x0=start_x, jac=jacobian)
+        
+        logging.info(f&#34;Maximum change in linearisation value for variables: {np.abs(solver_results.x - start_x).max()}&#34;)
+
+        # Set the RHS values of the adjusted LHS variables.
+        i = 0
+        for lhs_variable in self.lhs_variables:
+            match lhs_variable[0]:
+                case &#39;x1l&#39;:
+                    self._x1r[lhs_variable[1]] = solver_results.x[i]
+                case &#39;j1l&#39;:
+                    self._j1r[lhs_variable[1]] = solver_results.x[i]
+                case &#39;zel&#39;:
+                    self._zer[lhs_variable[1]] = solver_results.x[i]
+                case &#39;z1l&#39;:
+                    self._z1r[lhs_variable[1]] = solver_results.x[i]
+            i += 1
+
+        # Evaluate all of the equations to get the model - solving set of variable values to get LHS vectors that are a root of the equation system.
+        self.__compute_lhs_vectors()
+        
+        # Copy LHS results to use as RHS inputs.
+        for lhs_vector_name in self.model.sym_data.lhs_vector_names:
+            rhs_vector_name = lhs_vector_name[:-1]+&#39;r&#39;
+            setattr(self, f&#34;_{rhs_vector_name}&#34;, getattr(self, f&#34;_{lhs_vector_name}&#34;).copy())
+            setattr(self, f&#34;_solution_{lhs_vector_name}&#34;, getattr(self, f&#34;_{lhs_vector_name}&#34;).copy())
+
+        # Evaluate all of the equations to get the model - solving set of variable values to get LHS vectors that are a root of the equation system.
+        self.__compute_lhs_vectors()
+
+        # Generate CSV reports
+        for lhs_vector_name in self.model.sym_data.lhs_vector_names:
+            rhs_vector_name: str = lhs_vector_name[:-1]+ &#39;r&#39;
+            data: pd.DataFrame = pd.DataFrame(np.hstack(( getattr(self, f&#34;_original_{lhs_vector_name}&#34;),  getattr(self, f&#34;_original_{rhs_vector_name}&#34;), getattr(self, f&#34;_solution_{lhs_vector_name}&#34;), getattr(self, f&#34;_{lhs_vector_name}&#34;) )))
+            data.index = self.model.sym_data.vector_variable_names(vector_name=rhs_vector_name)
+            data.columns = [&#39;LHS original&#39;, &#39;RHS original&#39;, &#39;RHS/LHS adjusted&#39;, &#39;RHS/LHS iteration test&#39;]
+            data.to_csv(f&#34;{self.model.configuration.benchmarking_reports_directory}{rhs_vector_name} adjusted linearisation values.csv&#34;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="gcubed.base.Base" href="../base.html#gcubed.base.Base">Base</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="gcubed.linearisation.model_solver.ModelSolver.linearisation_year"><code class="name">var <span class="ident">linearisation_year</span> : int</code></dt>
+<dd>
+<div class="desc"><p>int: The return value, the 4 digit linearisation year.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def linearisation_year(self) -&gt; int:
+    &#34;&#34;&#34;
+    int: The return value, the 4 digit linearisation year.
+    &#34;&#34;&#34;
+    return self._linearisation_year</code></pre>
+</details>
+</dd>
+<dt id="gcubed.linearisation.model_solver.ModelSolver.model"><code class="name">var <span class="ident">model</span> : <a title="gcubed.model.Model" href="../model.html#gcubed.model.Model">Model</a></code></dt>
+<dd>
+<div class="desc"><p>Model: The model that needs a solution to linearise around.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def model(self) -&gt; Model:
+    &#34;&#34;&#34;
+    Model: The model that needs a solution to linearise around.
+    &#34;&#34;&#34;
+    return self._model</code></pre>
+</details>
+</dd>
+<dt id="gcubed.linearisation.model_solver.ModelSolver.solution_found"><code class="name">var <span class="ident">solution_found</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>bool: True if the model solution has been found and False otherwise.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def solution_found(self) -&gt; bool:
+    &#34;&#34;&#34;
+    bool: True if the model solution has been found and False otherwise.
+    &#34;&#34;&#34;
+    return self._solution_found</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="gcubed.linearisation.model_solver.ModelSolver.index_of"><code class="name flex">
+<span>def <span class="ident">index_of</span></span>(<span>self, variable: tuple[str, int]) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>variable</code></strong> :&ensp;<code>tuple[str,int]</code></dt>
+<dd>The vector and index pair that</dd>
+</dl>
+<p>identifies the variable.</p>
+<h3 id="returns">Returns</h3>
+<pre><code> int: The return value, equal to the index of the variable
+ in the vector of variables that we are adjusting to find 
+ a model solution.
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def index_of(self, variable:tuple[str,int]) -&gt; int:
+    &#34;&#34;&#34;
+    Args:
+        variable (tuple[str,int]): The vector and index pair that
+        identifies the variable.
+
+   ### Returns
+        int: The return value, equal to the index of the variable
+        in the vector of variables that we are adjusting to find 
+        a model solution.
+    &#34;&#34;&#34;
+    return self.lhs_variables_indices[variable]</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="gcubed.base.Base" href="../base.html#gcubed.base.Base">Base</a></b></code>:
+<ul class="hlist">
+<li><code><a title="gcubed.base.Base.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
+<li><code><a title="gcubed.base.Base.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.zeros" href="../base.html#gcubed.base.Base.zeros">zeros</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="gcubed.linearisation" href="index.html">gcubed.linearisation</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="gcubed.linearisation.model_solver.ModelSolver" href="#gcubed.linearisation.model_solver.ModelSolver">ModelSolver</a></code></h4>
+<ul class="">
+<li><code><a title="gcubed.linearisation.model_solver.ModelSolver.index_of" href="#gcubed.linearisation.model_solver.ModelSolver.index_of">index_of</a></code></li>
+<li><code><a title="gcubed.linearisation.model_solver.ModelSolver.linearisation_year" href="#gcubed.linearisation.model_solver.ModelSolver.linearisation_year">linearisation_year</a></code></li>
+<li><code><a title="gcubed.linearisation.model_solver.ModelSolver.model" href="#gcubed.linearisation.model_solver.ModelSolver.model">model</a></code></li>
+<li><code><a title="gcubed.linearisation.model_solver.ModelSolver.solution_found" href="#gcubed.linearisation.model_solver.ModelSolver.solution_found">solution_found</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

@@ -155,21 +155,6 @@ class Productivity(Base):
         self._us_productivity_growth_rates = self._us_productivity_growth_rates / 100
         self._us_productivity_growth_rates.index = sectors_members
 
-        # THIS IS OBSOLETE. SEE:
-        # https://bitbucket.org/msgpl/gcubedcode/issues/140/prodmat-file-for-20r-is-missing-some
-        # # US sector convergence rates (decimal value) - these are not yet used in the models
-        # try:
-        #     label_row: int = self.__get_index_of(__class__.label_us_sector_convergence_rates) + 1
-        #     us_convergence_rows: list[int] = range(label_row, label_row + self.sym_data.sectors_count)
-        #     if len(us_convergence_rows) &lt; self.sym_data.sectors_count:
-        #         raise Exception(f&#34;The US sector convergence rate data is available for {us_convergence_rows} sectors but the model has {self.sym_data.all_sectors_count} sectors.&#34;)
-        #     self._us_sector_convergence_rates = self._input.iloc[us_convergence_rows, table_columns].copy()
-        #     self._us_sector_convergence_rates = self._us_sector_convergence_rates.head(self.sym_data.sectors_count)
-        #     self._us_sector_convergence_rates.columns = self._data_column_names
-        #     self._us_sector_convergence_rates.index = sectors_members
-        # except Exception as e:
-        #     logging.warn(f&#34;There was a problem loading US sector convergence rates. That data is not needed but it is also not available or it is not complete.\n{str(e)}&#34;)
-
         # Ratio to US productivity for each region, by sector. (1 means the productivity is the same)
         label_row: int = self.__get_index_of(__class__.label_regional_sector_ratio_to_us) + 2
         self._region_productivity_ratios:dict[str,pd.DataFrame] = dict()
@@ -276,7 +261,10 @@ class Productivity(Base):
 </code></dt>
 <dd>
 <div class="desc"><p>Loads productivity parameters and converts them to productivity projections
-for all regions and all sectors within each region.</p></div>
+for all regions and all sectors within each region.</p>
+<h3 id="constructor">Constructor</h3>
+<p>Does constructor operations required by all classes that inherit from this base class.</p>
+<p>These currently just set up numpy array print options.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -396,21 +384,6 @@ for all regions and all sectors within each region.</p></div>
         self._us_productivity_growth_rates = self._us_productivity_growth_rates.loc[:, self.configuration.start_to_end_year_column_labels]
         self._us_productivity_growth_rates = self._us_productivity_growth_rates / 100
         self._us_productivity_growth_rates.index = sectors_members
-
-        # THIS IS OBSOLETE. SEE:
-        # https://bitbucket.org/msgpl/gcubedcode/issues/140/prodmat-file-for-20r-is-missing-some
-        # # US sector convergence rates (decimal value) - these are not yet used in the models
-        # try:
-        #     label_row: int = self.__get_index_of(__class__.label_us_sector_convergence_rates) + 1
-        #     us_convergence_rows: list[int] = range(label_row, label_row + self.sym_data.sectors_count)
-        #     if len(us_convergence_rows) &lt; self.sym_data.sectors_count:
-        #         raise Exception(f&#34;The US sector convergence rate data is available for {us_convergence_rows} sectors but the model has {self.sym_data.all_sectors_count} sectors.&#34;)
-        #     self._us_sector_convergence_rates = self._input.iloc[us_convergence_rows, table_columns].copy()
-        #     self._us_sector_convergence_rates = self._us_sector_convergence_rates.head(self.sym_data.sectors_count)
-        #     self._us_sector_convergence_rates.columns = self._data_column_names
-        #     self._us_sector_convergence_rates.index = sectors_members
-        # except Exception as e:
-        #     logging.warn(f&#34;There was a problem loading US sector convergence rates. That data is not needed but it is also not available or it is not complete.\n{str(e)}&#34;)
 
         # Ratio to US productivity for each region, by sector. (1 means the productivity is the same)
         label_row: int = self.__get_index_of(__class__.label_regional_sector_ratio_to_us) + 2

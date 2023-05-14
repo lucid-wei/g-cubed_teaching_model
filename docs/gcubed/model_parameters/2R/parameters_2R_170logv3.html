@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>gcubed.model_parameters.20C API documentation</title>
-<meta name="description" content="Model version 20C parameter subclasses." />
+<title>gcubed.model_parameters.2R.parameters_2R_170logv3 API documentation</title>
+<meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,33 +19,106 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>gcubed.model_parameters.20C</code></h1>
+<h1 class="title">Module <code>gcubed.model_parameters.2R.parameters_2R_170logv3</code></h1>
 </header>
 <section id="section-intro">
-<p>Model version 20C parameter subclasses.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;
-Model version 20C parameter subclasses.
-&#34;&#34;&#34;</code></pre>
+<pre><code class="python"># ------------------------------------------------------------------
+# Purpose: Custom model parameter calibration
+# Author: Geoff
+# ------------------------------------------------------------------
+from __future__ import annotations
+from gcubed.model_parameters.parameters import Parameters
+from gcubed.data.database import Database
+
+
+class Parameters2R170logv3(Parameters):
+    &#34;&#34;&#34;
+    Customise parameter calibration for model 2R 170.
+    &#34;&#34;&#34;
+
+    def __init__(self, database: Database, base_year: int) -&gt; None:
+        super().__init__(database=database, base_year=base_year)
+
+        # No custom parameter calibrations are required.
+
+        # Required statements in all final subclasses of the parameter class.
+        self._parameter_values.index = self._parameter_full_names
+        self.validate()
+
+    def validate(self):
+        super().validate()</code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt><code class="name"><a title="gcubed.model_parameters.20C.parameters_20C_169" href="parameters_20C_169.html">gcubed.model_parameters.20C.parameters_20C_169</a></code></dt>
+<dt id="gcubed.model_parameters.2R.parameters_2R_170logv3.Parameters2R170logv3"><code class="flex name class">
+<span>class <span class="ident">Parameters2R170logv3</span></span>
+<span>(</span><span>database: Database, base_year: int)</span>
+</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Customise parameter calibration for model 2R 170.</p>
+<h3 id="constructor">Constructor</h3>
+<p>Does constructor operations required by all classes that inherit from this base class.</p>
+<p>These currently just set up numpy array print options.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Parameters2R170logv3(Parameters):
+    &#34;&#34;&#34;
+    Customise parameter calibration for model 2R 170.
+    &#34;&#34;&#34;
+
+    def __init__(self, database: Database, base_year: int) -&gt; None:
+        super().__init__(database=database, base_year=base_year)
+
+        # No custom parameter calibrations are required.
+
+        # Required statements in all final subclasses of the parameter class.
+        self._parameter_values.index = self._parameter_full_names
+        self.validate()
+
+    def validate(self):
+        super().validate()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="gcubed.model_parameters.parameters.Parameters" href="../parameters.html#gcubed.model_parameters.parameters.Parameters">Parameters</a></li>
+<li><a title="gcubed.base.Base" href="../../base.html#gcubed.base.Base">Base</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="gcubed.model_parameters.parameters.Parameters" href="../parameters.html#gcubed.model_parameters.parameters.Parameters">Parameters</a></b></code>:
+<ul class="hlist">
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.EMZT" href="../parameters.html#gcubed.model_parameters.parameters.Parameters.EMZT">EMZT</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.TCAX" href="../parameters.html#gcubed.model_parameters.parameters.Parameters.TCAX">TCAX</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.discrate" href="../parameters.html#gcubed.model_parameters.parameters.Parameters.discrate">discrate</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.get_year_labels" href="../../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.has_parameter" href="../parameters.html#gcubed.model_parameters.parameters.Parameters.has_parameter">has_parameter</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.insert_parameter" href="../parameters.html#gcubed.model_parameters.parameters.Parameters.insert_parameter">insert_parameter</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.load_data" href="../../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.non_sym_parameter_names" href="../parameters.html#gcubed.model_parameters.parameters.Parameters.non_sym_parameter_names">non_sym_parameter_names</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.parameter" href="../parameters.html#gcubed.model_parameters.parameters.Parameters.parameter">parameter</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.parameter_values" href="../parameters.html#gcubed.model_parameters.parameters.Parameters.parameter_values">parameter_values</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.parameter_values_vector" href="../parameters.html#gcubed.model_parameters.parameters.Parameters.parameter_values_vector">parameter_values_vector</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.validate" href="../parameters.html#gcubed.model_parameters.parameters.Parameters.validate">validate</a></code></li>
+<li><code><a title="gcubed.model_parameters.parameters.Parameters.zeros" href="../../base.html#gcubed.base.Base.zeros">zeros</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 </dl>
-</section>
-<section>
-</section>
-<section>
-</section>
-<section>
 </section>
 </article>
 <nav id="sidebar">
@@ -56,12 +129,14 @@ Model version 20C parameter subclasses.
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="gcubed.model_parameters" href="../index.html">gcubed.model_parameters</a></code></li>
+<li><code><a title="gcubed.model_parameters.2R" href="index.html">gcubed.model_parameters.2R</a></code></li>
 </ul>
 </li>
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
-<li><code><a title="gcubed.model_parameters.20C.parameters_20C_169" href="parameters_20C_169.html">gcubed.model_parameters.20C.parameters_20C_169</a></code></li>
+<li>
+<h4><code><a title="gcubed.model_parameters.2R.parameters_2R_170logv3.Parameters2R170logv3" href="#gcubed.model_parameters.2R.parameters_2R_170logv3.Parameters2R170logv3">Parameters2R170logv3</a></code></h4>
+</li>
 </ul>
 </li>
 </ul>

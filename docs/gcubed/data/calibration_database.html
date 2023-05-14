@@ -102,7 +102,10 @@ class CalibrationDatabase(Database):
 <p>Additional properties:</p>
 <pre><code>database: the database that this calibration database was derived from.
 base_year: the base year for the database.
-</code></pre></div>
+</code></pre>
+<h3 id="constructor">Constructor</h3>
+<p>Does constructor operations required by all classes that inherit from this base class.</p>
+<p>These currently just set up numpy array print options.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -154,37 +157,13 @@ base_year: the base year for the database.
 <li><a title="gcubed.data.database.Database" href="database.html#gcubed.data.database.Database">Database</a></li>
 <li><a title="gcubed.base.Base" href="../base.html#gcubed.base.Base">Base</a></li>
 </ul>
-<h3>Instance variables</h3>
-<dl>
-<dt id="gcubed.data.calibration_database.CalibrationDatabase.configuration"><code class="name">var <span class="ident">configuration</span> : <a title="gcubed.model_configuration.ModelConfiguration" href="../model_configuration.html#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a></code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def configuration(self) -&gt; ModelConfiguration:
-    return self.sym_data.configuration</code></pre>
-</details>
-</dd>
-<dt id="gcubed.data.calibration_database.CalibrationDatabase.sym_data"><code class="name">var <span class="ident">sym_data</span> : <a title="gcubed.sym_data.SymData" href="../sym_data.html#gcubed.sym_data.SymData">SymData</a></code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def sym_data(self) -&gt; SymData:
-    return self._sym_data</code></pre>
-</details>
-</dd>
-</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="gcubed.data.database.Database" href="database.html#gcubed.data.database.Database">Database</a></b></code>:
 <ul class="hlist">
+<li><code><a title="gcubed.data.database.Database.base_year" href="database.html#gcubed.data.database.Database.base_year">base_year</a></code></li>
+<li><code><a title="gcubed.data.database.Database.configuration" href="database.html#gcubed.data.database.Database.configuration">configuration</a></code></li>
+<li><code><a title="gcubed.data.database.Database.data" href="database.html#gcubed.data.database.Database.data">data</a></code></li>
 <li><code><a title="gcubed.data.database.Database.export_to_csv" href="database.html#gcubed.data.database.Database.export_to_csv">export_to_csv</a></code></li>
 <li><code><a title="gcubed.data.database.Database.get_data" href="database.html#gcubed.data.database.Database.get_data">get_data</a></code></li>
 <li><code><a title="gcubed.data.database.Database.get_data_and_varmap_indices" href="database.html#gcubed.data.database.Database.get_data_and_varmap_indices">get_data_and_varmap_indices</a></code></li>
@@ -195,7 +174,12 @@ def sym_data(self) -&gt; SymData:
 <li><code><a title="gcubed.data.database.Database.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
 <li><code><a title="gcubed.data.database.Database.rebase" href="database.html#gcubed.data.database.Database.rebase">rebase</a></code></li>
 <li><code><a title="gcubed.data.database.Database.rhs_vector_value" href="database.html#gcubed.data.database.Database.rhs_vector_value">rhs_vector_value</a></code></li>
+<li><code><a title="gcubed.data.database.Database.sym_data" href="database.html#gcubed.data.database.Database.sym_data">sym_data</a></code></li>
 <li><code><a title="gcubed.data.database.Database.update_data" href="database.html#gcubed.data.database.Database.update_data">update_data</a></code></li>
+<li><code><a title="gcubed.data.database.Database.variables" href="database.html#gcubed.data.database.Database.variables">variables</a></code></li>
+<li><code><a title="gcubed.data.database.Database.variables_count" href="database.html#gcubed.data.database.Database.variables_count">variables_count</a></code></li>
+<li><code><a title="gcubed.data.database.Database.years_column_names" href="database.html#gcubed.data.database.Database.years_column_names">years_column_names</a></code></li>
+<li><code><a title="gcubed.data.database.Database.years_count" href="database.html#gcubed.data.database.Database.years_count">years_count</a></code></li>
 <li><code><a title="gcubed.data.database.Database.zeros" href="../base.html#gcubed.base.Base.zeros">zeros</a></code></li>
 </ul>
 </li>
@@ -219,10 +203,6 @@ def sym_data(self) -&gt; SymData:
 <ul>
 <li>
 <h4><code><a title="gcubed.data.calibration_database.CalibrationDatabase" href="#gcubed.data.calibration_database.CalibrationDatabase">CalibrationDatabase</a></code></h4>
-<ul class="">
-<li><code><a title="gcubed.data.calibration_database.CalibrationDatabase.configuration" href="#gcubed.data.calibration_database.CalibrationDatabase.configuration">configuration</a></code></li>
-<li><code><a title="gcubed.data.calibration_database.CalibrationDatabase.sym_data" href="#gcubed.data.calibration_database.CalibrationDatabase.sym_data">sym_data</a></code></li>
-</ul>
 </li>
 </ul>
 </li>

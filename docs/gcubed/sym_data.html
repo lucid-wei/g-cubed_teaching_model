@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>gcubed.sym_data API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Contains the SymData class" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,6 +22,7 @@
 <h1 class="title">Module <code>gcubed.sym_data</code></h1>
 </header>
 <section id="section-intro">
+<p>Contains the SymData class</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -32,7 +33,9 @@
 # definition.
 # Author: Geoff Shuetrim
 # ------------------------------------------------------------------
-
+&#34;&#34;&#34;
+Contains the SymData class
+&#34;&#34;&#34;
 from ast import match_case
 from concurrent.futures import process
 import logging
@@ -45,31 +48,28 @@ import regex as re
 
 class SymData:
     &#34;&#34;&#34;
-    Properties:
 
-    var_info: variable and parameter information
-
-    var_map: more variable and parameter information
-
-    opt_map: more information about how variable and parameters are to be organised.
+    #### Overview
 
     The model equations are expressed in terms of various vectors of variables.
     Each vector is a different type of variable.
     Note the naming conventions for the lefthand side (LHS) variable vectors:
-    a. x1l (the vector of state variables) X=S=State
-    b. j1l (the vector of costate or jump variables) J=C=Costate
-    c. zel (the endogenous variables LOGY, PRCT, PRID) 
-    d. z1l (the other endogenous variables)
+
+    a. X1l (the vector of state variables) X=S=State
+    b. J1l (the vector of costate or jump variables) J=C=Costate
+    c. ZEL (the endogenous variables LOGY, PRCT, PRID) 
+    d. Z1L (the other endogenous variables)
 
     These 4 vectors of variables are functions of:
-    1. x1r is right hand side (RHS) state variables
-    2. j1r is RHS costate or jump variables
-    3. zer is RHS endogenous variables LOGY, PRCT, PRID
-    4. exz is RHS the lead expected ze variables
-    5. yxr is RHS state variables lagged by 1 period
-    6. yjr is RHS costate variables lagged by 1 period
-    7. exo is exogenous variables (by definition only appearing on RHS)
-    8. z1r is RHS other endogenous variables.
+
+    1. X1r is right hand side (RHS) state variables
+    2. J1r is RHS costate or jump variables
+    3. ZER is RHS endogenous variables LOGY, PRCT, PRID
+    4. EXZ is RHS the lead expected ze variables
+    5. YXR is RHS state variables lagged by 1 period
+    6. YJR is RHS costate variables lagged by 1 period
+    7. EXO is exogenous variables (by definition only appearing on RHS)
+    8. Z1R is RHS other endogenous variables.
 
     &#34;&#34;&#34;
 
@@ -82,15 +82,20 @@ class SymData:
     # Those vectors that are projected forward using the model
     _projection_vector_names: list[str] = [&#34;x1l&#34;, &#34;j1l&#34;, &#34;zel&#34;, &#34;z1l&#34;, &#34;exo&#34;]
 
-    def matching_rhs_vector_name(self, lhs_vector_name: str) -&gt; str:
-        &#34;&#34;&#34;
-        Arguments:
-        lhs_vector_name the name of the LHS vector.
-        Returns the matching RHS vector name, replacing the last character, l, with an r.
-        &#34;&#34;&#34;
-        return f&#34;{lhs_vector_name[0:2]}r&#34;
-
     def __init__(self, configuration: ModelConfiguration) -&gt; None:
+        &#34;&#34;&#34;
+
+        ### Constructor
+
+        Loads and provides access to all of the information about the model contained
+        in the SYM model definition.
+        
+        ### Arguments
+
+        configuration: The configuration details for the model.
+
+        &#34;&#34;&#34;
+        
         assert isinstance(configuration, ModelConfiguration)
         self._configuration = configuration
 
@@ -111,18 +116,50 @@ class SymData:
 
     @property
     def configuration(self):
+        &#34;&#34;&#34;
+        The configuration details for the model.
+        &#34;&#34;&#34;
         return self._configuration
 
     @property
-    def var_info(self):
-        # TODO: Provide methods to look up the varinfo
+    def var_info(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        The dataframe of information about the model variables, loaded from the var_info file
+        produced by processing the SYM model definition with the SYM processor.
+        &#34;&#34;&#34;
         # TODO: Make sure parameter attributes in SYM appear in this dataset in the last column.
         return self._variable_information
 
     @property
     def var_map(self) -&gt; pd.DataFrame:
-        # TODO: Provide methods to look up the varmap
+        &#34;&#34;&#34;
+        The dataframe containing the map of the model variables, loaded from the var_map file
+        produced by processing the SYM model definition with the SYM processor.
+        &#34;&#34;&#34;
         return self._variable_map
+
+    @property
+    def opt_map(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        The dataframe containing the opt map of the model variables, loaded from the optmap file
+        produced by processing the SYM model definition with the SYM processor.
+
+        This information is not used by the Python implementation.
+        &#34;&#34;&#34;
+        return self._optmap
+
+    def matching_rhs_vector_name(self, lhs_vector_name: str) -&gt; str:
+        &#34;&#34;&#34;
+        
+       ### Arguments
+
+        lhs_vector_name: the name of the LHS vector.
+
+       ### Returns 
+        
+        the matching RHS vector name, replacing the last character, l, with an r.
+        &#34;&#34;&#34;
+        return f&#34;{lhs_vector_name[0:2]}r&#34;
 
     def varmap_variable_type(self, vector_name: str):
         &#34;&#34;&#34;
@@ -151,7 +188,7 @@ class SymData:
 
     def projection_vector_for_variable(self, variable_name: str) -&gt; str:
         &#34;&#34;&#34;
-        Arguments:
+       ### Arguments
 
         vector_name: The fully qualified name of the variable
         
@@ -163,9 +200,6 @@ class SymData:
         vector_name = var_types.values[0]
         return self.varmap_variable_type(vector_name=vector_name)
 
-    @property
-    def opt_map(self) -&gt; pd.DataFrame:
-        return self._optmap
 
     @property
     def sym_sets(self) -&gt; dict:
@@ -527,7 +561,7 @@ class SymData:
 
     def vector_variable_names(self, vector_name: str) -&gt; list[str]:
         &#34;&#34;&#34;
-        Arguments:
+       ### Arguments
         vector_name: the name of the vector
 
         Returns the SYM ordered fully articulated variable names for the
@@ -681,7 +715,7 @@ class SymData:
         TODO: Write unit tests for this functionality.
         Determine the length of various vectors used by the model.
 
-        Arguments:
+       ### Arguments
 
         self: The model
 
@@ -756,7 +790,7 @@ class SymData:
 
     def variable_units(self, vector_name: str, variable_name_prefix: str) -&gt; int:
         &#34;&#34;&#34;
-        Arguments:
+       ### Arguments
 
         variable_name_prefix: The prefix is the set of characters up to but not including the 
         round bracket that starts the full qualification of the variable based on the sets it is
@@ -1001,57 +1035,58 @@ class SymData:
 <span>(</span><span>configuration: <a title="gcubed.model_configuration.ModelConfiguration" href="model_configuration.html#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Properties:</p>
-<p>var_info: variable and parameter information</p>
-<p>var_map: more variable and parameter information</p>
-<p>opt_map: more information about how variable and parameters are to be organised.</p>
+<div class="desc"><h4 id="overview">Overview</h4>
 <p>The model equations are expressed in terms of various vectors of variables.
 Each vector is a different type of variable.
-Note the naming conventions for the lefthand side (LHS) variable vectors:
-a. x1l (the vector of state variables) X=S=State
-b. j1l (the vector of costate or jump variables) J=C=Costate
-c. zel (the endogenous variables LOGY, PRCT, PRID)
-d. z1l (the other endogenous variables)</p>
-<p>These 4 vectors of variables are functions of:
-1. x1r is right hand side (RHS) state variables
-2. j1r is RHS costate or jump variables
-3. zer is RHS endogenous variables LOGY, PRCT, PRID
-4. exz is RHS the lead expected ze variables
-5. yxr is RHS state variables lagged by 1 period
-6. yjr is RHS costate variables lagged by 1 period
-7. exo is exogenous variables (by definition only appearing on RHS)
-8. z1r is RHS other endogenous variables.</p></div>
+Note the naming conventions for the lefthand side (LHS) variable vectors:</p>
+<p>a. X1l (the vector of state variables) X=S=State
+b. J1l (the vector of costate or jump variables) J=C=Costate
+c. ZEL (the endogenous variables LOGY, PRCT, PRID)
+d. Z1L (the other endogenous variables)</p>
+<p>These 4 vectors of variables are functions of:</p>
+<ol>
+<li>X1r is right hand side (RHS) state variables</li>
+<li>J1r is RHS costate or jump variables</li>
+<li>ZER is RHS endogenous variables LOGY, PRCT, PRID</li>
+<li>EXZ is RHS the lead expected ze variables</li>
+<li>YXR is RHS state variables lagged by 1 period</li>
+<li>YJR is RHS costate variables lagged by 1 period</li>
+<li>EXO is exogenous variables (by definition only appearing on RHS)</li>
+<li>Z1R is RHS other endogenous variables.</li>
+</ol>
+<h3 id="constructor">Constructor</h3>
+<p>Loads and provides access to all of the information about the model contained
+in the SYM model definition.</p>
+<h3 id="arguments">Arguments</h3>
+<p>configuration: The configuration details for the model.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SymData:
     &#34;&#34;&#34;
-    Properties:
 
-    var_info: variable and parameter information
-
-    var_map: more variable and parameter information
-
-    opt_map: more information about how variable and parameters are to be organised.
+    #### Overview
 
     The model equations are expressed in terms of various vectors of variables.
     Each vector is a different type of variable.
     Note the naming conventions for the lefthand side (LHS) variable vectors:
-    a. x1l (the vector of state variables) X=S=State
-    b. j1l (the vector of costate or jump variables) J=C=Costate
-    c. zel (the endogenous variables LOGY, PRCT, PRID) 
-    d. z1l (the other endogenous variables)
+
+    a. X1l (the vector of state variables) X=S=State
+    b. J1l (the vector of costate or jump variables) J=C=Costate
+    c. ZEL (the endogenous variables LOGY, PRCT, PRID) 
+    d. Z1L (the other endogenous variables)
 
     These 4 vectors of variables are functions of:
-    1. x1r is right hand side (RHS) state variables
-    2. j1r is RHS costate or jump variables
-    3. zer is RHS endogenous variables LOGY, PRCT, PRID
-    4. exz is RHS the lead expected ze variables
-    5. yxr is RHS state variables lagged by 1 period
-    6. yjr is RHS costate variables lagged by 1 period
-    7. exo is exogenous variables (by definition only appearing on RHS)
-    8. z1r is RHS other endogenous variables.
+
+    1. X1r is right hand side (RHS) state variables
+    2. J1r is RHS costate or jump variables
+    3. ZER is RHS endogenous variables LOGY, PRCT, PRID
+    4. EXZ is RHS the lead expected ze variables
+    5. YXR is RHS state variables lagged by 1 period
+    6. YJR is RHS costate variables lagged by 1 period
+    7. EXO is exogenous variables (by definition only appearing on RHS)
+    8. Z1R is RHS other endogenous variables.
 
     &#34;&#34;&#34;
 
@@ -1064,15 +1099,20 @@ d. z1l (the other endogenous variables)</p>
     # Those vectors that are projected forward using the model
     _projection_vector_names: list[str] = [&#34;x1l&#34;, &#34;j1l&#34;, &#34;zel&#34;, &#34;z1l&#34;, &#34;exo&#34;]
 
-    def matching_rhs_vector_name(self, lhs_vector_name: str) -&gt; str:
-        &#34;&#34;&#34;
-        Arguments:
-        lhs_vector_name the name of the LHS vector.
-        Returns the matching RHS vector name, replacing the last character, l, with an r.
-        &#34;&#34;&#34;
-        return f&#34;{lhs_vector_name[0:2]}r&#34;
-
     def __init__(self, configuration: ModelConfiguration) -&gt; None:
+        &#34;&#34;&#34;
+
+        ### Constructor
+
+        Loads and provides access to all of the information about the model contained
+        in the SYM model definition.
+        
+        ### Arguments
+
+        configuration: The configuration details for the model.
+
+        &#34;&#34;&#34;
+        
         assert isinstance(configuration, ModelConfiguration)
         self._configuration = configuration
 
@@ -1093,18 +1133,50 @@ d. z1l (the other endogenous variables)</p>
 
     @property
     def configuration(self):
+        &#34;&#34;&#34;
+        The configuration details for the model.
+        &#34;&#34;&#34;
         return self._configuration
 
     @property
-    def var_info(self):
-        # TODO: Provide methods to look up the varinfo
+    def var_info(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        The dataframe of information about the model variables, loaded from the var_info file
+        produced by processing the SYM model definition with the SYM processor.
+        &#34;&#34;&#34;
         # TODO: Make sure parameter attributes in SYM appear in this dataset in the last column.
         return self._variable_information
 
     @property
     def var_map(self) -&gt; pd.DataFrame:
-        # TODO: Provide methods to look up the varmap
+        &#34;&#34;&#34;
+        The dataframe containing the map of the model variables, loaded from the var_map file
+        produced by processing the SYM model definition with the SYM processor.
+        &#34;&#34;&#34;
         return self._variable_map
+
+    @property
+    def opt_map(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        The dataframe containing the opt map of the model variables, loaded from the optmap file
+        produced by processing the SYM model definition with the SYM processor.
+
+        This information is not used by the Python implementation.
+        &#34;&#34;&#34;
+        return self._optmap
+
+    def matching_rhs_vector_name(self, lhs_vector_name: str) -&gt; str:
+        &#34;&#34;&#34;
+        
+       ### Arguments
+
+        lhs_vector_name: the name of the LHS vector.
+
+       ### Returns 
+        
+        the matching RHS vector name, replacing the last character, l, with an r.
+        &#34;&#34;&#34;
+        return f&#34;{lhs_vector_name[0:2]}r&#34;
 
     def varmap_variable_type(self, vector_name: str):
         &#34;&#34;&#34;
@@ -1133,7 +1205,7 @@ d. z1l (the other endogenous variables)</p>
 
     def projection_vector_for_variable(self, variable_name: str) -&gt; str:
         &#34;&#34;&#34;
-        Arguments:
+       ### Arguments
 
         vector_name: The fully qualified name of the variable
         
@@ -1145,9 +1217,6 @@ d. z1l (the other endogenous variables)</p>
         vector_name = var_types.values[0]
         return self.varmap_variable_type(vector_name=vector_name)
 
-    @property
-    def opt_map(self) -&gt; pd.DataFrame:
-        return self._optmap
 
     @property
     def sym_sets(self) -&gt; dict:
@@ -1509,7 +1578,7 @@ d. z1l (the other endogenous variables)</p>
 
     def vector_variable_names(self, vector_name: str) -&gt; list[str]:
         &#34;&#34;&#34;
-        Arguments:
+       ### Arguments
         vector_name: the name of the vector
 
         Returns the SYM ordered fully articulated variable names for the
@@ -1663,7 +1732,7 @@ d. z1l (the other endogenous variables)</p>
         TODO: Write unit tests for this functionality.
         Determine the length of various vectors used by the model.
 
-        Arguments:
+       ### Arguments
 
         self: The model
 
@@ -1738,7 +1807,7 @@ d. z1l (the other endogenous variables)</p>
 
     def variable_units(self, vector_name: str, variable_name_prefix: str) -&gt; int:
         &#34;&#34;&#34;
-        Arguments:
+       ### Arguments
 
         variable_name_prefix: The prefix is the set of characters up to but not including the 
         round bracket that starts the full qualification of the variable based on the sets it is
@@ -2111,13 +2180,16 @@ def combined_variable_summary(self) -&gt; pd.DataFrame:
 </dd>
 <dt id="gcubed.sym_data.SymData.configuration"><code class="name">var <span class="ident">configuration</span></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The configuration details for the model.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def configuration(self):
+    &#34;&#34;&#34;
+    The configuration details for the model.
+    &#34;&#34;&#34;
     return self._configuration</code></pre>
 </details>
 </dd>
@@ -2628,13 +2700,21 @@ def oil_sector_good(self) -&gt; str:
 </dd>
 <dt id="gcubed.sym_data.SymData.opt_map"><code class="name">var <span class="ident">opt_map</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The dataframe containing the opt map of the model variables, loaded from the optmap file
+produced by processing the SYM model definition with the SYM processor.</p>
+<p>This information is not used by the Python implementation.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def opt_map(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    The dataframe containing the opt map of the model variables, loaded from the optmap file
+    produced by processing the SYM model definition with the SYM processor.
+
+    This information is not used by the Python implementation.
+    &#34;&#34;&#34;
     return self._optmap</code></pre>
 </details>
 </dd>
@@ -2858,30 +2938,38 @@ def us_region(self) -&gt; str:
     return self.regions_members[0]</code></pre>
 </details>
 </dd>
-<dt id="gcubed.sym_data.SymData.var_info"><code class="name">var <span class="ident">var_info</span></code></dt>
+<dt id="gcubed.sym_data.SymData.var_info"><code class="name">var <span class="ident">var_info</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The dataframe of information about the model variables, loaded from the var_info file
+produced by processing the SYM model definition with the SYM processor.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def var_info(self):
-    # TODO: Provide methods to look up the varinfo
+def var_info(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    The dataframe of information about the model variables, loaded from the var_info file
+    produced by processing the SYM model definition with the SYM processor.
+    &#34;&#34;&#34;
     # TODO: Make sure parameter attributes in SYM appear in this dataset in the last column.
     return self._variable_information</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.var_map"><code class="name">var <span class="ident">var_map</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The dataframe containing the map of the model variables, loaded from the var_map file
+produced by processing the SYM model definition with the SYM processor.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def var_map(self) -&gt; pd.DataFrame:
-    # TODO: Provide methods to look up the varmap
+    &#34;&#34;&#34;
+    The dataframe containing the map of the model variables, loaded from the var_map file
+    produced by processing the SYM model definition with the SYM processor.
+    &#34;&#34;&#34;
     return self._variable_map</code></pre>
 </details>
 </dd>
@@ -3008,18 +3096,24 @@ the set qualifier in round brackets.</p></div>
 <span>def <span class="ident">matching_rhs_vector_name</span></span>(<span>self, lhs_vector_name: str) ‑> str</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Arguments:
-lhs_vector_name the name of the LHS vector.
-Returns the matching RHS vector name, replacing the last character, l, with an r.</p></div>
+<div class="desc"><h3 id="arguments">Arguments</h3>
+<p>lhs_vector_name: the name of the LHS vector.</p>
+<h3 id="returns">Returns</h3>
+<p>the matching RHS vector name, replacing the last character, l, with an r.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def matching_rhs_vector_name(self, lhs_vector_name: str) -&gt; str:
     &#34;&#34;&#34;
-    Arguments:
-    lhs_vector_name the name of the LHS vector.
-    Returns the matching RHS vector name, replacing the last character, l, with an r.
+    
+   ### Arguments
+
+    lhs_vector_name: the name of the LHS vector.
+
+   ### Returns 
+    
+    the matching RHS vector name, replacing the last character, l, with an r.
     &#34;&#34;&#34;
     return f&#34;{lhs_vector_name[0:2]}r&#34;</code></pre>
 </details>
@@ -3028,7 +3122,7 @@ Returns the matching RHS vector name, replacing the last character, l, with an r
 <span>def <span class="ident">projection_vector_for_variable</span></span>(<span>self, variable_name: str) ‑> str</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Arguments:</p>
+<div class="desc"><h3 id="arguments">Arguments</h3>
 <p>vector_name: The fully qualified name of the variable</p>
 <p>Returns the string ID of the projection vector that the variable is in.</p></div>
 <details class="source">
@@ -3037,7 +3131,7 @@ Returns the matching RHS vector name, replacing the last character, l, with an r
 </summary>
 <pre><code class="python">def projection_vector_for_variable(self, variable_name: str) -&gt; str:
     &#34;&#34;&#34;
-    Arguments:
+   ### Arguments
 
     vector_name: The fully qualified name of the variable
     
@@ -3103,7 +3197,7 @@ Returns the matching RHS vector name, replacing the last character, l, with an r
 <span>def <span class="ident">variable_units</span></span>(<span>self, vector_name: str, variable_name_prefix: str) ‑> int</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Arguments:</p>
+<div class="desc"><h3 id="arguments">Arguments</h3>
 <p>variable_name_prefix: The prefix is the set of characters up to but not including the
 round bracket that starts the full qualification of the variable based on the sets it is
 defined over.</p>
@@ -3117,7 +3211,7 @@ the set qualifier in round brackets.</p></div>
 </summary>
 <pre><code class="python">def variable_units(self, vector_name: str, variable_name_prefix: str) -&gt; int:
     &#34;&#34;&#34;
-    Arguments:
+   ### Arguments
 
     variable_name_prefix: The prefix is the set of characters up to but not including the 
     round bracket that starts the full qualification of the variable based on the sets it is
@@ -3223,8 +3317,8 @@ the varmap information associated with the vector.</p></div>
 <span>def <span class="ident">vector_variable_names</span></span>(<span>self, vector_name: str) ‑> list[str]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Arguments:
-vector_name: the name of the vector</p>
+<div class="desc"><h3 id="arguments">Arguments</h3>
+<p>vector_name: the name of the vector</p>
 <p>Returns the SYM ordered fully articulated variable names for the
 variables in the given model vector.</p>
 <p>This is useful for labelling the rows/columns of dataframes containing
@@ -3235,7 +3329,7 @@ linear model partial derivatives, and SSF matrices.</p></div>
 </summary>
 <pre><code class="python">def vector_variable_names(self, vector_name: str) -&gt; list[str]:
     &#34;&#34;&#34;
-    Arguments:
+   ### Arguments
     vector_name: the name of the vector
 
     Returns the SYM ordered fully articulated variable names for the

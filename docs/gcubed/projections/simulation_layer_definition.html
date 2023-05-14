@@ -46,7 +46,7 @@ class SimulationLayerDefinition(Base):
 
     def __init__(self, sym_data: SymData, name: str, event_year: int, data_filename: str, description: str) -&gt; None:
         &#34;&#34;&#34;
-        Arguments:
+       ### Arguments
 
         baseline_projections: The baseline projections that this simulation layer will be applied to.
         
@@ -151,7 +151,7 @@ class SimulationLayerDefinition(Base):
 </code></dt>
 <dd>
 <div class="desc"><p>Sets up and checks metadata about a simulation layer</p>
-<p>Arguments:</p>
+<h3 id="arguments">Arguments</h3>
 <p>baseline_projections: The baseline projections that this simulation layer will be applied to.</p>
 <p>name: the name of the simulation layer</p>
 <p>event_year: YYYY format integer that is the year that the simulation layer details became
@@ -169,7 +169,7 @@ known to the agents in the model.</p>
 
     def __init__(self, sym_data: SymData, name: str, event_year: int, data_filename: str, description: str) -&gt; None:
         &#34;&#34;&#34;
-        Arguments:
+       ### Arguments
 
         baseline_projections: The baseline projections that this simulation layer will be applied to.
         

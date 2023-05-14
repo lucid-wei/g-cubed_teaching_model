@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>gcubed.runner API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Contains the Runner class - used to run simple model experiments." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,11 +22,15 @@
 <h1 class="title">Module <code>gcubed.runner</code></h1>
 </header>
 <section id="section-intro">
+<p>Contains the Runner class - used to run simple model experiments.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import os
+<pre><code class="python">&#34;&#34;&#34;
+Contains the Runner class - used to run simple model experiments.
+&#34;&#34;&#34;
+import os
 import logging
 from posixpath import isabs
 import pandas as pd
@@ -34,9 +38,10 @@ from datetime import datetime
 from gcubed.base import Base
 from gcubed.model_configuration import ModelConfiguration
 from gcubed.model import Model
-from gcubed.linear_model import LinearModel
+from gcubed.linearisation.linear_model import LinearModel
 from gcubed.state_space_form import StateSpaceForm
 from gcubed.stable_manifold import StableManifold
+from gcubed.projections.projections import Projections
 from gcubed.projections.baseline_projections import BaselineProjections
 from gcubed.projections.simulation_experiment import SimulationExperiment
 from gcubed.projections.simulation_layer import SimulationLayer
@@ -45,7 +50,12 @@ class Runner(Base):
 
     def __init__(self, working_directory:str, configuration_file: str, experiment_design_file: str = None):
         &#34;&#34;&#34;
-        Arguments:
+
+        ### Overview
+
+        Simple way to run a simulation experiment with G-Cubed.
+
+       ### Arguments
         
         working_directory: The directory where the results and logs are to be stored.
 
@@ -103,7 +113,11 @@ class Runner(Base):
 
     def run(self):
         &#34;&#34;&#34;
+        ### Overview
+
         Do the actual work of running the model and generating results.
+        
+        Call this method after creating a Runner instance.
         &#34;&#34;&#34;
         
         # Load the model
@@ -143,7 +157,7 @@ class Runner(Base):
             last_simulation_layer.graphable_projections.to_csv(f&#34;{self.results_directory}/simulation_projections.csv&#34;)
 
             # Generate the CSV file containing the simulation deviation from baseline projections
-            experiment.graphable_deviation_projections(reference_projections=last_simulation_layer, comparison_projections=baseline_projections).to_csv(f&#34;{self.results_directory}/deviation_projections.csv&#34;)
+            Projections.get_differences_between_projections(new_projections=last_simulation_layer, original_projections=baseline_projections).to_csv(f&#34;{self.results_directory}/deviation_projections.csv&#34;)
 
             logging.info(f&#34;Simulation projections have been saved as CSV files in {self.results_directory}&#34;)</code></pre>
 </details>
@@ -162,8 +176,12 @@ class Runner(Base):
 <span>(</span><span>working_directory: str, configuration_file: str, experiment_design_file: str = None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Provide convenience methods for all classes.</p>
-<p>Arguments:</p>
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Provides convenience methods for all classes.</p>
+<p>All G-Cubed classes inherit from this base class.</p>
+<p>### Overview</p>
+<p>Simple way to run a simulation experiment with G-Cubed.</p>
+<h3 id="arguments">Arguments</h3>
 <p>working_directory: The directory where the results and logs are to be stored.</p>
 <p>configuration_file: The location of the configuration file, as an absolute path or relative to the
 specified working directory.</p>
@@ -179,7 +197,12 @@ the configuration file).</p>
 
     def __init__(self, working_directory:str, configuration_file: str, experiment_design_file: str = None):
         &#34;&#34;&#34;
-        Arguments:
+
+        ### Overview
+
+        Simple way to run a simulation experiment with G-Cubed.
+
+       ### Arguments
         
         working_directory: The directory where the results and logs are to be stored.
 
@@ -237,7 +260,11 @@ the configuration file).</p>
 
     def run(self):
         &#34;&#34;&#34;
+        ### Overview
+
         Do the actual work of running the model and generating results.
+        
+        Call this method after creating a Runner instance.
         &#34;&#34;&#34;
         
         # Load the model
@@ -277,7 +304,7 @@ the configuration file).</p>
             last_simulation_layer.graphable_projections.to_csv(f&#34;{self.results_directory}/simulation_projections.csv&#34;)
 
             # Generate the CSV file containing the simulation deviation from baseline projections
-            experiment.graphable_deviation_projections(reference_projections=last_simulation_layer, comparison_projections=baseline_projections).to_csv(f&#34;{self.results_directory}/deviation_projections.csv&#34;)
+            Projections.get_differences_between_projections(new_projections=last_simulation_layer, original_projections=baseline_projections).to_csv(f&#34;{self.results_directory}/deviation_projections.csv&#34;)
 
             logging.info(f&#34;Simulation projections have been saved as CSV files in {self.results_directory}&#34;)</code></pre>
 </details>
@@ -291,14 +318,20 @@ the configuration file).</p>
 <span>def <span class="ident">run</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Do the actual work of running the model and generating results.</p></div>
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Do the actual work of running the model and generating results.</p>
+<p>Call this method after creating a Runner instance.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def run(self):
     &#34;&#34;&#34;
+    ### Overview
+
     Do the actual work of running the model and generating results.
+    
+    Call this method after creating a Runner instance.
     &#34;&#34;&#34;
     
     # Load the model
@@ -338,7 +371,7 @@ the configuration file).</p>
         last_simulation_layer.graphable_projections.to_csv(f&#34;{self.results_directory}/simulation_projections.csv&#34;)
 
         # Generate the CSV file containing the simulation deviation from baseline projections
-        experiment.graphable_deviation_projections(reference_projections=last_simulation_layer, comparison_projections=baseline_projections).to_csv(f&#34;{self.results_directory}/deviation_projections.csv&#34;)
+        Projections.get_differences_between_projections(new_projections=last_simulation_layer, original_projections=baseline_projections).to_csv(f&#34;{self.results_directory}/deviation_projections.csv&#34;)
 
         logging.info(f&#34;Simulation projections have been saved as CSV files in {self.results_directory}&#34;)</code></pre>
 </details>

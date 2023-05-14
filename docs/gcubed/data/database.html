@@ -45,26 +45,20 @@ from gcubed.sym_data import SymData
 
 class Database(Base):
     &#34;&#34;&#34;
-    Encapsulates all of the information about the database of values for all variables across a range of years.
-    Properties:
-        
-        configuration: the model configuration
-        
-        sym_data: the SYM processor output
-        
-        data: the database itself
 
-        variables: the details for each variable in the database
+    The database class is used directly but it is also 
+    subclassed to support specific data usage scenarios.
+
+    It encapsulates all of the information about the database 
+    of values for all variables across a range of years.
     
     &#34;&#34;&#34;
 
     def __init__(self, sym_data: SymData) -&gt; None:
 
-
         assert sym_data is not None
         assert isinstance(sym_data, SymData)
         self._sym_data = sym_data
-        self._configuration = sym_data.configuration
         self._base_year = self.configuration.base_year
         logging.info(f&#34;Loading a database from {self.configuration.database_file}&#34;)
         self.__load_data()
@@ -72,42 +66,73 @@ class Database(Base):
 
     @property
     def sym_data(self) -&gt; SymData:
+        &#34;&#34;&#34;
+        The SYM processor output
+        &#34;&#34;&#34;
         return self._sym_data
 
     @property
     def configuration(self) -&gt; ModelConfiguration:
-        return self._configuration
+        &#34;&#34;&#34;
+        The model configuration
+        &#34;&#34;&#34;
+        return self.sym_data.configuration
 
     @property
     def variables(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Metadata about the variables, contained in a dataframe 
+        with columns for each type of metadata and with the rows indexed by variable&#34;&#34;&#34;
         return self._variables
 
     @property
     def data(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        The data itself, contained in a dataframe with columns 
+        indexed by 4 digit (YYYY) year strings and with the rows indexed by variable
+        names.
+
+        &#34;&#34;&#34;
         return self._data
 
     @property
     def variables_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of variables in the database.
+        &#34;&#34;&#34;
         return len(self.variables.index)
 
     @property
     def years_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of years in the database.
+        &#34;&#34;&#34;
         return len(self.data.columns)
 
     @property
-    def years_column_names(self) -&gt; int:
+    def years_column_names(self) -&gt; pd.Index:
+        &#34;&#34;&#34;
+        The year column names for the data.
+        &#34;&#34;&#34;
         return self.data.columns
 
     @property
     def base_year(self) -&gt; int:
+        &#34;&#34;&#34;
+        The (YYYY) format base year for the data. All indexes in the database
+        are based in the specified year.  Databases (but not database subclasses)
+        can be rebased to different years.
+        &#34;&#34;&#34;
         return self._base_year
 
     def __load_data(self):
         &#34;&#34;&#34;
-        Import the data from the CSV file, splitting it into 
-        the variable details and the data itself.
+        ### Overview
+
+        Import the data from the database CSV file, splitting it into 
+        the variable metadata and the data itself.
         &#34;&#34;&#34;
-        filename = self._configuration.database_file
+        filename = self.configuration.database_file
         assert os.path.isfile(filename)
         (self._variables, self._data) = self.load_data(filename)
         self._data = self._data.astype(float)
@@ -115,7 +140,7 @@ class Database(Base):
         self._variables[&#34;order&#34;].astype(&#34;int&#34;)
 
     def __validate(self):
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;        
         Raise an exception if the calibration data is invalid.
 
         TODO: Add check that the variable units match the units listed in the sym_data summary.
@@ -133,12 +158,9 @@ class Database(Base):
         &#34;&#34;&#34;
         assert self.data.loc[self.data.index.str.contains(CONSTANTS.PRID_PREFIX), str(self.base_year)].sum() == 0
 
-
-
     def export_to_csv(self, filename:str):
         &#34;&#34;&#34;
-        Export the database to a CSV file, 
-        making sure that the file extension is &#39;.csv&#39;.
+        Export the database to a CSV file, making sure that the file extension is &#39;.csv&#39;.
         &#34;&#34;&#34;
         if filename.endswith(&#39;.csv&#39;):
             np.savetxt(filename,self.data, delimiter=&#34;,&#34;)                
@@ -147,15 +169,15 @@ class Database(Base):
 
     def rebase(self, new_base_year: int):
         &#34;&#34;&#34;
-        Purpose: Rebase a database so indices have a new base year.
+        Rebase a database so indices have a new base year.
         This can be used to convert the database used for calibration
         to a database with the base year equal to the start year
         for projections (eg. 2011 to 2018).
 
         Note that this script draws on the approach in the G-Cubed utilities/rebase.ox script.
 
-        Arguments:
-            new_base_year: the new year to be applied in the output file, again in YYYY integer format
+       ### Arguments
+            new_base_year (int): a YYYY formatted new base year for the database.
         &#34;&#34;&#34;
 
         # Adjust the price indices
@@ -184,7 +206,7 @@ class Database(Base):
         This can also be used for rebasing lead and lag price and wage indices
         by simply modifying the new_base_year appropriately, adding 1 for a lag
         variable and subtracting 1 for a lead variable.
-        Arguments:
+       ### Arguments
             variablePrefix: The text name of the variable to be rebased, up to
             but not including the component of the variable name in round brackets ().
             new_base_year: the new year to be applied in the output file, again in YYYY integer format
@@ -199,7 +221,7 @@ class Database(Base):
         This can also be used for rebasing lead and lag indices
         by simply modifying the new_base_year appropriately, adding 1 for a lag
         variable and subtracting 1 for a lead variable.
-        Arguments:
+       ### Arguments
             variablePrefix: The text name of the variable to be rebased, up to
             but not including the component of the variable name in round brackets ().
             new_base_year: the new year to be applied in the output file, again in YYYY integer format
@@ -213,8 +235,9 @@ class Database(Base):
         Does an index rebase, changing the base year for real GDP in each region.
         This updates the LGDPR and YRATR variables.
 
-        Arguments:
-            new_base_year: the new year to be applied in the output file, in YYYY integer format
+       ### Arguments
+            new_base_year (int): the new year to be applied 
+            in the output file, in YYYY integer format
         &#34;&#34;&#34;
         real_gdp_row_indices = self.data.index.str.startswith(f&#34;{CONSTANTS.REAL_GDP_PREFIX}(&#34;)
         real_gdp = self.data.loc[real_gdp_row_indices, :]
@@ -230,29 +253,48 @@ class Database(Base):
 
     def rhs_vector_value(self, vector_name: str, year: int, use_neutral_real_interest_rate=False) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Arguments:
 
-        vector_name: The name of the vector to set the values for.
+        ### Overview
 
-        year: The year to use when populating the RHS vectors.
+        Retrieves data from the database for all of the variables in a specific RHS vector in the model.
+        The data is retrieved for the specified year. 
+        
+        Note that some state variables have their data retrieved
+        for the following year. 
+
+        Note also that interest rate values can be overridden by the globally defined neutral real interest rate
+        that is set in the model configuration file.
+
+        The implementation steps are:
+
+        1. get the rows for the variables of the given type in varmap.
+        2. get the names of the variables in those rows from varmap.
+        3. use those names to select the data from the calibration year database.
+        4. set the values for those variables in the appropriate places in the vector to that data for that year
+        using the indices specified in the varmap data.
+
+
+       ### Arguments
+
+        `vector_name`: The name of the vector to get the values for. This must be a RHS vector listed in
+        the model&#39;s RHS vector names by the SymData class.
+
+        `year`: The YYYY format year to get data for when populating the RHS vectors.
         e.g. 2011 implies linearise model equations around the values
         of the model variables in 2011 (or in adjacent years for leads/lags).
 
-        use_neutral_real_interest_rate: boolean set to true if interest rates are to be overridden with the
-        model configuration neutral real interest rate.
+        `use_neutral_real_interest_rate`: True if interest rates are to be overridden with the
+        model configuration neutral real interest rate and False otherwise.
 
-        Returns a numpy array with values for the RHS vector that are associated with the requested year or
-        none if the vector has zero length.
-
-        # Get the rows for the variables of the given type in varmap.
-        # Get the names of the variables in those rows from varmap.
-        # Use those names to select the data from the calibration year database.
-        # Set the values for those variables in the appropriate places in the vector to that data for that year
-        # using the indices specified in the varmap data.
+       ### Returns
+          
+        A column vector with the requested values for the RHS vector or
+        `None` if the vector has zero length.
 
         &#34;&#34;&#34;
-        if not self.sym_data.vector_length(vector_name=vector_name):
-            return None
+
+        if not vector_name in self.sym_data.rhs_vector_names:
+            raise Exception(f&#34;{vector_name} is not a RHS vector in the model. It should be one of {self.sym_data.rhs_vector_names}&#34;)
 
         vector_value: np.ndarray = np.zeros(shape=(self.sym_data.vector_length(vector_name=vector_name), 1), dtype=float)
         match vector_name:
@@ -313,7 +355,7 @@ class Database(Base):
 
     def get_data_and_varmap_indices(self, vector_name: str, year: int) -&gt; tuple:
         &#34;&#34;&#34;
-        Arguments:
+       ### Arguments
 
         vector_name: The three character name of the vector that is to be populated 
         with data.
@@ -349,7 +391,7 @@ class Database(Base):
         &#34;&#34;&#34;
         Gets matching data for the given variable prefix for a given vector.
 
-        Arguments:
+       ### Arguments
 
         variable_prefix: The prefix for the variable name
 
@@ -367,10 +409,32 @@ class Database(Base):
 
         return (map.sequence.to_list(), result.reshape((len(result), 1)))
 
-    def get_data(self, name_regular_expression: str, years: list[int]) -&gt; pd.DataFrame:
+    def get_data(self, name_regular_expression: str, years: list) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        Get a copy of the data for the specified year for all variables with names matching the given regular expression
-        where the names are matched against the row index (labels) in the calibration database.
+
+        Gets data for the set of variables with variable names that match the given regular
+        expression.
+
+       ### Arguments
+
+        name_regular_expression (str): The variable selection criteria. It can be any 
+        regular expression that works with the Python regex package. 
+        
+        To get select all variables with a name that starts with INF, use &#34;^INF&#34;.
+
+        To get the specific variable, INFL(UU), use &#34;^INFL\(UU\)&#34;.
+
+        To get the the INFL variables for all regions, use &#34;^INFL\(&#34;.
+
+        years (list): the list of years for which the data is to be retrieved. Note that
+        this can be a list of integer values or a list of strings.
+
+       ### Returns
+        
+        pd.DataFrame: a copy of the data for the specified year for 
+        all variables with names matching the given regular expression
+        where the names are matched against the row index (labels) in 
+        the database.
         &#34;&#34;&#34;
         selected_rows = self.data.index.str.contains(name_regular_expression)
         if not years:
@@ -388,7 +452,14 @@ class Database(Base):
 
     def update_data(self, new_data: pd.DataFrame):
         &#34;&#34;&#34;
-        Replace the existing data property with a new dataframe.
+        Replace the existing data property with a new dataframe. All of the data is replaced.
+
+        This is useful if you need to do projections and then treat those projections as actual data
+        in a subsequent step in your analysis pipeline.
+
+       ### Arguments
+
+        new_data (pd.DataFrame): The new dataframe to use.
         &#34;&#34;&#34;
         if not self._data.index.equals(new_data.index):
             raise Exception(&#34;The new database does not describe the same set of variables as the old database.&#34;)
@@ -396,18 +467,25 @@ class Database(Base):
 
     def has_data(self, year:int) -&gt; bool:
         &#34;&#34;&#34;
-        Arguments:
+        Used to check if there is a column of data in the database for the specified year.
 
-        year: The 4 digit integer value of the year (YYYY).
+        Args:
 
-        Returns true if the database has data for the specified year.
+        year (int): The 4 digit integer value of the year (YYYY).
+
+       ### Returns
+        bool:  True if the database has data for the specified year and False otherwise
         &#34;&#34;&#34;
         return str(year) in self.data.columns
 
     @property 
     def has_data_for_all_projection_years(self) -&gt; bool:
         &#34;&#34;&#34;
-        Returns true if the database has data for the last projection year.
+        This property is used when determining whether the database has been populated
+        with projections, in which case those projections provide values, now stored 
+        as data, out to the end year of the projections.
+
+        bool: True if the database has data for the last projection year.
         &#34;&#34;&#34;
         return self.has_data(year = self.configuration.end_year)</code></pre>
 </details>
@@ -426,38 +504,33 @@ class Database(Base):
 <span>(</span><span>sym_data: SymData)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Encapsulates all of the information about the database of values for all variables across a range of years.</p>
-<h2 id="properties">Properties</h2>
-<p>configuration: the model configuration</p>
-<p>sym_data: the SYM processor output</p>
-<p>data: the database itself</p>
-<p>variables: the details for each variable in the database</p></div>
+<div class="desc"><p>The database class is used directly but it is also
+subclassed to support specific data usage scenarios.</p>
+<p>It encapsulates all of the information about the database
+of values for all variables across a range of years.</p>
+<h3 id="constructor">Constructor</h3>
+<p>Does constructor operations required by all classes that inherit from this base class.</p>
+<p>These currently just set up numpy array print options.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Database(Base):
     &#34;&#34;&#34;
-    Encapsulates all of the information about the database of values for all variables across a range of years.
-    Properties:
-        
-        configuration: the model configuration
-        
-        sym_data: the SYM processor output
-        
-        data: the database itself
 
-        variables: the details for each variable in the database
+    The database class is used directly but it is also 
+    subclassed to support specific data usage scenarios.
+
+    It encapsulates all of the information about the database 
+    of values for all variables across a range of years.
     
     &#34;&#34;&#34;
 
     def __init__(self, sym_data: SymData) -&gt; None:
 
-
         assert sym_data is not None
         assert isinstance(sym_data, SymData)
         self._sym_data = sym_data
-        self._configuration = sym_data.configuration
         self._base_year = self.configuration.base_year
         logging.info(f&#34;Loading a database from {self.configuration.database_file}&#34;)
         self.__load_data()
@@ -465,42 +538,73 @@ class Database(Base):
 
     @property
     def sym_data(self) -&gt; SymData:
+        &#34;&#34;&#34;
+        The SYM processor output
+        &#34;&#34;&#34;
         return self._sym_data
 
     @property
     def configuration(self) -&gt; ModelConfiguration:
-        return self._configuration
+        &#34;&#34;&#34;
+        The model configuration
+        &#34;&#34;&#34;
+        return self.sym_data.configuration
 
     @property
     def variables(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Metadata about the variables, contained in a dataframe 
+        with columns for each type of metadata and with the rows indexed by variable&#34;&#34;&#34;
         return self._variables
 
     @property
     def data(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        The data itself, contained in a dataframe with columns 
+        indexed by 4 digit (YYYY) year strings and with the rows indexed by variable
+        names.
+
+        &#34;&#34;&#34;
         return self._data
 
     @property
     def variables_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of variables in the database.
+        &#34;&#34;&#34;
         return len(self.variables.index)
 
     @property
     def years_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of years in the database.
+        &#34;&#34;&#34;
         return len(self.data.columns)
 
     @property
-    def years_column_names(self) -&gt; int:
+    def years_column_names(self) -&gt; pd.Index:
+        &#34;&#34;&#34;
+        The year column names for the data.
+        &#34;&#34;&#34;
         return self.data.columns
 
     @property
     def base_year(self) -&gt; int:
+        &#34;&#34;&#34;
+        The (YYYY) format base year for the data. All indexes in the database
+        are based in the specified year.  Databases (but not database subclasses)
+        can be rebased to different years.
+        &#34;&#34;&#34;
         return self._base_year
 
     def __load_data(self):
         &#34;&#34;&#34;
-        Import the data from the CSV file, splitting it into 
-        the variable details and the data itself.
+        ### Overview
+
+        Import the data from the database CSV file, splitting it into 
+        the variable metadata and the data itself.
         &#34;&#34;&#34;
-        filename = self._configuration.database_file
+        filename = self.configuration.database_file
         assert os.path.isfile(filename)
         (self._variables, self._data) = self.load_data(filename)
         self._data = self._data.astype(float)
@@ -508,7 +612,7 @@ class Database(Base):
         self._variables[&#34;order&#34;].astype(&#34;int&#34;)
 
     def __validate(self):
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;        
         Raise an exception if the calibration data is invalid.
 
         TODO: Add check that the variable units match the units listed in the sym_data summary.
@@ -526,12 +630,9 @@ class Database(Base):
         &#34;&#34;&#34;
         assert self.data.loc[self.data.index.str.contains(CONSTANTS.PRID_PREFIX), str(self.base_year)].sum() == 0
 
-
-
     def export_to_csv(self, filename:str):
         &#34;&#34;&#34;
-        Export the database to a CSV file, 
-        making sure that the file extension is &#39;.csv&#39;.
+        Export the database to a CSV file, making sure that the file extension is &#39;.csv&#39;.
         &#34;&#34;&#34;
         if filename.endswith(&#39;.csv&#39;):
             np.savetxt(filename,self.data, delimiter=&#34;,&#34;)                
@@ -540,15 +641,15 @@ class Database(Base):
 
     def rebase(self, new_base_year: int):
         &#34;&#34;&#34;
-        Purpose: Rebase a database so indices have a new base year.
+        Rebase a database so indices have a new base year.
         This can be used to convert the database used for calibration
         to a database with the base year equal to the start year
         for projections (eg. 2011 to 2018).
 
         Note that this script draws on the approach in the G-Cubed utilities/rebase.ox script.
 
-        Arguments:
-            new_base_year: the new year to be applied in the output file, again in YYYY integer format
+       ### Arguments
+            new_base_year (int): a YYYY formatted new base year for the database.
         &#34;&#34;&#34;
 
         # Adjust the price indices
@@ -577,7 +678,7 @@ class Database(Base):
         This can also be used for rebasing lead and lag price and wage indices
         by simply modifying the new_base_year appropriately, adding 1 for a lag
         variable and subtracting 1 for a lead variable.
-        Arguments:
+       ### Arguments
             variablePrefix: The text name of the variable to be rebased, up to
             but not including the component of the variable name in round brackets ().
             new_base_year: the new year to be applied in the output file, again in YYYY integer format
@@ -592,7 +693,7 @@ class Database(Base):
         This can also be used for rebasing lead and lag indices
         by simply modifying the new_base_year appropriately, adding 1 for a lag
         variable and subtracting 1 for a lead variable.
-        Arguments:
+       ### Arguments
             variablePrefix: The text name of the variable to be rebased, up to
             but not including the component of the variable name in round brackets ().
             new_base_year: the new year to be applied in the output file, again in YYYY integer format
@@ -606,8 +707,9 @@ class Database(Base):
         Does an index rebase, changing the base year for real GDP in each region.
         This updates the LGDPR and YRATR variables.
 
-        Arguments:
-            new_base_year: the new year to be applied in the output file, in YYYY integer format
+       ### Arguments
+            new_base_year (int): the new year to be applied 
+            in the output file, in YYYY integer format
         &#34;&#34;&#34;
         real_gdp_row_indices = self.data.index.str.startswith(f&#34;{CONSTANTS.REAL_GDP_PREFIX}(&#34;)
         real_gdp = self.data.loc[real_gdp_row_indices, :]
@@ -623,29 +725,48 @@ class Database(Base):
 
     def rhs_vector_value(self, vector_name: str, year: int, use_neutral_real_interest_rate=False) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Arguments:
 
-        vector_name: The name of the vector to set the values for.
+        ### Overview
 
-        year: The year to use when populating the RHS vectors.
+        Retrieves data from the database for all of the variables in a specific RHS vector in the model.
+        The data is retrieved for the specified year. 
+        
+        Note that some state variables have their data retrieved
+        for the following year. 
+
+        Note also that interest rate values can be overridden by the globally defined neutral real interest rate
+        that is set in the model configuration file.
+
+        The implementation steps are:
+
+        1. get the rows for the variables of the given type in varmap.
+        2. get the names of the variables in those rows from varmap.
+        3. use those names to select the data from the calibration year database.
+        4. set the values for those variables in the appropriate places in the vector to that data for that year
+        using the indices specified in the varmap data.
+
+
+       ### Arguments
+
+        `vector_name`: The name of the vector to get the values for. This must be a RHS vector listed in
+        the model&#39;s RHS vector names by the SymData class.
+
+        `year`: The YYYY format year to get data for when populating the RHS vectors.
         e.g. 2011 implies linearise model equations around the values
         of the model variables in 2011 (or in adjacent years for leads/lags).
 
-        use_neutral_real_interest_rate: boolean set to true if interest rates are to be overridden with the
-        model configuration neutral real interest rate.
+        `use_neutral_real_interest_rate`: True if interest rates are to be overridden with the
+        model configuration neutral real interest rate and False otherwise.
 
-        Returns a numpy array with values for the RHS vector that are associated with the requested year or
-        none if the vector has zero length.
-
-        # Get the rows for the variables of the given type in varmap.
-        # Get the names of the variables in those rows from varmap.
-        # Use those names to select the data from the calibration year database.
-        # Set the values for those variables in the appropriate places in the vector to that data for that year
-        # using the indices specified in the varmap data.
+       ### Returns
+          
+        A column vector with the requested values for the RHS vector or
+        `None` if the vector has zero length.
 
         &#34;&#34;&#34;
-        if not self.sym_data.vector_length(vector_name=vector_name):
-            return None
+
+        if not vector_name in self.sym_data.rhs_vector_names:
+            raise Exception(f&#34;{vector_name} is not a RHS vector in the model. It should be one of {self.sym_data.rhs_vector_names}&#34;)
 
         vector_value: np.ndarray = np.zeros(shape=(self.sym_data.vector_length(vector_name=vector_name), 1), dtype=float)
         match vector_name:
@@ -706,7 +827,7 @@ class Database(Base):
 
     def get_data_and_varmap_indices(self, vector_name: str, year: int) -&gt; tuple:
         &#34;&#34;&#34;
-        Arguments:
+       ### Arguments
 
         vector_name: The three character name of the vector that is to be populated 
         with data.
@@ -742,7 +863,7 @@ class Database(Base):
         &#34;&#34;&#34;
         Gets matching data for the given variable prefix for a given vector.
 
-        Arguments:
+       ### Arguments
 
         variable_prefix: The prefix for the variable name
 
@@ -760,10 +881,32 @@ class Database(Base):
 
         return (map.sequence.to_list(), result.reshape((len(result), 1)))
 
-    def get_data(self, name_regular_expression: str, years: list[int]) -&gt; pd.DataFrame:
+    def get_data(self, name_regular_expression: str, years: list) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        Get a copy of the data for the specified year for all variables with names matching the given regular expression
-        where the names are matched against the row index (labels) in the calibration database.
+
+        Gets data for the set of variables with variable names that match the given regular
+        expression.
+
+       ### Arguments
+
+        name_regular_expression (str): The variable selection criteria. It can be any 
+        regular expression that works with the Python regex package. 
+        
+        To get select all variables with a name that starts with INF, use &#34;^INF&#34;.
+
+        To get the specific variable, INFL(UU), use &#34;^INFL\(UU\)&#34;.
+
+        To get the the INFL variables for all regions, use &#34;^INFL\(&#34;.
+
+        years (list): the list of years for which the data is to be retrieved. Note that
+        this can be a list of integer values or a list of strings.
+
+       ### Returns
+        
+        pd.DataFrame: a copy of the data for the specified year for 
+        all variables with names matching the given regular expression
+        where the names are matched against the row index (labels) in 
+        the database.
         &#34;&#34;&#34;
         selected_rows = self.data.index.str.contains(name_regular_expression)
         if not years:
@@ -781,7 +924,14 @@ class Database(Base):
 
     def update_data(self, new_data: pd.DataFrame):
         &#34;&#34;&#34;
-        Replace the existing data property with a new dataframe.
+        Replace the existing data property with a new dataframe. All of the data is replaced.
+
+        This is useful if you need to do projections and then treat those projections as actual data
+        in a subsequent step in your analysis pipeline.
+
+       ### Arguments
+
+        new_data (pd.DataFrame): The new dataframe to use.
         &#34;&#34;&#34;
         if not self._data.index.equals(new_data.index):
             raise Exception(&#34;The new database does not describe the same set of variables as the old database.&#34;)
@@ -789,18 +939,25 @@ class Database(Base):
 
     def has_data(self, year:int) -&gt; bool:
         &#34;&#34;&#34;
-        Arguments:
+        Used to check if there is a column of data in the database for the specified year.
 
-        year: The 4 digit integer value of the year (YYYY).
+        Args:
 
-        Returns true if the database has data for the specified year.
+        year (int): The 4 digit integer value of the year (YYYY).
+
+       ### Returns
+        bool:  True if the database has data for the specified year and False otherwise
         &#34;&#34;&#34;
         return str(year) in self.data.columns
 
     @property 
     def has_data_for_all_projection_years(self) -&gt; bool:
         &#34;&#34;&#34;
-        Returns true if the database has data for the last projection year.
+        This property is used when determining whether the database has been populated
+        with projections, in which case those projections provide values, now stored 
+        as data, out to the end year of the projections.
+
+        bool: True if the database has data for the last projection year.
         &#34;&#34;&#34;
         return self.has_data(year = self.configuration.end_year)</code></pre>
 </details>
@@ -817,43 +974,65 @@ class Database(Base):
 <dl>
 <dt id="gcubed.data.database.Database.base_year"><code class="name">var <span class="ident">base_year</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The (YYYY) format base year for the data. All indexes in the database
+are based in the specified year.
+Databases (but not database subclasses)
+can be rebased to different years.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def base_year(self) -&gt; int:
+    &#34;&#34;&#34;
+    The (YYYY) format base year for the data. All indexes in the database
+    are based in the specified year.  Databases (but not database subclasses)
+    can be rebased to different years.
+    &#34;&#34;&#34;
     return self._base_year</code></pre>
 </details>
 </dd>
 <dt id="gcubed.data.database.Database.configuration"><code class="name">var <span class="ident">configuration</span> : <a title="gcubed.model_configuration.ModelConfiguration" href="../model_configuration.html#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The model configuration</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def configuration(self) -&gt; ModelConfiguration:
-    return self._configuration</code></pre>
+    &#34;&#34;&#34;
+    The model configuration
+    &#34;&#34;&#34;
+    return self.sym_data.configuration</code></pre>
 </details>
 </dd>
 <dt id="gcubed.data.database.Database.data"><code class="name">var <span class="ident">data</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The data itself, contained in a dataframe with columns
+indexed by 4 digit (YYYY) year strings and with the rows indexed by variable
+names.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def data(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    The data itself, contained in a dataframe with columns 
+    indexed by 4 digit (YYYY) year strings and with the rows indexed by variable
+    names.
+
+    &#34;&#34;&#34;
     return self._data</code></pre>
 </details>
 </dd>
 <dt id="gcubed.data.database.Database.has_data_for_all_projection_years"><code class="name">var <span class="ident">has_data_for_all_projection_years</span> : bool</code></dt>
 <dd>
-<div class="desc"><p>Returns true if the database has data for the last projection year.</p></div>
+<div class="desc"><p>This property is used when determining whether the database has been populated
+with projections, in which case those projections provide values, now stored
+as data, out to the end year of the projections.</p>
+<p>bool: True if the database has data for the last projection year.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -861,68 +1040,88 @@ def data(self) -&gt; pd.DataFrame:
 <pre><code class="python">@property 
 def has_data_for_all_projection_years(self) -&gt; bool:
     &#34;&#34;&#34;
-    Returns true if the database has data for the last projection year.
+    This property is used when determining whether the database has been populated
+    with projections, in which case those projections provide values, now stored 
+    as data, out to the end year of the projections.
+
+    bool: True if the database has data for the last projection year.
     &#34;&#34;&#34;
     return self.has_data(year = self.configuration.end_year)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.data.database.Database.sym_data"><code class="name">var <span class="ident">sym_data</span> : <a title="gcubed.sym_data.SymData" href="../sym_data.html#gcubed.sym_data.SymData">SymData</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The SYM processor output</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def sym_data(self) -&gt; SymData:
+    &#34;&#34;&#34;
+    The SYM processor output
+    &#34;&#34;&#34;
     return self._sym_data</code></pre>
 </details>
 </dd>
 <dt id="gcubed.data.database.Database.variables"><code class="name">var <span class="ident">variables</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Metadata about the variables, contained in a dataframe
+with columns for each type of metadata and with the rows indexed by variable</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def variables(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Metadata about the variables, contained in a dataframe 
+    with columns for each type of metadata and with the rows indexed by variable&#34;&#34;&#34;
     return self._variables</code></pre>
 </details>
 </dd>
 <dt id="gcubed.data.database.Database.variables_count"><code class="name">var <span class="ident">variables_count</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The number of variables in the database.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def variables_count(self) -&gt; int:
+    &#34;&#34;&#34;
+    The number of variables in the database.
+    &#34;&#34;&#34;
     return len(self.variables.index)</code></pre>
 </details>
 </dd>
-<dt id="gcubed.data.database.Database.years_column_names"><code class="name">var <span class="ident">years_column_names</span> : int</code></dt>
+<dt id="gcubed.data.database.Database.years_column_names"><code class="name">var <span class="ident">years_column_names</span> : pandas.core.indexes.base.Index</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The year column names for the data.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def years_column_names(self) -&gt; int:
+def years_column_names(self) -&gt; pd.Index:
+    &#34;&#34;&#34;
+    The year column names for the data.
+    &#34;&#34;&#34;
     return self.data.columns</code></pre>
 </details>
 </dd>
 <dt id="gcubed.data.database.Database.years_count"><code class="name">var <span class="ident">years_count</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The number of years in the database.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def years_count(self) -&gt; int:
+    &#34;&#34;&#34;
+    The number of years in the database.
+    &#34;&#34;&#34;
     return len(self.data.columns)</code></pre>
 </details>
 </dd>
@@ -933,16 +1132,14 @@ def years_count(self) -&gt; int:
 <span>def <span class="ident">export_to_csv</span></span>(<span>self, filename: str)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Export the database to a CSV file,
-making sure that the file extension is '.csv'.</p></div>
+<div class="desc"><p>Export the database to a CSV file, making sure that the file extension is '.csv'.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def export_to_csv(self, filename:str):
     &#34;&#34;&#34;
-    Export the database to a CSV file, 
-    making sure that the file extension is &#39;.csv&#39;.
+    Export the database to a CSV file, making sure that the file extension is &#39;.csv&#39;.
     &#34;&#34;&#34;
     if filename.endswith(&#39;.csv&#39;):
         np.savetxt(filename,self.data, delimiter=&#34;,&#34;)                
@@ -951,19 +1148,54 @@ making sure that the file extension is '.csv'.</p></div>
 </details>
 </dd>
 <dt id="gcubed.data.database.Database.get_data"><code class="name flex">
-<span>def <span class="ident">get_data</span></span>(<span>self, name_regular_expression: str, years: list[int]) ‑> pandas.core.frame.DataFrame</span>
+<span>def <span class="ident">get_data</span></span>(<span>self, name_regular_expression: str, years: list) ‑> pandas.core.frame.DataFrame</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Get a copy of the data for the specified year for all variables with names matching the given regular expression
-where the names are matched against the row index (labels) in the calibration database.</p></div>
+<div class="desc"><p>Gets data for the set of variables with variable names that match the given regular
+expression.</p>
+<h3 id="arguments">Arguments</h3>
+<p>name_regular_expression (str): The variable selection criteria. It can be any
+regular expression that works with the Python regex package. </p>
+<p>To get select all variables with a name that starts with INF, use "^INF".</p>
+<p>To get the specific variable, INFL(UU), use "^INFL(UU)".</p>
+<p>To get the the INFL variables for all regions, use "^INFL(".</p>
+<p>years (list): the list of years for which the data is to be retrieved. Note that
+this can be a list of integer values or a list of strings.</p>
+<h3 id="returns">Returns</h3>
+<p>pd.DataFrame: a copy of the data for the specified year for
+all variables with names matching the given regular expression
+where the names are matched against the row index (labels) in
+the database.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_data(self, name_regular_expression: str, years: list[int]) -&gt; pd.DataFrame:
+<pre><code class="python">def get_data(self, name_regular_expression: str, years: list) -&gt; pd.DataFrame:
     &#34;&#34;&#34;
-    Get a copy of the data for the specified year for all variables with names matching the given regular expression
-    where the names are matched against the row index (labels) in the calibration database.
+
+    Gets data for the set of variables with variable names that match the given regular
+    expression.
+
+   ### Arguments
+
+    name_regular_expression (str): The variable selection criteria. It can be any 
+    regular expression that works with the Python regex package. 
+    
+    To get select all variables with a name that starts with INF, use &#34;^INF&#34;.
+
+    To get the specific variable, INFL(UU), use &#34;^INFL\(UU\)&#34;.
+
+    To get the the INFL variables for all regions, use &#34;^INFL\(&#34;.
+
+    years (list): the list of years for which the data is to be retrieved. Note that
+    this can be a list of integer values or a list of strings.
+
+   ### Returns
+    
+    pd.DataFrame: a copy of the data for the specified year for 
+    all variables with names matching the given regular expression
+    where the names are matched against the row index (labels) in 
+    the database.
     &#34;&#34;&#34;
     selected_rows = self.data.index.str.contains(name_regular_expression)
     if not years:
@@ -984,7 +1216,7 @@ where the names are matched against the row index (labels) in the calibration da
 <span>def <span class="ident">get_data_and_varmap_indices</span></span>(<span>self, vector_name: str, year: int) ‑> tuple</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Arguments:</p>
+<div class="desc"><h3 id="arguments">Arguments</h3>
 <p>vector_name: The three character name of the vector that is to be populated
 with data.</p>
 <p>year: the 4 digit integer specifying the year in the database that will be used
@@ -1006,7 +1238,7 @@ vector, that data should be inserted.</p></div>
 </summary>
 <pre><code class="python">def get_data_and_varmap_indices(self, vector_name: str, year: int) -&gt; tuple:
     &#34;&#34;&#34;
-    Arguments:
+   ### Arguments
 
     vector_name: The three character name of the vector that is to be populated 
     with data.
@@ -1044,7 +1276,7 @@ vector, that data should be inserted.</p></div>
 </code></dt>
 <dd>
 <div class="desc"><p>Gets matching data for the given variable prefix for a given vector.</p>
-<p>Arguments:</p>
+<h3 id="arguments">Arguments</h3>
 <p>variable_prefix: The prefix for the variable name</p>
 <p>vector_name: the name of the vector to be populated.</p>
 <p>Returns a tuple containing the indices in the vector to be populated (as a list of integers)
@@ -1057,7 +1289,7 @@ and the values to use to do the populating as a numpy column vector.</p></div>
     &#34;&#34;&#34;
     Gets matching data for the given variable prefix for a given vector.
 
-    Arguments:
+   ### Arguments
 
     variable_prefix: The prefix for the variable name
 
@@ -1080,20 +1312,26 @@ and the values to use to do the populating as a numpy column vector.</p></div>
 <span>def <span class="ident">has_data</span></span>(<span>self, year: int) ‑> bool</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Arguments:</p>
-<p>year: The 4 digit integer value of the year (YYYY).</p>
-<p>Returns true if the database has data for the specified year.</p></div>
+<div class="desc"><p>Used to check if there is a column of data in the database for the specified year.</p>
+<p>Args:</p>
+<p>year (int): The 4 digit integer value of the year (YYYY).</p>
+<h3 id="returns">Returns</h3>
+<p>bool:
+True if the database has data for the specified year and False otherwise</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def has_data(self, year:int) -&gt; bool:
     &#34;&#34;&#34;
-    Arguments:
+    Used to check if there is a column of data in the database for the specified year.
 
-    year: The 4 digit integer value of the year (YYYY).
+    Args:
 
-    Returns true if the database has data for the specified year.
+    year (int): The 4 digit integer value of the year (YYYY).
+
+   ### Returns
+    bool:  True if the database has data for the specified year and False otherwise
     &#34;&#34;&#34;
     return str(year) in self.data.columns</code></pre>
 </details>
@@ -1102,28 +1340,29 @@ and the values to use to do the populating as a numpy column vector.</p></div>
 <span>def <span class="ident">rebase</span></span>(<span>self, new_base_year: int)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Purpose: Rebase a database so indices have a new base year.
+<div class="desc"><p>Rebase a database so indices have a new base year.
 This can be used to convert the database used for calibration
 to a database with the base year equal to the start year
 for projections (eg. 2011 to 2018).</p>
 <p>Note that this script draws on the approach in the G-Cubed utilities/rebase.ox script.</p>
-<h2 id="arguments">Arguments</h2>
-<p>new_base_year: the new year to be applied in the output file, again in YYYY integer format</p></div>
+<h3 id="arguments">Arguments</h3>
+<pre><code> new_base_year (int): a YYYY formatted new base year for the database.
+</code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def rebase(self, new_base_year: int):
     &#34;&#34;&#34;
-    Purpose: Rebase a database so indices have a new base year.
+    Rebase a database so indices have a new base year.
     This can be used to convert the database used for calibration
     to a database with the base year equal to the start year
     for projections (eg. 2011 to 2018).
 
     Note that this script draws on the approach in the G-Cubed utilities/rebase.ox script.
 
-    Arguments:
-        new_base_year: the new year to be applied in the output file, again in YYYY integer format
+   ### Arguments
+        new_base_year (int): a YYYY formatted new base year for the database.
     &#34;&#34;&#34;
 
     # Adjust the price indices
@@ -1150,49 +1389,80 @@ for projections (eg. 2011 to 2018).</p>
 <span>def <span class="ident">rhs_vector_value</span></span>(<span>self, vector_name: str, year: int, use_neutral_real_interest_rate=False) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Arguments:</p>
-<p>vector_name: The name of the vector to set the values for.</p>
-<p>year: The year to use when populating the RHS vectors.
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Retrieves data from the database for all of the variables in a specific RHS vector in the model.
+The data is retrieved for the specified year. </p>
+<p>Note that some state variables have their data retrieved
+for the following year. </p>
+<p>Note also that interest rate values can be overridden by the globally defined neutral real interest rate
+that is set in the model configuration file.</p>
+<p>The implementation steps are:</p>
+<ol>
+<li>get the rows for the variables of the given type in varmap.</li>
+<li>get the names of the variables in those rows from varmap.</li>
+<li>use those names to select the data from the calibration year database.</li>
+<li>set the values for those variables in the appropriate places in the vector to that data for that year
+using the indices specified in the varmap data.</li>
+</ol>
+<h3 id="arguments">Arguments</h3>
+<p><code>vector_name</code>: The name of the vector to get the values for. This must be a RHS vector listed in
+the model's RHS vector names by the SymData class.</p>
+<p><code>year</code>: The YYYY format year to get data for when populating the RHS vectors.
 e.g. 2011 implies linearise model equations around the values
 of the model variables in 2011 (or in adjacent years for leads/lags).</p>
-<p>use_neutral_real_interest_rate: boolean set to true if interest rates are to be overridden with the
-model configuration neutral real interest rate.</p>
-<p>Returns a numpy array with values for the RHS vector that are associated with the requested year or
-none if the vector has zero length.</p>
-<h1 id="get-the-rows-for-the-variables-of-the-given-type-in-varmap">Get the rows for the variables of the given type in varmap.</h1>
-<h1 id="get-the-names-of-the-variables-in-those-rows-from-varmap">Get the names of the variables in those rows from varmap.</h1>
-<h1 id="use-those-names-to-select-the-data-from-the-calibration-year-database">Use those names to select the data from the calibration year database.</h1>
-<h1 id="set-the-values-for-those-variables-in-the-appropriate-places-in-the-vector-to-that-data-for-that-year">Set the values for those variables in the appropriate places in the vector to that data for that year</h1>
-<h1 id="using-the-indices-specified-in-the-varmap-data">using the indices specified in the varmap data.</h1></div>
+<p><code>use_neutral_real_interest_rate</code>: True if interest rates are to be overridden with the
+model configuration neutral real interest rate and False otherwise.</p>
+<h3 id="returns">Returns</h3>
+<p>A column vector with the requested values for the RHS vector or
+<code>None</code> if the vector has zero length.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def rhs_vector_value(self, vector_name: str, year: int, use_neutral_real_interest_rate=False) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    Arguments:
 
-    vector_name: The name of the vector to set the values for.
+    ### Overview
 
-    year: The year to use when populating the RHS vectors.
+    Retrieves data from the database for all of the variables in a specific RHS vector in the model.
+    The data is retrieved for the specified year. 
+    
+    Note that some state variables have their data retrieved
+    for the following year. 
+
+    Note also that interest rate values can be overridden by the globally defined neutral real interest rate
+    that is set in the model configuration file.
+
+    The implementation steps are:
+
+    1. get the rows for the variables of the given type in varmap.
+    2. get the names of the variables in those rows from varmap.
+    3. use those names to select the data from the calibration year database.
+    4. set the values for those variables in the appropriate places in the vector to that data for that year
+    using the indices specified in the varmap data.
+
+
+   ### Arguments
+
+    `vector_name`: The name of the vector to get the values for. This must be a RHS vector listed in
+    the model&#39;s RHS vector names by the SymData class.
+
+    `year`: The YYYY format year to get data for when populating the RHS vectors.
     e.g. 2011 implies linearise model equations around the values
     of the model variables in 2011 (or in adjacent years for leads/lags).
 
-    use_neutral_real_interest_rate: boolean set to true if interest rates are to be overridden with the
-    model configuration neutral real interest rate.
+    `use_neutral_real_interest_rate`: True if interest rates are to be overridden with the
+    model configuration neutral real interest rate and False otherwise.
 
-    Returns a numpy array with values for the RHS vector that are associated with the requested year or
-    none if the vector has zero length.
-
-    # Get the rows for the variables of the given type in varmap.
-    # Get the names of the variables in those rows from varmap.
-    # Use those names to select the data from the calibration year database.
-    # Set the values for those variables in the appropriate places in the vector to that data for that year
-    # using the indices specified in the varmap data.
+   ### Returns
+      
+    A column vector with the requested values for the RHS vector or
+    `None` if the vector has zero length.
 
     &#34;&#34;&#34;
-    if not self.sym_data.vector_length(vector_name=vector_name):
-        return None
+
+    if not vector_name in self.sym_data.rhs_vector_names:
+        raise Exception(f&#34;{vector_name} is not a RHS vector in the model. It should be one of {self.sym_data.rhs_vector_names}&#34;)
 
     vector_value: np.ndarray = np.zeros(shape=(self.sym_data.vector_length(vector_name=vector_name), 1), dtype=float)
     match vector_name:
@@ -1256,14 +1526,25 @@ none if the vector has zero length.</p>
 <span>def <span class="ident">update_data</span></span>(<span>self, new_data: pd.DataFrame)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Replace the existing data property with a new dataframe.</p></div>
+<div class="desc"><p>Replace the existing data property with a new dataframe. All of the data is replaced.</p>
+<p>This is useful if you need to do projections and then treat those projections as actual data
+in a subsequent step in your analysis pipeline.</p>
+<h3 id="arguments">Arguments</h3>
+<p>new_data (pd.DataFrame): The new dataframe to use.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def update_data(self, new_data: pd.DataFrame):
     &#34;&#34;&#34;
-    Replace the existing data property with a new dataframe.
+    Replace the existing data property with a new dataframe. All of the data is replaced.
+
+    This is useful if you need to do projections and then treat those projections as actual data
+    in a subsequent step in your analysis pipeline.
+
+   ### Arguments
+
+    new_data (pd.DataFrame): The new dataframe to use.
     &#34;&#34;&#34;
     if not self._data.index.equals(new_data.index):
         raise Exception(&#34;The new database does not describe the same set of variables as the old database.&#34;)

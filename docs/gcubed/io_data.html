@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>gcubed.io_data API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Contains the IOTables class for input/output table management." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,6 +22,7 @@
 <h1 class="title">Module <code>gcubed.io_data</code></h1>
 </header>
 <section id="section-intro">
+<p>Contains the IOTables class for input/output table management.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -30,41 +31,43 @@
 # Purpose: Manage loading and provision of IO table information.
 # Author: Geoff Shuetrim
 # ------------------------------------------------------------------
+&#34;&#34;&#34;
+Contains the IOTables class for input/output table management.
+&#34;&#34;&#34;
 
 from __future__ import annotations
 import logging
 import os
-import re
 import pandas as pd
-import numpy as np
 from gcubed.base import Base
-from gcubed.model_configuration import ModelConfiguration
 from gcubed.sym_data import SymData
 
 
 class IOData(Base):
     &#34;&#34;&#34;
-    Encapsulates all of the information about the IO data used by a Model.
+    ### Overview
 
-    Properties:
-
-        TODO: Complete this listing of class properties and their explanations.
-        _database: the dataframe containing the annual data for all variables.
-
+    Encapsulates all of the information about the input/output tables for each region.
     &#34;&#34;&#34;
 
     def __init__(self, sym_data: SymData) -&gt; None:
+        &#34;&#34;&#34;
+       ### Arguments
 
+        `sym_data`: The information about the SYM model definition.
 
+        &#34;&#34;&#34;
         assert sym_data is not None
         assert isinstance(sym_data, SymData)
         self._sym_data = sym_data
-        logging.info(f&#34;Loading IO tables from {self.sym_data.configuration.io_table_file}&#34;)
         self.__load_io_tables()
         self.__validate()
 
     @property
     def sym_data(self):
+        &#34;&#34;&#34;
+        The SYM details of the model.
+        &#34;&#34;&#34;
         return self._sym_data
 
     def __load_io_tables(self):
@@ -113,83 +116,113 @@ class IOData(Base):
             self._io_tables[region] = io_table
 
     def io_table(self, region: str) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        
+        ### Overview
+        Use this function to retrieve the IO table content for a single region.
+        That IO table can then be analysed using the input (row) index and the output
+        (column) label for the rows and columns of the dataframe that is the
+        IO table.
+
+       ### Arguments
+
+        region: the identifier for the region of interest.
+        
+       ### Returns
+
+        the dataframe containing the input/output table for the specified region.
+
+        &#34;&#34;&#34;
         if region in self._io_tables:
             return self._io_tables[region]
         raise Exception(&#34;There is no IO table defined for &#34; + region)
 
     def has_io_table(self, region: str) -&gt; bool:
+        &#34;&#34;&#34;
+        
+       ### Arguments
+
+        region: The region of interest.
+        
+       ### Returns
+
+        True if there is an IO table for the specified region.
+        
+        &#34;&#34;&#34;
         return region in self._io_tables
 
-    @ property
+    @property
     def io_table_inputs(self):
         &#34;&#34;&#34;
-        Returns the row names for each region&#39;s IO table.
+        The row names (one per input) in the IO tables. All regions have the same rows in
+        their IO tables.
         &#34;&#34;&#34;
         input_names = self.sym_data.goods_members
         input_names.extend(
             [self.io_table_labour, self.io_table_capital, self.io_table_tax])
         return input_names
 
-    @ property
+    @property
     def io_table_tax(self) -&gt; str:
         &#34;&#34;&#34;
         Returns the tax row label.
         &#34;&#34;&#34;
         return &#34;TAX&#34;
 
-    @ property
+    @property
     def io_table_labour(self) -&gt; str:
         &#34;&#34;&#34;
-        Returns the labour row label.
+        The labour row label.
         &#34;&#34;&#34;
         return &#34;L&#34;
 
-    @ property
+    @property
     def io_table_capital(self) -&gt; str:
         &#34;&#34;&#34;
-        Returns the capital row label.
+        The capital row label.
         &#34;&#34;&#34;
         return &#34;K&#34;
 
-    @ property
+    @property
     def io_table_consumption(self) -&gt; str:
         &#34;&#34;&#34;
-        Returns the consumption column label.
+        The consumption column label.
         &#34;&#34;&#34;
         return &#34;C&#34;
 
-    @ property
+    @property
     def io_table_investment(self) -&gt; str:
         &#34;&#34;&#34;
-        Returns the investment column label.
+        The investment column label.
         &#34;&#34;&#34;
         return &#34;I&#34;
 
-    @ property
+    @property
     def io_table_government(self) -&gt; str:
         &#34;&#34;&#34;
-        Returns the government spending column label.
+        The government spending column label.
         &#34;&#34;&#34;
         return &#34;G&#34;
 
-    @ property
+    @property
     def io_table_exports(self) -&gt; str:
         &#34;&#34;&#34;
-        Returns the exports column label.
+        The exports column label.
         &#34;&#34;&#34;
         return &#34;X&#34;
 
-    @ property
+    @property
     def io_table_imports(self) -&gt; str:
         &#34;&#34;&#34;
-        Returns the imports column label.
+        The imports column label.
         &#34;&#34;&#34;
         return &#34;M&#34;
 
-    @ property
+    @property
     def io_table_uses(self):
         &#34;&#34;&#34;
-        Returns the column names for each region&#39;s IO table.
+        The column names, one column for each output in the IO tables. The IO table
+        has the same columns for each region.
         &#34;&#34;&#34;
         use_names = self.sym_data.sectors_members
         # TODO: Figure out how to interpret the first column.
@@ -201,7 +234,7 @@ class IOData(Base):
         &#34;&#34;&#34;
         Raise an exception if the IO data is invalid
         &#34;&#34;&#34;
-        pass</code></pre>
+        logging.info(f&#34;Loaded input/ouput tables for each region from {self.sym_data.configuration.io_table_file}&#34;)</code></pre>
 </details>
 </section>
 <section>
@@ -218,37 +251,39 @@ class IOData(Base):
 <span>(</span><span>sym_data: SymData)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Encapsulates all of the information about the IO data used by a Model.</p>
-<h2 id="properties">Properties</h2>
-<p>TODO: Complete this listing of class properties and their explanations.
-_database: the dataframe containing the annual data for all variables.</p></div>
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Encapsulates all of the information about the input/output tables for each region.</p>
+<h3 id="arguments">Arguments</h3>
+<p><code>sym_data</code>: The information about the SYM model definition.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class IOData(Base):
     &#34;&#34;&#34;
-    Encapsulates all of the information about the IO data used by a Model.
+    ### Overview
 
-    Properties:
-
-        TODO: Complete this listing of class properties and their explanations.
-        _database: the dataframe containing the annual data for all variables.
-
+    Encapsulates all of the information about the input/output tables for each region.
     &#34;&#34;&#34;
 
     def __init__(self, sym_data: SymData) -&gt; None:
+        &#34;&#34;&#34;
+       ### Arguments
 
+        `sym_data`: The information about the SYM model definition.
 
+        &#34;&#34;&#34;
         assert sym_data is not None
         assert isinstance(sym_data, SymData)
         self._sym_data = sym_data
-        logging.info(f&#34;Loading IO tables from {self.sym_data.configuration.io_table_file}&#34;)
         self.__load_io_tables()
         self.__validate()
 
     @property
     def sym_data(self):
+        &#34;&#34;&#34;
+        The SYM details of the model.
+        &#34;&#34;&#34;
         return self._sym_data
 
     def __load_io_tables(self):
@@ -297,83 +332,113 @@ _database: the dataframe containing the annual data for all variables.</p></div>
             self._io_tables[region] = io_table
 
     def io_table(self, region: str) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        
+        ### Overview
+        Use this function to retrieve the IO table content for a single region.
+        That IO table can then be analysed using the input (row) index and the output
+        (column) label for the rows and columns of the dataframe that is the
+        IO table.
+
+       ### Arguments
+
+        region: the identifier for the region of interest.
+        
+       ### Returns
+
+        the dataframe containing the input/output table for the specified region.
+
+        &#34;&#34;&#34;
         if region in self._io_tables:
             return self._io_tables[region]
         raise Exception(&#34;There is no IO table defined for &#34; + region)
 
     def has_io_table(self, region: str) -&gt; bool:
+        &#34;&#34;&#34;
+        
+       ### Arguments
+
+        region: The region of interest.
+        
+       ### Returns
+
+        True if there is an IO table for the specified region.
+        
+        &#34;&#34;&#34;
         return region in self._io_tables
 
-    @ property
+    @property
     def io_table_inputs(self):
         &#34;&#34;&#34;
-        Returns the row names for each region&#39;s IO table.
+        The row names (one per input) in the IO tables. All regions have the same rows in
+        their IO tables.
         &#34;&#34;&#34;
         input_names = self.sym_data.goods_members
         input_names.extend(
             [self.io_table_labour, self.io_table_capital, self.io_table_tax])
         return input_names
 
-    @ property
+    @property
     def io_table_tax(self) -&gt; str:
         &#34;&#34;&#34;
         Returns the tax row label.
         &#34;&#34;&#34;
         return &#34;TAX&#34;
 
-    @ property
+    @property
     def io_table_labour(self) -&gt; str:
         &#34;&#34;&#34;
-        Returns the labour row label.
+        The labour row label.
         &#34;&#34;&#34;
         return &#34;L&#34;
 
-    @ property
+    @property
     def io_table_capital(self) -&gt; str:
         &#34;&#34;&#34;
-        Returns the capital row label.
+        The capital row label.
         &#34;&#34;&#34;
         return &#34;K&#34;
 
-    @ property
+    @property
     def io_table_consumption(self) -&gt; str:
         &#34;&#34;&#34;
-        Returns the consumption column label.
+        The consumption column label.
         &#34;&#34;&#34;
         return &#34;C&#34;
 
-    @ property
+    @property
     def io_table_investment(self) -&gt; str:
         &#34;&#34;&#34;
-        Returns the investment column label.
+        The investment column label.
         &#34;&#34;&#34;
         return &#34;I&#34;
 
-    @ property
+    @property
     def io_table_government(self) -&gt; str:
         &#34;&#34;&#34;
-        Returns the government spending column label.
+        The government spending column label.
         &#34;&#34;&#34;
         return &#34;G&#34;
 
-    @ property
+    @property
     def io_table_exports(self) -&gt; str:
         &#34;&#34;&#34;
-        Returns the exports column label.
+        The exports column label.
         &#34;&#34;&#34;
         return &#34;X&#34;
 
-    @ property
+    @property
     def io_table_imports(self) -&gt; str:
         &#34;&#34;&#34;
-        Returns the imports column label.
+        The imports column label.
         &#34;&#34;&#34;
         return &#34;M&#34;
 
-    @ property
+    @property
     def io_table_uses(self):
         &#34;&#34;&#34;
-        Returns the column names for each region&#39;s IO table.
+        The column names, one column for each output in the IO tables. The IO table
+        has the same columns for each region.
         &#34;&#34;&#34;
         use_names = self.sym_data.sectors_members
         # TODO: Figure out how to interpret the first column.
@@ -385,7 +450,7 @@ _database: the dataframe containing the annual data for all variables.</p></div>
         &#34;&#34;&#34;
         Raise an exception if the IO data is invalid
         &#34;&#34;&#34;
-        pass</code></pre>
+        logging.info(f&#34;Loaded input/ouput tables for each region from {self.sym_data.configuration.io_table_file}&#34;)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -395,90 +460,92 @@ _database: the dataframe containing the annual data for all variables.</p></div>
 <dl>
 <dt id="gcubed.io_data.IOData.io_table_capital"><code class="name">var <span class="ident">io_table_capital</span> : str</code></dt>
 <dd>
-<div class="desc"><p>Returns the capital row label.</p></div>
+<div class="desc"><p>The capital row label.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@ property
+<pre><code class="python">@property
 def io_table_capital(self) -&gt; str:
     &#34;&#34;&#34;
-    Returns the capital row label.
+    The capital row label.
     &#34;&#34;&#34;
     return &#34;K&#34;</code></pre>
 </details>
 </dd>
 <dt id="gcubed.io_data.IOData.io_table_consumption"><code class="name">var <span class="ident">io_table_consumption</span> : str</code></dt>
 <dd>
-<div class="desc"><p>Returns the consumption column label.</p></div>
+<div class="desc"><p>The consumption column label.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@ property
+<pre><code class="python">@property
 def io_table_consumption(self) -&gt; str:
     &#34;&#34;&#34;
-    Returns the consumption column label.
+    The consumption column label.
     &#34;&#34;&#34;
     return &#34;C&#34;</code></pre>
 </details>
 </dd>
 <dt id="gcubed.io_data.IOData.io_table_exports"><code class="name">var <span class="ident">io_table_exports</span> : str</code></dt>
 <dd>
-<div class="desc"><p>Returns the exports column label.</p></div>
+<div class="desc"><p>The exports column label.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@ property
+<pre><code class="python">@property
 def io_table_exports(self) -&gt; str:
     &#34;&#34;&#34;
-    Returns the exports column label.
+    The exports column label.
     &#34;&#34;&#34;
     return &#34;X&#34;</code></pre>
 </details>
 </dd>
 <dt id="gcubed.io_data.IOData.io_table_government"><code class="name">var <span class="ident">io_table_government</span> : str</code></dt>
 <dd>
-<div class="desc"><p>Returns the government spending column label.</p></div>
+<div class="desc"><p>The government spending column label.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@ property
+<pre><code class="python">@property
 def io_table_government(self) -&gt; str:
     &#34;&#34;&#34;
-    Returns the government spending column label.
+    The government spending column label.
     &#34;&#34;&#34;
     return &#34;G&#34;</code></pre>
 </details>
 </dd>
 <dt id="gcubed.io_data.IOData.io_table_imports"><code class="name">var <span class="ident">io_table_imports</span> : str</code></dt>
 <dd>
-<div class="desc"><p>Returns the imports column label.</p></div>
+<div class="desc"><p>The imports column label.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@ property
+<pre><code class="python">@property
 def io_table_imports(self) -&gt; str:
     &#34;&#34;&#34;
-    Returns the imports column label.
+    The imports column label.
     &#34;&#34;&#34;
     return &#34;M&#34;</code></pre>
 </details>
 </dd>
 <dt id="gcubed.io_data.IOData.io_table_inputs"><code class="name">var <span class="ident">io_table_inputs</span></code></dt>
 <dd>
-<div class="desc"><p>Returns the row names for each region's IO table.</p></div>
+<div class="desc"><p>The row names (one per input) in the IO tables. All regions have the same rows in
+their IO tables.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@ property
+<pre><code class="python">@property
 def io_table_inputs(self):
     &#34;&#34;&#34;
-    Returns the row names for each region&#39;s IO table.
+    The row names (one per input) in the IO tables. All regions have the same rows in
+    their IO tables.
     &#34;&#34;&#34;
     input_names = self.sym_data.goods_members
     input_names.extend(
@@ -488,30 +555,30 @@ def io_table_inputs(self):
 </dd>
 <dt id="gcubed.io_data.IOData.io_table_investment"><code class="name">var <span class="ident">io_table_investment</span> : str</code></dt>
 <dd>
-<div class="desc"><p>Returns the investment column label.</p></div>
+<div class="desc"><p>The investment column label.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@ property
+<pre><code class="python">@property
 def io_table_investment(self) -&gt; str:
     &#34;&#34;&#34;
-    Returns the investment column label.
+    The investment column label.
     &#34;&#34;&#34;
     return &#34;I&#34;</code></pre>
 </details>
 </dd>
 <dt id="gcubed.io_data.IOData.io_table_labour"><code class="name">var <span class="ident">io_table_labour</span> : str</code></dt>
 <dd>
-<div class="desc"><p>Returns the labour row label.</p></div>
+<div class="desc"><p>The labour row label.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@ property
+<pre><code class="python">@property
 def io_table_labour(self) -&gt; str:
     &#34;&#34;&#34;
-    Returns the labour row label.
+    The labour row label.
     &#34;&#34;&#34;
     return &#34;L&#34;</code></pre>
 </details>
@@ -523,7 +590,7 @@ def io_table_labour(self) -&gt; str:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@ property
+<pre><code class="python">@property
 def io_table_tax(self) -&gt; str:
     &#34;&#34;&#34;
     Returns the tax row label.
@@ -533,15 +600,17 @@ def io_table_tax(self) -&gt; str:
 </dd>
 <dt id="gcubed.io_data.IOData.io_table_uses"><code class="name">var <span class="ident">io_table_uses</span></code></dt>
 <dd>
-<div class="desc"><p>Returns the column names for each region's IO table.</p></div>
+<div class="desc"><p>The column names, one column for each output in the IO tables. The IO table
+has the same columns for each region.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@ property
+<pre><code class="python">@property
 def io_table_uses(self):
     &#34;&#34;&#34;
-    Returns the column names for each region&#39;s IO table.
+    The column names, one column for each output in the IO tables. The IO table
+    has the same columns for each region.
     &#34;&#34;&#34;
     use_names = self.sym_data.sectors_members
     # TODO: Figure out how to interpret the first column.
@@ -552,13 +621,16 @@ def io_table_uses(self):
 </dd>
 <dt id="gcubed.io_data.IOData.sym_data"><code class="name">var <span class="ident">sym_data</span></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The SYM details of the model.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def sym_data(self):
+    &#34;&#34;&#34;
+    The SYM details of the model.
+    &#34;&#34;&#34;
     return self._sym_data</code></pre>
 </details>
 </dd>
@@ -569,12 +641,26 @@ def sym_data(self):
 <span>def <span class="ident">has_io_table</span></span>(<span>self, region: str) ‑> bool</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><h3 id="arguments">Arguments</h3>
+<p>region: The region of interest.</p>
+<h3 id="returns">Returns</h3>
+<p>True if there is an IO table for the specified region.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def has_io_table(self, region: str) -&gt; bool:
+    &#34;&#34;&#34;
+    
+   ### Arguments
+
+    region: The region of interest.
+    
+   ### Returns
+
+    True if there is an IO table for the specified region.
+    
+    &#34;&#34;&#34;
     return region in self._io_tables</code></pre>
 </details>
 </dd>
@@ -582,12 +668,37 @@ def sym_data(self):
 <span>def <span class="ident">io_table</span></span>(<span>self, region: str) ‑> pandas.core.frame.DataFrame</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Use this function to retrieve the IO table content for a single region.
+That IO table can then be analysed using the input (row) index and the output
+(column) label for the rows and columns of the dataframe that is the
+IO table.</p>
+<h3 id="arguments">Arguments</h3>
+<p>region: the identifier for the region of interest.</p>
+<h3 id="returns">Returns</h3>
+<p>the dataframe containing the input/output table for the specified region.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def io_table(self, region: str) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    
+    ### Overview
+    Use this function to retrieve the IO table content for a single region.
+    That IO table can then be analysed using the input (row) index and the output
+    (column) label for the rows and columns of the dataframe that is the
+    IO table.
+
+   ### Arguments
+
+    region: the identifier for the region of interest.
+    
+   ### Returns
+
+    the dataframe containing the input/output table for the specified region.
+
+    &#34;&#34;&#34;
     if region in self._io_tables:
         return self._io_tables[region]
     raise Exception(&#34;There is no IO table defined for &#34; + region)</code></pre>

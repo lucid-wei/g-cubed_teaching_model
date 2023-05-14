@@ -108,7 +108,7 @@ class SimulationLayerDefinitions(Base):
 
     def get_simulation_layer_definition(self, simulation_name: str) -&gt; SimulationLayerDefinition:
         &#34;&#34;&#34;
-        Arguments:
+       ### Arguments
 
         simulation_name: The name of the simulation to retrieve details for.
 
@@ -122,7 +122,7 @@ class SimulationLayerDefinitions(Base):
     def load_from_csv_file(self, design_file: str):
         &#34;&#34;&#34;
 
-        Arguments:
+       ### Arguments
 
         design_file: the name and relative path to the experiment configuration file from the simulations directory,
             e.g. &#39;example_experiment/design.csv&#39;
@@ -248,7 +248,7 @@ class SimulationLayerDefinitions(Base):
 
     def get_simulation_layer_definition(self, simulation_name: str) -&gt; SimulationLayerDefinition:
         &#34;&#34;&#34;
-        Arguments:
+       ### Arguments
 
         simulation_name: The name of the simulation to retrieve details for.
 
@@ -262,7 +262,7 @@ class SimulationLayerDefinitions(Base):
     def load_from_csv_file(self, design_file: str):
         &#34;&#34;&#34;
 
-        Arguments:
+       ### Arguments
 
         design_file: the name and relative path to the experiment configuration file from the simulations directory,
             e.g. &#39;example_experiment/design.csv&#39;
@@ -357,7 +357,7 @@ def sym_data(self) -&gt; SymData:
 <span>def <span class="ident">get_simulation_layer_definition</span></span>(<span>self, simulation_name: str) ‑> <a title="gcubed.projections.simulation_layer_definition.SimulationLayerDefinition" href="simulation_layer_definition.html#gcubed.projections.simulation_layer_definition.SimulationLayerDefinition">SimulationLayerDefinition</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Arguments:</p>
+<div class="desc"><h3 id="arguments">Arguments</h3>
 <p>simulation_name: The name of the simulation to retrieve details for.</p>
 <p>Returns the definition for a named simulation layer.</p></div>
 <details class="source">
@@ -366,7 +366,7 @@ def sym_data(self) -&gt; SymData:
 </summary>
 <pre><code class="python">def get_simulation_layer_definition(self, simulation_name: str) -&gt; SimulationLayerDefinition:
     &#34;&#34;&#34;
-    Arguments:
+   ### Arguments
 
     simulation_name: The name of the simulation to retrieve details for.
 
@@ -382,7 +382,7 @@ def sym_data(self) -&gt; SymData:
 <span>def <span class="ident">load_from_csv_file</span></span>(<span>self, design_file: str)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Arguments:</p>
+<div class="desc"><h3 id="arguments">Arguments</h3>
 <p>design_file: the name and relative path to the experiment configuration file from the simulations directory,
 e.g. 'example_experiment/design.csv'</p>
 <p>Loads the simulation layer definitions from a CSV file that lists the files along with other details of each simulation layer.
@@ -399,7 +399,7 @@ description - the text description of the simulation layer.</p></div>
 <pre><code class="python">def load_from_csv_file(self, design_file: str):
     &#34;&#34;&#34;
 
-    Arguments:
+   ### Arguments
 
     design_file: the name and relative path to the experiment configuration file from the simulations directory,
         e.g. &#39;example_experiment/design.csv&#39;

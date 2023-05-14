@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>gcubed.base_equations API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Contains the BaseEquations class" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,6 +22,7 @@
 <h1 class="title">Module <code>gcubed.base_equations</code></h1>
 </header>
 <section id="section-intro">
+<p>Contains the BaseEquations class</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -32,6 +33,9 @@
 # class.
 # Author: Geoff Shuetrim
 # ------------------------------------------------------------------
+&#34;&#34;&#34;
+Contains the BaseEquations class
+&#34;&#34;&#34;
 
 import numpy as np
 from gcubed.base import Base
@@ -40,6 +44,9 @@ from gcubed.base import Base
 class BaseEquations(Base):
 
     &#34;&#34;&#34;
+
+    ### Overview
+
     Provides GCubed equations class boilerplate.
     
     The Python class created by the SYM processor 
@@ -167,9 +174,13 @@ class BaseEquations(Base):
 <span>(</span><span>x1l: numpy.ndarray, j1l: numpy.ndarray, zel: numpy.ndarray, z1l: numpy.ndarray, x1r: numpy.ndarray, j1r: numpy.ndarray, z1r: numpy.ndarray, zer: numpy.ndarray, yjr: numpy.ndarray, yxr: numpy.ndarray, exo: numpy.ndarray, exz: numpy.ndarray, par: numpy.ndarray)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Provides GCubed equations class boilerplate.</p>
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Provides GCubed equations class boilerplate.</p>
 <p>The Python class created by the SYM processor
-subclasses this class.</p></div>
+subclasses this class.</p>
+<h3 id="constructor">Constructor</h3>
+<p>Does constructor operations required by all classes that inherit from this base class.</p>
+<p>These currently just set up numpy array print options.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -177,6 +188,9 @@ subclasses this class.</p></div>
 <pre><code class="python">class BaseEquations(Base):
 
     &#34;&#34;&#34;
+
+    ### Overview
+
     Provides GCubed equations class boilerplate.
     
     The Python class created by the SYM processor 

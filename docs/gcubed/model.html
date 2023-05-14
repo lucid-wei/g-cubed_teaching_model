@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>gcubed.model API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Contains the Model class" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,6 +22,7 @@
 <h1 class="title">Module <code>gcubed.model</code></h1>
 </header>
 <section id="section-intro">
+<p>Contains the Model class</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -34,6 +35,9 @@
 # Ensure that the current working directory
 # is the base directory of the G-cubed model.
 # ------------------------------------------------------------------
+&#34;&#34;&#34;
+Contains the Model class
+&#34;&#34;&#34;
 from __future__ import annotations
 import importlib
 import logging
@@ -74,37 +78,39 @@ class Model(Base):
         intcon: The interest rate variable values in the calibration year, adjusted for r0,
         along with the value of r0 that was used.
 
-        TODO: Complete this listing of class properties and their explanations.
-        _database: the dataframe containing the annual data for all variables.
+       ### Arguments
 
-        previous_model: the previous model, in a rolling sequence of models.
+        configuration (ModelConfiguration): The configuration details of the model.
 
-        next_model: the next model in a rolling sequence of models.
+        sym_data (SymData): The SYM processor generated information about the model.
 
-        The next and previous model properties form a doubly-linked list of
-        models that can be used to perform rolling model evaluations as required
-        for the CPD project.
+        database (Database): the database containing the annual data for all variables
+        in the model.
+
+        parameters (Parameters): The parameters (subclass) that has the calibrated
+        model parameter values.
+
+        effective_productivity (EffectiveProductivity): The effective
+        labour productivity growth projections underpinning levels projections
+        that reflect long-run growth prospects.
+
+        energy_usage_efficiency (EnergeUsageEfficiency): The energy usage
+        efficiency improvement rate projections for each sector in each
+        region. These impact projections for energy requirements by region and sector.
 
     &#34;&#34;&#34;
 
-    def initialise_properties(self):
-        self._configuration: ModelConfiguration = None
-        self._sym_data: SymData = None
-        self._parameters: Parameters = None
-        self._previous_model: Model = None
-        self._next_model: Model = None
-        self._variables: pd.DataFrame = None
-        self._database: pd.DataFrame = None
-        self._shock_variables: pd.DataFrame = None
-        self._shock_database: pd.DataFrame = None
-
     def __init__(self, configuration: ModelConfiguration) -&gt; None:
         &#34;&#34;&#34;
-        Arguments:
-        configuration: either the string file name 
-        for a Model Configuration file or a ModelConfiguration.
+
+        ### Constructor
+
+       ### Arguments
+
+        configuration (ModelConfiguration): the configuration details
+        for the model being created.
+        
         &#34;&#34;&#34;
-        self.initialise_properties()
         self._configuration = configuration
 
         self._sym_data = SymData(configuration=self.configuration)
@@ -113,9 +119,9 @@ class Model(Base):
 
         # Use the parameters class associated with the model version and number being run
         version: str = self.configuration.version
-        number: int = self.configuration.number
-        module = importlib.import_module(f&#34;gcubed.model_parameters.{version}.parameters_{version}_{number}&#34;)
-        parameters_class: Parameters = getattr(module, f&#34;Parameters{version}{number}&#34;)
+        build: int = self.configuration.build
+        module = importlib.import_module(f&#34;gcubed.model_parameters.{version}.parameters_{version}_{build}&#34;)
+        parameters_class: Parameters = getattr(module, f&#34;Parameters{version}{build}&#34;)
         self._parameters = parameters_class(database=self.database, base_year=self.configuration.calibration_year)
 
         self._effective_productivity = EffectiveLabourProductivity(parameters=self.parameters)
@@ -124,7 +130,13 @@ class Model(Base):
 
         self.__validate()
 
-        logging.info(&#34;The model has been loaded.&#34;)
+    def __validate(self):
+        &#34;&#34;&#34;
+        Raise an exception if the model is invalid.
+        Confirm a successful instantiation otherwise.
+        &#34;&#34;&#34;
+        logging.info(f&#34;Model {self.configuration.version} {self.configuration._build} has successfully loaded.&#34;)
+
 
     @property
     def configuration(self) -&gt; ModelConfiguration:
@@ -148,13 +160,7 @@ class Model(Base):
 
     @property
     def energy_usage_efficiency(self) -&gt; EnergyUsageEfficiency:
-        return self._energy_usage_efficiency
-
-    def __validate(self):
-        &#34;&#34;&#34;
-        Raise an exception if the model is invalid
-        &#34;&#34;&#34;
-        pass</code></pre>
+        return self._energy_usage_efficiency</code></pre>
 </details>
 </section>
 <section>
@@ -190,16 +196,23 @@ Then convert back to a dataframe and transpose it using
 pd.DataFrame(vector).transpose().</p>
 <p>intcon: The interest rate variable values in the calibration year, adjusted for r0,
 along with the value of r0 that was used.</p>
-<p>TODO: Complete this listing of class properties and their explanations.
-_database: the dataframe containing the annual data for all variables.</p>
-<p>previous_model: the previous model, in a rolling sequence of models.</p>
-<p>next_model: the next model in a rolling sequence of models.</p>
-<p>The next and previous model properties form a doubly-linked list of
-models that can be used to perform rolling model evaluations as required
-for the CPD project.</p>
-<p>Arguments:
-configuration: either the string file name
-for a Model Configuration file or a ModelConfiguration.</p></div>
+<h3 id="arguments">Arguments</h3>
+<p>configuration (ModelConfiguration): The configuration details of the model.</p>
+<p>sym_data (SymData): The SYM processor generated information about the model.</p>
+<p>database (Database): the database containing the annual data for all variables
+in the model.</p>
+<p>parameters (Parameters): The parameters (subclass) that has the calibrated
+model parameter values.</p>
+<p>effective_productivity (EffectiveProductivity): The effective
+labour productivity growth projections underpinning levels projections
+that reflect long-run growth prospects.</p>
+<p>energy_usage_efficiency (EnergeUsageEfficiency): The energy usage
+efficiency improvement rate projections for each sector in each
+region. These impact projections for energy requirements by region and sector.</p>
+<p>### Constructor</p>
+<h3 id="arguments_1">Arguments</h3>
+<p>configuration (ModelConfiguration): the configuration details
+for the model being created.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -232,37 +245,39 @@ for a Model Configuration file or a ModelConfiguration.</p></div>
         intcon: The interest rate variable values in the calibration year, adjusted for r0,
         along with the value of r0 that was used.
 
-        TODO: Complete this listing of class properties and their explanations.
-        _database: the dataframe containing the annual data for all variables.
+       ### Arguments
 
-        previous_model: the previous model, in a rolling sequence of models.
+        configuration (ModelConfiguration): The configuration details of the model.
 
-        next_model: the next model in a rolling sequence of models.
+        sym_data (SymData): The SYM processor generated information about the model.
 
-        The next and previous model properties form a doubly-linked list of
-        models that can be used to perform rolling model evaluations as required
-        for the CPD project.
+        database (Database): the database containing the annual data for all variables
+        in the model.
+
+        parameters (Parameters): The parameters (subclass) that has the calibrated
+        model parameter values.
+
+        effective_productivity (EffectiveProductivity): The effective
+        labour productivity growth projections underpinning levels projections
+        that reflect long-run growth prospects.
+
+        energy_usage_efficiency (EnergeUsageEfficiency): The energy usage
+        efficiency improvement rate projections for each sector in each
+        region. These impact projections for energy requirements by region and sector.
 
     &#34;&#34;&#34;
 
-    def initialise_properties(self):
-        self._configuration: ModelConfiguration = None
-        self._sym_data: SymData = None
-        self._parameters: Parameters = None
-        self._previous_model: Model = None
-        self._next_model: Model = None
-        self._variables: pd.DataFrame = None
-        self._database: pd.DataFrame = None
-        self._shock_variables: pd.DataFrame = None
-        self._shock_database: pd.DataFrame = None
-
     def __init__(self, configuration: ModelConfiguration) -&gt; None:
         &#34;&#34;&#34;
-        Arguments:
-        configuration: either the string file name 
-        for a Model Configuration file or a ModelConfiguration.
+
+        ### Constructor
+
+       ### Arguments
+
+        configuration (ModelConfiguration): the configuration details
+        for the model being created.
+        
         &#34;&#34;&#34;
-        self.initialise_properties()
         self._configuration = configuration
 
         self._sym_data = SymData(configuration=self.configuration)
@@ -271,9 +286,9 @@ for a Model Configuration file or a ModelConfiguration.</p></div>
 
         # Use the parameters class associated with the model version and number being run
         version: str = self.configuration.version
-        number: int = self.configuration.number
-        module = importlib.import_module(f&#34;gcubed.model_parameters.{version}.parameters_{version}_{number}&#34;)
-        parameters_class: Parameters = getattr(module, f&#34;Parameters{version}{number}&#34;)
+        build: int = self.configuration.build
+        module = importlib.import_module(f&#34;gcubed.model_parameters.{version}.parameters_{version}_{build}&#34;)
+        parameters_class: Parameters = getattr(module, f&#34;Parameters{version}{build}&#34;)
         self._parameters = parameters_class(database=self.database, base_year=self.configuration.calibration_year)
 
         self._effective_productivity = EffectiveLabourProductivity(parameters=self.parameters)
@@ -282,7 +297,13 @@ for a Model Configuration file or a ModelConfiguration.</p></div>
 
         self.__validate()
 
-        logging.info(&#34;The model has been loaded.&#34;)
+    def __validate(self):
+        &#34;&#34;&#34;
+        Raise an exception if the model is invalid.
+        Confirm a successful instantiation otherwise.
+        &#34;&#34;&#34;
+        logging.info(f&#34;Model {self.configuration.version} {self.configuration._build} has successfully loaded.&#34;)
+
 
     @property
     def configuration(self) -&gt; ModelConfiguration:
@@ -306,13 +327,7 @@ for a Model Configuration file or a ModelConfiguration.</p></div>
 
     @property
     def energy_usage_efficiency(self) -&gt; EnergyUsageEfficiency:
-        return self._energy_usage_efficiency
-
-    def __validate(self):
-        &#34;&#34;&#34;
-        Raise an exception if the model is invalid
-        &#34;&#34;&#34;
-        pass</code></pre>
+        return self._energy_usage_efficiency</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -393,30 +408,6 @@ def sym_data(self) -&gt; SymData:
 </details>
 </dd>
 </dl>
-<h3>Methods</h3>
-<dl>
-<dt id="gcubed.model.Model.initialise_properties"><code class="name flex">
-<span>def <span class="ident">initialise_properties</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def initialise_properties(self):
-    self._configuration: ModelConfiguration = None
-    self._sym_data: SymData = None
-    self._parameters: Parameters = None
-    self._previous_model: Model = None
-    self._next_model: Model = None
-    self._variables: pd.DataFrame = None
-    self._database: pd.DataFrame = None
-    self._shock_variables: pd.DataFrame = None
-    self._shock_database: pd.DataFrame = None</code></pre>
-</details>
-</dd>
-</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="gcubed.base.Base" href="base.html#gcubed.base.Base">Base</a></b></code>:
@@ -451,7 +442,6 @@ def sym_data(self) -&gt; SymData:
 <li><code><a title="gcubed.model.Model.database" href="#gcubed.model.Model.database">database</a></code></li>
 <li><code><a title="gcubed.model.Model.effective_labour_productivity" href="#gcubed.model.Model.effective_labour_productivity">effective_labour_productivity</a></code></li>
 <li><code><a title="gcubed.model.Model.energy_usage_efficiency" href="#gcubed.model.Model.energy_usage_efficiency">energy_usage_efficiency</a></code></li>
-<li><code><a title="gcubed.model.Model.initialise_properties" href="#gcubed.model.Model.initialise_properties">initialise_properties</a></code></li>
 <li><code><a title="gcubed.model.Model.parameters" href="#gcubed.model.Model.parameters">parameters</a></code></li>
 <li><code><a title="gcubed.model.Model.sym_data" href="#gcubed.model.Model.sym_data">sym_data</a></code></li>
 </ul>

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>gcubed.constants API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Defines all constants." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,6 +22,7 @@
 <h1 class="title">Module <code>gcubed.constants</code></h1>
 </header>
 <section id="section-intro">
+<p>Defines all constants.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -34,7 +35,13 @@
 # from model attributes rather than hard coded into the Python
 # implementation of the model.
 # ------------------------------------------------------------------
+&#34;&#34;&#34;
+Defines all constants.
+&#34;&#34;&#34;
+#The delta used to compute numeric derivatives.
+DELTA: float = 0.00000001
 
+# The region code for the USA
 USA_REGION_CODE: str = &#34;UU&#34;
 
 # Weighted price of domestic output. See gcubed.Model
@@ -43,6 +50,8 @@ WAGE_PREFIX: str = &#34;WAGE&#34;
 NOMINAL_GDP_PREFIX = &#34;LGDPN&#34;
 REAL_GDP_PREFIX = &#34;LGDPR&#34;
 US_REAL_GDP_RATIO_PREFIX = &#34;YRATR&#34;
+REAL_INTEREST_RATE_PREFIX = &#34;INTR&#34;
+NOMINAL_INTEREST_RATE_PREFIX = &#34;INTN&#34;
 
 INTEREST_RATE_PREFIXES: list[str] = [&#34;INPL&#34;, &#34;INPN&#34;, &#34;INTF&#34;, &#34;INTL&#34;, &#34;INTN&#34;, &#34;INTR&#34;]
 
@@ -54,27 +63,34 @@ STATE_LEAD_VARIABLES: list[str] = [&#34;INTN&#34;, &#34;EXCH&#34;, &#34;INPN&#34
 JUMPING_VARIABLE_PREFIXES_FOR_REGIONS = [&#34;REXC&#34;, &#34;WELH&#34;, &#34;LAMY&#34;, &#34;LAMZ&#34;, &#34;EYGR&#34;, &#34;EPRC&#34;]
 JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS = [&#34;LAM&#34;]
 
-# Constants relevant to rebasing operations. See gcubed.Rebaser.
-
+# Constants relevant to database rebasing operations.
 LOG_INDEX_PREFIXES = [&#34;PRCT&#34;, &#34;PRID&#34;, &#34;PRIM&#34;, &#34;PRIX&#34;, &#34;PRIE&#34;, &#34;PRII&#34;, &#34;PRKY&#34;, &#34;PRKZ&#34;,
                       &#34;WAGE&#34;, &#34;PGDP&#34;, &#34;EXCH&#34;, &#34;REXC&#34;, &#34;NEER&#34;, &#34;PRCE&#34;, &#34;PRCO&#34;, &#34;REER&#34;, 
                       &#34;MONE&#34;, &#34;PRGT&#34;, &#34;PROI&#34;, &#34;PRDX&#34;, &#34;PRY&#34;, &#34;PRD&#34;, 
                       &#34;PIM&#34;, &#34;PRE&#34;, &#34;POI&#34;, &#34;PRK&#34;, &#34;PRP&#34;, &#34;WAG&#34;, &#34;PMR&#34;, &#34;PMQ&#34;, &#34;PRX&#34;]
+
 LEAD_LOG_INDEX_PREFIXES = [&#34;EXCL&#34;]
 LAG_LOG_INDEX_PREFIXES = [&#34;PRCL&#34;, &#34;PRDL&#34;]
 INDEX_PREFIXES = [&#34;GDPN&#34;]
 
+
+# Constants used as part of finding intertemporal constant values.
 NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES = [
     (&#39;EPRC&#39;, &#39;z1l&#39;),
     (&#39;EYGR&#39;, &#39;z1l&#39;),
     (&#39;WAGE&#39;, &#39;x1l&#39;)]
-    
 NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES = [
     (&#39;EPRC&#39;, &#39;z1l&#39;),
     (&#39;EYGR&#39;, &#39;z1l&#39;),
     (&#39;PRID&#39;, &#39;zel&#39;)]
 
-REXC_FOR_USA = &#39;REXC(UU)&#39;</code></pre>
+REXC_FOR_USA = &#39;REXC(UU)&#39;
+
+# Pick out the variables of interest to report.
+REPORTING_VARIABLES:list[str] = [&#39;INFX(UU)&#39;, &#39;INFL(UU)&#39;, &#39;INTN(UU)&#39;, &#39;NB10(UU)&#39;, &#39;INTR(UU)&#39;, &#39;RB10(UU)&#39;, &#39;GDPN(UU)&#39;, &#39;GDPR(UU)&#39;, &#39;INVT(UU)&#39;]
+
+# Pick out the years of interest to report
+REPORTING_YEARS: list[str] = [str(x) for x in range(2018, 2026)]</code></pre>
 </details>
 </section>
 <section>

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>gcubed.base API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Contains the Base class" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,6 +22,7 @@
 <h1 class="title">Module <code>gcubed.base</code></h1>
 </header>
 <section id="section-intro">
+<p>Contains the Base class</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -30,6 +31,10 @@
 # Purpose: Base class that every other class inherits from.
 # Author: Geoff Shuetrim
 # ------------------------------------------------------------------
+&#34;&#34;&#34;
+Contains the Base class
+&#34;&#34;&#34;
+
 import logging
 import re
 import os
@@ -39,31 +44,46 @@ import numpy as np
 
 class Base:
     &#34;&#34;&#34;
-    Provide convenience methods for all classes.
+
+    ### Overview
+
+    Provides convenience methods for all classes.
+
+    All G-Cubed classes inherit from this base class.
+
     &#34;&#34;&#34;
 
     # Set to true if you are doing a detailed debug of the model.
     DOING_DETAILED_DEBUG = True
 
     def __init__(self) -&gt; None:
+        &#34;&#34;&#34;
+        
+        ### Constructor
+
+        Does constructor operations required by all classes that inherit from this base class.
+
+        These currently just set up numpy array print options.
+
+        &#34;&#34;&#34;
         np.set_printoptions(formatter={&#39;float&#39;: lambda x: &#34;{0:0.4f}&#34;.format(x)})
         np.set_printoptions(suppress=True, linewidth=400)
-        pass
-
-    def log(self):
-        logging.debug(vars(self))
 
     def zeros(self, rows=1, cols=1) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
+        ### Overview
+
         Create a dataframe filled with zeros.
 
-        Arguments
+        ### Arguments
 
         rows: the number of dataframe rows
 
         cols: the number of dataframe columns
 
-        Return a dataframe containing zeros with the given number
+        ### Returns
+         
+        A dataframe containing zeros with the given number
         of rows and the given number of columns.
         &#34;&#34;&#34;
         data: pd.DataFrame = pd.DataFrame(
@@ -73,21 +93,31 @@ class Base:
             data.columns = [&#34;value&#34;]
         return data
 
-    def load_data(self, filename: str, name_column: int = 1):
+    def load_data(self, filename: str, name_column: int = 1) -&gt; tuple:
         &#34;&#34;&#34;
+
+        ### Overview
+
         Loads data from a CSV file, splitting it into two parts,
         the data selected as the columns with a 4 digit column name,
         and the non-data, selected as all other columns.
 
         This is used to load a variety of different CSV data sources.
 
-        Arguments:
+        ### Arguments
 
         filename: the name of the CSV file, including the path relative
         to the model root directory.
 
         name_column: the column of the CSV file that contains the variable
         names, indexed from zero for the first column and defaulting to 1.
+
+        ### Returns
+
+        A tuple is returned. The first element in the tuple is the dataframe consisting
+        of all columns that were loaded and that did not have a year label for the column.
+        The second element in the tuple is the dataframe consisting of all columns that 
+        were loaded and that did have a year label for the column.
         &#34;&#34;&#34;
         if not os.path.isfile(filename):
             raise Exception(f&#34;Could not load data from {filename} because it does not exist.&#34;)
@@ -114,7 +144,19 @@ class Base:
 
     def get_year_labels(self, labels:list[str]) -&gt; list[str]:
         &#34;&#34;&#34;
-        Return all strings in the list that match the YYYY year format.
+        
+        ### Overview
+
+        Extracts the subset of elements in the input list of labels that have
+        a YYYY format.
+
+        ### Arguments
+
+        labels: A list of strings, some of which contain years in YYYY format.
+
+        ### Returns
+        
+        all strings in the list that match the YYYY year format.
         &#34;&#34;&#34;
         return list(filter(__class__.__YYY_regular_expression.match, labels))
         </code></pre>
@@ -133,38 +175,58 @@ class Base:
 <span>class <span class="ident">Base</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Provide convenience methods for all classes.</p></div>
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Provides convenience methods for all classes.</p>
+<p>All G-Cubed classes inherit from this base class.</p>
+<h3 id="constructor">Constructor</h3>
+<p>Does constructor operations required by all classes that inherit from this base class.</p>
+<p>These currently just set up numpy array print options.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Base:
     &#34;&#34;&#34;
-    Provide convenience methods for all classes.
+
+    ### Overview
+
+    Provides convenience methods for all classes.
+
+    All G-Cubed classes inherit from this base class.
+
     &#34;&#34;&#34;
 
     # Set to true if you are doing a detailed debug of the model.
     DOING_DETAILED_DEBUG = True
 
     def __init__(self) -&gt; None:
+        &#34;&#34;&#34;
+        
+        ### Constructor
+
+        Does constructor operations required by all classes that inherit from this base class.
+
+        These currently just set up numpy array print options.
+
+        &#34;&#34;&#34;
         np.set_printoptions(formatter={&#39;float&#39;: lambda x: &#34;{0:0.4f}&#34;.format(x)})
         np.set_printoptions(suppress=True, linewidth=400)
-        pass
-
-    def log(self):
-        logging.debug(vars(self))
 
     def zeros(self, rows=1, cols=1) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
+        ### Overview
+
         Create a dataframe filled with zeros.
 
-        Arguments
+        ### Arguments
 
         rows: the number of dataframe rows
 
         cols: the number of dataframe columns
 
-        Return a dataframe containing zeros with the given number
+        ### Returns
+         
+        A dataframe containing zeros with the given number
         of rows and the given number of columns.
         &#34;&#34;&#34;
         data: pd.DataFrame = pd.DataFrame(
@@ -174,21 +236,31 @@ class Base:
             data.columns = [&#34;value&#34;]
         return data
 
-    def load_data(self, filename: str, name_column: int = 1):
+    def load_data(self, filename: str, name_column: int = 1) -&gt; tuple:
         &#34;&#34;&#34;
+
+        ### Overview
+
         Loads data from a CSV file, splitting it into two parts,
         the data selected as the columns with a 4 digit column name,
         and the non-data, selected as all other columns.
 
         This is used to load a variety of different CSV data sources.
 
-        Arguments:
+        ### Arguments
 
         filename: the name of the CSV file, including the path relative
         to the model root directory.
 
         name_column: the column of the CSV file that contains the variable
         names, indexed from zero for the first column and defaulting to 1.
+
+        ### Returns
+
+        A tuple is returned. The first element in the tuple is the dataframe consisting
+        of all columns that were loaded and that did not have a year label for the column.
+        The second element in the tuple is the dataframe consisting of all columns that 
+        were loaded and that did have a year label for the column.
         &#34;&#34;&#34;
         if not os.path.isfile(filename):
             raise Exception(f&#34;Could not load data from {filename} because it does not exist.&#34;)
@@ -215,7 +287,19 @@ class Base:
 
     def get_year_labels(self, labels:list[str]) -&gt; list[str]:
         &#34;&#34;&#34;
-        Return all strings in the list that match the YYYY year format.
+        
+        ### Overview
+
+        Extracts the subset of elements in the input list of labels that have
+        a YYYY format.
+
+        ### Arguments
+
+        labels: A list of strings, some of which contain years in YYYY format.
+
+        ### Returns
+        
+        all strings in the list that match the YYYY year format.
         &#34;&#34;&#34;
         return list(filter(__class__.__YYY_regular_expression.match, labels))</code></pre>
 </details>
@@ -228,16 +312,16 @@ class Base:
 <li><a title="gcubed.baseline.productivity.Productivity" href="baseline/productivity.html#gcubed.baseline.productivity.Productivity">Productivity</a></li>
 <li><a title="gcubed.data.database.Database" href="data/database.html#gcubed.data.database.Database">Database</a></li>
 <li><a title="gcubed.io_data.IOData" href="io_data.html#gcubed.io_data.IOData">IOData</a></li>
-<li><a title="gcubed.linear_model.LinearModel" href="linear_model.html#gcubed.linear_model.LinearModel">LinearModel</a></li>
+<li><a title="gcubed.linearisation.linear_model.LinearModel" href="linearisation/linear_model.html#gcubed.linearisation.linear_model.LinearModel">LinearModel</a></li>
+<li><a title="gcubed.linearisation.model_solver.ModelSolver" href="linearisation/model_solver.html#gcubed.linearisation.model_solver.ModelSolver">ModelSolver</a></li>
 <li><a title="gcubed.model.Model" href="model.html#gcubed.model.Model">Model</a></li>
 <li><a title="gcubed.model_configuration.ModelConfiguration" href="model_configuration.html#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a></li>
 <li><a title="gcubed.model_parameters.parameters.Parameters" href="model_parameters/parameters.html#gcubed.model_parameters.parameters.Parameters">Parameters</a></li>
-<li><a title="gcubed.model_solver.ModelSolver" href="model_solver.html#gcubed.model_solver.ModelSolver">ModelSolver</a></li>
-<li><a title="gcubed.projections.base_projections.BaseProjections" href="projections/base_projections.html#gcubed.projections.base_projections.BaseProjections">BaseProjections</a></li>
+<li><a title="gcubed.projections.model_updater.ModelUpdater" href="projections/model_updater.html#gcubed.projections.model_updater.ModelUpdater">ModelUpdater</a></li>
+<li><a title="gcubed.projections.projections.Projections" href="projections/projections.html#gcubed.projections.projections.Projections">Projections</a></li>
 <li><a title="gcubed.projections.simulation_experiment.SimulationExperiment" href="projections/simulation_experiment.html#gcubed.projections.simulation_experiment.SimulationExperiment">SimulationExperiment</a></li>
 <li><a title="gcubed.projections.simulation_layer_definition.SimulationLayerDefinition" href="projections/simulation_layer_definition.html#gcubed.projections.simulation_layer_definition.SimulationLayerDefinition">SimulationLayerDefinition</a></li>
 <li><a title="gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions" href="projections/simulation_layer_definitions.html#gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions">SimulationLayerDefinitions</a></li>
-<li><a title="gcubed.relinearisation.model_updater.ModelUpdater" href="relinearisation/model_updater.html#gcubed.relinearisation.model_updater.ModelUpdater">ModelUpdater</a></li>
 <li><a title="gcubed.runner.Runner" href="runner.html#gcubed.runner.Runner">Runner</a></li>
 <li><a title="gcubed.stable_manifold.StableManifold" href="stable_manifold.html#gcubed.stable_manifold.StableManifold">StableManifold</a></li>
 <li><a title="gcubed.state_space_form.StateSpaceForm" href="state_space_form.html#gcubed.state_space_form.StateSpaceForm">StateSpaceForm</a></li>
@@ -255,50 +339,84 @@ class Base:
 <span>def <span class="ident">get_year_labels</span></span>(<span>self, labels: list[str]) ‑> list[str]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return all strings in the list that match the YYYY year format.</p></div>
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Extracts the subset of elements in the input list of labels that have
+a YYYY format.</p>
+<h3 id="arguments">Arguments</h3>
+<p>labels: A list of strings, some of which contain years in YYYY format.</p>
+<h3 id="returns">Returns</h3>
+<p>all strings in the list that match the YYYY year format.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_year_labels(self, labels:list[str]) -&gt; list[str]:
     &#34;&#34;&#34;
-    Return all strings in the list that match the YYYY year format.
+    
+    ### Overview
+
+    Extracts the subset of elements in the input list of labels that have
+    a YYYY format.
+
+    ### Arguments
+
+    labels: A list of strings, some of which contain years in YYYY format.
+
+    ### Returns
+    
+    all strings in the list that match the YYYY year format.
     &#34;&#34;&#34;
     return list(filter(__class__.__YYY_regular_expression.match, labels))</code></pre>
 </details>
 </dd>
 <dt id="gcubed.base.Base.load_data"><code class="name flex">
-<span>def <span class="ident">load_data</span></span>(<span>self, filename: str, name_column: int = 1)</span>
+<span>def <span class="ident">load_data</span></span>(<span>self, filename: str, name_column: int = 1) ‑> tuple</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Loads data from a CSV file, splitting it into two parts,
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Loads data from a CSV file, splitting it into two parts,
 the data selected as the columns with a 4 digit column name,
 and the non-data, selected as all other columns.</p>
 <p>This is used to load a variety of different CSV data sources.</p>
-<p>Arguments:</p>
+<h3 id="arguments">Arguments</h3>
 <p>filename: the name of the CSV file, including the path relative
 to the model root directory.</p>
 <p>name_column: the column of the CSV file that contains the variable
-names, indexed from zero for the first column and defaulting to 1.</p></div>
+names, indexed from zero for the first column and defaulting to 1.</p>
+<h3 id="returns">Returns</h3>
+<p>A tuple is returned. The first element in the tuple is the dataframe consisting
+of all columns that were loaded and that did not have a year label for the column.
+The second element in the tuple is the dataframe consisting of all columns that
+were loaded and that did have a year label for the column.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def load_data(self, filename: str, name_column: int = 1):
+<pre><code class="python">def load_data(self, filename: str, name_column: int = 1) -&gt; tuple:
     &#34;&#34;&#34;
+
+    ### Overview
+
     Loads data from a CSV file, splitting it into two parts,
     the data selected as the columns with a 4 digit column name,
     and the non-data, selected as all other columns.
 
     This is used to load a variety of different CSV data sources.
 
-    Arguments:
+    ### Arguments
 
     filename: the name of the CSV file, including the path relative
     to the model root directory.
 
     name_column: the column of the CSV file that contains the variable
     names, indexed from zero for the first column and defaulting to 1.
+
+    ### Returns
+
+    A tuple is returned. The first element in the tuple is the dataframe consisting
+    of all columns that were loaded and that did not have a year label for the column.
+    The second element in the tuple is the dataframe consisting of all columns that 
+    were loaded and that did have a year label for the column.
     &#34;&#34;&#34;
     if not os.path.isfile(filename):
         raise Exception(f&#34;Could not load data from {filename} because it does not exist.&#34;)
@@ -321,28 +439,17 @@ names, indexed from zero for the first column and defaulting to 1.</p></div>
     return (variables, data)</code></pre>
 </details>
 </dd>
-<dt id="gcubed.base.Base.log"><code class="name flex">
-<span>def <span class="ident">log</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def log(self):
-    logging.debug(vars(self))</code></pre>
-</details>
-</dd>
 <dt id="gcubed.base.Base.zeros"><code class="name flex">
 <span>def <span class="ident">zeros</span></span>(<span>self, rows=1, cols=1) ‑> pandas.core.frame.DataFrame</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Create a dataframe filled with zeros.</p>
-<p>Arguments</p>
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Create a dataframe filled with zeros.</p>
+<h3 id="arguments">Arguments</h3>
 <p>rows: the number of dataframe rows</p>
 <p>cols: the number of dataframe columns</p>
-<p>Return a dataframe containing zeros with the given number
+<h3 id="returns">Returns</h3>
+<p>A dataframe containing zeros with the given number
 of rows and the given number of columns.</p></div>
 <details class="source">
 <summary>
@@ -350,15 +457,19 @@ of rows and the given number of columns.</p></div>
 </summary>
 <pre><code class="python">def zeros(self, rows=1, cols=1) -&gt; pd.DataFrame:
     &#34;&#34;&#34;
+    ### Overview
+
     Create a dataframe filled with zeros.
 
-    Arguments
+    ### Arguments
 
     rows: the number of dataframe rows
 
     cols: the number of dataframe columns
 
-    Return a dataframe containing zeros with the given number
+    ### Returns
+     
+    A dataframe containing zeros with the given number
     of rows and the given number of columns.
     &#34;&#34;&#34;
     data: pd.DataFrame = pd.DataFrame(
@@ -393,7 +504,6 @@ of rows and the given number of columns.</p></div>
 <li><code><a title="gcubed.base.Base.DOING_DETAILED_DEBUG" href="#gcubed.base.Base.DOING_DETAILED_DEBUG">DOING_DETAILED_DEBUG</a></code></li>
 <li><code><a title="gcubed.base.Base.get_year_labels" href="#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.base.Base.load_data" href="#gcubed.base.Base.load_data">load_data</a></code></li>
-<li><code><a title="gcubed.base.Base.log" href="#gcubed.base.Base.log">log</a></code></li>
 <li><code><a title="gcubed.base.Base.zeros" href="#gcubed.base.Base.zeros">zeros</a></code></li>
 </ul>
 </li>

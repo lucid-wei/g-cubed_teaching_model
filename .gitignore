@@ -3,3 +3,9 @@
 __pycache__/
 *.pyc
 *.uploading.cfg
+/_site_src/assets/images/g-cubed-logo.jpg
+/_site_src/2env_setup.md
+/_site_src/3model_definitions.md
+/_site_src/4io_folder.md
+/_site_src/5running.md
+/_site_src/index.md

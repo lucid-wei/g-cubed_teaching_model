@@ -1,0 +1,3030 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>gcubed.projections.projections API documentation</title>
+<meta name="description" content="Contains the base Projections class" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>gcubed.projections.projections</code></h1>
+</header>
+<section id="section-intro">
+<p>Contains the base Projections class</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ------------------------------------------------------------------
+# Purpose: Base class for baseline projections and simulations
+# Author: Geoff Shuetrim
+# ------------------------------------------------------------------
+&#34;&#34;&#34;
+Contains the base Projections class
+&#34;&#34;&#34;
+import logging
+import pandas as pd
+import numpy as np
+import gcubed.constants as CONSTANTS
+from gcubed.base import Base
+from gcubed.model_configuration import ModelConfiguration
+from gcubed.sym_data import SymData
+from gcubed.model import Model
+from gcubed.model_parameters.parameters import Parameters
+from gcubed.state_space_form import StateSpaceForm
+from gcubed.stable_manifold import StableManifold
+
+class Projections(Base):
+    &#34;&#34;&#34;
+    Base class for Simulation Projections and for Baseline Projections.
+    &#34;&#34;&#34;
+
+    @classmethod
+    def get_differences_between_projections(cls, new_projections:pd.DataFrame, original_projections:pd.DataFrame) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+       ### Arguments
+
+        new_projections: A dataframe of projections
+
+        original_projections: A second dataframe of projections
+
+        Produce a dataframe of differences between two projections (new_projections - original_projections).
+
+        Note that this can be used for raw, database, publishable and graphable projection types. However, the new 
+        and original projections must be the same type for the results to be meaningful.
+
+        Raises exceptions if the dataframes have different indexes or different columns.
+        &#34;&#34;&#34;
+
+        if not new_projections.index.equals(original_projections.index):
+            raise Exception(&#34;The two sets of projections are not for identical lists of variables. Make sure they are both for the same model.&#34;)
+        if not new_projections.columns.equals(original_projections.columns):
+            raise Exception(&#34;The two sets of projections are not for identical years so differences between them cannot be calculated.&#34;)
+        
+        return (new_projections - original_projections)
+
+    def __init__(self, stable_manifold: StableManifold) -&gt; None:
+
+        assert stable_manifold is not None
+        assert stable_manifold.converged
+        self._stable_manifold = stable_manifold
+        self._event_year = self.base_year # gets overridden by subclasses.
+        self.__validate()
+
+    def __validate(self):
+        &#34;&#34;&#34;
+        TODO:  Validate the projections: 
+        1. check that they are available for the expected projection years.
+        2. Check that the base year projections are equal to the base year data values.
+        &#34;&#34;&#34;
+        pass
+
+    @property
+    def stable_manifold(self) -&gt; StableManifold:
+        return self._stable_manifold
+
+    @property
+    def state_space_form(self) -&gt; StateSpaceForm:
+        return self.stable_manifold.ssf
+
+    @property
+    def model(self) -&gt; Model:
+        return self.state_space_form.model
+
+    @property
+    def sym_data(self) -&gt; SymData:
+        return self.model.sym_data
+
+    @property
+    def parameters(self) -&gt; Parameters:
+        return self.model.parameters
+
+    @property
+    def configuration(self) -&gt; ModelConfiguration:
+        return self.sym_data.configuration
+
+    @property
+    def base_year(self) -&gt; int:
+        &#34;&#34;&#34;
+        Returns the base year for this projection
+        &#34;&#34;&#34;
+        return self.configuration.projection_base_year
+
+    @property
+    def end_year(self) -&gt; int:
+        return self.configuration.end_year
+
+    @property
+    def event_year(self) -&gt; int:
+        &#34;&#34;&#34;
+        The event year is the year in which the experimental event happens.
+
+        Shocks that affect the economy are revealed to economic agents and 
+        alter the values of state variables in the event year and exogenous
+        variables from the event year onwards. The adjustments associated
+        with those shocks are applied to the projected values for the event year
+        that were generated by the previously generated projections.
+
+        For example, if we have baseline projections that use a base projection year
+        of 2018, the first year of projections are for 2018. These projections are
+        adjusted using constant adjustments to equal the observed values in the base
+        projection year, because the data in the baseline base projection year is observed.
+
+        If we then have a simulation layer with an event year of 2019, that simulation layer can
+        make adjustments to exogenous variables from 2019 onwards and to the state variables in 2019.
+
+        We can then run the simulation layer projections for 2019 onwards. These projections
+        can lead to changes in the values in 2019 for j1, ze, z1.
+        x1 does not get changed in the simulation layer projections: its values are predetermined as
+        the projection values from 2018 with whatever adjustments are implied by the event associated
+        with the simulation layer.
+        &#34;&#34;&#34;
+        return self._event_year
+
+    @property
+    def projection_years(self) -&gt; list[int]:
+        &#34;&#34;&#34;
+        Returns the list of years for projections from the event year through to 
+        and including the projection end year.
+        &#34;&#34;&#34;
+        return range(self.event_year, self.end_year+1)
+
+    @property
+    def projection_years_count(self) -&gt; list[int]:
+        return (self.end_year - self.event_year + 1)
+
+    @property
+    def projection_years_column_labels(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        Returns the ordered list of 4 digit year 
+        column labels for the projections.
+        &#34;&#34;&#34;
+        return [str(x) for x in self.projection_years]
+
+    @property
+    def preceding_projection_years(self) -&gt; list[int]:
+        &#34;&#34;&#34;
+        Returns the list of years for projections from the base year through to but
+        not including the event year for this baseline projection or simulation layer.
+        &#34;&#34;&#34;
+        return range(self.base_year, self.event_year)
+
+    @property
+    def preceding_projection_years_count(self) -&gt; list[int]:
+        &#34;&#34;&#34;
+        Returns the number of years from the base year for the projections to
+        the event year.
+        &#34;&#34;&#34;
+        return (self.event_year - self.base_year)
+
+    @property
+    def preceding_projection_years_column_labels(self) -&gt; list[str]:
+        result = [str(x) for x in self.preceding_projection_years]
+        logging.debug(f&#34;With event year {self.event_year}, the preceding projection years are\n{result}&#34;)
+        return result
+
+    @property
+    def simulation_data_columns(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        Returns the list of years (YYYY format) as strings from the event year to the
+        end year in the projections.
+        &#34;&#34;&#34;
+        return [str(x) for x in range(self.event_year, self.configuration.end_year+1)]
+
+    @property
+    def projections(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Returns the dataframe of projections for all variables in the model that are part of the 
+        4 vectors specified. There still need to be additional variable projected that are computed
+        outside of the system to take non-linearity into account (eg long-term interest rates.)
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_projections&#39;):
+            return self._projections
+        raise Exception(f&#34;The projections for all variables are not yet available.&#34;)
+
+    @property
+    def database_projections(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Returns the dataframe of projections for all variables in the model in forms that are consistent with
+        the values contained in the original model database.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_database_projections&#39;):
+            return self._database_projections
+        raise Exception(f&#34;The database projections for all variables are not yet available.&#34;)
+
+    @property
+    def publishable_projections(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Returns the dataframe of projections for all variables in the model.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_publishable_projections&#39;):
+            return self._publishable_projections
+        raise Exception(f&#34;The publishable projections for all variables are not yet available.&#34;)
+
+    @property
+    def yxr_initial_values(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Get yxr initial values to start the projections process.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_yxr_initial_values&#39;):
+            return self._yxr_initial_values
+        raise Exception(f&#34;The initial values for the period t state variable projections (yxr) are not yet available.&#34;)
+
+
+    @property
+    def yxr_projections_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Get yxr variable projection values
+        of the projection years as a dataframe.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_yxr_projections&#39;):
+            return self._yxr_projections
+        raise Exception(f&#34;The period t state variable projections (yxr) are not yet available.&#34;)
+
+    @property
+    def yxr_projections(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Get yxr variable projection values
+        of the projection years.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_yxr_projections&#39;):
+            return self._yxr_projections.to_numpy()
+        raise Exception(f&#34;The period t state variable projections are not yet available.&#34;)
+
+    @property
+    def yjr_projections_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Get yjr variable projection values
+        of the projection years as a dataframe.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_yjr_projections&#39;):
+            return self._yjr_projections
+        raise Exception(f&#34;The period t costate variable projections (yjr) are not yet available.&#34;)
+
+    @property
+    def yjr_projections(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Get yjr variable projection values
+        of the projection years.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_yjr_projections&#39;):
+            return self._yjr_projections.to_numpy()
+        raise Exception(f&#34;The period t costate variable projections (yjr) are not yet available.&#34;)
+
+    @property
+    def exz_projections_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Get exz variable projection values
+        of the projection years as a dataframe.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_exz_projections&#39;):
+            return self._exz_projections
+        raise Exception(f&#34;The period t expected values for t+1 variables projections (exz) are not yet available.&#34;)
+
+    @property
+    def exz_projections(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Get exz variable projection values
+        of the projection years.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_exz_projections&#39;):
+            return self._exz_projections.to_numpy()
+        raise Exception(f&#34;The period t expected values for t+1 variables projections (exz) are not yet available.&#34;)
+
+    @property
+    def zel_projections_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Get zel variable projection values
+        of the projection years as a dataframe.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_zel_projections&#39;):
+            return self._zel_projections
+        raise Exception(f&#34;The period t ZEL projections are not yet available.&#34;)
+
+    @property
+    def zel_projections(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Get zel variable projection values
+        of the projection years.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_zel_projections&#39;):
+            return self._zel_projections.to_numpy()
+        raise Exception(f&#34;The period t ZEL projections are not yet available.&#34;)
+
+    @property
+    def z1l_projections_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Get z1l variable projection values
+        of the projection years as a dataframe.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_z1l_projections&#39;):
+            return self._z1l_projections
+        raise Exception(f&#34;The period t Z1L projections are not yet available.&#34;)
+
+    @property
+    def z1l_projections(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Get z1l variable projection values
+        of the projection years.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_z1l_projections&#39;):
+            return self._z1l_projections.to_numpy()
+        raise Exception(f&#34;The period t Z1L projections are not yet available.&#34;)
+
+    @property
+    def exo_projections_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Get exogenous variable projection values
+        of the projection years as a dataframe.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_exo_projections&#39;):
+            return self._exo_projections
+        raise Exception(f&#34;The exogenous variable projections are not yet available.&#34;)
+
+    @property
+    def exo_projections(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Get exogenous variable projection values
+        of the projection years.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_exo_projections&#39;):
+            return self._exo_projections.to_numpy()
+        raise Exception(f&#34;The exogenous variable projections are not yet available.&#34;)
+
+    def longrate_calculation(self, term: int, rates: pd.DataFrame) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Utility method that returns the compounding long rates given the yearly rates.
+
+        Rates are provided as decimal values so 1% is 0.01.
+ 
+       ### Arguments
+
+        term: the number of years of the term of the instrument. 2 for a 2 year bond.
+
+        rates: the projections of the 1 year interest rates, (nominal or real).
+
+        Returns the long rates that can be computed from the one year rates. This series is shorter
+        than the series of one year rates because the required data is not available for 
+        the last (term-1) observations. It is padded with NaN values in the returned projection.
+        &#34;&#34;&#34;
+        shortrates = rates.copy()
+        name_suffix = str(shortrates.index[0]).split(&#39;(&#39;)[1]
+        longrates_columns = shortrates.iloc[:, 0:(len(shortrates.columns)-term+1)].columns
+        preceding_year: int = int(shortrates.columns[0])-1
+        shortrates = shortrates + 1
+
+        shortrates = shortrates.cumprod(axis=&#39;columns&#39;)
+        shortrates.insert(0, str(preceding_year), 1.0)
+
+        longrates: pd.DataFrame = pd.DataFrame(np.power(shortrates.iloc[:, term:].to_numpy() / shortrates.iloc[:, 0:-term:1].to_numpy(), 1/term) - 1.0)
+        longrates.columns = longrates_columns
+        match str(rates.index[0]).split(&#39;(&#39;)[0]:
+            case &#39;INTN&#39;:
+                match term:
+                    case 2:
+                        long_rate_name = &#39;NB02&#39;
+                    case 5:
+                        long_rate_name = &#39;NB05&#39;
+                    case 10:
+                        long_rate_name = &#39;NB10&#39;
+                    case _:
+                        raise Exception(f&#34;Invalid nominal bond term specified: {term}&#34;)
+            case &#34;INTR&#34;:
+                match term:
+                    case 2:
+                        long_rate_name = &#39;RB02&#39;
+                    case 5:
+                        long_rate_name = &#39;RB05&#39;
+                    case 10:
+                        long_rate_name = &#39;RB10&#39;
+                    case _:
+                        raise Exception(f&#34;Invalid real bond term specified: {term}&#34;)
+            case _:
+                raise Exception(f&#34;Invalid variable used to compute bond rates: {str(rates.index[0])}. Use a 1 year interest rate.&#34;)
+        longrates.index = [ f&#34;{long_rate_name}({name_suffix}&#34; ]
+        return longrates.astype(float)
+
+    @property
+    def long_rate_constants(self):
+        &#34;&#34;&#34;
+        The constant adjustments to long bond rates 
+        (real and nominal) in the base projection year 
+        to ensure projections equal observed values.
+        &#34;&#34;&#34;
+        return self._long_rate_constants
+
+    def compute_functions_of_future_exogenous_variables(self):
+        &#34;&#34;&#34;
+        The rules governing the dynamic behaviour of variables depend on functions of the current and future exogenous variables.
+        These functions are evaluated and the results are stored in numpy matrices that match the number of rows
+        for the related vector of variables and that have a column for each year from the base projection year to the
+        last year in the projections.
+        &#34;&#34;&#34;
+
+        # Set up the arrays that will be populated and initialise them to zeros.
+
+        # // setup for baseline with optimization
+        # decl id=invert(unit(nez)-c4n);
+        # c4t=id*cz5;
+
+        # decl mu2t=id*c6n;
+
+        # id=invert(unit(njm)-ff-we*mu2t);
+        # c6t=id*(cz4+we*c4t);
+
+        # c4t=c4t+mu2t*c6t;
+        # c4t=ones(rows(c4t),nobs).*c4t;
+        # c6t=ones(rows(c6t),nobs).*c6t;
+        # c2t=h2t*exog+c6t+bt2t*gam3t;
+
+        # This is equivalent to h3t in the newsetsymbl.ox script (j by 1 dimensions)
+        h3t: np.ndarray = np.zeros(shape=(self.sym_data.vector_length(vector_name=&#39;j1l&#39;), self.projection_years_count))
+
+        # Populate for period T.
+
+        # c4t=invert(unit(nez)-zel_exz_ssf)*cz5   (r by 1 dimensions)
+        interim_calculation = self.stable_manifold.Gamma_rT @ self.ze_constants
+
+        # c6t = invert(unit(j)-j1l_yjr_ssf-j1l_exz_ssf*mu2t) * (cz4+j1l_exz_ssf*c4t)
+        #     = Gamma_jT (cz4+j1l_exz_ssf*interim_calculation)
+        c6T_column = self.stable_manifold.Gamma_jT @ (self.j1_constants + self.state_space_form.delta(&#39;j1l&#39;, &#39;exz&#39;) @ interim_calculation)
+
+        # c4t = c4t + mu2t * c6t (r by 1 dimensions)
+        c4T_column = interim_calculation + self.stable_manifold.psi_rj @ c6T_column
+
+        # c4t=ones(rows(c4t),nobs).*c4t (r by T dimensions)
+        c4t: np.ndarray = np.tile(c4T_column, (1, self.projection_years_count))
+
+        # c6t=ones(rows(c6t),nobs).*c6t (j by T dimensions)
+        c6t: np.ndarray = np.tile(c6T_column, (1, self.projection_years_count))
+
+        # c2t=h2t*exog+c6t    (j by T dimensions)
+        c2t: np.ndarray = self.stable_manifold.H2 @ self.exo_projections + c6t
+
+        # (s by T dimensions)
+        c5t: np.ndarray = np.zeros(shape=(self.sym_data.vector_length(vector_name=&#39;x1l&#39;), self.projection_years_count))
+
+        # (j by T dimensions)
+        c2t_lead: np.ndarray = c2t.copy()
+        c4t_lead: np.ndarray = c4t.copy()
+
+        # Populate for earlier periods.
+        j = self.projection_years_count-1
+        for k in range(self.projection_years_count-1, -1, -1):
+
+            # c5t[][k] = wvi*(x1l_exz_ssf*c4tl[][j] + cz2)          (s by 1 : note no need for T columns)
+            c5t: np.ndarray = self.stable_manifold.Gamma_st @ (self.state_space_form.delta(&#39;x1l&#39;, &#39;exz&#39;) @ c4t_lead[:, [j]] + self.x1_constants)
+
+            # c6t[][k] = fdeltinv*(th6t*c5t[][k] - j1l_exz_ssf*c4tl[][j] + c2tl[][j] - cz4)         (j rows)
+            c6t[:, [k]] = self.stable_manifold.Gamma_jt @ (self.stable_manifold.common_factor @ c5t - self.state_space_form.delta(
+                &#39;j1l&#39;, &#39;exz&#39;) @ c4t_lead[:, [j]] + c2t_lead[:, [j]] - self.j1_constants)
+
+            # c5t[][k] = c5t[][k] + th2t*c6t[][k]
+            c5t = c5t + self.stable_manifold.tau_sjt @ c6t[:, [k]]
+
+            # c4t[][k] = mu1tl*c5t[][k] + c4tl[][j]
+            c4t[:, [k]] = self.stable_manifold.M1_lead @ c5t + c4t_lead[:, [j]]
+
+            # h3t[][k] = c6t[][k]
+            h3t[:, [k]] = c6t[:, [k]].copy()
+
+            # c2t[][k] = h2t*exog[][k] + h3t[][k]
+            c2t[:, [k]] = self.stable_manifold.H2 @ self.exo_projections[:, [k]] + h3t[:, [k]]
+
+            # c4tl[][k] = nmu4t*exog[][k] + zel_yjr_ssf*h3t[][k] + zel_exz_ssf*c4t[][k] + cz5
+            c4t_lead[:, [k]] = self.stable_manifold.M2 @ self.exo_projections[:, [k]] + \
+                self.state_space_form.delta(&#39;zel&#39;, &#39;yjr&#39;) @ h3t[:, [k]] + \
+                self.state_space_form.delta(&#39;zel&#39;, &#39;exz&#39;) @ c4t[:, [k]] + \
+                self.ze_constants
+
+            c2t_lead = c2t.copy()
+
+            j = k
+
+        # Store the functions of future exogenous variables to access when doing projections.
+        self._h3t = h3t.copy()
+        self._c4t = c4t.copy()
+
+    @property
+    def h3t(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Equivalent to h3t in the Ox implementation
+        
+        Returns constants and the functions of current and future exogenous variables affecting J1.
+        &#34;&#34;&#34;
+        return self._h3t
+
+    @property
+    def c4t(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Equivalent to c4t in the Ox implementation
+        
+        Returns constants and the functions of current and future exogenous variables affecting ZE.
+        &#34;&#34;&#34;
+        return self._c4t
+
+    def generate_projections(self):
+        &#34;&#34;&#34;
+        Implements the projection logic in msgsimBL.ox. This runs the various equations
+        to project variables based on the starting state vector and the values of
+        exogenous variables in all years. The steps are as follows:
+
+        Step 1.
+        Recalculate the functions of future exogenous variables, incorporating 
+        the updated exogenous variable projections and all constant adjustments: 
+        the intertemporal constants and the other constants  capturing the difference 
+        between the SSF equation results in the base year and the observed 
+        values in the base year.
+        
+        Step 2.
+        Project the state vector. (x_t+1 as a function of x_t and exogenous variables and constant adjustments)
+        This uses the Anew and Znew matrices computed as part of getting the stable manifold.
+
+        Step 3. 
+        Combine all variable projections into a single data frame.
+
+        Step 4.
+        Sort the variables in the projection dataframe into the same order as the original database.
+        &#34;&#34;&#34;
+
+        # Step 1.
+        self.compute_functions_of_future_exogenous_variables()
+
+        # Step 2.
+        self._constantBL: pd.DataFrame = pd.DataFrame(
+            self.stable_manifold.Znew @ self.exo_projections +
+            self.state_space_form.delta(&#39;x1l&#39;, &#39;yjr&#39;) @ self.h3t +
+            self.state_space_form.delta(&#39;x1l&#39;, &#39;exz&#39;) @ self.c4t +
+            self.x1_constants)
+        self._constantBL.columns = self.projection_years_column_labels
+        self._constantBL.index = self.sym_data.vector_variable_names(vector_name=&#39;yxr&#39;)
+        yxr: pd.DataFrame = pd.DataFrame(index=self.sym_data.vector_variable_names(vector_name=&#39;yxr&#39;), columns=self.projection_years_column_labels)
+        yxr.loc[:, [str(self.event_year)]] = self.yxr_initial_values
+        previous_year_label = str(self.event_year)
+        assert previous_year_label == yxr.columns[0]
+        for year in yxr.columns[1:]: # omit the first year - it should be the previous year label.
+            yxr.loc[:, [year]] = self.stable_manifold.Anew @ yxr.loc[:, [previous_year_label]].to_numpy() + self.constantBL.loc[:, [previous_year_label]].to_numpy()
+            previous_year_label = year
+
+        # Project J1
+        # er = h1t*x + h2t*exog[][1:nobs] + h3t
+        yjr: pd.DataFrame = pd.DataFrame(self.stable_manifold.H1 @ (yxr.to_numpy()) + self.stable_manifold.H2 @ self.exo_projections + self._h3t)
+        yjr.columns = self.projection_years_column_labels
+        yjr.index = self.sym_data.vector_variable_names(vector_name=&#39;j1l&#39;)
+        self._yjr_projections = yjr
+
+        # Project time t expected value of ZE in period t+1 (EXZ)
+        # Project time t expected value of ZE in period t+1 (EXZ)
+        # tzl = mu1t*x + mu4t*exog[][1:nobs] + c4t
+        exz: pd.DataFrame = pd.DataFrame(
+            self.stable_manifold.mu1 @ yxr.to_numpy() +
+            self.stable_manifold.mu2 @ self.exo_projections +
+            self._c4t
+        )
+        exz.columns = self.projection_years_column_labels
+        exz.index = self.sym_data.vector_variable_names(vector_name=&#39;zer&#39;)
+        self._exz_projections = exz
+
+        # Project time t values of ZE using the SSF equation (this should be done with M1 and M2?)
+        # What about the functions of future exogenous variables and the constant adjustments
+        zel: pd.DataFrame = pd.DataFrame(
+            self.state_space_form.delta(&#39;zel&#39;, &#39;yxr&#39;) @ yxr +
+            self.state_space_form.delta(&#39;zel&#39;, &#39;exz&#39;) @ exz +
+            self.state_space_form.delta(&#39;zel&#39;, &#39;yjr&#39;) @ yjr +
+            self.state_space_form.delta(&#39;zel&#39;, &#39;exo&#39;) @ self.exo_projections)
+        zel.columns = self.projection_years_column_labels
+        zel.index = self.sym_data.vector_variable_names(vector_name=&#39;zel&#39;)
+        self._zel_projections = zel + self.ze_constants
+
+        # Project Z1 using the SSF equation
+        z1l: pd.DataFrame = pd.DataFrame(
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;yxr&#39;) @ yxr +
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;exz&#39;) @ exz +
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;yjr&#39;) @ yjr +
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;exo&#39;) @ self.exo_projections)
+        z1l.columns = self.projection_years_column_labels
+        z1l.index = self.sym_data.vector_variable_names(vector_name=&#39;z1l&#39;)
+        self._z1l_projections = z1l + self.z1_constants
+
+        # timeshift forward the special state variables by 1 period.
+        for variable_name_prefix in CONSTANTS.STATE_LEAD_VARIABLES:
+            matching_variables = yxr.index.str.startswith(variable_name_prefix)
+            yxr.iloc[matching_variables, 0:-2] = yxr.iloc[matching_variables, 1:-1]
+            yxr.iloc[matching_variables, -1] = 0  # TODO: Once we are past benchmarking against Ox, set this equal to NaN.
+
+        self._yxr_projections = yxr
+
+        # Combine the projections into a single dataframe in the same order as the database
+        self._projections = pd.concat([
+            self.yxr_projections_as_dataframe,
+            self.z1l_projections_as_dataframe,
+            self.zel_projections_as_dataframe,
+            self.yjr_projections_as_dataframe,
+            self.exo_projections_as_dataframe])
+        database_ordered_variable_list: pd.DataFrame = self.database.variables.name
+        self._projections = pd.concat([database_ordered_variable_list, self._projections], axis=1)
+        self._projections.drop(&#39;name&#39;, inplace=True, axis=1)
+
+        self._projections = self._projections.astype(float)
+
+    @property
+    def constantBL(self) -&gt; pd.DataFrame:
+        return self._constantBL
+
+    def generate_database_projections(self):
+        &#34;&#34;&#34;
+        Converts the raw projections into projections that are consistent with the database being used
+        by the model. These projections can be spliced on to the original database (as opposed to the
+        GDP scaled database) that was loaded with the model used to produce the projections.
+
+        Implements the first parts of the projection conversion logic in datamsymbl.ox.
+
+        Step 1.
+        Get a copy of the raw projections.
+
+        Step 2b.
+        Divide the projections by YRATR in the projection base year for every variable that has units of:
+            gdp
+            mmtgdp
+            btugdp
+            gwhgdp
+        This ensures that the resulting values are comparable to the original database aside from scaling by 100.
+        for mmtgdp, in models from version 170 onwards, multiply mmtgdp by 100 also because of a change in the 
+        definition of the units.
+
+        # Step 3.
+        At this stage the interest rates are expressed as decimals so 0.02 is a 2% interest rate.
+        Adjust the interest rate variables using the intcons adjustment, adding the difference between 
+        the base-projection year interest rate and the assumed neutral real interest rate to each of the interest 
+        rate variables.
+        This ensures that the result short interest rates are comparable to the original database, aside from scaling by 100.
+
+        # Step 4.
+        Generate long rates from short rates
+        This ensures that the long interest rates are derived from the short rates.
+         
+        # Step 5.
+        Adjust long rate projections by adding long rate constants that
+        are calculated to ensure that the long rates are equal to the 
+        observed values in the base projection year.
+        This ensures that the long interest rates are comparable to the original database aside from scaling by 100.
+
+        Step 6.
+        Get LGDPR (real GDP level) data in the projection base year for each 
+        region and grow over projection years at rate given by &#39;labgrow&#39; parameter.
+        Store the LGDPR projections in the publishable projections dataset.
+
+        Step 7.
+        Multiply projection values by 100
+        This ensures that the projections are scaled in the same way as the original database.
+
+
+        Saves the result in the _database_projections property.
+
+        These database projections should be associated with the publication_units of measurement
+        available from the sym_data variable summary.
+        &#34;&#34;&#34;
+
+        # Step 1.
+        database_projections: pd.DataFrame = self.projections.copy() 
+
+        # Step 2.
+        yratr_data: pd.DataFrame = self.database.get_data(name_regular_expression=f&#34;^{CONSTANTS.US_REAL_GDP_RATIO_PREFIX}\(&#34;, years=[self.configuration.original_projection_base_year])
+        yratr_data.index = self.sym_data.regions_members
+        for variable_name, variable_projection in database_projections.iterrows():
+            units: str = str(self.database.variables.loc[variable_name,&#39;units&#39;])
+            match units:
+                case &#39;gdp&#39; | &#39;btugdp&#39; | &#39;gwhgdp&#39;:
+                    variable_region: str = str(self.database.variables.loc[variable_name, &#39;region&#39;])
+                    factor: float = float(yratr_data.loc[variable_region].values[0])
+                    database_projections.loc[[variable_name], :] /= factor
+                case &#39;mmtgdp&#39;:
+                    variable_region: str = str(self.database.variables.loc[variable_name, &#39;region&#39;])
+                    factor: float = float(yratr_data.loc[variable_region].values[0])
+                    # Warwick changed the definition of mmt by a scale factor of 100 
+                    # for all models from # 169 onwards.
+                    if self.configuration.build_number &gt;= 169:
+                        database_projections.loc[[variable_name], :] /= factor / 100
+                    else:
+                        database_projections.loc[[variable_name], :] /= factor / 100
+
+        # Step 3.
+        # Make the adjustment to convert back to actual interest rates from the neutral real interest rate.
+        for prefix in CONSTANTS.INTEREST_RATE_PREFIXES:
+            variable_names = self.database.variables.loc[self.database.variables.name.str.startswith(f&#34;{prefix}(&#34;), &#39;name&#39;]
+            for variable_name in variable_names:
+                database_projections.loc[[variable_name], :] += (float(self.database.data.loc[variable_name, str(self.configuration.original_projection_base_year)] - self.configuration.neutral_real_interest_rate))
+
+        # Step 4.
+        # Calculate the long rates.
+        real_interest_rates: pd.DataFrame = database_projections.loc[database_projections.index.str.startswith(f&#34;{CONSTANTS.REAL_INTEREST_RATE_PREFIX}(&#34;), str(self.base_year):].copy()
+        for variable_name in real_interest_rates.index:
+            rb10: pd.DataFrame = self.longrate_calculation(term=10, rates=real_interest_rates.loc[[variable_name], :])
+            database_projections.loc[[str(rb10.index[0])], :] = rb10
+        nominal_interest_rates: pd.DataFrame = database_projections.loc[database_projections.index.str.startswith(f&#34;{CONSTANTS.NOMINAL_INTEREST_RATE_PREFIX}(&#34;), str(self.base_year):].copy()
+        for variable_name in nominal_interest_rates.index:
+            nb02: pd.DataFrame = self.longrate_calculation(term=2, rates=nominal_interest_rates.loc[[variable_name], :])
+            database_projections.loc[[str(nb02.index[0])], :] = nb02
+            nb05: pd.DataFrame = self.longrate_calculation(term=5, rates=nominal_interest_rates.loc[[variable_name], :])
+            database_projections.loc[[str(nb05.index[0])], :] = nb05
+            nb10: pd.DataFrame = self.longrate_calculation(term=10, rates=nominal_interest_rates.loc[[variable_name], :])
+            database_projections.loc[[str(nb10.index[0])], :] = nb10
+
+        # Step 5.
+        # Only if doing baseline projections:
+        # Determine the constants to add to the long rates to match 
+        # the original base projection year observed and projected values.
+        if (self.event_year == self.configuration.original_projection_base_year):
+            self._long_rate_constants: pd.DataFrame = None
+            for prefix in CONSTANTS.BOND_RATE_PREFIXES:
+                observed_values: pd.DataFrame = self.database.data.loc[self.database.variables.name.str.startswith(f&#34;{prefix}(&#34;), [str(self.event_year)]].copy()
+                projected_values: pd.DataFrame = database_projections.loc[database_projections.index.str.startswith(f&#34;{prefix}(&#34;), [str(self.event_year)]].copy()
+                constants: pd.DataFrame = observed_values - projected_values
+                constants.columns = [str(self.event_year)]
+                constants.index = observed_values.index
+                if self._long_rate_constants is None:
+                    self._long_rate_constants = constants
+                else:
+                    self._long_rate_constants = pd.concat([self._long_rate_constants, constants], axis=0)
+
+        # For all projections, baseline and otherwise:
+        # Add the baseline projection long-rate constants to the long rate projections 
+        # to line the long rate projections up with observed data in the base projection year.
+        for variable_name in self.long_rate_constants.index:
+            database_projections.loc[[variable_name], :] += self.long_rate_constants.loc[variable_name, str(self.configuration.original_projection_base_year)]
+
+        # Step 6.
+        rows_containing_LGDPR_data = self.database.variables.name.str.startswith(f&#34;{CONSTANTS.REAL_GDP_PREFIX}(&#34;)
+        lgdpr_data: pd.DataFrame = self.database.data.loc[rows_containing_LGDPR_data, [str(self.configuration.original_projection_base_year)]]
+        us_longrun_effective_labour_productivity_index: pd.DataFrame = self.model.effective_labour_productivity.us_longrun_effective_labour_index.loc[:,self.configuration.base_and_projection_years_column_labels]
+        lgdpr_longrun_projections: pd.DataFrame = pd.DataFrame(lgdpr_data.values * us_longrun_effective_labour_productivity_index.values)
+        lgdpr_longrun_projections.columns = self.configuration.base_and_projection_years_column_labels
+        lgdpr_longrun_projections.index = lgdpr_data.index # Index with the LGDPR full variable names
+        database_projections.loc[rows_containing_LGDPR_data, :] = lgdpr_longrun_projections
+
+        # Step 7.
+        database_projections *= 100.0
+
+        # Splice on the actual data from the model database
+        for column in self.model.database.data.columns[::-1]:
+            if not (column in database_projections.columns):
+                if int(column) &lt; int(database_projections.columns[0]):
+                    database_projections.insert(0, column, self.model.database.data.loc[:,column], True)
+                else:
+                    break
+
+        # Save the results for use later.
+        self._database_projections = database_projections.astype(float)
+
+    def generate_publishable_projections(self):
+        &#34;&#34;&#34;
+
+        Uses the real GDP trend growth projections to adjust 
+        the projections of all variables with units equal to 
+        &#39;usgdp&#39; or &#39;gdp&#39;.
+
+        Implements the real GDP scaling part of the projection conversion logic in datamsymbl.ox.
+
+        Step 1.
+        For all projections with units equal to usgdp, multiply the projection 
+        by the US LGDPR projection computed in step 4 when producing the database projections.
+
+        Step 2.
+        For all projections with units equal to &#39;gdp&#39;, multiply the projection by the associated
+        region&#39;s LGDPR projection computed in step 4 when producing the database projections.
+
+        These publishable projections should be associated with the publication_units of measurement
+        available from the sym_data variable summary.
+
+        Saves the result in the _publishable_projections property.
+        &#34;&#34;&#34;
+
+        publication_projections: pd.DataFrame = self.database_projections.copy()
+
+        # Real GDP scaling
+
+        # Get the LGDPR projections. 
+        # There will be one row per region.
+        lgdpr_database_projections: pd.DataFrame = self.database_projections.loc[self.database_projections.index.str.startswith(f&#34;{CONSTANTS.REAL_GDP_PREFIX}(&#34;), :]
+        lgdpr_database_projections.index = self.model.sym_data.regions_members
+        for variable_name in publication_projections.index:
+            variable_units: str = str(self.database.variables.loc[variable_name,&#39;units&#39;])
+            match variable_units:
+                case &#39;usgdp&#39; | &#39;mmtusgdp&#39; | &#39;btuusgdp&#39;:
+                    publication_projections.loc[[variable_name], :] *= lgdpr_database_projections.loc[[CONSTANTS.USA_REGION_CODE],:].values / 100
+                case &#39;gdp&#39; | &#39;mmtgdp&#39; | &#39;btugdp&#39; | &#39;gwhgdp&#39;:
+                    variable_region: str = str(self.database.variables.loc[variable_name, &#39;region&#39;])
+                    publication_projections.loc[[variable_name], :] *= lgdpr_database_projections.loc[[variable_region],:].values / 100
+
+        # Save the results for use later.
+        self._publishable_projections = publication_projections.astype(float)
+
+
+    @property
+    def graphable_projections(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Produces publishable projections in a format suitable 
+        for loading into graphing systems such as R.
+
+        The publishable projections are transposed so there is 
+        a column for each variable and a row for each year.
+        &#34;&#34;&#34;
+        result: pd.DataFrame = self.publishable_projections.copy().transpose()
+        result.index = self.model.configuration.all_years
+        return result</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="gcubed.projections.projections.Projections"><code class="flex name class">
+<span>class <span class="ident">Projections</span></span>
+<span>(</span><span>stable_manifold: <a title="gcubed.stable_manifold.StableManifold" href="../stable_manifold.html#gcubed.stable_manifold.StableManifold">StableManifold</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for Simulation Projections and for Baseline Projections.</p>
+<h3 id="constructor">Constructor</h3>
+<p>Does constructor operations required by all classes that inherit from this base class.</p>
+<p>These currently just set up numpy array print options.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Projections(Base):
+    &#34;&#34;&#34;
+    Base class for Simulation Projections and for Baseline Projections.
+    &#34;&#34;&#34;
+
+    @classmethod
+    def get_differences_between_projections(cls, new_projections:pd.DataFrame, original_projections:pd.DataFrame) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+       ### Arguments
+
+        new_projections: A dataframe of projections
+
+        original_projections: A second dataframe of projections
+
+        Produce a dataframe of differences between two projections (new_projections - original_projections).
+
+        Note that this can be used for raw, database, publishable and graphable projection types. However, the new 
+        and original projections must be the same type for the results to be meaningful.
+
+        Raises exceptions if the dataframes have different indexes or different columns.
+        &#34;&#34;&#34;
+
+        if not new_projections.index.equals(original_projections.index):
+            raise Exception(&#34;The two sets of projections are not for identical lists of variables. Make sure they are both for the same model.&#34;)
+        if not new_projections.columns.equals(original_projections.columns):
+            raise Exception(&#34;The two sets of projections are not for identical years so differences between them cannot be calculated.&#34;)
+        
+        return (new_projections - original_projections)
+
+    def __init__(self, stable_manifold: StableManifold) -&gt; None:
+
+        assert stable_manifold is not None
+        assert stable_manifold.converged
+        self._stable_manifold = stable_manifold
+        self._event_year = self.base_year # gets overridden by subclasses.
+        self.__validate()
+
+    def __validate(self):
+        &#34;&#34;&#34;
+        TODO:  Validate the projections: 
+        1. check that they are available for the expected projection years.
+        2. Check that the base year projections are equal to the base year data values.
+        &#34;&#34;&#34;
+        pass
+
+    @property
+    def stable_manifold(self) -&gt; StableManifold:
+        return self._stable_manifold
+
+    @property
+    def state_space_form(self) -&gt; StateSpaceForm:
+        return self.stable_manifold.ssf
+
+    @property
+    def model(self) -&gt; Model:
+        return self.state_space_form.model
+
+    @property
+    def sym_data(self) -&gt; SymData:
+        return self.model.sym_data
+
+    @property
+    def parameters(self) -&gt; Parameters:
+        return self.model.parameters
+
+    @property
+    def configuration(self) -&gt; ModelConfiguration:
+        return self.sym_data.configuration
+
+    @property
+    def base_year(self) -&gt; int:
+        &#34;&#34;&#34;
+        Returns the base year for this projection
+        &#34;&#34;&#34;
+        return self.configuration.projection_base_year
+
+    @property
+    def end_year(self) -&gt; int:
+        return self.configuration.end_year
+
+    @property
+    def event_year(self) -&gt; int:
+        &#34;&#34;&#34;
+        The event year is the year in which the experimental event happens.
+
+        Shocks that affect the economy are revealed to economic agents and 
+        alter the values of state variables in the event year and exogenous
+        variables from the event year onwards. The adjustments associated
+        with those shocks are applied to the projected values for the event year
+        that were generated by the previously generated projections.
+
+        For example, if we have baseline projections that use a base projection year
+        of 2018, the first year of projections are for 2018. These projections are
+        adjusted using constant adjustments to equal the observed values in the base
+        projection year, because the data in the baseline base projection year is observed.
+
+        If we then have a simulation layer with an event year of 2019, that simulation layer can
+        make adjustments to exogenous variables from 2019 onwards and to the state variables in 2019.
+
+        We can then run the simulation layer projections for 2019 onwards. These projections
+        can lead to changes in the values in 2019 for j1, ze, z1.
+        x1 does not get changed in the simulation layer projections: its values are predetermined as
+        the projection values from 2018 with whatever adjustments are implied by the event associated
+        with the simulation layer.
+        &#34;&#34;&#34;
+        return self._event_year
+
+    @property
+    def projection_years(self) -&gt; list[int]:
+        &#34;&#34;&#34;
+        Returns the list of years for projections from the event year through to 
+        and including the projection end year.
+        &#34;&#34;&#34;
+        return range(self.event_year, self.end_year+1)
+
+    @property
+    def projection_years_count(self) -&gt; list[int]:
+        return (self.end_year - self.event_year + 1)
+
+    @property
+    def projection_years_column_labels(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        Returns the ordered list of 4 digit year 
+        column labels for the projections.
+        &#34;&#34;&#34;
+        return [str(x) for x in self.projection_years]
+
+    @property
+    def preceding_projection_years(self) -&gt; list[int]:
+        &#34;&#34;&#34;
+        Returns the list of years for projections from the base year through to but
+        not including the event year for this baseline projection or simulation layer.
+        &#34;&#34;&#34;
+        return range(self.base_year, self.event_year)
+
+    @property
+    def preceding_projection_years_count(self) -&gt; list[int]:
+        &#34;&#34;&#34;
+        Returns the number of years from the base year for the projections to
+        the event year.
+        &#34;&#34;&#34;
+        return (self.event_year - self.base_year)
+
+    @property
+    def preceding_projection_years_column_labels(self) -&gt; list[str]:
+        result = [str(x) for x in self.preceding_projection_years]
+        logging.debug(f&#34;With event year {self.event_year}, the preceding projection years are\n{result}&#34;)
+        return result
+
+    @property
+    def simulation_data_columns(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        Returns the list of years (YYYY format) as strings from the event year to the
+        end year in the projections.
+        &#34;&#34;&#34;
+        return [str(x) for x in range(self.event_year, self.configuration.end_year+1)]
+
+    @property
+    def projections(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Returns the dataframe of projections for all variables in the model that are part of the 
+        4 vectors specified. There still need to be additional variable projected that are computed
+        outside of the system to take non-linearity into account (eg long-term interest rates.)
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_projections&#39;):
+            return self._projections
+        raise Exception(f&#34;The projections for all variables are not yet available.&#34;)
+
+    @property
+    def database_projections(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Returns the dataframe of projections for all variables in the model in forms that are consistent with
+        the values contained in the original model database.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_database_projections&#39;):
+            return self._database_projections
+        raise Exception(f&#34;The database projections for all variables are not yet available.&#34;)
+
+    @property
+    def publishable_projections(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Returns the dataframe of projections for all variables in the model.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_publishable_projections&#39;):
+            return self._publishable_projections
+        raise Exception(f&#34;The publishable projections for all variables are not yet available.&#34;)
+
+    @property
+    def yxr_initial_values(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Get yxr initial values to start the projections process.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_yxr_initial_values&#39;):
+            return self._yxr_initial_values
+        raise Exception(f&#34;The initial values for the period t state variable projections (yxr) are not yet available.&#34;)
+
+
+    @property
+    def yxr_projections_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Get yxr variable projection values
+        of the projection years as a dataframe.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_yxr_projections&#39;):
+            return self._yxr_projections
+        raise Exception(f&#34;The period t state variable projections (yxr) are not yet available.&#34;)
+
+    @property
+    def yxr_projections(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Get yxr variable projection values
+        of the projection years.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_yxr_projections&#39;):
+            return self._yxr_projections.to_numpy()
+        raise Exception(f&#34;The period t state variable projections are not yet available.&#34;)
+
+    @property
+    def yjr_projections_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Get yjr variable projection values
+        of the projection years as a dataframe.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_yjr_projections&#39;):
+            return self._yjr_projections
+        raise Exception(f&#34;The period t costate variable projections (yjr) are not yet available.&#34;)
+
+    @property
+    def yjr_projections(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Get yjr variable projection values
+        of the projection years.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_yjr_projections&#39;):
+            return self._yjr_projections.to_numpy()
+        raise Exception(f&#34;The period t costate variable projections (yjr) are not yet available.&#34;)
+
+    @property
+    def exz_projections_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Get exz variable projection values
+        of the projection years as a dataframe.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_exz_projections&#39;):
+            return self._exz_projections
+        raise Exception(f&#34;The period t expected values for t+1 variables projections (exz) are not yet available.&#34;)
+
+    @property
+    def exz_projections(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Get exz variable projection values
+        of the projection years.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_exz_projections&#39;):
+            return self._exz_projections.to_numpy()
+        raise Exception(f&#34;The period t expected values for t+1 variables projections (exz) are not yet available.&#34;)
+
+    @property
+    def zel_projections_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Get zel variable projection values
+        of the projection years as a dataframe.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_zel_projections&#39;):
+            return self._zel_projections
+        raise Exception(f&#34;The period t ZEL projections are not yet available.&#34;)
+
+    @property
+    def zel_projections(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Get zel variable projection values
+        of the projection years.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_zel_projections&#39;):
+            return self._zel_projections.to_numpy()
+        raise Exception(f&#34;The period t ZEL projections are not yet available.&#34;)
+
+    @property
+    def z1l_projections_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Get z1l variable projection values
+        of the projection years as a dataframe.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_z1l_projections&#39;):
+            return self._z1l_projections
+        raise Exception(f&#34;The period t Z1L projections are not yet available.&#34;)
+
+    @property
+    def z1l_projections(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Get z1l variable projection values
+        of the projection years.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_z1l_projections&#39;):
+            return self._z1l_projections.to_numpy()
+        raise Exception(f&#34;The period t Z1L projections are not yet available.&#34;)
+
+    @property
+    def exo_projections_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Get exogenous variable projection values
+        of the projection years as a dataframe.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_exo_projections&#39;):
+            return self._exo_projections
+        raise Exception(f&#34;The exogenous variable projections are not yet available.&#34;)
+
+    @property
+    def exo_projections(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Get exogenous variable projection values
+        of the projection years.
+        &#34;&#34;&#34;
+        if hasattr(self, &#39;_exo_projections&#39;):
+            return self._exo_projections.to_numpy()
+        raise Exception(f&#34;The exogenous variable projections are not yet available.&#34;)
+
+    def longrate_calculation(self, term: int, rates: pd.DataFrame) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Utility method that returns the compounding long rates given the yearly rates.
+
+        Rates are provided as decimal values so 1% is 0.01.
+ 
+       ### Arguments
+
+        term: the number of years of the term of the instrument. 2 for a 2 year bond.
+
+        rates: the projections of the 1 year interest rates, (nominal or real).
+
+        Returns the long rates that can be computed from the one year rates. This series is shorter
+        than the series of one year rates because the required data is not available for 
+        the last (term-1) observations. It is padded with NaN values in the returned projection.
+        &#34;&#34;&#34;
+        shortrates = rates.copy()
+        name_suffix = str(shortrates.index[0]).split(&#39;(&#39;)[1]
+        longrates_columns = shortrates.iloc[:, 0:(len(shortrates.columns)-term+1)].columns
+        preceding_year: int = int(shortrates.columns[0])-1
+        shortrates = shortrates + 1
+
+        shortrates = shortrates.cumprod(axis=&#39;columns&#39;)
+        shortrates.insert(0, str(preceding_year), 1.0)
+
+        longrates: pd.DataFrame = pd.DataFrame(np.power(shortrates.iloc[:, term:].to_numpy() / shortrates.iloc[:, 0:-term:1].to_numpy(), 1/term) - 1.0)
+        longrates.columns = longrates_columns
+        match str(rates.index[0]).split(&#39;(&#39;)[0]:
+            case &#39;INTN&#39;:
+                match term:
+                    case 2:
+                        long_rate_name = &#39;NB02&#39;
+                    case 5:
+                        long_rate_name = &#39;NB05&#39;
+                    case 10:
+                        long_rate_name = &#39;NB10&#39;
+                    case _:
+                        raise Exception(f&#34;Invalid nominal bond term specified: {term}&#34;)
+            case &#34;INTR&#34;:
+                match term:
+                    case 2:
+                        long_rate_name = &#39;RB02&#39;
+                    case 5:
+                        long_rate_name = &#39;RB05&#39;
+                    case 10:
+                        long_rate_name = &#39;RB10&#39;
+                    case _:
+                        raise Exception(f&#34;Invalid real bond term specified: {term}&#34;)
+            case _:
+                raise Exception(f&#34;Invalid variable used to compute bond rates: {str(rates.index[0])}. Use a 1 year interest rate.&#34;)
+        longrates.index = [ f&#34;{long_rate_name}({name_suffix}&#34; ]
+        return longrates.astype(float)
+
+    @property
+    def long_rate_constants(self):
+        &#34;&#34;&#34;
+        The constant adjustments to long bond rates 
+        (real and nominal) in the base projection year 
+        to ensure projections equal observed values.
+        &#34;&#34;&#34;
+        return self._long_rate_constants
+
+    def compute_functions_of_future_exogenous_variables(self):
+        &#34;&#34;&#34;
+        The rules governing the dynamic behaviour of variables depend on functions of the current and future exogenous variables.
+        These functions are evaluated and the results are stored in numpy matrices that match the number of rows
+        for the related vector of variables and that have a column for each year from the base projection year to the
+        last year in the projections.
+        &#34;&#34;&#34;
+
+        # Set up the arrays that will be populated and initialise them to zeros.
+
+        # // setup for baseline with optimization
+        # decl id=invert(unit(nez)-c4n);
+        # c4t=id*cz5;
+
+        # decl mu2t=id*c6n;
+
+        # id=invert(unit(njm)-ff-we*mu2t);
+        # c6t=id*(cz4+we*c4t);
+
+        # c4t=c4t+mu2t*c6t;
+        # c4t=ones(rows(c4t),nobs).*c4t;
+        # c6t=ones(rows(c6t),nobs).*c6t;
+        # c2t=h2t*exog+c6t+bt2t*gam3t;
+
+        # This is equivalent to h3t in the newsetsymbl.ox script (j by 1 dimensions)
+        h3t: np.ndarray = np.zeros(shape=(self.sym_data.vector_length(vector_name=&#39;j1l&#39;), self.projection_years_count))
+
+        # Populate for period T.
+
+        # c4t=invert(unit(nez)-zel_exz_ssf)*cz5   (r by 1 dimensions)
+        interim_calculation = self.stable_manifold.Gamma_rT @ self.ze_constants
+
+        # c6t = invert(unit(j)-j1l_yjr_ssf-j1l_exz_ssf*mu2t) * (cz4+j1l_exz_ssf*c4t)
+        #     = Gamma_jT (cz4+j1l_exz_ssf*interim_calculation)
+        c6T_column = self.stable_manifold.Gamma_jT @ (self.j1_constants + self.state_space_form.delta(&#39;j1l&#39;, &#39;exz&#39;) @ interim_calculation)
+
+        # c4t = c4t + mu2t * c6t (r by 1 dimensions)
+        c4T_column = interim_calculation + self.stable_manifold.psi_rj @ c6T_column
+
+        # c4t=ones(rows(c4t),nobs).*c4t (r by T dimensions)
+        c4t: np.ndarray = np.tile(c4T_column, (1, self.projection_years_count))
+
+        # c6t=ones(rows(c6t),nobs).*c6t (j by T dimensions)
+        c6t: np.ndarray = np.tile(c6T_column, (1, self.projection_years_count))
+
+        # c2t=h2t*exog+c6t    (j by T dimensions)
+        c2t: np.ndarray = self.stable_manifold.H2 @ self.exo_projections + c6t
+
+        # (s by T dimensions)
+        c5t: np.ndarray = np.zeros(shape=(self.sym_data.vector_length(vector_name=&#39;x1l&#39;), self.projection_years_count))
+
+        # (j by T dimensions)
+        c2t_lead: np.ndarray = c2t.copy()
+        c4t_lead: np.ndarray = c4t.copy()
+
+        # Populate for earlier periods.
+        j = self.projection_years_count-1
+        for k in range(self.projection_years_count-1, -1, -1):
+
+            # c5t[][k] = wvi*(x1l_exz_ssf*c4tl[][j] + cz2)          (s by 1 : note no need for T columns)
+            c5t: np.ndarray = self.stable_manifold.Gamma_st @ (self.state_space_form.delta(&#39;x1l&#39;, &#39;exz&#39;) @ c4t_lead[:, [j]] + self.x1_constants)
+
+            # c6t[][k] = fdeltinv*(th6t*c5t[][k] - j1l_exz_ssf*c4tl[][j] + c2tl[][j] - cz4)         (j rows)
+            c6t[:, [k]] = self.stable_manifold.Gamma_jt @ (self.stable_manifold.common_factor @ c5t - self.state_space_form.delta(
+                &#39;j1l&#39;, &#39;exz&#39;) @ c4t_lead[:, [j]] + c2t_lead[:, [j]] - self.j1_constants)
+
+            # c5t[][k] = c5t[][k] + th2t*c6t[][k]
+            c5t = c5t + self.stable_manifold.tau_sjt @ c6t[:, [k]]
+
+            # c4t[][k] = mu1tl*c5t[][k] + c4tl[][j]
+            c4t[:, [k]] = self.stable_manifold.M1_lead @ c5t + c4t_lead[:, [j]]
+
+            # h3t[][k] = c6t[][k]
+            h3t[:, [k]] = c6t[:, [k]].copy()
+
+            # c2t[][k] = h2t*exog[][k] + h3t[][k]
+            c2t[:, [k]] = self.stable_manifold.H2 @ self.exo_projections[:, [k]] + h3t[:, [k]]
+
+            # c4tl[][k] = nmu4t*exog[][k] + zel_yjr_ssf*h3t[][k] + zel_exz_ssf*c4t[][k] + cz5
+            c4t_lead[:, [k]] = self.stable_manifold.M2 @ self.exo_projections[:, [k]] + \
+                self.state_space_form.delta(&#39;zel&#39;, &#39;yjr&#39;) @ h3t[:, [k]] + \
+                self.state_space_form.delta(&#39;zel&#39;, &#39;exz&#39;) @ c4t[:, [k]] + \
+                self.ze_constants
+
+            c2t_lead = c2t.copy()
+
+            j = k
+
+        # Store the functions of future exogenous variables to access when doing projections.
+        self._h3t = h3t.copy()
+        self._c4t = c4t.copy()
+
+    @property
+    def h3t(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Equivalent to h3t in the Ox implementation
+        
+        Returns constants and the functions of current and future exogenous variables affecting J1.
+        &#34;&#34;&#34;
+        return self._h3t
+
+    @property
+    def c4t(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        Equivalent to c4t in the Ox implementation
+        
+        Returns constants and the functions of current and future exogenous variables affecting ZE.
+        &#34;&#34;&#34;
+        return self._c4t
+
+    def generate_projections(self):
+        &#34;&#34;&#34;
+        Implements the projection logic in msgsimBL.ox. This runs the various equations
+        to project variables based on the starting state vector and the values of
+        exogenous variables in all years. The steps are as follows:
+
+        Step 1.
+        Recalculate the functions of future exogenous variables, incorporating 
+        the updated exogenous variable projections and all constant adjustments: 
+        the intertemporal constants and the other constants  capturing the difference 
+        between the SSF equation results in the base year and the observed 
+        values in the base year.
+        
+        Step 2.
+        Project the state vector. (x_t+1 as a function of x_t and exogenous variables and constant adjustments)
+        This uses the Anew and Znew matrices computed as part of getting the stable manifold.
+
+        Step 3. 
+        Combine all variable projections into a single data frame.
+
+        Step 4.
+        Sort the variables in the projection dataframe into the same order as the original database.
+        &#34;&#34;&#34;
+
+        # Step 1.
+        self.compute_functions_of_future_exogenous_variables()
+
+        # Step 2.
+        self._constantBL: pd.DataFrame = pd.DataFrame(
+            self.stable_manifold.Znew @ self.exo_projections +
+            self.state_space_form.delta(&#39;x1l&#39;, &#39;yjr&#39;) @ self.h3t +
+            self.state_space_form.delta(&#39;x1l&#39;, &#39;exz&#39;) @ self.c4t +
+            self.x1_constants)
+        self._constantBL.columns = self.projection_years_column_labels
+        self._constantBL.index = self.sym_data.vector_variable_names(vector_name=&#39;yxr&#39;)
+        yxr: pd.DataFrame = pd.DataFrame(index=self.sym_data.vector_variable_names(vector_name=&#39;yxr&#39;), columns=self.projection_years_column_labels)
+        yxr.loc[:, [str(self.event_year)]] = self.yxr_initial_values
+        previous_year_label = str(self.event_year)
+        assert previous_year_label == yxr.columns[0]
+        for year in yxr.columns[1:]: # omit the first year - it should be the previous year label.
+            yxr.loc[:, [year]] = self.stable_manifold.Anew @ yxr.loc[:, [previous_year_label]].to_numpy() + self.constantBL.loc[:, [previous_year_label]].to_numpy()
+            previous_year_label = year
+
+        # Project J1
+        # er = h1t*x + h2t*exog[][1:nobs] + h3t
+        yjr: pd.DataFrame = pd.DataFrame(self.stable_manifold.H1 @ (yxr.to_numpy()) + self.stable_manifold.H2 @ self.exo_projections + self._h3t)
+        yjr.columns = self.projection_years_column_labels
+        yjr.index = self.sym_data.vector_variable_names(vector_name=&#39;j1l&#39;)
+        self._yjr_projections = yjr
+
+        # Project time t expected value of ZE in period t+1 (EXZ)
+        # Project time t expected value of ZE in period t+1 (EXZ)
+        # tzl = mu1t*x + mu4t*exog[][1:nobs] + c4t
+        exz: pd.DataFrame = pd.DataFrame(
+            self.stable_manifold.mu1 @ yxr.to_numpy() +
+            self.stable_manifold.mu2 @ self.exo_projections +
+            self._c4t
+        )
+        exz.columns = self.projection_years_column_labels
+        exz.index = self.sym_data.vector_variable_names(vector_name=&#39;zer&#39;)
+        self._exz_projections = exz
+
+        # Project time t values of ZE using the SSF equation (this should be done with M1 and M2?)
+        # What about the functions of future exogenous variables and the constant adjustments
+        zel: pd.DataFrame = pd.DataFrame(
+            self.state_space_form.delta(&#39;zel&#39;, &#39;yxr&#39;) @ yxr +
+            self.state_space_form.delta(&#39;zel&#39;, &#39;exz&#39;) @ exz +
+            self.state_space_form.delta(&#39;zel&#39;, &#39;yjr&#39;) @ yjr +
+            self.state_space_form.delta(&#39;zel&#39;, &#39;exo&#39;) @ self.exo_projections)
+        zel.columns = self.projection_years_column_labels
+        zel.index = self.sym_data.vector_variable_names(vector_name=&#39;zel&#39;)
+        self._zel_projections = zel + self.ze_constants
+
+        # Project Z1 using the SSF equation
+        z1l: pd.DataFrame = pd.DataFrame(
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;yxr&#39;) @ yxr +
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;exz&#39;) @ exz +
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;yjr&#39;) @ yjr +
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;exo&#39;) @ self.exo_projections)
+        z1l.columns = self.projection_years_column_labels
+        z1l.index = self.sym_data.vector_variable_names(vector_name=&#39;z1l&#39;)
+        self._z1l_projections = z1l + self.z1_constants
+
+        # timeshift forward the special state variables by 1 period.
+        for variable_name_prefix in CONSTANTS.STATE_LEAD_VARIABLES:
+            matching_variables = yxr.index.str.startswith(variable_name_prefix)
+            yxr.iloc[matching_variables, 0:-2] = yxr.iloc[matching_variables, 1:-1]
+            yxr.iloc[matching_variables, -1] = 0  # TODO: Once we are past benchmarking against Ox, set this equal to NaN.
+
+        self._yxr_projections = yxr
+
+        # Combine the projections into a single dataframe in the same order as the database
+        self._projections = pd.concat([
+            self.yxr_projections_as_dataframe,
+            self.z1l_projections_as_dataframe,
+            self.zel_projections_as_dataframe,
+            self.yjr_projections_as_dataframe,
+            self.exo_projections_as_dataframe])
+        database_ordered_variable_list: pd.DataFrame = self.database.variables.name
+        self._projections = pd.concat([database_ordered_variable_list, self._projections], axis=1)
+        self._projections.drop(&#39;name&#39;, inplace=True, axis=1)
+
+        self._projections = self._projections.astype(float)
+
+    @property
+    def constantBL(self) -&gt; pd.DataFrame:
+        return self._constantBL
+
+    def generate_database_projections(self):
+        &#34;&#34;&#34;
+        Converts the raw projections into projections that are consistent with the database being used
+        by the model. These projections can be spliced on to the original database (as opposed to the
+        GDP scaled database) that was loaded with the model used to produce the projections.
+
+        Implements the first parts of the projection conversion logic in datamsymbl.ox.
+
+        Step 1.
+        Get a copy of the raw projections.
+
+        Step 2b.
+        Divide the projections by YRATR in the projection base year for every variable that has units of:
+            gdp
+            mmtgdp
+            btugdp
+            gwhgdp
+        This ensures that the resulting values are comparable to the original database aside from scaling by 100.
+        for mmtgdp, in models from version 170 onwards, multiply mmtgdp by 100 also because of a change in the 
+        definition of the units.
+
+        # Step 3.
+        At this stage the interest rates are expressed as decimals so 0.02 is a 2% interest rate.
+        Adjust the interest rate variables using the intcons adjustment, adding the difference between 
+        the base-projection year interest rate and the assumed neutral real interest rate to each of the interest 
+        rate variables.
+        This ensures that the result short interest rates are comparable to the original database, aside from scaling by 100.
+
+        # Step 4.
+        Generate long rates from short rates
+        This ensures that the long interest rates are derived from the short rates.
+         
+        # Step 5.
+        Adjust long rate projections by adding long rate constants that
+        are calculated to ensure that the long rates are equal to the 
+        observed values in the base projection year.
+        This ensures that the long interest rates are comparable to the original database aside from scaling by 100.
+
+        Step 6.
+        Get LGDPR (real GDP level) data in the projection base year for each 
+        region and grow over projection years at rate given by &#39;labgrow&#39; parameter.
+        Store the LGDPR projections in the publishable projections dataset.
+
+        Step 7.
+        Multiply projection values by 100
+        This ensures that the projections are scaled in the same way as the original database.
+
+
+        Saves the result in the _database_projections property.
+
+        These database projections should be associated with the publication_units of measurement
+        available from the sym_data variable summary.
+        &#34;&#34;&#34;
+
+        # Step 1.
+        database_projections: pd.DataFrame = self.projections.copy() 
+
+        # Step 2.
+        yratr_data: pd.DataFrame = self.database.get_data(name_regular_expression=f&#34;^{CONSTANTS.US_REAL_GDP_RATIO_PREFIX}\(&#34;, years=[self.configuration.original_projection_base_year])
+        yratr_data.index = self.sym_data.regions_members
+        for variable_name, variable_projection in database_projections.iterrows():
+            units: str = str(self.database.variables.loc[variable_name,&#39;units&#39;])
+            match units:
+                case &#39;gdp&#39; | &#39;btugdp&#39; | &#39;gwhgdp&#39;:
+                    variable_region: str = str(self.database.variables.loc[variable_name, &#39;region&#39;])
+                    factor: float = float(yratr_data.loc[variable_region].values[0])
+                    database_projections.loc[[variable_name], :] /= factor
+                case &#39;mmtgdp&#39;:
+                    variable_region: str = str(self.database.variables.loc[variable_name, &#39;region&#39;])
+                    factor: float = float(yratr_data.loc[variable_region].values[0])
+                    # Warwick changed the definition of mmt by a scale factor of 100 
+                    # for all models from # 169 onwards.
+                    if self.configuration.build_number &gt;= 169:
+                        database_projections.loc[[variable_name], :] /= factor / 100
+                    else:
+                        database_projections.loc[[variable_name], :] /= factor / 100
+
+        # Step 3.
+        # Make the adjustment to convert back to actual interest rates from the neutral real interest rate.
+        for prefix in CONSTANTS.INTEREST_RATE_PREFIXES:
+            variable_names = self.database.variables.loc[self.database.variables.name.str.startswith(f&#34;{prefix}(&#34;), &#39;name&#39;]
+            for variable_name in variable_names:
+                database_projections.loc[[variable_name], :] += (float(self.database.data.loc[variable_name, str(self.configuration.original_projection_base_year)] - self.configuration.neutral_real_interest_rate))
+
+        # Step 4.
+        # Calculate the long rates.
+        real_interest_rates: pd.DataFrame = database_projections.loc[database_projections.index.str.startswith(f&#34;{CONSTANTS.REAL_INTEREST_RATE_PREFIX}(&#34;), str(self.base_year):].copy()
+        for variable_name in real_interest_rates.index:
+            rb10: pd.DataFrame = self.longrate_calculation(term=10, rates=real_interest_rates.loc[[variable_name], :])
+            database_projections.loc[[str(rb10.index[0])], :] = rb10
+        nominal_interest_rates: pd.DataFrame = database_projections.loc[database_projections.index.str.startswith(f&#34;{CONSTANTS.NOMINAL_INTEREST_RATE_PREFIX}(&#34;), str(self.base_year):].copy()
+        for variable_name in nominal_interest_rates.index:
+            nb02: pd.DataFrame = self.longrate_calculation(term=2, rates=nominal_interest_rates.loc[[variable_name], :])
+            database_projections.loc[[str(nb02.index[0])], :] = nb02
+            nb05: pd.DataFrame = self.longrate_calculation(term=5, rates=nominal_interest_rates.loc[[variable_name], :])
+            database_projections.loc[[str(nb05.index[0])], :] = nb05
+            nb10: pd.DataFrame = self.longrate_calculation(term=10, rates=nominal_interest_rates.loc[[variable_name], :])
+            database_projections.loc[[str(nb10.index[0])], :] = nb10
+
+        # Step 5.
+        # Only if doing baseline projections:
+        # Determine the constants to add to the long rates to match 
+        # the original base projection year observed and projected values.
+        if (self.event_year == self.configuration.original_projection_base_year):
+            self._long_rate_constants: pd.DataFrame = None
+            for prefix in CONSTANTS.BOND_RATE_PREFIXES:
+                observed_values: pd.DataFrame = self.database.data.loc[self.database.variables.name.str.startswith(f&#34;{prefix}(&#34;), [str(self.event_year)]].copy()
+                projected_values: pd.DataFrame = database_projections.loc[database_projections.index.str.startswith(f&#34;{prefix}(&#34;), [str(self.event_year)]].copy()
+                constants: pd.DataFrame = observed_values - projected_values
+                constants.columns = [str(self.event_year)]
+                constants.index = observed_values.index
+                if self._long_rate_constants is None:
+                    self._long_rate_constants = constants
+                else:
+                    self._long_rate_constants = pd.concat([self._long_rate_constants, constants], axis=0)
+
+        # For all projections, baseline and otherwise:
+        # Add the baseline projection long-rate constants to the long rate projections 
+        # to line the long rate projections up with observed data in the base projection year.
+        for variable_name in self.long_rate_constants.index:
+            database_projections.loc[[variable_name], :] += self.long_rate_constants.loc[variable_name, str(self.configuration.original_projection_base_year)]
+
+        # Step 6.
+        rows_containing_LGDPR_data = self.database.variables.name.str.startswith(f&#34;{CONSTANTS.REAL_GDP_PREFIX}(&#34;)
+        lgdpr_data: pd.DataFrame = self.database.data.loc[rows_containing_LGDPR_data, [str(self.configuration.original_projection_base_year)]]
+        us_longrun_effective_labour_productivity_index: pd.DataFrame = self.model.effective_labour_productivity.us_longrun_effective_labour_index.loc[:,self.configuration.base_and_projection_years_column_labels]
+        lgdpr_longrun_projections: pd.DataFrame = pd.DataFrame(lgdpr_data.values * us_longrun_effective_labour_productivity_index.values)
+        lgdpr_longrun_projections.columns = self.configuration.base_and_projection_years_column_labels
+        lgdpr_longrun_projections.index = lgdpr_data.index # Index with the LGDPR full variable names
+        database_projections.loc[rows_containing_LGDPR_data, :] = lgdpr_longrun_projections
+
+        # Step 7.
+        database_projections *= 100.0
+
+        # Splice on the actual data from the model database
+        for column in self.model.database.data.columns[::-1]:
+            if not (column in database_projections.columns):
+                if int(column) &lt; int(database_projections.columns[0]):
+                    database_projections.insert(0, column, self.model.database.data.loc[:,column], True)
+                else:
+                    break
+
+        # Save the results for use later.
+        self._database_projections = database_projections.astype(float)
+
+    def generate_publishable_projections(self):
+        &#34;&#34;&#34;
+
+        Uses the real GDP trend growth projections to adjust 
+        the projections of all variables with units equal to 
+        &#39;usgdp&#39; or &#39;gdp&#39;.
+
+        Implements the real GDP scaling part of the projection conversion logic in datamsymbl.ox.
+
+        Step 1.
+        For all projections with units equal to usgdp, multiply the projection 
+        by the US LGDPR projection computed in step 4 when producing the database projections.
+
+        Step 2.
+        For all projections with units equal to &#39;gdp&#39;, multiply the projection by the associated
+        region&#39;s LGDPR projection computed in step 4 when producing the database projections.
+
+        These publishable projections should be associated with the publication_units of measurement
+        available from the sym_data variable summary.
+
+        Saves the result in the _publishable_projections property.
+        &#34;&#34;&#34;
+
+        publication_projections: pd.DataFrame = self.database_projections.copy()
+
+        # Real GDP scaling
+
+        # Get the LGDPR projections. 
+        # There will be one row per region.
+        lgdpr_database_projections: pd.DataFrame = self.database_projections.loc[self.database_projections.index.str.startswith(f&#34;{CONSTANTS.REAL_GDP_PREFIX}(&#34;), :]
+        lgdpr_database_projections.index = self.model.sym_data.regions_members
+        for variable_name in publication_projections.index:
+            variable_units: str = str(self.database.variables.loc[variable_name,&#39;units&#39;])
+            match variable_units:
+                case &#39;usgdp&#39; | &#39;mmtusgdp&#39; | &#39;btuusgdp&#39;:
+                    publication_projections.loc[[variable_name], :] *= lgdpr_database_projections.loc[[CONSTANTS.USA_REGION_CODE],:].values / 100
+                case &#39;gdp&#39; | &#39;mmtgdp&#39; | &#39;btugdp&#39; | &#39;gwhgdp&#39;:
+                    variable_region: str = str(self.database.variables.loc[variable_name, &#39;region&#39;])
+                    publication_projections.loc[[variable_name], :] *= lgdpr_database_projections.loc[[variable_region],:].values / 100
+
+        # Save the results for use later.
+        self._publishable_projections = publication_projections.astype(float)
+
+
+    @property
+    def graphable_projections(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Produces publishable projections in a format suitable 
+        for loading into graphing systems such as R.
+
+        The publishable projections are transposed so there is 
+        a column for each variable and a row for each year.
+        &#34;&#34;&#34;
+        result: pd.DataFrame = self.publishable_projections.copy().transpose()
+        result.index = self.model.configuration.all_years
+        return result</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="gcubed.base.Base" href="../base.html#gcubed.base.Base">Base</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="gcubed.projections.baseline_projections.BaselineProjections" href="baseline_projections.html#gcubed.projections.baseline_projections.BaselineProjections">BaselineProjections</a></li>
+<li><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections" href="relinearisation_projections.html#gcubed.projections.relinearisation_projections.RelinearisationProjections">RelinearisationProjections</a></li>
+<li><a title="gcubed.projections.simulation_layer.SimulationLayer" href="simulation_layer.html#gcubed.projections.simulation_layer.SimulationLayer">SimulationLayer</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="gcubed.projections.projections.Projections.get_differences_between_projections"><code class="name flex">
+<span>def <span class="ident">get_differences_between_projections</span></span>(<span>new_projections: pandas.core.frame.DataFrame, original_projections: pandas.core.frame.DataFrame) ‑> pandas.core.frame.DataFrame</span>
+</code></dt>
+<dd>
+<div class="desc"><h3 id="arguments">Arguments</h3>
+<p>new_projections: A dataframe of projections</p>
+<p>original_projections: A second dataframe of projections</p>
+<p>Produce a dataframe of differences between two projections (new_projections - original_projections).</p>
+<p>Note that this can be used for raw, database, publishable and graphable projection types. However, the new
+and original projections must be the same type for the results to be meaningful.</p>
+<p>Raises exceptions if the dataframes have different indexes or different columns.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def get_differences_between_projections(cls, new_projections:pd.DataFrame, original_projections:pd.DataFrame) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+   ### Arguments
+
+    new_projections: A dataframe of projections
+
+    original_projections: A second dataframe of projections
+
+    Produce a dataframe of differences between two projections (new_projections - original_projections).
+
+    Note that this can be used for raw, database, publishable and graphable projection types. However, the new 
+    and original projections must be the same type for the results to be meaningful.
+
+    Raises exceptions if the dataframes have different indexes or different columns.
+    &#34;&#34;&#34;
+
+    if not new_projections.index.equals(original_projections.index):
+        raise Exception(&#34;The two sets of projections are not for identical lists of variables. Make sure they are both for the same model.&#34;)
+    if not new_projections.columns.equals(original_projections.columns):
+        raise Exception(&#34;The two sets of projections are not for identical years so differences between them cannot be calculated.&#34;)
+    
+    return (new_projections - original_projections)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="gcubed.projections.projections.Projections.base_year"><code class="name">var <span class="ident">base_year</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Returns the base year for this projection</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def base_year(self) -&gt; int:
+    &#34;&#34;&#34;
+    Returns the base year for this projection
+    &#34;&#34;&#34;
+    return self.configuration.projection_base_year</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.c4t"><code class="name">var <span class="ident">c4t</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>Equivalent to c4t in the Ox implementation</p>
+<p>Returns constants and the functions of current and future exogenous variables affecting ZE.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def c4t(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Equivalent to c4t in the Ox implementation
+    
+    Returns constants and the functions of current and future exogenous variables affecting ZE.
+    &#34;&#34;&#34;
+    return self._c4t</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.configuration"><code class="name">var <span class="ident">configuration</span> : <a title="gcubed.model_configuration.ModelConfiguration" href="../model_configuration.html#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def configuration(self) -&gt; ModelConfiguration:
+    return self.sym_data.configuration</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.constantBL"><code class="name">var <span class="ident">constantBL</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def constantBL(self) -&gt; pd.DataFrame:
+    return self._constantBL</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.database_projections"><code class="name">var <span class="ident">database_projections</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Returns the dataframe of projections for all variables in the model in forms that are consistent with
+the values contained in the original model database.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def database_projections(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Returns the dataframe of projections for all variables in the model in forms that are consistent with
+    the values contained in the original model database.
+    &#34;&#34;&#34;
+    if hasattr(self, &#39;_database_projections&#39;):
+        return self._database_projections
+    raise Exception(f&#34;The database projections for all variables are not yet available.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.end_year"><code class="name">var <span class="ident">end_year</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def end_year(self) -&gt; int:
+    return self.configuration.end_year</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.event_year"><code class="name">var <span class="ident">event_year</span> : int</code></dt>
+<dd>
+<div class="desc"><p>The event year is the year in which the experimental event happens.</p>
+<p>Shocks that affect the economy are revealed to economic agents and
+alter the values of state variables in the event year and exogenous
+variables from the event year onwards. The adjustments associated
+with those shocks are applied to the projected values for the event year
+that were generated by the previously generated projections.</p>
+<p>For example, if we have baseline projections that use a base projection year
+of 2018, the first year of projections are for 2018. These projections are
+adjusted using constant adjustments to equal the observed values in the base
+projection year, because the data in the baseline base projection year is observed.</p>
+<p>If we then have a simulation layer with an event year of 2019, that simulation layer can
+make adjustments to exogenous variables from 2019 onwards and to the state variables in 2019.</p>
+<p>We can then run the simulation layer projections for 2019 onwards. These projections
+can lead to changes in the values in 2019 for j1, ze, z1.
+x1 does not get changed in the simulation layer projections: its values are predetermined as
+the projection values from 2018 with whatever adjustments are implied by the event associated
+with the simulation layer.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def event_year(self) -&gt; int:
+    &#34;&#34;&#34;
+    The event year is the year in which the experimental event happens.
+
+    Shocks that affect the economy are revealed to economic agents and 
+    alter the values of state variables in the event year and exogenous
+    variables from the event year onwards. The adjustments associated
+    with those shocks are applied to the projected values for the event year
+    that were generated by the previously generated projections.
+
+    For example, if we have baseline projections that use a base projection year
+    of 2018, the first year of projections are for 2018. These projections are
+    adjusted using constant adjustments to equal the observed values in the base
+    projection year, because the data in the baseline base projection year is observed.
+
+    If we then have a simulation layer with an event year of 2019, that simulation layer can
+    make adjustments to exogenous variables from 2019 onwards and to the state variables in 2019.
+
+    We can then run the simulation layer projections for 2019 onwards. These projections
+    can lead to changes in the values in 2019 for j1, ze, z1.
+    x1 does not get changed in the simulation layer projections: its values are predetermined as
+    the projection values from 2018 with whatever adjustments are implied by the event associated
+    with the simulation layer.
+    &#34;&#34;&#34;
+    return self._event_year</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.exo_projections"><code class="name">var <span class="ident">exo_projections</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>Get exogenous variable projection values
+of the projection years.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def exo_projections(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Get exogenous variable projection values
+    of the projection years.
+    &#34;&#34;&#34;
+    if hasattr(self, &#39;_exo_projections&#39;):
+        return self._exo_projections.to_numpy()
+    raise Exception(f&#34;The exogenous variable projections are not yet available.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.exo_projections_as_dataframe"><code class="name">var <span class="ident">exo_projections_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Get exogenous variable projection values
+of the projection years as a dataframe.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def exo_projections_as_dataframe(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Get exogenous variable projection values
+    of the projection years as a dataframe.
+    &#34;&#34;&#34;
+    if hasattr(self, &#39;_exo_projections&#39;):
+        return self._exo_projections
+    raise Exception(f&#34;The exogenous variable projections are not yet available.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.exz_projections"><code class="name">var <span class="ident">exz_projections</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>Get exz variable projection values
+of the projection years.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def exz_projections(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Get exz variable projection values
+    of the projection years.
+    &#34;&#34;&#34;
+    if hasattr(self, &#39;_exz_projections&#39;):
+        return self._exz_projections.to_numpy()
+    raise Exception(f&#34;The period t expected values for t+1 variables projections (exz) are not yet available.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.exz_projections_as_dataframe"><code class="name">var <span class="ident">exz_projections_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Get exz variable projection values
+of the projection years as a dataframe.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def exz_projections_as_dataframe(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Get exz variable projection values
+    of the projection years as a dataframe.
+    &#34;&#34;&#34;
+    if hasattr(self, &#39;_exz_projections&#39;):
+        return self._exz_projections
+    raise Exception(f&#34;The period t expected values for t+1 variables projections (exz) are not yet available.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.graphable_projections"><code class="name">var <span class="ident">graphable_projections</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Produces publishable projections in a format suitable
+for loading into graphing systems such as R.</p>
+<p>The publishable projections are transposed so there is
+a column for each variable and a row for each year.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def graphable_projections(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Produces publishable projections in a format suitable 
+    for loading into graphing systems such as R.
+
+    The publishable projections are transposed so there is 
+    a column for each variable and a row for each year.
+    &#34;&#34;&#34;
+    result: pd.DataFrame = self.publishable_projections.copy().transpose()
+    result.index = self.model.configuration.all_years
+    return result</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.h3t"><code class="name">var <span class="ident">h3t</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>Equivalent to h3t in the Ox implementation</p>
+<p>Returns constants and the functions of current and future exogenous variables affecting J1.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def h3t(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Equivalent to h3t in the Ox implementation
+    
+    Returns constants and the functions of current and future exogenous variables affecting J1.
+    &#34;&#34;&#34;
+    return self._h3t</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.long_rate_constants"><code class="name">var <span class="ident">long_rate_constants</span></code></dt>
+<dd>
+<div class="desc"><p>The constant adjustments to long bond rates
+(real and nominal) in the base projection year
+to ensure projections equal observed values.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def long_rate_constants(self):
+    &#34;&#34;&#34;
+    The constant adjustments to long bond rates 
+    (real and nominal) in the base projection year 
+    to ensure projections equal observed values.
+    &#34;&#34;&#34;
+    return self._long_rate_constants</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.model"><code class="name">var <span class="ident">model</span> : <a title="gcubed.model.Model" href="../model.html#gcubed.model.Model">Model</a></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def model(self) -&gt; Model:
+    return self.state_space_form.model</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.parameters"><code class="name">var <span class="ident">parameters</span> : <a title="gcubed.model_parameters.parameters.Parameters" href="../model_parameters/parameters.html#gcubed.model_parameters.parameters.Parameters">Parameters</a></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def parameters(self) -&gt; Parameters:
+    return self.model.parameters</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.preceding_projection_years"><code class="name">var <span class="ident">preceding_projection_years</span> : list[int]</code></dt>
+<dd>
+<div class="desc"><p>Returns the list of years for projections from the base year through to but
+not including the event year for this baseline projection or simulation layer.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def preceding_projection_years(self) -&gt; list[int]:
+    &#34;&#34;&#34;
+    Returns the list of years for projections from the base year through to but
+    not including the event year for this baseline projection or simulation layer.
+    &#34;&#34;&#34;
+    return range(self.base_year, self.event_year)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.preceding_projection_years_column_labels"><code class="name">var <span class="ident">preceding_projection_years_column_labels</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def preceding_projection_years_column_labels(self) -&gt; list[str]:
+    result = [str(x) for x in self.preceding_projection_years]
+    logging.debug(f&#34;With event year {self.event_year}, the preceding projection years are\n{result}&#34;)
+    return result</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.preceding_projection_years_count"><code class="name">var <span class="ident">preceding_projection_years_count</span> : list[int]</code></dt>
+<dd>
+<div class="desc"><p>Returns the number of years from the base year for the projections to
+the event year.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def preceding_projection_years_count(self) -&gt; list[int]:
+    &#34;&#34;&#34;
+    Returns the number of years from the base year for the projections to
+    the event year.
+    &#34;&#34;&#34;
+    return (self.event_year - self.base_year)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.projection_years"><code class="name">var <span class="ident">projection_years</span> : list[int]</code></dt>
+<dd>
+<div class="desc"><p>Returns the list of years for projections from the event year through to
+and including the projection end year.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def projection_years(self) -&gt; list[int]:
+    &#34;&#34;&#34;
+    Returns the list of years for projections from the event year through to 
+    and including the projection end year.
+    &#34;&#34;&#34;
+    return range(self.event_year, self.end_year+1)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.projection_years_column_labels"><code class="name">var <span class="ident">projection_years_column_labels</span> : list[str]</code></dt>
+<dd>
+<div class="desc"><p>Returns the ordered list of 4 digit year
+column labels for the projections.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def projection_years_column_labels(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    Returns the ordered list of 4 digit year 
+    column labels for the projections.
+    &#34;&#34;&#34;
+    return [str(x) for x in self.projection_years]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.projection_years_count"><code class="name">var <span class="ident">projection_years_count</span> : list[int]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def projection_years_count(self) -&gt; list[int]:
+    return (self.end_year - self.event_year + 1)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.projections"><code class="name">var <span class="ident">projections</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Returns the dataframe of projections for all variables in the model that are part of the
+4 vectors specified. There still need to be additional variable projected that are computed
+outside of the system to take non-linearity into account (eg long-term interest rates.)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def projections(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Returns the dataframe of projections for all variables in the model that are part of the 
+    4 vectors specified. There still need to be additional variable projected that are computed
+    outside of the system to take non-linearity into account (eg long-term interest rates.)
+    &#34;&#34;&#34;
+    if hasattr(self, &#39;_projections&#39;):
+        return self._projections
+    raise Exception(f&#34;The projections for all variables are not yet available.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.publishable_projections"><code class="name">var <span class="ident">publishable_projections</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Returns the dataframe of projections for all variables in the model.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def publishable_projections(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Returns the dataframe of projections for all variables in the model.
+    &#34;&#34;&#34;
+    if hasattr(self, &#39;_publishable_projections&#39;):
+        return self._publishable_projections
+    raise Exception(f&#34;The publishable projections for all variables are not yet available.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.simulation_data_columns"><code class="name">var <span class="ident">simulation_data_columns</span> : list[str]</code></dt>
+<dd>
+<div class="desc"><p>Returns the list of years (YYYY format) as strings from the event year to the
+end year in the projections.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def simulation_data_columns(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    Returns the list of years (YYYY format) as strings from the event year to the
+    end year in the projections.
+    &#34;&#34;&#34;
+    return [str(x) for x in range(self.event_year, self.configuration.end_year+1)]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.stable_manifold"><code class="name">var <span class="ident">stable_manifold</span> : <a title="gcubed.stable_manifold.StableManifold" href="../stable_manifold.html#gcubed.stable_manifold.StableManifold">StableManifold</a></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def stable_manifold(self) -&gt; StableManifold:
+    return self._stable_manifold</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.state_space_form"><code class="name">var <span class="ident">state_space_form</span> : <a title="gcubed.state_space_form.StateSpaceForm" href="../state_space_form.html#gcubed.state_space_form.StateSpaceForm">StateSpaceForm</a></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def state_space_form(self) -&gt; StateSpaceForm:
+    return self.stable_manifold.ssf</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.sym_data"><code class="name">var <span class="ident">sym_data</span> : <a title="gcubed.sym_data.SymData" href="../sym_data.html#gcubed.sym_data.SymData">SymData</a></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sym_data(self) -&gt; SymData:
+    return self.model.sym_data</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.yjr_projections"><code class="name">var <span class="ident">yjr_projections</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>Get yjr variable projection values
+of the projection years.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def yjr_projections(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Get yjr variable projection values
+    of the projection years.
+    &#34;&#34;&#34;
+    if hasattr(self, &#39;_yjr_projections&#39;):
+        return self._yjr_projections.to_numpy()
+    raise Exception(f&#34;The period t costate variable projections (yjr) are not yet available.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.yjr_projections_as_dataframe"><code class="name">var <span class="ident">yjr_projections_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Get yjr variable projection values
+of the projection years as a dataframe.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def yjr_projections_as_dataframe(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Get yjr variable projection values
+    of the projection years as a dataframe.
+    &#34;&#34;&#34;
+    if hasattr(self, &#39;_yjr_projections&#39;):
+        return self._yjr_projections
+    raise Exception(f&#34;The period t costate variable projections (yjr) are not yet available.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.yxr_initial_values"><code class="name">var <span class="ident">yxr_initial_values</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Get yxr initial values to start the projections process.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def yxr_initial_values(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Get yxr initial values to start the projections process.
+    &#34;&#34;&#34;
+    if hasattr(self, &#39;_yxr_initial_values&#39;):
+        return self._yxr_initial_values
+    raise Exception(f&#34;The initial values for the period t state variable projections (yxr) are not yet available.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.yxr_projections"><code class="name">var <span class="ident">yxr_projections</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>Get yxr variable projection values
+of the projection years.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def yxr_projections(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Get yxr variable projection values
+    of the projection years.
+    &#34;&#34;&#34;
+    if hasattr(self, &#39;_yxr_projections&#39;):
+        return self._yxr_projections.to_numpy()
+    raise Exception(f&#34;The period t state variable projections are not yet available.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.yxr_projections_as_dataframe"><code class="name">var <span class="ident">yxr_projections_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Get yxr variable projection values
+of the projection years as a dataframe.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def yxr_projections_as_dataframe(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Get yxr variable projection values
+    of the projection years as a dataframe.
+    &#34;&#34;&#34;
+    if hasattr(self, &#39;_yxr_projections&#39;):
+        return self._yxr_projections
+    raise Exception(f&#34;The period t state variable projections (yxr) are not yet available.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.z1l_projections"><code class="name">var <span class="ident">z1l_projections</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>Get z1l variable projection values
+of the projection years.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def z1l_projections(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Get z1l variable projection values
+    of the projection years.
+    &#34;&#34;&#34;
+    if hasattr(self, &#39;_z1l_projections&#39;):
+        return self._z1l_projections.to_numpy()
+    raise Exception(f&#34;The period t Z1L projections are not yet available.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.z1l_projections_as_dataframe"><code class="name">var <span class="ident">z1l_projections_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Get z1l variable projection values
+of the projection years as a dataframe.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def z1l_projections_as_dataframe(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Get z1l variable projection values
+    of the projection years as a dataframe.
+    &#34;&#34;&#34;
+    if hasattr(self, &#39;_z1l_projections&#39;):
+        return self._z1l_projections
+    raise Exception(f&#34;The period t Z1L projections are not yet available.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.zel_projections"><code class="name">var <span class="ident">zel_projections</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>Get zel variable projection values
+of the projection years.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def zel_projections(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Get zel variable projection values
+    of the projection years.
+    &#34;&#34;&#34;
+    if hasattr(self, &#39;_zel_projections&#39;):
+        return self._zel_projections.to_numpy()
+    raise Exception(f&#34;The period t ZEL projections are not yet available.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.zel_projections_as_dataframe"><code class="name">var <span class="ident">zel_projections_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dd>
+<div class="desc"><p>Get zel variable projection values
+of the projection years as a dataframe.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def zel_projections_as_dataframe(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Get zel variable projection values
+    of the projection years as a dataframe.
+    &#34;&#34;&#34;
+    if hasattr(self, &#39;_zel_projections&#39;):
+        return self._zel_projections
+    raise Exception(f&#34;The period t ZEL projections are not yet available.&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="gcubed.projections.projections.Projections.compute_functions_of_future_exogenous_variables"><code class="name flex">
+<span>def <span class="ident">compute_functions_of_future_exogenous_variables</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The rules governing the dynamic behaviour of variables depend on functions of the current and future exogenous variables.
+These functions are evaluated and the results are stored in numpy matrices that match the number of rows
+for the related vector of variables and that have a column for each year from the base projection year to the
+last year in the projections.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_functions_of_future_exogenous_variables(self):
+    &#34;&#34;&#34;
+    The rules governing the dynamic behaviour of variables depend on functions of the current and future exogenous variables.
+    These functions are evaluated and the results are stored in numpy matrices that match the number of rows
+    for the related vector of variables and that have a column for each year from the base projection year to the
+    last year in the projections.
+    &#34;&#34;&#34;
+
+    # Set up the arrays that will be populated and initialise them to zeros.
+
+    # // setup for baseline with optimization
+    # decl id=invert(unit(nez)-c4n);
+    # c4t=id*cz5;
+
+    # decl mu2t=id*c6n;
+
+    # id=invert(unit(njm)-ff-we*mu2t);
+    # c6t=id*(cz4+we*c4t);
+
+    # c4t=c4t+mu2t*c6t;
+    # c4t=ones(rows(c4t),nobs).*c4t;
+    # c6t=ones(rows(c6t),nobs).*c6t;
+    # c2t=h2t*exog+c6t+bt2t*gam3t;
+
+    # This is equivalent to h3t in the newsetsymbl.ox script (j by 1 dimensions)
+    h3t: np.ndarray = np.zeros(shape=(self.sym_data.vector_length(vector_name=&#39;j1l&#39;), self.projection_years_count))
+
+    # Populate for period T.
+
+    # c4t=invert(unit(nez)-zel_exz_ssf)*cz5   (r by 1 dimensions)
+    interim_calculation = self.stable_manifold.Gamma_rT @ self.ze_constants
+
+    # c6t = invert(unit(j)-j1l_yjr_ssf-j1l_exz_ssf*mu2t) * (cz4+j1l_exz_ssf*c4t)
+    #     = Gamma_jT (cz4+j1l_exz_ssf*interim_calculation)
+    c6T_column = self.stable_manifold.Gamma_jT @ (self.j1_constants + self.state_space_form.delta(&#39;j1l&#39;, &#39;exz&#39;) @ interim_calculation)
+
+    # c4t = c4t + mu2t * c6t (r by 1 dimensions)
+    c4T_column = interim_calculation + self.stable_manifold.psi_rj @ c6T_column
+
+    # c4t=ones(rows(c4t),nobs).*c4t (r by T dimensions)
+    c4t: np.ndarray = np.tile(c4T_column, (1, self.projection_years_count))
+
+    # c6t=ones(rows(c6t),nobs).*c6t (j by T dimensions)
+    c6t: np.ndarray = np.tile(c6T_column, (1, self.projection_years_count))
+
+    # c2t=h2t*exog+c6t    (j by T dimensions)
+    c2t: np.ndarray = self.stable_manifold.H2 @ self.exo_projections + c6t
+
+    # (s by T dimensions)
+    c5t: np.ndarray = np.zeros(shape=(self.sym_data.vector_length(vector_name=&#39;x1l&#39;), self.projection_years_count))
+
+    # (j by T dimensions)
+    c2t_lead: np.ndarray = c2t.copy()
+    c4t_lead: np.ndarray = c4t.copy()
+
+    # Populate for earlier periods.
+    j = self.projection_years_count-1
+    for k in range(self.projection_years_count-1, -1, -1):
+
+        # c5t[][k] = wvi*(x1l_exz_ssf*c4tl[][j] + cz2)          (s by 1 : note no need for T columns)
+        c5t: np.ndarray = self.stable_manifold.Gamma_st @ (self.state_space_form.delta(&#39;x1l&#39;, &#39;exz&#39;) @ c4t_lead[:, [j]] + self.x1_constants)
+
+        # c6t[][k] = fdeltinv*(th6t*c5t[][k] - j1l_exz_ssf*c4tl[][j] + c2tl[][j] - cz4)         (j rows)
+        c6t[:, [k]] = self.stable_manifold.Gamma_jt @ (self.stable_manifold.common_factor @ c5t - self.state_space_form.delta(
+            &#39;j1l&#39;, &#39;exz&#39;) @ c4t_lead[:, [j]] + c2t_lead[:, [j]] - self.j1_constants)
+
+        # c5t[][k] = c5t[][k] + th2t*c6t[][k]
+        c5t = c5t + self.stable_manifold.tau_sjt @ c6t[:, [k]]
+
+        # c4t[][k] = mu1tl*c5t[][k] + c4tl[][j]
+        c4t[:, [k]] = self.stable_manifold.M1_lead @ c5t + c4t_lead[:, [j]]
+
+        # h3t[][k] = c6t[][k]
+        h3t[:, [k]] = c6t[:, [k]].copy()
+
+        # c2t[][k] = h2t*exog[][k] + h3t[][k]
+        c2t[:, [k]] = self.stable_manifold.H2 @ self.exo_projections[:, [k]] + h3t[:, [k]]
+
+        # c4tl[][k] = nmu4t*exog[][k] + zel_yjr_ssf*h3t[][k] + zel_exz_ssf*c4t[][k] + cz5
+        c4t_lead[:, [k]] = self.stable_manifold.M2 @ self.exo_projections[:, [k]] + \
+            self.state_space_form.delta(&#39;zel&#39;, &#39;yjr&#39;) @ h3t[:, [k]] + \
+            self.state_space_form.delta(&#39;zel&#39;, &#39;exz&#39;) @ c4t[:, [k]] + \
+            self.ze_constants
+
+        c2t_lead = c2t.copy()
+
+        j = k
+
+    # Store the functions of future exogenous variables to access when doing projections.
+    self._h3t = h3t.copy()
+    self._c4t = c4t.copy()</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.generate_database_projections"><code class="name flex">
+<span>def <span class="ident">generate_database_projections</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Converts the raw projections into projections that are consistent with the database being used
+by the model. These projections can be spliced on to the original database (as opposed to the
+GDP scaled database) that was loaded with the model used to produce the projections.</p>
+<p>Implements the first parts of the projection conversion logic in datamsymbl.ox.</p>
+<p>Step 1.
+Get a copy of the raw projections.</p>
+<p>Step 2b.
+Divide the projections by YRATR in the projection base year for every variable that has units of:
+gdp
+mmtgdp
+btugdp
+gwhgdp
+This ensures that the resulting values are comparable to the original database aside from scaling by 100.
+for mmtgdp, in models from version 170 onwards, multiply mmtgdp by 100 also because of a change in the
+definition of the units.</p>
+<h1 id="step-3">Step 3.</h1>
+<p>At this stage the interest rates are expressed as decimals so 0.02 is a 2% interest rate.
+Adjust the interest rate variables using the intcons adjustment, adding the difference between
+the base-projection year interest rate and the assumed neutral real interest rate to each of the interest
+rate variables.
+This ensures that the result short interest rates are comparable to the original database, aside from scaling by 100.</p>
+<h1 id="step-4">Step 4.</h1>
+<p>Generate long rates from short rates
+This ensures that the long interest rates are derived from the short rates.</p>
+<h1 id="step-5">Step 5.</h1>
+<p>Adjust long rate projections by adding long rate constants that
+are calculated to ensure that the long rates are equal to the
+observed values in the base projection year.
+This ensures that the long interest rates are comparable to the original database aside from scaling by 100.</p>
+<p>Step 6.
+Get LGDPR (real GDP level) data in the projection base year for each
+region and grow over projection years at rate given by 'labgrow' parameter.
+Store the LGDPR projections in the publishable projections dataset.</p>
+<p>Step 7.
+Multiply projection values by 100
+This ensures that the projections are scaled in the same way as the original database.</p>
+<p>Saves the result in the _database_projections property.</p>
+<p>These database projections should be associated with the publication_units of measurement
+available from the sym_data variable summary.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_database_projections(self):
+    &#34;&#34;&#34;
+    Converts the raw projections into projections that are consistent with the database being used
+    by the model. These projections can be spliced on to the original database (as opposed to the
+    GDP scaled database) that was loaded with the model used to produce the projections.
+
+    Implements the first parts of the projection conversion logic in datamsymbl.ox.
+
+    Step 1.
+    Get a copy of the raw projections.
+
+    Step 2b.
+    Divide the projections by YRATR in the projection base year for every variable that has units of:
+        gdp
+        mmtgdp
+        btugdp
+        gwhgdp
+    This ensures that the resulting values are comparable to the original database aside from scaling by 100.
+    for mmtgdp, in models from version 170 onwards, multiply mmtgdp by 100 also because of a change in the 
+    definition of the units.
+
+    # Step 3.
+    At this stage the interest rates are expressed as decimals so 0.02 is a 2% interest rate.
+    Adjust the interest rate variables using the intcons adjustment, adding the difference between 
+    the base-projection year interest rate and the assumed neutral real interest rate to each of the interest 
+    rate variables.
+    This ensures that the result short interest rates are comparable to the original database, aside from scaling by 100.
+
+    # Step 4.
+    Generate long rates from short rates
+    This ensures that the long interest rates are derived from the short rates.
+     
+    # Step 5.
+    Adjust long rate projections by adding long rate constants that
+    are calculated to ensure that the long rates are equal to the 
+    observed values in the base projection year.
+    This ensures that the long interest rates are comparable to the original database aside from scaling by 100.
+
+    Step 6.
+    Get LGDPR (real GDP level) data in the projection base year for each 
+    region and grow over projection years at rate given by &#39;labgrow&#39; parameter.
+    Store the LGDPR projections in the publishable projections dataset.
+
+    Step 7.
+    Multiply projection values by 100
+    This ensures that the projections are scaled in the same way as the original database.
+
+
+    Saves the result in the _database_projections property.
+
+    These database projections should be associated with the publication_units of measurement
+    available from the sym_data variable summary.
+    &#34;&#34;&#34;
+
+    # Step 1.
+    database_projections: pd.DataFrame = self.projections.copy() 
+
+    # Step 2.
+    yratr_data: pd.DataFrame = self.database.get_data(name_regular_expression=f&#34;^{CONSTANTS.US_REAL_GDP_RATIO_PREFIX}\(&#34;, years=[self.configuration.original_projection_base_year])
+    yratr_data.index = self.sym_data.regions_members
+    for variable_name, variable_projection in database_projections.iterrows():
+        units: str = str(self.database.variables.loc[variable_name,&#39;units&#39;])
+        match units:
+            case &#39;gdp&#39; | &#39;btugdp&#39; | &#39;gwhgdp&#39;:
+                variable_region: str = str(self.database.variables.loc[variable_name, &#39;region&#39;])
+                factor: float = float(yratr_data.loc[variable_region].values[0])
+                database_projections.loc[[variable_name], :] /= factor
+            case &#39;mmtgdp&#39;:
+                variable_region: str = str(self.database.variables.loc[variable_name, &#39;region&#39;])
+                factor: float = float(yratr_data.loc[variable_region].values[0])
+                # Warwick changed the definition of mmt by a scale factor of 100 
+                # for all models from # 169 onwards.
+                if self.configuration.build_number &gt;= 169:
+                    database_projections.loc[[variable_name], :] /= factor / 100
+                else:
+                    database_projections.loc[[variable_name], :] /= factor / 100
+
+    # Step 3.
+    # Make the adjustment to convert back to actual interest rates from the neutral real interest rate.
+    for prefix in CONSTANTS.INTEREST_RATE_PREFIXES:
+        variable_names = self.database.variables.loc[self.database.variables.name.str.startswith(f&#34;{prefix}(&#34;), &#39;name&#39;]
+        for variable_name in variable_names:
+            database_projections.loc[[variable_name], :] += (float(self.database.data.loc[variable_name, str(self.configuration.original_projection_base_year)] - self.configuration.neutral_real_interest_rate))
+
+    # Step 4.
+    # Calculate the long rates.
+    real_interest_rates: pd.DataFrame = database_projections.loc[database_projections.index.str.startswith(f&#34;{CONSTANTS.REAL_INTEREST_RATE_PREFIX}(&#34;), str(self.base_year):].copy()
+    for variable_name in real_interest_rates.index:
+        rb10: pd.DataFrame = self.longrate_calculation(term=10, rates=real_interest_rates.loc[[variable_name], :])
+        database_projections.loc[[str(rb10.index[0])], :] = rb10
+    nominal_interest_rates: pd.DataFrame = database_projections.loc[database_projections.index.str.startswith(f&#34;{CONSTANTS.NOMINAL_INTEREST_RATE_PREFIX}(&#34;), str(self.base_year):].copy()
+    for variable_name in nominal_interest_rates.index:
+        nb02: pd.DataFrame = self.longrate_calculation(term=2, rates=nominal_interest_rates.loc[[variable_name], :])
+        database_projections.loc[[str(nb02.index[0])], :] = nb02
+        nb05: pd.DataFrame = self.longrate_calculation(term=5, rates=nominal_interest_rates.loc[[variable_name], :])
+        database_projections.loc[[str(nb05.index[0])], :] = nb05
+        nb10: pd.DataFrame = self.longrate_calculation(term=10, rates=nominal_interest_rates.loc[[variable_name], :])
+        database_projections.loc[[str(nb10.index[0])], :] = nb10
+
+    # Step 5.
+    # Only if doing baseline projections:
+    # Determine the constants to add to the long rates to match 
+    # the original base projection year observed and projected values.
+    if (self.event_year == self.configuration.original_projection_base_year):
+        self._long_rate_constants: pd.DataFrame = None
+        for prefix in CONSTANTS.BOND_RATE_PREFIXES:
+            observed_values: pd.DataFrame = self.database.data.loc[self.database.variables.name.str.startswith(f&#34;{prefix}(&#34;), [str(self.event_year)]].copy()
+            projected_values: pd.DataFrame = database_projections.loc[database_projections.index.str.startswith(f&#34;{prefix}(&#34;), [str(self.event_year)]].copy()
+            constants: pd.DataFrame = observed_values - projected_values
+            constants.columns = [str(self.event_year)]
+            constants.index = observed_values.index
+            if self._long_rate_constants is None:
+                self._long_rate_constants = constants
+            else:
+                self._long_rate_constants = pd.concat([self._long_rate_constants, constants], axis=0)
+
+    # For all projections, baseline and otherwise:
+    # Add the baseline projection long-rate constants to the long rate projections 
+    # to line the long rate projections up with observed data in the base projection year.
+    for variable_name in self.long_rate_constants.index:
+        database_projections.loc[[variable_name], :] += self.long_rate_constants.loc[variable_name, str(self.configuration.original_projection_base_year)]
+
+    # Step 6.
+    rows_containing_LGDPR_data = self.database.variables.name.str.startswith(f&#34;{CONSTANTS.REAL_GDP_PREFIX}(&#34;)
+    lgdpr_data: pd.DataFrame = self.database.data.loc[rows_containing_LGDPR_data, [str(self.configuration.original_projection_base_year)]]
+    us_longrun_effective_labour_productivity_index: pd.DataFrame = self.model.effective_labour_productivity.us_longrun_effective_labour_index.loc[:,self.configuration.base_and_projection_years_column_labels]
+    lgdpr_longrun_projections: pd.DataFrame = pd.DataFrame(lgdpr_data.values * us_longrun_effective_labour_productivity_index.values)
+    lgdpr_longrun_projections.columns = self.configuration.base_and_projection_years_column_labels
+    lgdpr_longrun_projections.index = lgdpr_data.index # Index with the LGDPR full variable names
+    database_projections.loc[rows_containing_LGDPR_data, :] = lgdpr_longrun_projections
+
+    # Step 7.
+    database_projections *= 100.0
+
+    # Splice on the actual data from the model database
+    for column in self.model.database.data.columns[::-1]:
+        if not (column in database_projections.columns):
+            if int(column) &lt; int(database_projections.columns[0]):
+                database_projections.insert(0, column, self.model.database.data.loc[:,column], True)
+            else:
+                break
+
+    # Save the results for use later.
+    self._database_projections = database_projections.astype(float)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.generate_projections"><code class="name flex">
+<span>def <span class="ident">generate_projections</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements the projection logic in msgsimBL.ox. This runs the various equations
+to project variables based on the starting state vector and the values of
+exogenous variables in all years. The steps are as follows:</p>
+<p>Step 1.
+Recalculate the functions of future exogenous variables, incorporating
+the updated exogenous variable projections and all constant adjustments:
+the intertemporal constants and the other constants
+capturing the difference
+between the SSF equation results in the base year and the observed
+values in the base year.</p>
+<p>Step 2.
+Project the state vector. (x_t+1 as a function of x_t and exogenous variables and constant adjustments)
+This uses the Anew and Znew matrices computed as part of getting the stable manifold.</p>
+<p>Step 3.
+Combine all variable projections into a single data frame.</p>
+<p>Step 4.
+Sort the variables in the projection dataframe into the same order as the original database.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_projections(self):
+    &#34;&#34;&#34;
+    Implements the projection logic in msgsimBL.ox. This runs the various equations
+    to project variables based on the starting state vector and the values of
+    exogenous variables in all years. The steps are as follows:
+
+    Step 1.
+    Recalculate the functions of future exogenous variables, incorporating 
+    the updated exogenous variable projections and all constant adjustments: 
+    the intertemporal constants and the other constants  capturing the difference 
+    between the SSF equation results in the base year and the observed 
+    values in the base year.
+    
+    Step 2.
+    Project the state vector. (x_t+1 as a function of x_t and exogenous variables and constant adjustments)
+    This uses the Anew and Znew matrices computed as part of getting the stable manifold.
+
+    Step 3. 
+    Combine all variable projections into a single data frame.
+
+    Step 4.
+    Sort the variables in the projection dataframe into the same order as the original database.
+    &#34;&#34;&#34;
+
+    # Step 1.
+    self.compute_functions_of_future_exogenous_variables()
+
+    # Step 2.
+    self._constantBL: pd.DataFrame = pd.DataFrame(
+        self.stable_manifold.Znew @ self.exo_projections +
+        self.state_space_form.delta(&#39;x1l&#39;, &#39;yjr&#39;) @ self.h3t +
+        self.state_space_form.delta(&#39;x1l&#39;, &#39;exz&#39;) @ self.c4t +
+        self.x1_constants)
+    self._constantBL.columns = self.projection_years_column_labels
+    self._constantBL.index = self.sym_data.vector_variable_names(vector_name=&#39;yxr&#39;)
+    yxr: pd.DataFrame = pd.DataFrame(index=self.sym_data.vector_variable_names(vector_name=&#39;yxr&#39;), columns=self.projection_years_column_labels)
+    yxr.loc[:, [str(self.event_year)]] = self.yxr_initial_values
+    previous_year_label = str(self.event_year)
+    assert previous_year_label == yxr.columns[0]
+    for year in yxr.columns[1:]: # omit the first year - it should be the previous year label.
+        yxr.loc[:, [year]] = self.stable_manifold.Anew @ yxr.loc[:, [previous_year_label]].to_numpy() + self.constantBL.loc[:, [previous_year_label]].to_numpy()
+        previous_year_label = year
+
+    # Project J1
+    # er = h1t*x + h2t*exog[][1:nobs] + h3t
+    yjr: pd.DataFrame = pd.DataFrame(self.stable_manifold.H1 @ (yxr.to_numpy()) + self.stable_manifold.H2 @ self.exo_projections + self._h3t)
+    yjr.columns = self.projection_years_column_labels
+    yjr.index = self.sym_data.vector_variable_names(vector_name=&#39;j1l&#39;)
+    self._yjr_projections = yjr
+
+    # Project time t expected value of ZE in period t+1 (EXZ)
+    # Project time t expected value of ZE in period t+1 (EXZ)
+    # tzl = mu1t*x + mu4t*exog[][1:nobs] + c4t
+    exz: pd.DataFrame = pd.DataFrame(
+        self.stable_manifold.mu1 @ yxr.to_numpy() +
+        self.stable_manifold.mu2 @ self.exo_projections +
+        self._c4t
+    )
+    exz.columns = self.projection_years_column_labels
+    exz.index = self.sym_data.vector_variable_names(vector_name=&#39;zer&#39;)
+    self._exz_projections = exz
+
+    # Project time t values of ZE using the SSF equation (this should be done with M1 and M2?)
+    # What about the functions of future exogenous variables and the constant adjustments
+    zel: pd.DataFrame = pd.DataFrame(
+        self.state_space_form.delta(&#39;zel&#39;, &#39;yxr&#39;) @ yxr +
+        self.state_space_form.delta(&#39;zel&#39;, &#39;exz&#39;) @ exz +
+        self.state_space_form.delta(&#39;zel&#39;, &#39;yjr&#39;) @ yjr +
+        self.state_space_form.delta(&#39;zel&#39;, &#39;exo&#39;) @ self.exo_projections)
+    zel.columns = self.projection_years_column_labels
+    zel.index = self.sym_data.vector_variable_names(vector_name=&#39;zel&#39;)
+    self._zel_projections = zel + self.ze_constants
+
+    # Project Z1 using the SSF equation
+    z1l: pd.DataFrame = pd.DataFrame(
+        self.state_space_form.delta(&#39;z1l&#39;, &#39;yxr&#39;) @ yxr +
+        self.state_space_form.delta(&#39;z1l&#39;, &#39;exz&#39;) @ exz +
+        self.state_space_form.delta(&#39;z1l&#39;, &#39;yjr&#39;) @ yjr +
+        self.state_space_form.delta(&#39;z1l&#39;, &#39;exo&#39;) @ self.exo_projections)
+    z1l.columns = self.projection_years_column_labels
+    z1l.index = self.sym_data.vector_variable_names(vector_name=&#39;z1l&#39;)
+    self._z1l_projections = z1l + self.z1_constants
+
+    # timeshift forward the special state variables by 1 period.
+    for variable_name_prefix in CONSTANTS.STATE_LEAD_VARIABLES:
+        matching_variables = yxr.index.str.startswith(variable_name_prefix)
+        yxr.iloc[matching_variables, 0:-2] = yxr.iloc[matching_variables, 1:-1]
+        yxr.iloc[matching_variables, -1] = 0  # TODO: Once we are past benchmarking against Ox, set this equal to NaN.
+
+    self._yxr_projections = yxr
+
+    # Combine the projections into a single dataframe in the same order as the database
+    self._projections = pd.concat([
+        self.yxr_projections_as_dataframe,
+        self.z1l_projections_as_dataframe,
+        self.zel_projections_as_dataframe,
+        self.yjr_projections_as_dataframe,
+        self.exo_projections_as_dataframe])
+    database_ordered_variable_list: pd.DataFrame = self.database.variables.name
+    self._projections = pd.concat([database_ordered_variable_list, self._projections], axis=1)
+    self._projections.drop(&#39;name&#39;, inplace=True, axis=1)
+
+    self._projections = self._projections.astype(float)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.generate_publishable_projections"><code class="name flex">
+<span>def <span class="ident">generate_publishable_projections</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Uses the real GDP trend growth projections to adjust
+the projections of all variables with units equal to
+'usgdp' or 'gdp'.</p>
+<p>Implements the real GDP scaling part of the projection conversion logic in datamsymbl.ox.</p>
+<p>Step 1.
+For all projections with units equal to usgdp, multiply the projection
+by the US LGDPR projection computed in step 4 when producing the database projections.</p>
+<p>Step 2.
+For all projections with units equal to 'gdp', multiply the projection by the associated
+region's LGDPR projection computed in step 4 when producing the database projections.</p>
+<p>These publishable projections should be associated with the publication_units of measurement
+available from the sym_data variable summary.</p>
+<p>Saves the result in the _publishable_projections property.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_publishable_projections(self):
+    &#34;&#34;&#34;
+
+    Uses the real GDP trend growth projections to adjust 
+    the projections of all variables with units equal to 
+    &#39;usgdp&#39; or &#39;gdp&#39;.
+
+    Implements the real GDP scaling part of the projection conversion logic in datamsymbl.ox.
+
+    Step 1.
+    For all projections with units equal to usgdp, multiply the projection 
+    by the US LGDPR projection computed in step 4 when producing the database projections.
+
+    Step 2.
+    For all projections with units equal to &#39;gdp&#39;, multiply the projection by the associated
+    region&#39;s LGDPR projection computed in step 4 when producing the database projections.
+
+    These publishable projections should be associated with the publication_units of measurement
+    available from the sym_data variable summary.
+
+    Saves the result in the _publishable_projections property.
+    &#34;&#34;&#34;
+
+    publication_projections: pd.DataFrame = self.database_projections.copy()
+
+    # Real GDP scaling
+
+    # Get the LGDPR projections. 
+    # There will be one row per region.
+    lgdpr_database_projections: pd.DataFrame = self.database_projections.loc[self.database_projections.index.str.startswith(f&#34;{CONSTANTS.REAL_GDP_PREFIX}(&#34;), :]
+    lgdpr_database_projections.index = self.model.sym_data.regions_members
+    for variable_name in publication_projections.index:
+        variable_units: str = str(self.database.variables.loc[variable_name,&#39;units&#39;])
+        match variable_units:
+            case &#39;usgdp&#39; | &#39;mmtusgdp&#39; | &#39;btuusgdp&#39;:
+                publication_projections.loc[[variable_name], :] *= lgdpr_database_projections.loc[[CONSTANTS.USA_REGION_CODE],:].values / 100
+            case &#39;gdp&#39; | &#39;mmtgdp&#39; | &#39;btugdp&#39; | &#39;gwhgdp&#39;:
+                variable_region: str = str(self.database.variables.loc[variable_name, &#39;region&#39;])
+                publication_projections.loc[[variable_name], :] *= lgdpr_database_projections.loc[[variable_region],:].values / 100
+
+    # Save the results for use later.
+    self._publishable_projections = publication_projections.astype(float)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.longrate_calculation"><code class="name flex">
+<span>def <span class="ident">longrate_calculation</span></span>(<span>self, term: int, rates: pandas.core.frame.DataFrame) ‑> pandas.core.frame.DataFrame</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Utility method that returns the compounding long rates given the yearly rates.</p>
+<p>Rates are provided as decimal values so 1% is 0.01.</p>
+<h3 id="arguments">Arguments</h3>
+<p>term: the number of years of the term of the instrument. 2 for a 2 year bond.</p>
+<p>rates: the projections of the 1 year interest rates, (nominal or real).</p>
+<p>Returns the long rates that can be computed from the one year rates. This series is shorter
+than the series of one year rates because the required data is not available for
+the last (term-1) observations. It is padded with NaN values in the returned projection.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def longrate_calculation(self, term: int, rates: pd.DataFrame) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Utility method that returns the compounding long rates given the yearly rates.
+
+    Rates are provided as decimal values so 1% is 0.01.
+
+   ### Arguments
+
+    term: the number of years of the term of the instrument. 2 for a 2 year bond.
+
+    rates: the projections of the 1 year interest rates, (nominal or real).
+
+    Returns the long rates that can be computed from the one year rates. This series is shorter
+    than the series of one year rates because the required data is not available for 
+    the last (term-1) observations. It is padded with NaN values in the returned projection.
+    &#34;&#34;&#34;
+    shortrates = rates.copy()
+    name_suffix = str(shortrates.index[0]).split(&#39;(&#39;)[1]
+    longrates_columns = shortrates.iloc[:, 0:(len(shortrates.columns)-term+1)].columns
+    preceding_year: int = int(shortrates.columns[0])-1
+    shortrates = shortrates + 1
+
+    shortrates = shortrates.cumprod(axis=&#39;columns&#39;)
+    shortrates.insert(0, str(preceding_year), 1.0)
+
+    longrates: pd.DataFrame = pd.DataFrame(np.power(shortrates.iloc[:, term:].to_numpy() / shortrates.iloc[:, 0:-term:1].to_numpy(), 1/term) - 1.0)
+    longrates.columns = longrates_columns
+    match str(rates.index[0]).split(&#39;(&#39;)[0]:
+        case &#39;INTN&#39;:
+            match term:
+                case 2:
+                    long_rate_name = &#39;NB02&#39;
+                case 5:
+                    long_rate_name = &#39;NB05&#39;
+                case 10:
+                    long_rate_name = &#39;NB10&#39;
+                case _:
+                    raise Exception(f&#34;Invalid nominal bond term specified: {term}&#34;)
+        case &#34;INTR&#34;:
+            match term:
+                case 2:
+                    long_rate_name = &#39;RB02&#39;
+                case 5:
+                    long_rate_name = &#39;RB05&#39;
+                case 10:
+                    long_rate_name = &#39;RB10&#39;
+                case _:
+                    raise Exception(f&#34;Invalid real bond term specified: {term}&#34;)
+        case _:
+            raise Exception(f&#34;Invalid variable used to compute bond rates: {str(rates.index[0])}. Use a 1 year interest rate.&#34;)
+    longrates.index = [ f&#34;{long_rate_name}({name_suffix}&#34; ]
+    return longrates.astype(float)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="gcubed.base.Base" href="../base.html#gcubed.base.Base">Base</a></b></code>:
+<ul class="hlist">
+<li><code><a title="gcubed.base.Base.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
+<li><code><a title="gcubed.base.Base.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.zeros" href="../base.html#gcubed.base.Base.zeros">zeros</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="gcubed.projections" href="index.html">gcubed.projections</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="gcubed.projections.projections.Projections" href="#gcubed.projections.projections.Projections">Projections</a></code></h4>
+<ul class="">
+<li><code><a title="gcubed.projections.projections.Projections.base_year" href="#gcubed.projections.projections.Projections.base_year">base_year</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.c4t" href="#gcubed.projections.projections.Projections.c4t">c4t</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.compute_functions_of_future_exogenous_variables" href="#gcubed.projections.projections.Projections.compute_functions_of_future_exogenous_variables">compute_functions_of_future_exogenous_variables</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.configuration" href="#gcubed.projections.projections.Projections.configuration">configuration</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.constantBL" href="#gcubed.projections.projections.Projections.constantBL">constantBL</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.database_projections" href="#gcubed.projections.projections.Projections.database_projections">database_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.end_year" href="#gcubed.projections.projections.Projections.end_year">end_year</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.event_year" href="#gcubed.projections.projections.Projections.event_year">event_year</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.exo_projections" href="#gcubed.projections.projections.Projections.exo_projections">exo_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.exo_projections_as_dataframe" href="#gcubed.projections.projections.Projections.exo_projections_as_dataframe">exo_projections_as_dataframe</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.exz_projections" href="#gcubed.projections.projections.Projections.exz_projections">exz_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.exz_projections_as_dataframe" href="#gcubed.projections.projections.Projections.exz_projections_as_dataframe">exz_projections_as_dataframe</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.generate_database_projections" href="#gcubed.projections.projections.Projections.generate_database_projections">generate_database_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.generate_projections" href="#gcubed.projections.projections.Projections.generate_projections">generate_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.generate_publishable_projections" href="#gcubed.projections.projections.Projections.generate_publishable_projections">generate_publishable_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.get_differences_between_projections" href="#gcubed.projections.projections.Projections.get_differences_between_projections">get_differences_between_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.graphable_projections" href="#gcubed.projections.projections.Projections.graphable_projections">graphable_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.h3t" href="#gcubed.projections.projections.Projections.h3t">h3t</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.long_rate_constants" href="#gcubed.projections.projections.Projections.long_rate_constants">long_rate_constants</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.longrate_calculation" href="#gcubed.projections.projections.Projections.longrate_calculation">longrate_calculation</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.model" href="#gcubed.projections.projections.Projections.model">model</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.parameters" href="#gcubed.projections.projections.Projections.parameters">parameters</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.preceding_projection_years" href="#gcubed.projections.projections.Projections.preceding_projection_years">preceding_projection_years</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.preceding_projection_years_column_labels" href="#gcubed.projections.projections.Projections.preceding_projection_years_column_labels">preceding_projection_years_column_labels</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.preceding_projection_years_count" href="#gcubed.projections.projections.Projections.preceding_projection_years_count">preceding_projection_years_count</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.projection_years" href="#gcubed.projections.projections.Projections.projection_years">projection_years</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.projection_years_column_labels" href="#gcubed.projections.projections.Projections.projection_years_column_labels">projection_years_column_labels</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.projection_years_count" href="#gcubed.projections.projections.Projections.projection_years_count">projection_years_count</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.projections" href="#gcubed.projections.projections.Projections.projections">projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.publishable_projections" href="#gcubed.projections.projections.Projections.publishable_projections">publishable_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.simulation_data_columns" href="#gcubed.projections.projections.Projections.simulation_data_columns">simulation_data_columns</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.stable_manifold" href="#gcubed.projections.projections.Projections.stable_manifold">stable_manifold</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.state_space_form" href="#gcubed.projections.projections.Projections.state_space_form">state_space_form</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.sym_data" href="#gcubed.projections.projections.Projections.sym_data">sym_data</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.yjr_projections" href="#gcubed.projections.projections.Projections.yjr_projections">yjr_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.yjr_projections_as_dataframe" href="#gcubed.projections.projections.Projections.yjr_projections_as_dataframe">yjr_projections_as_dataframe</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.yxr_initial_values" href="#gcubed.projections.projections.Projections.yxr_initial_values">yxr_initial_values</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.yxr_projections" href="#gcubed.projections.projections.Projections.yxr_projections">yxr_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.yxr_projections_as_dataframe" href="#gcubed.projections.projections.Projections.yxr_projections_as_dataframe">yxr_projections_as_dataframe</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.z1l_projections" href="#gcubed.projections.projections.Projections.z1l_projections">z1l_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.z1l_projections_as_dataframe" href="#gcubed.projections.projections.Projections.z1l_projections_as_dataframe">z1l_projections_as_dataframe</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.zel_projections" href="#gcubed.projections.projections.Projections.zel_projections">zel_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.zel_projections_as_dataframe" href="#gcubed.projections.projections.Projections.zel_projections_as_dataframe">zel_projections_as_dataframe</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

@@ -101,34 +101,6 @@ class Parameters(Base):
             assert len(
                 phi.index) == self.sym_data.sectors_count
 
-        # If the parameters include TCAX, then the SYM model must include the variable with the same name.
-        # TODO: enable these validations when adding optimal policy handling to stable manifold class.
-        # if self.EMZT is not None and isinstance(self.EMZT, pd.DataFrame):
-        #     assert self.TCAX  is not None
-        #     if not self.sym_data.has_variable(variable_name_prefix=&#34;EMZT&#34;):
-        #         logging.error(
-        #             &#34;The user parameters refer to EMZT but EMZT is not in the SYM model definition.&#34;)
-        # if self.TCAX is not None and isinstance(self.TCAX, pd.DataFrame):
-        #     assert self.EMZT is not None
-        #     if not self.sym_data.has_variable(variable_name_prefix=&#34;TCAX&#34;):
-        #         logging.error(
-        #             &#34;The user parameters refer to TCAX but TCAX is not in the SYM model definition.&#34;)
-
-        # Policy optimisation only allowed to be turned on 
-        # if the model parameters include TCAX and EMZT for all regions
-        # and both of those parameters are not zero for all regions.
-        # TODO: enable these validations when adding optimal policy handling to stable manifold class.
-        # TODO: Are there other constraints that should also be imposed (e.g. TCAX and EMZT should be 1 for same regions?)
-        if self.configuration.stable_manifold_use_policy_optimisation:
-            assert self.EMZT is not None
-            assert isinstance(self.EMZT , pd.DataFrame)
-            if self.EMZT.to_numpy().sum().sum() == 0:
-                raise Exception(&#34;You cannot set the model configuration to use optimal policy if EMZT (refer to the SYM variables documentation for the model) is all zeros or missing from the user set parameters.&#34;)
-            assert self.TCAX is not None
-            assert isinstance(self.TCAX, pd.DataFrame)
-            if self.TCAX.to_numpy().sum().sum() == 0:
-                raise Exception(&#34;You cannot set the model configuration to use optimal policy if TCAX (refer to the SYM variables documentation for the model) is all zeros or missing from the user set parameters.&#34;)
-
     @property 
     def sym_data(self) -&gt; SymData:
         return self._sym_data
@@ -145,7 +117,7 @@ class Parameters(Base):
     def calibration_year(self) -&gt; int:
         return self._base_year
 
-    @ property
+    @property
     def non_sym_parameter_names(self):
         &#34;&#34;&#34;
         Returns a tuple containing the names of parameters that are assigned values in 
@@ -154,13 +126,13 @@ class Parameters(Base):
         &#34;&#34;&#34;
         return (&#34;discrate&#34;, &#34;TCAX&#34;, &#34;EMZT&#34;)
 
-    @ property
+    @property
     def all_parameters(self):
         return self._all_parameters
 
     def parameter(self, parameter_name: str) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        Arguments:
+       ### Arguments
 
         parameter_name: The name of the parameter to return.
 
@@ -174,7 +146,7 @@ class Parameters(Base):
 
     def has_parameter(self, parameter_name: str) -&gt; bool:
         &#34;&#34;&#34;
-        Arguments:
+       ### Arguments
 
         parameter_name: The name of the parameter to return.
 
@@ -185,7 +157,7 @@ class Parameters(Base):
         return True
 
 
-    @ property
+    @property
     def parameter_values(self):
         &#34;&#34;&#34;
         The vectorised parameter values in SYM model order as a data frame
@@ -193,7 +165,7 @@ class Parameters(Base):
         &#34;&#34;&#34;
         return self._parameter_values
 
-    @ property
+    @property
     def parameter_values_vector(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
         Used when evaluating the model equations for linearisation.
@@ -201,14 +173,14 @@ class Parameters(Base):
         result: np.ndarray = self.parameter_values.value.to_numpy()
         return result
 
-    @ property
+    @property
     def discrate(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
         Discount rates by region
         &#34;&#34;&#34;
         return self.all_parameters[&#34;discrate&#34;]
 
-    @ property
+    @property
     def TCAX(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
         The TCAX parameter values are 1 for regions where the TCAX (unit tax on carbon)
@@ -217,7 +189,7 @@ class Parameters(Base):
         &#34;&#34;&#34;
         return self.all_parameters[&#34;TCAX&#34;]
 
-    @ property
+    @property
     def EMZT(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
         The EMZT parameter values are 1 for regions where the EMZT (carbon emissions)
@@ -388,8 +360,6 @@ class Parameters(Base):
 
         # ainv parameter - matrix inverse of (aeye - ashr)
         ainv: np.ndarray = np.linalg.inv(aeye - ashr)
-        # logging.debug(&#34;####### ainv&#34;)
-        # logging.debug(ainv)
         self._all_parameters[&#34;ainv&#34;] = ainv
         self.insert_parameter(&#34;ainv&#34;, ainv.flatten())
 
@@ -958,8 +928,7 @@ class Parameters(Base):
             domestic_uses.remove(&#34;X&#34;)
             domestic_uses.remove(&#34;M&#34;)
             sub_io_table = io_table.loc[generation_goods, domestic_uses]
-            domestic_use_of_electricity = sub_io_table.sum(
-                axis=&#39;columns&#39;)
+            domestic_use_of_electricity = sub_io_table.sum(axis=&#39;columns&#39;)
 
             # Get the region&#39;s scalar float value for LGDPN in the base calibration year.
             region_lgdpn = float(lgdpn.loc[region,:].values[0])
@@ -1018,7 +987,10 @@ class Parameters(Base):
 <h2 id="properties">Properties</h2>
 <p>database: The model database</p>
 <p>TODO: Complete this listing of class properties and their explanations.
-_database: the dataframe containing the annual data for all variables.</p></div>
+_database: the dataframe containing the annual data for all variables.</p>
+<h3 id="constructor">Constructor</h3>
+<p>Does constructor operations required by all classes that inherit from this base class.</p>
+<p>These currently just set up numpy array print options.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1081,34 +1053,6 @@ _database: the dataframe containing the annual data for all variables.</p></div>
             assert len(
                 phi.index) == self.sym_data.sectors_count
 
-        # If the parameters include TCAX, then the SYM model must include the variable with the same name.
-        # TODO: enable these validations when adding optimal policy handling to stable manifold class.
-        # if self.EMZT is not None and isinstance(self.EMZT, pd.DataFrame):
-        #     assert self.TCAX  is not None
-        #     if not self.sym_data.has_variable(variable_name_prefix=&#34;EMZT&#34;):
-        #         logging.error(
-        #             &#34;The user parameters refer to EMZT but EMZT is not in the SYM model definition.&#34;)
-        # if self.TCAX is not None and isinstance(self.TCAX, pd.DataFrame):
-        #     assert self.EMZT is not None
-        #     if not self.sym_data.has_variable(variable_name_prefix=&#34;TCAX&#34;):
-        #         logging.error(
-        #             &#34;The user parameters refer to TCAX but TCAX is not in the SYM model definition.&#34;)
-
-        # Policy optimisation only allowed to be turned on 
-        # if the model parameters include TCAX and EMZT for all regions
-        # and both of those parameters are not zero for all regions.
-        # TODO: enable these validations when adding optimal policy handling to stable manifold class.
-        # TODO: Are there other constraints that should also be imposed (e.g. TCAX and EMZT should be 1 for same regions?)
-        if self.configuration.stable_manifold_use_policy_optimisation:
-            assert self.EMZT is not None
-            assert isinstance(self.EMZT , pd.DataFrame)
-            if self.EMZT.to_numpy().sum().sum() == 0:
-                raise Exception(&#34;You cannot set the model configuration to use optimal policy if EMZT (refer to the SYM variables documentation for the model) is all zeros or missing from the user set parameters.&#34;)
-            assert self.TCAX is not None
-            assert isinstance(self.TCAX, pd.DataFrame)
-            if self.TCAX.to_numpy().sum().sum() == 0:
-                raise Exception(&#34;You cannot set the model configuration to use optimal policy if TCAX (refer to the SYM variables documentation for the model) is all zeros or missing from the user set parameters.&#34;)
-
     @property 
     def sym_data(self) -&gt; SymData:
         return self._sym_data
@@ -1125,7 +1069,7 @@ _database: the dataframe containing the annual data for all variables.</p></div>
     def calibration_year(self) -&gt; int:
         return self._base_year
 
-    @ property
+    @property
     def non_sym_parameter_names(self):
         &#34;&#34;&#34;
         Returns a tuple containing the names of parameters that are assigned values in 
@@ -1134,13 +1078,13 @@ _database: the dataframe containing the annual data for all variables.</p></div>
         &#34;&#34;&#34;
         return (&#34;discrate&#34;, &#34;TCAX&#34;, &#34;EMZT&#34;)
 
-    @ property
+    @property
     def all_parameters(self):
         return self._all_parameters
 
     def parameter(self, parameter_name: str) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        Arguments:
+       ### Arguments
 
         parameter_name: The name of the parameter to return.
 
@@ -1154,7 +1098,7 @@ _database: the dataframe containing the annual data for all variables.</p></div>
 
     def has_parameter(self, parameter_name: str) -&gt; bool:
         &#34;&#34;&#34;
-        Arguments:
+       ### Arguments
 
         parameter_name: The name of the parameter to return.
 
@@ -1165,7 +1109,7 @@ _database: the dataframe containing the annual data for all variables.</p></div>
         return True
 
 
-    @ property
+    @property
     def parameter_values(self):
         &#34;&#34;&#34;
         The vectorised parameter values in SYM model order as a data frame
@@ -1173,7 +1117,7 @@ _database: the dataframe containing the annual data for all variables.</p></div>
         &#34;&#34;&#34;
         return self._parameter_values
 
-    @ property
+    @property
     def parameter_values_vector(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
         Used when evaluating the model equations for linearisation.
@@ -1181,14 +1125,14 @@ _database: the dataframe containing the annual data for all variables.</p></div>
         result: np.ndarray = self.parameter_values.value.to_numpy()
         return result
 
-    @ property
+    @property
     def discrate(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
         Discount rates by region
         &#34;&#34;&#34;
         return self.all_parameters[&#34;discrate&#34;]
 
-    @ property
+    @property
     def TCAX(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
         The TCAX parameter values are 1 for regions where the TCAX (unit tax on carbon)
@@ -1197,7 +1141,7 @@ _database: the dataframe containing the annual data for all variables.</p></div>
         &#34;&#34;&#34;
         return self.all_parameters[&#34;TCAX&#34;]
 
-    @ property
+    @property
     def EMZT(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
         The EMZT parameter values are 1 for regions where the EMZT (carbon emissions)
@@ -1368,8 +1312,6 @@ _database: the dataframe containing the annual data for all variables.</p></div>
 
         # ainv parameter - matrix inverse of (aeye - ashr)
         ainv: np.ndarray = np.linalg.inv(aeye - ashr)
-        # logging.debug(&#34;####### ainv&#34;)
-        # logging.debug(ainv)
         self._all_parameters[&#34;ainv&#34;] = ainv
         self.insert_parameter(&#34;ainv&#34;, ainv.flatten())
 
@@ -1938,8 +1880,7 @@ _database: the dataframe containing the annual data for all variables.</p></div>
             domestic_uses.remove(&#34;X&#34;)
             domestic_uses.remove(&#34;M&#34;)
             sub_io_table = io_table.loc[generation_goods, domestic_uses]
-            domestic_use_of_electricity = sub_io_table.sum(
-                axis=&#39;columns&#39;)
+            domestic_use_of_electricity = sub_io_table.sum(axis=&#39;columns&#39;)
 
             # Get the region&#39;s scalar float value for LGDPN in the base calibration year.
             region_lgdpn = float(lgdpn.loc[region,:].values[0])
@@ -1990,6 +1931,7 @@ _database: the dataframe containing the annual data for all variables.</p></div>
 <li><a title="gcubed.model_parameters.20R.parameters_20R_170.Parameters20R170" href="20R/parameters_20R_170.html#gcubed.model_parameters.20R.parameters_20R_170.Parameters20R170">Parameters20R170</a></li>
 <li><a title="gcubed.model_parameters.2R.parameters_2R_164.Parameters2R164" href="2R/parameters_2R_164.html#gcubed.model_parameters.2R.parameters_2R_164.Parameters2R164">Parameters2R164</a></li>
 <li><a title="gcubed.model_parameters.2R.parameters_2R_170.Parameters2R170" href="2R/parameters_2R_170.html#gcubed.model_parameters.2R.parameters_2R_170.Parameters2R170">Parameters2R170</a></li>
+<li><a title="gcubed.model_parameters.2R.parameters_2R_170logv3.Parameters2R170logv3" href="2R/parameters_2R_170logv3.html#gcubed.model_parameters.2R.parameters_2R_170logv3.Parameters2R170logv3">Parameters2R170logv3</a></li>
 </ul>
 <h3>Instance variables</h3>
 <dl>
@@ -2002,7 +1944,7 @@ This feeds into the stable manifold calculation.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@ property
+<pre><code class="python">@property
 def EMZT(self) -&gt; pd.DataFrame:
     &#34;&#34;&#34;
     The EMZT parameter values are 1 for regions where the EMZT (carbon emissions)
@@ -2021,7 +1963,7 @@ This feeds into the stable manifold calculation.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@ property
+<pre><code class="python">@property
 def TCAX(self) -&gt; pd.DataFrame:
     &#34;&#34;&#34;
     The TCAX parameter values are 1 for regions where the TCAX (unit tax on carbon)
@@ -2038,7 +1980,7 @@ def TCAX(self) -&gt; pd.DataFrame:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@ property
+<pre><code class="python">@property
 def all_parameters(self):
     return self._all_parameters</code></pre>
 </details>
@@ -2086,7 +2028,7 @@ def configuration(self) -&gt; ModelConfiguration:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@ property
+<pre><code class="python">@property
 def discrate(self) -&gt; pd.DataFrame:
     &#34;&#34;&#34;
     Discount rates by region
@@ -2103,7 +2045,7 @@ defined in the SYM model definition.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@ property
+<pre><code class="python">@property
 def non_sym_parameter_names(self):
     &#34;&#34;&#34;
     Returns a tuple containing the names of parameters that are assigned values in 
@@ -2121,7 +2063,7 @@ indexed by the parameter name.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@ property
+<pre><code class="python">@property
 def parameter_values(self):
     &#34;&#34;&#34;
     The vectorised parameter values in SYM model order as a data frame
@@ -2137,7 +2079,7 @@ def parameter_values(self):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@ property
+<pre><code class="python">@property
 def parameter_values_vector(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Used when evaluating the model equations for linearisation.
@@ -2165,7 +2107,7 @@ def sym_data(self) -&gt; SymData:
 <span>def <span class="ident">has_parameter</span></span>(<span>self, parameter_name: str) ‑> bool</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Arguments:</p>
+<div class="desc"><h3 id="arguments">Arguments</h3>
 <p>parameter_name: The name of the parameter to return.</p>
 <p>Return true iff the parameter is available and false otherwise.</p></div>
 <details class="source">
@@ -2174,7 +2116,7 @@ def sym_data(self) -&gt; SymData:
 </summary>
 <pre><code class="python">def has_parameter(self, parameter_name: str) -&gt; bool:
     &#34;&#34;&#34;
-    Arguments:
+   ### Arguments
 
     parameter_name: The name of the parameter to return.
 
@@ -2217,7 +2159,7 @@ def sym_data(self) -&gt; SymData:
 <span>def <span class="ident">parameter</span></span>(<span>self, parameter_name: str) ‑> pandas.core.frame.DataFrame</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Arguments:</p>
+<div class="desc"><h3 id="arguments">Arguments</h3>
 <p>parameter_name: The name of the parameter to return.</p>
 <p>Return the value of the named parameter as a dataframe.</p>
 <p>Raise an exception if the parameter is not available.</p></div>
@@ -2227,7 +2169,7 @@ def sym_data(self) -&gt; SymData:
 </summary>
 <pre><code class="python">def parameter(self, parameter_name: str) -&gt; pd.DataFrame:
     &#34;&#34;&#34;
-    Arguments:
+   ### Arguments
 
     parameter_name: The name of the parameter to return.
 
@@ -2273,35 +2215,7 @@ Raise an exception if the parameter setting information is invalid</p></div>
             phi.index) == self.sym_data.non_energy_distribution_sectors_count
     else:
         assert len(
-            phi.index) == self.sym_data.sectors_count
-
-    # If the parameters include TCAX, then the SYM model must include the variable with the same name.
-    # TODO: enable these validations when adding optimal policy handling to stable manifold class.
-    # if self.EMZT is not None and isinstance(self.EMZT, pd.DataFrame):
-    #     assert self.TCAX  is not None
-    #     if not self.sym_data.has_variable(variable_name_prefix=&#34;EMZT&#34;):
-    #         logging.error(
-    #             &#34;The user parameters refer to EMZT but EMZT is not in the SYM model definition.&#34;)
-    # if self.TCAX is not None and isinstance(self.TCAX, pd.DataFrame):
-    #     assert self.EMZT is not None
-    #     if not self.sym_data.has_variable(variable_name_prefix=&#34;TCAX&#34;):
-    #         logging.error(
-    #             &#34;The user parameters refer to TCAX but TCAX is not in the SYM model definition.&#34;)
-
-    # Policy optimisation only allowed to be turned on 
-    # if the model parameters include TCAX and EMZT for all regions
-    # and both of those parameters are not zero for all regions.
-    # TODO: enable these validations when adding optimal policy handling to stable manifold class.
-    # TODO: Are there other constraints that should also be imposed (e.g. TCAX and EMZT should be 1 for same regions?)
-    if self.configuration.stable_manifold_use_policy_optimisation:
-        assert self.EMZT is not None
-        assert isinstance(self.EMZT , pd.DataFrame)
-        if self.EMZT.to_numpy().sum().sum() == 0:
-            raise Exception(&#34;You cannot set the model configuration to use optimal policy if EMZT (refer to the SYM variables documentation for the model) is all zeros or missing from the user set parameters.&#34;)
-        assert self.TCAX is not None
-        assert isinstance(self.TCAX, pd.DataFrame)
-        if self.TCAX.to_numpy().sum().sum() == 0:
-            raise Exception(&#34;You cannot set the model configuration to use optimal policy if TCAX (refer to the SYM variables documentation for the model) is all zeros or missing from the user set parameters.&#34;)</code></pre>
+            phi.index) == self.sym_data.sectors_count</code></pre>
 </details>
 </dd>
 </dl>
