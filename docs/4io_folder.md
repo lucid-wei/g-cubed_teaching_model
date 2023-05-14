@@ -62,6 +62,127 @@ and a few other configurable options during its calculation.
 This file is loaded by [gcubed.model_configuration.ModelConfiguration.load_configuration_details](./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.load_configuration_details). 
 The details of each field is shown below.
 
+<style>
+    table {
+        width: 100%;
+    }
+    
+    th:nth-child(1),
+    td:nth-child(1) {
+        width: 10%;
+    }
+    
+    th:nth-child(2),
+    td:nth-child(2) {
+        width: 10%;
+    }
+    
+    th:nth-child(3),
+    td:nth-child(3) {
+        width: 10%;
+    }
+    
+    th:nth-child(n+3),
+    td:nth-child(n+3) {
+        width: 70%;
+    }
+</style>
+
+<table>
+    <tr>
+        <th>Field</th>
+        <th>Current Value</th>
+        <th>Other Valid Values</th>
+        <th>Explanation</th>
+        <th>Roles in the model</th>
+    </tr>
+    <tr>
+        <td>Version</td>
+        <td>2R</td>
+        <td>6G, 20C, 20J, 20R</td>
+        <td>The model version (number of regions followed by a letter indicating model type e.g. 2R)</td>
+        <td>Determine sectors in the model, locate SYM generated Python equations file.</td>
+    </tr>
+    <tr>
+        <td>Build</td>
+        <td>164</td>
+        <td>170, 170logv3</td>
+        <td>The model build - must start with a positive integer but can include other letters and digits (no spaces or punctuation though).</td>
+        <td>Same as above. Different builds of the same version impact calculation procedure, often a new build has new features or bug fixes.</td>
+    </tr>
+    <tr>
+        <td>Debugging</td>
+        <td>1</td>
+        <td>0</td>
+        <td>Set to 1 if debugging and 0 otherwise. This affects model logging verbosity.</td>
+        <td>Impact the amount of information you see in log file and terminal. (A feature under development, currently has no big impact for gcubed-1.0.0)</td>
+    </tr>
+    <tr>
+        <td>SymInputFile</td>
+        <td>ggg2r164.sym</td>
+        <td>e.g. ggg20c169.sym</td>
+        <td>The root SYM file containing the model definition.</td>
+        <td>Determine the <a href="./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.sym_input_file">absolute path of the sym input file</a> to be processed by the sym processor to produce the sym details for the model and the model equations in Python.</td>
+    </tr>
+    <tr>
+        <td>Database</td>
+        <td>DATAvR2018.csv</td>
+        <td>Not available</td>
+        <td>The database of values for the model variables in a range of years.</td>
+        <td>Determine the <a href="./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.database_file">absolute path of the database file</a> to be loaded by gcubed.data.database.Database which calls <a href="./gcubed/base.html#gcubed.base.Base.load_data">load_data function</a>.</td>
+    </tr>
+    <tr>
+        <td>BaseYear</td>
+        <td>2018</td>
+        <td>Not available</td>
+        <td>The base year of the database that is loaded.</td>
+        <td>The year in which all indexes are based at 1 (so their log values are 0). Databases can be rebased to different years.</td>
+    </tr>
+    <tr>
+        <td>UserParameters</td>
+        <td>setparameters.csv</td>
+        <td>Not available</td>
+        <td>The user-specified parameter values.</td>
+        <td>Determine the <a href="./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.parameters_file">absolute path of the parameters file</a> to be loaded by <a href="./gcubed/model_parameters/parameters.html#gcubed.model_parameters.parameters.Parameters.validate">gcubed.model_parameters.parameters.Parameters</a>.</td>
+    </tr>
+    <tr>
+        <td>IOTables</td>
+        <td>IOTABLESvR2011.csv</td>
+        <td>Not available</td>
+        <td>The IO tables used for parameter calibration.</td>
+        <td>Determine the <a href="./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.io_table_file">absolute path of the IO data file</a> to be loaded by <a href="./gcubed/io_data.html">gcubed.io_data.IOData</a>.</td>
+    </tr>
+    <tr>
+        <td>Productivity</td>
+        <td>prodmat.csv</td>
+        <td>Not available</td>
+        <td>The productivity parameters.</td>
+        <td>Determine the <a href="./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.productivity_file">absolute path of the productivity file</a> to be loaded by <a href="./gcubed/baseline/productivity.html">gcubed.baseline.productivity.Productivity</a>.</td>
+    </tr>
+    <tr>
+        <td>Population</td>
+        <td>modpop.csv</td>
+        <td>Not available</td>
+        <td>Population growth data.</td>
+        <td>Determine the <a href="./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.population_file">absolute path of the population data file</a> to be loaded by <a href="./gcubed/baseline/population.html">gcubed.baseline.population.Population</a>.</td>
+    </tr>
+    <tr>
+        <td>AutonomousEnergyEfficiencyImprovement</td>
+        <td>aeeinew.csv</td>
+        <td>Not available</td>
+        <td>The AEEI data file.</td>
+        <td>Determine the <a href="./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.aeei_file">absolute path of the AEEI data file</a> to be loaded by <a href="./gcubed/baseline/energy_usage_efficiency.html">gcubed.baseline.energy_usage_efficiency.EnergyUsageEfficiency</a>.</td>
+    </tr>
+    <tr>
+        <td>CalibrationYear</td>
+        <td>2011</td>
+        <td></td>
+        <td>Related to the year used to create the database.</td>
+        <td></td>
+    </tr>
+
+</table>
+
 | Field                                 | Current Value      | Other Valid Values | Explanation                                                                                                                      | Roles in the gcubed python module                                                                                                                                                                                                                                                                                        |
 |---------------------------------------|--------------------|--------------------|----------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Version                               | 2R                 | 6G, 20C, 20J, 20R  | The model version (number of regions followed by a letter indicating model type e.g. 2R)                                         | Determine sectors in the model, locate SYM generated Python equations file.                                                                                                                                                                                                                                              |
