@@ -70,21 +70,29 @@ The details of each field is shown below.
     th:nth-child(1),
     td:nth-child(1) {
         width: 10%;
+        word-wrap: break-word;
     }
     
     th:nth-child(2),
     td:nth-child(2) {
         width: 10%;
+        word-wrap: break-word;
     }
     
     th:nth-child(3),
     td:nth-child(3) {
         width: 10%;
+        word-wrap: break-word;
     }
-    
-    th:nth-child(n+3),
-    td:nth-child(n+3) {
-        width: 70%;
+    th:nth-child(4),
+    td:nth-child(4) {
+        width: 30%;
+        word-wrap: break-word;
+    }
+    th:nth-child(5),
+    td:nth-child(5) {
+        width: 40%;
+        word-wrap: break-word;
     }
 </style>
 
@@ -122,14 +130,14 @@ The details of each field is shown below.
         <td>ggg2r164.sym</td>
         <td>e.g. ggg20c169.sym</td>
         <td>The root SYM file containing the model definition.</td>
-        <td>Determine the <a href="./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.sym_input_file">absolute path of the sym input file</a> to be processed by the sym processor to produce the sym details for the model and the model equations in Python.</td>
+        <td>Determine the <a href="../gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.sym_input_file">absolute path of the sym input file</a> to be processed by the sym processor to produce the sym details for the model and the model equations in Python.</td>
     </tr>
     <tr>
         <td>Database</td>
         <td>DATAvR2018.csv</td>
         <td>Not available</td>
         <td>The database of values for the model variables in a range of years.</td>
-        <td>Determine the <a href="./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.database_file">absolute path of the database file</a> to be loaded by gcubed.data.database.Database which calls <a href="./gcubed/base.html#gcubed.base.Base.load_data">load_data function</a>.</td>
+        <td>Determine the <a href="../gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.database_file">absolute path of the database file</a> to be loaded by gcubed.data.database.Database which calls <a href="../gcubed/base.html#gcubed.base.Base.load_data">load_data function</a>.</td>
     </tr>
     <tr>
         <td>BaseYear</td>
@@ -143,35 +151,35 @@ The details of each field is shown below.
         <td>setparameters.csv</td>
         <td>Not available</td>
         <td>The user-specified parameter values.</td>
-        <td>Determine the <a href="./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.parameters_file">absolute path of the parameters file</a> to be loaded by <a href="./gcubed/model_parameters/parameters.html#gcubed.model_parameters.parameters.Parameters.validate">gcubed.model_parameters.parameters.Parameters</a>.</td>
+        <td>Determine the <a href="../gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.parameters_file">absolute path of the parameters file</a> to be loaded by <a href="../gcubed/model_parameters/parameters.html#gcubed.model_parameters.parameters.Parameters.validate">gcubed.model_parameters.parameters.Parameters</a>.</td>
     </tr>
     <tr>
         <td>IOTables</td>
         <td>IOTABLESvR2011.csv</td>
         <td>Not available</td>
         <td>The IO tables used for parameter calibration.</td>
-        <td>Determine the <a href="./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.io_table_file">absolute path of the IO data file</a> to be loaded by <a href="./gcubed/io_data.html">gcubed.io_data.IOData</a>.</td>
+        <td>Determine the <a href="../gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.io_table_file">absolute path of the IO data file</a> to be loaded by <a href="../gcubed/io_data.html">gcubed.io_data.IOData</a>.</td>
     </tr>
     <tr>
         <td>Productivity</td>
         <td>prodmat.csv</td>
         <td>Not available</td>
         <td>The productivity parameters.</td>
-        <td>Determine the <a href="./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.productivity_file">absolute path of the productivity file</a> to be loaded by <a href="./gcubed/baseline/productivity.html">gcubed.baseline.productivity.Productivity</a>.</td>
+        <td>Determine the <a href="../gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.productivity_file">absolute path of the productivity file</a> to be loaded by <a href="../gcubed/baseline/productivity.html">gcubed.baseline.productivity.Productivity</a>.</td>
     </tr>
     <tr>
         <td>Population</td>
         <td>modpop.csv</td>
         <td>Not available</td>
         <td>Population growth data.</td>
-        <td>Determine the <a href="./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.population_file">absolute path of the population data file</a> to be loaded by <a href="./gcubed/baseline/population.html">gcubed.baseline.population.Population</a>.</td>
+        <td>Determine the <a href="../gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.population_file">absolute path of the population data file</a> to be loaded by <a href="../gcubed/baseline/population.html">gcubed.baseline.population.Population</a>.</td>
     </tr>
     <tr>
         <td>AutonomousEnergyEfficiencyImprovement</td>
         <td>aeeinew.csv</td>
         <td>Not available</td>
         <td>The AEEI data file.</td>
-        <td>Determine the <a href="./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.aeei_file">absolute path of the AEEI data file</a> to be loaded by <a href="./gcubed/baseline/energy_usage_efficiency.html">gcubed.baseline.energy_usage_efficiency.EnergyUsageEfficiency</a>.</td>
+        <td>Determine the <a href="../gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.aeei_file">absolute path of the AEEI data file</a> to be loaded by <a href="../gcubed/baseline/energy_usage_efficiency.html">gcubed.baseline.energy_usage_efficiency.EnergyUsageEfficiency</a>.</td>
     </tr>
     <tr>
         <td>CalibrationYear</td>
