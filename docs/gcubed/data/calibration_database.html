@@ -30,8 +30,6 @@
 # Purpose: Manage loading and provision of calibration database.
 # Author: Geoff Shuetrim
 # ------------------------------------------------------------------
-
-from __future__ import annotations
 import logging
 import pandas as pd
 import numpy as np
@@ -59,6 +57,7 @@ class CalibrationDatabase(Database):
         self._variables = database.variables.copy()  # save memory by not taking a copy?
         self._data = database.data.copy()
         if database.base_year != base_year:
+            logging.info(f&#34;The parameter calibration database is being rebased from {database.base_year} to {base_year}&#34;)
             super().rebase(new_base_year=base_year)
         else:
             self._base_year = base_year
@@ -95,7 +94,7 @@ class CalibrationDatabase(Database):
 <dl>
 <dt id="gcubed.data.calibration_database.CalibrationDatabase"><code class="flex name class">
 <span>class <span class="ident">CalibrationDatabase</span></span>
-<span>(</span><span>database: Database, base_year: int)</span>
+<span>(</span><span>database: <a title="gcubed.data.database.Database" href="database.html#gcubed.data.database.Database">Database</a>, base_year: int)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Encapsulates all of the information about the calibration data used to calibrate parameters of a Model.</p>
@@ -128,6 +127,7 @@ base_year: the base year for the database.
         self._variables = database.variables.copy()  # save memory by not taking a copy?
         self._data = database.data.copy()
         if database.base_year != base_year:
+            logging.info(f&#34;The parameter calibration database is being rebased from {database.base_year} to {base_year}&#34;)
             super().rebase(new_base_year=base_year)
         else:
             self._base_year = base_year
@@ -165,12 +165,14 @@ base_year: the base year for the database.
 <li><code><a title="gcubed.data.database.Database.configuration" href="database.html#gcubed.data.database.Database.configuration">configuration</a></code></li>
 <li><code><a title="gcubed.data.database.Database.data" href="database.html#gcubed.data.database.Database.data">data</a></code></li>
 <li><code><a title="gcubed.data.database.Database.export_to_csv" href="database.html#gcubed.data.database.Database.export_to_csv">export_to_csv</a></code></li>
+<li><code><a title="gcubed.data.database.Database.first_available_year" href="database.html#gcubed.data.database.Database.first_available_year">first_available_year</a></code></li>
 <li><code><a title="gcubed.data.database.Database.get_data" href="database.html#gcubed.data.database.Database.get_data">get_data</a></code></li>
 <li><code><a title="gcubed.data.database.Database.get_data_and_varmap_indices" href="database.html#gcubed.data.database.Database.get_data_and_varmap_indices">get_data_and_varmap_indices</a></code></li>
 <li><code><a title="gcubed.data.database.Database.get_data_and_varmap_indices_for_matching_variables" href="database.html#gcubed.data.database.Database.get_data_and_varmap_indices_for_matching_variables">get_data_and_varmap_indices_for_matching_variables</a></code></li>
 <li><code><a title="gcubed.data.database.Database.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.data.database.Database.has_data" href="database.html#gcubed.data.database.Database.has_data">has_data</a></code></li>
 <li><code><a title="gcubed.data.database.Database.has_data_for_all_projection_years" href="database.html#gcubed.data.database.Database.has_data_for_all_projection_years">has_data_for_all_projection_years</a></code></li>
+<li><code><a title="gcubed.data.database.Database.last_available_year" href="database.html#gcubed.data.database.Database.last_available_year">last_available_year</a></code></li>
 <li><code><a title="gcubed.data.database.Database.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
 <li><code><a title="gcubed.data.database.Database.rebase" href="database.html#gcubed.data.database.Database.rebase">rebase</a></code></li>
 <li><code><a title="gcubed.data.database.Database.rhs_vector_value" href="database.html#gcubed.data.database.Database.rhs_vector_value">rhs_vector_value</a></code></li>

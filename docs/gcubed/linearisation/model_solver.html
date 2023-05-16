@@ -36,11 +36,11 @@ import importlib
 import pandas as pd
 import numpy as np
 from scipy.optimize import least_squares
-from scipy.sparse import csr_matrix, identity
+from scipy.sparse import lil_matrix, identity
 from gcubed.data.gdp_scaled_database import GDPScaledDatabase
 from gcubed.model import Model
 from gcubed.base import Base
-import gcubed.constants as CONSTANTS
+from gcubed.constants import Constants
 
 class ModelSolver(Base):
     &#34;&#34;&#34;
@@ -75,30 +75,30 @@ class ModelSolver(Base):
 
     def __init__(self, model: Model, linearisation_year: int ):
 
+        logging.info(f&#34;Seeking a model solution close to the data values in {linearisation_year}.&#34;)
         self._solution_found = False
         
         assert model is not None
         self._model: Model = model
 
         assert linearisation_year  is not None
-        assert linearisation_year &gt;= model.configuration.original_projection_base_year
-        assert linearisation_year &lt; model.configuration.end_year
+        assert linearisation_year &lt; model.configuration.last_projection_year
         self._linearisation_year = linearisation_year
 
 
-        self.database = GDPScaledDatabase(database=self.model.database, base_year=self.model.configuration.calibration_year)
+        self.database = GDPScaledDatabase(database=self.model.database, base_year=self.model.configuration.base_year)
         self._parameters = self.model.parameters.parameter_values_vector
 
         # Set up the RHS vectors for the model using data for the linearisation year.
-        self.__load_rhs_vectors(linearisation_year=self.model.configuration.calibration_year)
+        self.__load_rhs_vectors(linearisation_year=self.model.configuration.linearisation_year)
 
         # Set up the LHS vectors as vectors of zeros.
         self.__configure_lhs_vectors()
 
         self.__load_equation_map()
 
-        sys.path.append(self.configuration.sym_directory)
-        equations_module = importlib.import_module(self.sym_output_filename_prefix)
+        sys.path.append(self.model.configuration.sym_directory)
+        equations_module = importlib.import_module(self.model.configuration.sym_output_filename_prefix)
         equations_class = getattr(equations_module, &#34;Equations&#34;)
         self.equations = equations_class(x1l=self._x1l,
                                           j1l=self._j1l,
@@ -425,7 +425,7 @@ class ModelSolver(Base):
 
             return result
 
-        def jacobian(x) -&gt; csr_matrix:
+        def jacobian(x) -&gt; lil_matrix:
             &#34;&#34;&#34;
             The function that calculates the square Jacobian at the 
             given set of values. the Jacobian is square, having a row for
@@ -457,11 +457,11 @@ class ModelSolver(Base):
             (model LHS - model RHS) = 0
 
            ### Returns
-            csr_matrix: The return value, the sparse matrix representing the Jacobian.
+            The return value, the sparse matrix representing the Jacobian.
             &#34;&#34;&#34;
 
             # Step 0.
-            result: csr_matrix = identity(len(x), format=&#39;csr&#39;)
+            result: lil_matrix = identity(len(x), format=&#39;lil&#39;)
 
             # Step 1.
             i = 0
@@ -497,7 +497,7 @@ class ModelSolver(Base):
                     reference_value: float = getattr(self, f&#34;_{lhs_vector_name}&#34;)[lhs_vector_index]
 
                     # Compute perturbed value
-                    getattr(self, f&#34;_{rhs_vector_name}&#34;)[rhs_vector_index] = original_value + CONSTANTS.delta
+                    getattr(self, f&#34;_{rhs_vector_name}&#34;)[rhs_vector_index] = original_value + Constants().DELTA
                     func()
                     perturbed_value: float = getattr(self, f&#34;_{lhs_vector_name}&#34;)[lhs_vector_index]
 
@@ -505,7 +505,7 @@ class ModelSolver(Base):
                     getattr(self, f&#34;_{rhs_vector_name}&#34;)[rhs_vector_index] = original_value
 
                     # Approximate the partial derivative
-                    partial_derivative: float = ((perturbed_value - reference_value) / CONSTANTS.delta)
+                    partial_derivative: float = ((perturbed_value - reference_value) / Constants().DELTA)
 
                     # logging.debug(f&#34;Partials derivative of {lhs_variable}  wrt {(rhs_vector_name, rhs_vector_index)} = {partial_derivative}&#34;)
 
@@ -556,18 +556,26 @@ class ModelSolver(Base):
         for lhs_vector_name in self.model.sym_data.lhs_vector_names:
             rhs_vector_name = lhs_vector_name[:-1]+&#39;r&#39;
             setattr(self, f&#34;_{rhs_vector_name}&#34;, getattr(self, f&#34;_{lhs_vector_name}&#34;).copy())
-            setattr(self, f&#34;_solution_{lhs_vector_name}&#34;, getattr(self, f&#34;_{lhs_vector_name}&#34;).copy())
 
         # Evaluate all of the equations to get the model - solving set of variable values to get LHS vectors that are a root of the equation system.
         self.__compute_lhs_vectors()
 
-        # Generate CSV reports
+        # Check that the solver has worked.
+        result: bool = True
         for lhs_vector_name in self.model.sym_data.lhs_vector_names:
             rhs_vector_name: str = lhs_vector_name[:-1]+ &#39;r&#39;
-            data: pd.DataFrame = pd.DataFrame(np.hstack(( getattr(self, f&#34;_original_{lhs_vector_name}&#34;),  getattr(self, f&#34;_original_{rhs_vector_name}&#34;), getattr(self, f&#34;_solution_{lhs_vector_name}&#34;), getattr(self, f&#34;_{lhs_vector_name}&#34;) )))
-            data.index = self.model.sym_data.vector_variable_names(vector_name=rhs_vector_name)
-            data.columns = [&#39;LHS original&#39;, &#39;RHS original&#39;, &#39;RHS/LHS adjusted&#39;, &#39;RHS/LHS iteration test&#39;]
-            data.to_csv(f&#34;{self.model.configuration.benchmarking_reports_directory}{rhs_vector_name} adjusted linearisation values.csv&#34;)</code></pre>
+            lhs_vector: np.ndarray = getattr(self, f&#34;_{lhs_vector_name}&#34;)
+            rhs_vector: np.ndarray = getattr(self, f&#34;_{rhs_vector_name}&#34;)
+            if not np.allclose(lhs_vector, rhs_vector, atol=0.000001):
+                logging.error(f&#34;The model solver failed to find a solution for {lhs_vector_name}&#34;)
+                result = False
+            # data: pd.DataFrame = pd.DataFrame(np.hstack(( getattr(self, f&#34;_original_{lhs_vector_name}&#34;),  getattr(self, f&#34;_original_{rhs_vector_name}&#34;), getattr(self, f&#34;_solution_{lhs_vector_name}&#34;), getattr(self, f&#34;_{lhs_vector_name}&#34;) )))
+            # data.index = self.model.sym_data.vector_variable_names(vector_name=rhs_vector_name)
+            # data.columns = [&#39;LHS original&#39;, &#39;RHS original&#39;, &#39;RHS/LHS adjusted&#39;, &#39;RHS/LHS iteration test&#39;]
+            # data.to_csv(f&#34;{self.model.configuration.benchmarking_reports_directory}{rhs_vector_name} adjusted linearisation values.csv&#34;)
+
+        # Model solved successfully.
+        return result</code></pre>
 </details>
 </section>
 <section>
@@ -644,30 +652,30 @@ of the model equations and then take the RHS of the equation</p>
 
     def __init__(self, model: Model, linearisation_year: int ):
 
+        logging.info(f&#34;Seeking a model solution close to the data values in {linearisation_year}.&#34;)
         self._solution_found = False
         
         assert model is not None
         self._model: Model = model
 
         assert linearisation_year  is not None
-        assert linearisation_year &gt;= model.configuration.original_projection_base_year
-        assert linearisation_year &lt; model.configuration.end_year
+        assert linearisation_year &lt; model.configuration.last_projection_year
         self._linearisation_year = linearisation_year
 
 
-        self.database = GDPScaledDatabase(database=self.model.database, base_year=self.model.configuration.calibration_year)
+        self.database = GDPScaledDatabase(database=self.model.database, base_year=self.model.configuration.base_year)
         self._parameters = self.model.parameters.parameter_values_vector
 
         # Set up the RHS vectors for the model using data for the linearisation year.
-        self.__load_rhs_vectors(linearisation_year=self.model.configuration.calibration_year)
+        self.__load_rhs_vectors(linearisation_year=self.model.configuration.linearisation_year)
 
         # Set up the LHS vectors as vectors of zeros.
         self.__configure_lhs_vectors()
 
         self.__load_equation_map()
 
-        sys.path.append(self.configuration.sym_directory)
-        equations_module = importlib.import_module(self.sym_output_filename_prefix)
+        sys.path.append(self.model.configuration.sym_directory)
+        equations_module = importlib.import_module(self.model.configuration.sym_output_filename_prefix)
         equations_class = getattr(equations_module, &#34;Equations&#34;)
         self.equations = equations_class(x1l=self._x1l,
                                           j1l=self._j1l,
@@ -994,7 +1002,7 @@ of the model equations and then take the RHS of the equation</p>
 
             return result
 
-        def jacobian(x) -&gt; csr_matrix:
+        def jacobian(x) -&gt; lil_matrix:
             &#34;&#34;&#34;
             The function that calculates the square Jacobian at the 
             given set of values. the Jacobian is square, having a row for
@@ -1026,11 +1034,11 @@ of the model equations and then take the RHS of the equation</p>
             (model LHS - model RHS) = 0
 
            ### Returns
-            csr_matrix: The return value, the sparse matrix representing the Jacobian.
+            The return value, the sparse matrix representing the Jacobian.
             &#34;&#34;&#34;
 
             # Step 0.
-            result: csr_matrix = identity(len(x), format=&#39;csr&#39;)
+            result: lil_matrix = identity(len(x), format=&#39;lil&#39;)
 
             # Step 1.
             i = 0
@@ -1066,7 +1074,7 @@ of the model equations and then take the RHS of the equation</p>
                     reference_value: float = getattr(self, f&#34;_{lhs_vector_name}&#34;)[lhs_vector_index]
 
                     # Compute perturbed value
-                    getattr(self, f&#34;_{rhs_vector_name}&#34;)[rhs_vector_index] = original_value + CONSTANTS.delta
+                    getattr(self, f&#34;_{rhs_vector_name}&#34;)[rhs_vector_index] = original_value + Constants().DELTA
                     func()
                     perturbed_value: float = getattr(self, f&#34;_{lhs_vector_name}&#34;)[lhs_vector_index]
 
@@ -1074,7 +1082,7 @@ of the model equations and then take the RHS of the equation</p>
                     getattr(self, f&#34;_{rhs_vector_name}&#34;)[rhs_vector_index] = original_value
 
                     # Approximate the partial derivative
-                    partial_derivative: float = ((perturbed_value - reference_value) / CONSTANTS.delta)
+                    partial_derivative: float = ((perturbed_value - reference_value) / Constants().DELTA)
 
                     # logging.debug(f&#34;Partials derivative of {lhs_variable}  wrt {(rhs_vector_name, rhs_vector_index)} = {partial_derivative}&#34;)
 
@@ -1125,18 +1133,26 @@ of the model equations and then take the RHS of the equation</p>
         for lhs_vector_name in self.model.sym_data.lhs_vector_names:
             rhs_vector_name = lhs_vector_name[:-1]+&#39;r&#39;
             setattr(self, f&#34;_{rhs_vector_name}&#34;, getattr(self, f&#34;_{lhs_vector_name}&#34;).copy())
-            setattr(self, f&#34;_solution_{lhs_vector_name}&#34;, getattr(self, f&#34;_{lhs_vector_name}&#34;).copy())
 
         # Evaluate all of the equations to get the model - solving set of variable values to get LHS vectors that are a root of the equation system.
         self.__compute_lhs_vectors()
 
-        # Generate CSV reports
+        # Check that the solver has worked.
+        result: bool = True
         for lhs_vector_name in self.model.sym_data.lhs_vector_names:
             rhs_vector_name: str = lhs_vector_name[:-1]+ &#39;r&#39;
-            data: pd.DataFrame = pd.DataFrame(np.hstack(( getattr(self, f&#34;_original_{lhs_vector_name}&#34;),  getattr(self, f&#34;_original_{rhs_vector_name}&#34;), getattr(self, f&#34;_solution_{lhs_vector_name}&#34;), getattr(self, f&#34;_{lhs_vector_name}&#34;) )))
-            data.index = self.model.sym_data.vector_variable_names(vector_name=rhs_vector_name)
-            data.columns = [&#39;LHS original&#39;, &#39;RHS original&#39;, &#39;RHS/LHS adjusted&#39;, &#39;RHS/LHS iteration test&#39;]
-            data.to_csv(f&#34;{self.model.configuration.benchmarking_reports_directory}{rhs_vector_name} adjusted linearisation values.csv&#34;)</code></pre>
+            lhs_vector: np.ndarray = getattr(self, f&#34;_{lhs_vector_name}&#34;)
+            rhs_vector: np.ndarray = getattr(self, f&#34;_{rhs_vector_name}&#34;)
+            if not np.allclose(lhs_vector, rhs_vector, atol=0.000001):
+                logging.error(f&#34;The model solver failed to find a solution for {lhs_vector_name}&#34;)
+                result = False
+            # data: pd.DataFrame = pd.DataFrame(np.hstack(( getattr(self, f&#34;_original_{lhs_vector_name}&#34;),  getattr(self, f&#34;_original_{rhs_vector_name}&#34;), getattr(self, f&#34;_solution_{lhs_vector_name}&#34;), getattr(self, f&#34;_{lhs_vector_name}&#34;) )))
+            # data.index = self.model.sym_data.vector_variable_names(vector_name=rhs_vector_name)
+            # data.columns = [&#39;LHS original&#39;, &#39;RHS original&#39;, &#39;RHS/LHS adjusted&#39;, &#39;RHS/LHS iteration test&#39;]
+            # data.to_csv(f&#34;{self.model.configuration.benchmarking_reports_directory}{rhs_vector_name} adjusted linearisation values.csv&#34;)
+
+        # Model solved successfully.
+        return result</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">

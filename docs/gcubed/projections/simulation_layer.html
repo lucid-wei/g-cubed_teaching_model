@@ -42,7 +42,7 @@ import logging
 import os
 import pandas as pd
 import numpy as np
-import gcubed.constants as CONSTANTS
+from gcubed.constants import Constants
 from gcubed.data.database import Database
 from gcubed.projections.projections import Projections
 from gcubed.projections.baseline_projections import BaselineProjections
@@ -54,7 +54,7 @@ class SimulationLayer(Projections):
     Compute model simulations over the projection horizon.
     &#34;&#34;&#34;
 
-    def __init__(self, simulation_layer_definition: SimulationLayerDefinition, baseline_projections: BaselineProjections, previous_simulation_layer: Projections=None) -&gt; None:
+    def __init__(self, simulation_layer_definition: SimulationLayerDefinition, previous_projections: Projections) -&gt; None:
         &#34;&#34;&#34;
 
         ### Constructor
@@ -63,113 +63,76 @@ class SimulationLayer(Projections):
 
         ### Arguments
 
-        simulation_layer_definition (SimulationLayerDefinition): The definition of this simulation layer
+        simulation_layer_definition: The definition of this simulation layer
 
-        baseline_projections (BaselineProjections): The baseline projections for this simulation
-
-        previous_simulation_layer (SimulationLayer): If this is not the first simulation layer after the 
-        baseline projections then set the previous_simulation_layer equal to the simulation layer created&#39;
-        immediately prior to this simulation layer.
+        previous_projections: The projections that this simulation layer builds upon, baseline or another type.
 
         &#34;&#34;&#34;
-        assert baseline_projections is not None
-        self._baseline_projections = baseline_projections
+        assert previous_projections is not None
+        self._previous_projections = previous_projections
+        if isinstance(previous_projections, BaselineProjections):
+            self._baseline_projections = previous_projections
+        else:
+            self._baseline_projections = self.previous_projections.baseline_projections
 
         super().__init__(stable_manifold=self.baseline_projections.stable_manifold)
-        
-        self._previous_simulation_layer = previous_simulation_layer
+        self._is_baseline_projections = False
 
         assert simulation_layer_definition is not None
         self._simulation_layer_definition = simulation_layer_definition
 
-        assert os.path.isfile(self.data_file)
-
-        if self.previous_simulation_layer is not None:
-            assert self.event_year &gt; self.previous_simulation_layer.event_year
+        if self.previous_projections is not None:
+            assert self.first_projection_year &gt;= self.previous_projections.first_projection_year
         else:
-            assert self.event_year &gt; self.baseline_projections.base_year
+            assert self.first_projection_year &gt;= self.baseline_projections.first_projection_year
+        self._first_projection_year = self.definition.event_year
 
-        self.load_simulation_data()
+        assert os.path.isfile(self.definition.data_filename)
+        self.__load_simulation_data()
 
-        self.generate_projections()
+        self._generate_projections()
 
         # Store long rate adjustment constants to use in creating the database projections
         self._long_rate_constants = self.baseline_projections._long_rate_constants
-        self.generate_database_projections()
+        self._generate_database_projections()
 
-        self.generate_publishable_projections()
+        self._generate_publishable_projections()
 
         self.__validate()
-
-        logging.info(f&#34;The {self.name} projections have been generated.&#34;)
-
-
 
     def __validate(self):
         &#34;&#34;&#34;
         TODO:  Validate the simulations: 
         &#34;&#34;&#34;
+        logging.info(f&#34;The {self.definition.name} projections have been generated.&#34;)
 
     @property
     def baseline_projections(self) -&gt; BaselineProjections:
         &#34;&#34;&#34;
-        Returns the baseline projections.
+        The baseline projections.
         &#34;&#34;&#34;
         return self._baseline_projections
 
     @property
-    def simulation_layer_definition(self) -&gt; SimulationLayerDefinition:
+    def definition(self) -&gt; SimulationLayerDefinition:
+        &#34;&#34;&#34;
+        The definition for this simulation layer, giving access to the information
+        about the simulation being done in this layer.
+        &#34;&#34;&#34;
         return self._simulation_layer_definition
 
     @property
-    def name(self) -&gt; str:
-        return self._simulation_layer_definition.name
-
-    @property
-    def description(self) -&gt; str:
-        return self._simulation_layer_definition.description
-
-    @property
-    def data_file(self) -&gt; str:
+    def previous_projections(self) -&gt; Projections:
         &#34;&#34;&#34;
-        Returns the string specifying the name of the file containing the simulation data.
+        The previous projections (baseline or simulation layer or other).
         &#34;&#34;&#34;
-        return self.simulation_layer_definition.data_filename
-
-    @property
-    def event_year(self) -&gt; str:
-        &#34;&#34;&#34;
-        Returns the event year for the simulation layer.
-        This is the first year that knowledge of the simulation event becomes available
-        to agents.
-        &#34;&#34;&#34;
-        return self.simulation_layer_definition.event_year
-
-    @property
-    def previous_simulation_layer(self):
-        &#34;&#34;&#34;
-        Note that the return type is not specified because the SimulationLayer class cannot
-        refer to itself in its own definition.
-
-        Returns the previous simulation layer, or none if there is none.
-        &#34;&#34;&#34;
-        if hasattr(self,&#39;_previous_simulation_layer&#39;):
-            return self._previous_simulation_layer
-        return None
-
-    @property
-    def previous_projection_layer(self) -&gt; Projections:
-        if self.previous_simulation_layer is None:
-            return self.baseline_projections
-        return self.previous_simulation_layer
+        return self._previous_projections
 
     @property
     def baseline_projections(self) -&gt; BaselineProjections:
         &#34;&#34;&#34;
         Returns the baseline projections underpinning this simulation
         &#34;&#34;&#34;
-        if self.previous_simulation_layer is not None:
-            return self.previous_simulation_layer.baseline_projections
         return self._baseline_projections
 
     @property
@@ -193,10 +156,12 @@ class SimulationLayer(Projections):
         &#34;&#34;&#34;
         return self._simulation_data
 
-    def load_simulation_data(self):
+    def __load_simulation_data(self):
         &#34;&#34;&#34;        
         Load and apply the simulation data that affect exogenous variables. 
+
         Load and apply the simulation data that affect state variables initial values.
+
         TODO: Check if there are simulations where shocks to state variable initial values are not allowed.
 
         When a variable has data in the simulation file, load that into the appropriate 
@@ -216,11 +181,11 @@ class SimulationLayer(Projections):
         &#34;&#34;&#34;
 
         # Load the simulation data.
-        filename: str = self.data_file
+        filename: str = self.definition.data_filename
         assert os.path.isfile(filename)
         (self._simulation_variables, self._simulation_data) = self.load_data(filename)
         if len(self._simulation_variables.index) == 0:
-            logging.warn(f&#34;The &#39;{self.name}&#39; simulation layer has no data. This will run but is not doing anything useful.&#34;)
+            logging.warn(f&#34;The &#39;{self.definition.name}&#39; simulation layer has no data. This will run but is not doing anything useful.&#34;)
         self._simulation_variables.columns = [&#39;name&#39;]
         self._simulation_variables.index = self._simulation_variables.name
         self._simulation_data = self._simulation_data.astype(float)
@@ -229,15 +194,15 @@ class SimulationLayer(Projections):
         try:
             self._simulation_data = self._simulation_data.loc[:, self.projection_years_column_labels]
         except:
-            raise Exception(f&#34;The simulation data in {self.data_file} should have data from {self.event_year} to {self.end_year}&#34;)
+            raise Exception(f&#34;The simulation data in {self.definition.data_file} should include data values from {self.first_projection_year} to {self.last_projection_year}&#34;)
 
         # Iterate the shocks, allocating the shocks
-        yratr: pd.DataFrame = self.database.get_data(name_regular_expression=f&#34;^{CONSTANTS.US_REAL_GDP_RATIO_PREFIX}\(&#34;, years=[self.configuration.original_projection_base_year])
+        yratr: pd.DataFrame = self.database.get_data(name_regular_expression=f&#34;^{Constants().US_REAL_GDP_RATIO_PREFIX}\(&#34;, years=[self.configuration.original_first_projection_year])
         yratr.index = self.sym_data.regions_members
 
-        self._exo_projections = self.previous_projection_layer.exo_projections_as_dataframe.loc[:, self.projection_years_column_labels]
+        self._exo_projections = self.previous_projections.exo_projections_as_dataframe.loc[:, self.projection_years_column_labels]
         
-        self._yxr_initial_values: pd.DataFrame = self.previous_projection_layer.yxr_projections_as_dataframe.loc[:, [str(self.event_year)]].copy()
+        self._yxr_initial_values: pd.DataFrame = self.previous_projections.yxr_projections_as_dataframe.loc[:, [str(self.first_projection_year)]].copy()
 
         for variable_name in self._simulation_variables.index:
             variable_region: str = str(self.baseline_projections.database.variables.loc[variable_name, &#39;region&#39;])
@@ -253,13 +218,13 @@ class SimulationLayer(Projections):
 
             match vector_name:
                 case &#39;exo&#39;:
-                    logging.info(f&#34;Augmenting exogenous variables, {variable_name}, from {self.event_year} on.&#34;)
+                    logging.info(f&#34;Augmenting exogenous variables, {variable_name}, from {self.first_projection_year} on.&#34;)
                     self._exo_projections.loc[[variable_name], self.projection_years_column_labels] += data
                     pass
 
                 case &#39;x1l&#39;:
-                    logging.info(f&#34;Augmenting initial state variables, {variable_name}, in {self.event_year}&#34;)
-                    self._yxr_initial_values.loc[[variable_name], [str(self.event_year)]] += float(data[0])
+                    logging.info(f&#34;Augmenting initial state variables, {variable_name}, in {self.first_projection_year}&#34;)
+                    self._yxr_initial_values.loc[[variable_name], [str(self.first_projection_year)]] += float(data[0])
                     pass
 
     @property
@@ -323,7 +288,7 @@ class SimulationLayer(Projections):
 <dl>
 <dt id="gcubed.projections.simulation_layer.SimulationLayer"><code class="flex name class">
 <span>class <span class="ident">SimulationLayer</span></span>
-<span>(</span><span>simulation_layer_definition: <a title="gcubed.projections.simulation_layer_definition.SimulationLayerDefinition" href="simulation_layer_definition.html#gcubed.projections.simulation_layer_definition.SimulationLayerDefinition">SimulationLayerDefinition</a>, baseline_projections: <a title="gcubed.projections.baseline_projections.BaselineProjections" href="baseline_projections.html#gcubed.projections.baseline_projections.BaselineProjections">BaselineProjections</a>, previous_simulation_layer: <a title="gcubed.projections.projections.Projections" href="projections.html#gcubed.projections.projections.Projections">Projections</a> = None)</span>
+<span>(</span><span>simulation_layer_definition: <a title="gcubed.projections.simulation_layer_definition.SimulationLayerDefinition" href="simulation_layer_definition.html#gcubed.projections.simulation_layer_definition.SimulationLayerDefinition">SimulationLayerDefinition</a>, previous_projections: <a title="gcubed.projections.projections.Projections" href="projections.html#gcubed.projections.projections.Projections">Projections</a>)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>TODO: Complete the simulations implementation
@@ -331,11 +296,8 @@ Compute model simulations over the projection horizon.</p>
 <h3 id="constructor">Constructor</h3>
 <p>Use this constructor for any simulation that is the first simulation layer applied to baseline projections.</p>
 <h3 id="arguments">Arguments</h3>
-<p>simulation_layer_definition (SimulationLayerDefinition): The definition of this simulation layer</p>
-<p>baseline_projections (BaselineProjections): The baseline projections for this simulation</p>
-<p>previous_simulation_layer (SimulationLayer): If this is not the first simulation layer after the
-baseline projections then set the previous_simulation_layer equal to the simulation layer created'
-immediately prior to this simulation layer.</p></div>
+<p>simulation_layer_definition: The definition of this simulation layer</p>
+<p>previous_projections: The projections that this simulation layer builds upon, baseline or another type.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -346,7 +308,7 @@ immediately prior to this simulation layer.</p></div>
     Compute model simulations over the projection horizon.
     &#34;&#34;&#34;
 
-    def __init__(self, simulation_layer_definition: SimulationLayerDefinition, baseline_projections: BaselineProjections, previous_simulation_layer: Projections=None) -&gt; None:
+    def __init__(self, simulation_layer_definition: SimulationLayerDefinition, previous_projections: Projections) -&gt; None:
         &#34;&#34;&#34;
 
         ### Constructor
@@ -355,113 +317,76 @@ immediately prior to this simulation layer.</p></div>
 
         ### Arguments
 
-        simulation_layer_definition (SimulationLayerDefinition): The definition of this simulation layer
+        simulation_layer_definition: The definition of this simulation layer
 
-        baseline_projections (BaselineProjections): The baseline projections for this simulation
-
-        previous_simulation_layer (SimulationLayer): If this is not the first simulation layer after the 
-        baseline projections then set the previous_simulation_layer equal to the simulation layer created&#39;
-        immediately prior to this simulation layer.
+        previous_projections: The projections that this simulation layer builds upon, baseline or another type.
 
         &#34;&#34;&#34;
-        assert baseline_projections is not None
-        self._baseline_projections = baseline_projections
+        assert previous_projections is not None
+        self._previous_projections = previous_projections
+        if isinstance(previous_projections, BaselineProjections):
+            self._baseline_projections = previous_projections
+        else:
+            self._baseline_projections = self.previous_projections.baseline_projections
 
         super().__init__(stable_manifold=self.baseline_projections.stable_manifold)
-        
-        self._previous_simulation_layer = previous_simulation_layer
+        self._is_baseline_projections = False
 
         assert simulation_layer_definition is not None
         self._simulation_layer_definition = simulation_layer_definition
 
-        assert os.path.isfile(self.data_file)
-
-        if self.previous_simulation_layer is not None:
-            assert self.event_year &gt; self.previous_simulation_layer.event_year
+        if self.previous_projections is not None:
+            assert self.first_projection_year &gt;= self.previous_projections.first_projection_year
         else:
-            assert self.event_year &gt; self.baseline_projections.base_year
+            assert self.first_projection_year &gt;= self.baseline_projections.first_projection_year
+        self._first_projection_year = self.definition.event_year
 
-        self.load_simulation_data()
+        assert os.path.isfile(self.definition.data_filename)
+        self.__load_simulation_data()
 
-        self.generate_projections()
+        self._generate_projections()
 
         # Store long rate adjustment constants to use in creating the database projections
         self._long_rate_constants = self.baseline_projections._long_rate_constants
-        self.generate_database_projections()
+        self._generate_database_projections()
 
-        self.generate_publishable_projections()
+        self._generate_publishable_projections()
 
         self.__validate()
-
-        logging.info(f&#34;The {self.name} projections have been generated.&#34;)
-
-
 
     def __validate(self):
         &#34;&#34;&#34;
         TODO:  Validate the simulations: 
         &#34;&#34;&#34;
+        logging.info(f&#34;The {self.definition.name} projections have been generated.&#34;)
 
     @property
     def baseline_projections(self) -&gt; BaselineProjections:
         &#34;&#34;&#34;
-        Returns the baseline projections.
+        The baseline projections.
         &#34;&#34;&#34;
         return self._baseline_projections
 
     @property
-    def simulation_layer_definition(self) -&gt; SimulationLayerDefinition:
+    def definition(self) -&gt; SimulationLayerDefinition:
+        &#34;&#34;&#34;
+        The definition for this simulation layer, giving access to the information
+        about the simulation being done in this layer.
+        &#34;&#34;&#34;
         return self._simulation_layer_definition
 
     @property
-    def name(self) -&gt; str:
-        return self._simulation_layer_definition.name
-
-    @property
-    def description(self) -&gt; str:
-        return self._simulation_layer_definition.description
-
-    @property
-    def data_file(self) -&gt; str:
+    def previous_projections(self) -&gt; Projections:
         &#34;&#34;&#34;
-        Returns the string specifying the name of the file containing the simulation data.
+        The previous projections (baseline or simulation layer or other).
         &#34;&#34;&#34;
-        return self.simulation_layer_definition.data_filename
-
-    @property
-    def event_year(self) -&gt; str:
-        &#34;&#34;&#34;
-        Returns the event year for the simulation layer.
-        This is the first year that knowledge of the simulation event becomes available
-        to agents.
-        &#34;&#34;&#34;
-        return self.simulation_layer_definition.event_year
-
-    @property
-    def previous_simulation_layer(self):
-        &#34;&#34;&#34;
-        Note that the return type is not specified because the SimulationLayer class cannot
-        refer to itself in its own definition.
-
-        Returns the previous simulation layer, or none if there is none.
-        &#34;&#34;&#34;
-        if hasattr(self,&#39;_previous_simulation_layer&#39;):
-            return self._previous_simulation_layer
-        return None
-
-    @property
-    def previous_projection_layer(self) -&gt; Projections:
-        if self.previous_simulation_layer is None:
-            return self.baseline_projections
-        return self.previous_simulation_layer
+        return self._previous_projections
 
     @property
     def baseline_projections(self) -&gt; BaselineProjections:
         &#34;&#34;&#34;
         Returns the baseline projections underpinning this simulation
         &#34;&#34;&#34;
-        if self.previous_simulation_layer is not None:
-            return self.previous_simulation_layer.baseline_projections
         return self._baseline_projections
 
     @property
@@ -485,10 +410,12 @@ immediately prior to this simulation layer.</p></div>
         &#34;&#34;&#34;
         return self._simulation_data
 
-    def load_simulation_data(self):
+    def __load_simulation_data(self):
         &#34;&#34;&#34;        
         Load and apply the simulation data that affect exogenous variables. 
+
         Load and apply the simulation data that affect state variables initial values.
+
         TODO: Check if there are simulations where shocks to state variable initial values are not allowed.
 
         When a variable has data in the simulation file, load that into the appropriate 
@@ -508,11 +435,11 @@ immediately prior to this simulation layer.</p></div>
         &#34;&#34;&#34;
 
         # Load the simulation data.
-        filename: str = self.data_file
+        filename: str = self.definition.data_filename
         assert os.path.isfile(filename)
         (self._simulation_variables, self._simulation_data) = self.load_data(filename)
         if len(self._simulation_variables.index) == 0:
-            logging.warn(f&#34;The &#39;{self.name}&#39; simulation layer has no data. This will run but is not doing anything useful.&#34;)
+            logging.warn(f&#34;The &#39;{self.definition.name}&#39; simulation layer has no data. This will run but is not doing anything useful.&#34;)
         self._simulation_variables.columns = [&#39;name&#39;]
         self._simulation_variables.index = self._simulation_variables.name
         self._simulation_data = self._simulation_data.astype(float)
@@ -521,15 +448,15 @@ immediately prior to this simulation layer.</p></div>
         try:
             self._simulation_data = self._simulation_data.loc[:, self.projection_years_column_labels]
         except:
-            raise Exception(f&#34;The simulation data in {self.data_file} should have data from {self.event_year} to {self.end_year}&#34;)
+            raise Exception(f&#34;The simulation data in {self.definition.data_file} should include data values from {self.first_projection_year} to {self.last_projection_year}&#34;)
 
         # Iterate the shocks, allocating the shocks
-        yratr: pd.DataFrame = self.database.get_data(name_regular_expression=f&#34;^{CONSTANTS.US_REAL_GDP_RATIO_PREFIX}\(&#34;, years=[self.configuration.original_projection_base_year])
+        yratr: pd.DataFrame = self.database.get_data(name_regular_expression=f&#34;^{Constants().US_REAL_GDP_RATIO_PREFIX}\(&#34;, years=[self.configuration.original_first_projection_year])
         yratr.index = self.sym_data.regions_members
 
-        self._exo_projections = self.previous_projection_layer.exo_projections_as_dataframe.loc[:, self.projection_years_column_labels]
+        self._exo_projections = self.previous_projections.exo_projections_as_dataframe.loc[:, self.projection_years_column_labels]
         
-        self._yxr_initial_values: pd.DataFrame = self.previous_projection_layer.yxr_projections_as_dataframe.loc[:, [str(self.event_year)]].copy()
+        self._yxr_initial_values: pd.DataFrame = self.previous_projections.yxr_projections_as_dataframe.loc[:, [str(self.first_projection_year)]].copy()
 
         for variable_name in self._simulation_variables.index:
             variable_region: str = str(self.baseline_projections.database.variables.loc[variable_name, &#39;region&#39;])
@@ -545,13 +472,13 @@ immediately prior to this simulation layer.</p></div>
 
             match vector_name:
                 case &#39;exo&#39;:
-                    logging.info(f&#34;Augmenting exogenous variables, {variable_name}, from {self.event_year} on.&#34;)
+                    logging.info(f&#34;Augmenting exogenous variables, {variable_name}, from {self.first_projection_year} on.&#34;)
                     self._exo_projections.loc[[variable_name], self.projection_years_column_labels] += data
                     pass
 
                 case &#39;x1l&#39;:
-                    logging.info(f&#34;Augmenting initial state variables, {variable_name}, in {self.event_year}&#34;)
-                    self._yxr_initial_values.loc[[variable_name], [str(self.event_year)]] += float(data[0])
+                    logging.info(f&#34;Augmenting initial state variables, {variable_name}, in {self.first_projection_year}&#34;)
+                    self._yxr_initial_values.loc[[variable_name], [str(self.first_projection_year)]] += float(data[0])
                     pass
 
     @property
@@ -622,8 +549,6 @@ def baseline_projections(self) -&gt; BaselineProjections:
     &#34;&#34;&#34;
     Returns the baseline projections underpinning this simulation
     &#34;&#34;&#34;
-    if self.previous_simulation_layer is not None:
-        return self.previous_simulation_layer.baseline_projections
     return self._baseline_projections</code></pre>
 </details>
 </dd>
@@ -644,21 +569,6 @@ def c4t(self) -&gt; np.ndarray:
     return self._c4t</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.simulation_layer.SimulationLayer.data_file"><code class="name">var <span class="ident">data_file</span> : str</code></dt>
-<dd>
-<div class="desc"><p>Returns the string specifying the name of the file containing the simulation data.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def data_file(self) -&gt; str:
-    &#34;&#34;&#34;
-    Returns the string specifying the name of the file containing the simulation data.
-    &#34;&#34;&#34;
-    return self.simulation_layer_definition.data_filename</code></pre>
-</details>
-</dd>
 <dt id="gcubed.projections.simulation_layer.SimulationLayer.database"><code class="name">var <span class="ident">database</span> : <a title="gcubed.data.database.Database" href="../data/database.html#gcubed.data.database.Database">Database</a></code></dt>
 <dd>
 <div class="desc"><p>Returns the database associated with the baseline projections.</p></div>
@@ -674,35 +584,21 @@ def database(self) -&gt; Database:
     return self.baseline_projections.database</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.simulation_layer.SimulationLayer.description"><code class="name">var <span class="ident">description</span> : str</code></dt>
+<dt id="gcubed.projections.simulation_layer.SimulationLayer.definition"><code class="name">var <span class="ident">definition</span> : <a title="gcubed.projections.simulation_layer_definition.SimulationLayerDefinition" href="simulation_layer_definition.html#gcubed.projections.simulation_layer_definition.SimulationLayerDefinition">SimulationLayerDefinition</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The definition for this simulation layer, giving access to the information
+about the simulation being done in this layer.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def description(self) -&gt; str:
-    return self._simulation_layer_definition.description</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.simulation_layer.SimulationLayer.event_year"><code class="name">var <span class="ident">event_year</span> : str</code></dt>
-<dd>
-<div class="desc"><p>Returns the event year for the simulation layer.
-This is the first year that knowledge of the simulation event becomes available
-to agents.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def event_year(self) -&gt; str:
+def definition(self) -&gt; SimulationLayerDefinition:
     &#34;&#34;&#34;
-    Returns the event year for the simulation layer.
-    This is the first year that knowledge of the simulation event becomes available
-    to agents.
+    The definition for this simulation layer, giving access to the information
+    about the simulation being done in this layer.
     &#34;&#34;&#34;
-    return self.simulation_layer_definition.event_year</code></pre>
+    return self._simulation_layer_definition</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.simulation_layer.SimulationLayer.h3t"><code class="name">var <span class="ident">h3t</span> : numpy.ndarray</code></dt>
@@ -739,52 +635,19 @@ def j1_constants(self) -&gt; np.ndarray:
     return self.baseline_projections.j1_constants</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.simulation_layer.SimulationLayer.name"><code class="name">var <span class="ident">name</span> : str</code></dt>
+<dt id="gcubed.projections.simulation_layer.SimulationLayer.previous_projections"><code class="name">var <span class="ident">previous_projections</span> : <a title="gcubed.projections.projections.Projections" href="projections.html#gcubed.projections.projections.Projections">Projections</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The previous projections (baseline or simulation layer or other).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def name(self) -&gt; str:
-    return self._simulation_layer_definition.name</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.simulation_layer.SimulationLayer.previous_projection_layer"><code class="name">var <span class="ident">previous_projection_layer</span> : <a title="gcubed.projections.projections.Projections" href="projections.html#gcubed.projections.projections.Projections">Projections</a></code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def previous_projection_layer(self) -&gt; Projections:
-    if self.previous_simulation_layer is None:
-        return self.baseline_projections
-    return self.previous_simulation_layer</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.simulation_layer.SimulationLayer.previous_simulation_layer"><code class="name">var <span class="ident">previous_simulation_layer</span></code></dt>
-<dd>
-<div class="desc"><p>Note that the return type is not specified because the SimulationLayer class cannot
-refer to itself in its own definition.</p>
-<p>Returns the previous simulation layer, or none if there is none.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def previous_simulation_layer(self):
+def previous_projections(self) -&gt; Projections:
     &#34;&#34;&#34;
-    Note that the return type is not specified because the SimulationLayer class cannot
-    refer to itself in its own definition.
-
-    Returns the previous simulation layer, or none if there is none.
+    The previous projections (baseline or simulation layer or other).
     &#34;&#34;&#34;
-    if hasattr(self,&#39;_previous_simulation_layer&#39;):
-        return self._previous_simulation_layer
-    return None</code></pre>
+    return self._previous_projections</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.simulation_layer.SimulationLayer.simulation_data"><code class="name">var <span class="ident">simulation_data</span> : pandas.core.frame.DataFrame</code></dt>
@@ -800,18 +663,6 @@ def simulation_data(self) -&gt; pd.DataFrame:
     Returns the simulation data.
     &#34;&#34;&#34;
     return self._simulation_data</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.simulation_layer.SimulationLayer.simulation_layer_definition"><code class="name">var <span class="ident">simulation_layer_definition</span> : <a title="gcubed.projections.simulation_layer_definition.SimulationLayerDefinition" href="simulation_layer_definition.html#gcubed.projections.simulation_layer_definition.SimulationLayerDefinition">SimulationLayerDefinition</a></code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def simulation_layer_definition(self) -&gt; SimulationLayerDefinition:
-    return self._simulation_layer_definition</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.simulation_layer.SimulationLayer.simulation_variables"><code class="name">var <span class="ident">simulation_variables</span> : pandas.core.frame.DataFrame</code></dt>
@@ -881,129 +732,33 @@ def ze_constants(self) -&gt; np.ndarray:
 </details>
 </dd>
 </dl>
-<h3>Methods</h3>
-<dl>
-<dt id="gcubed.projections.simulation_layer.SimulationLayer.load_simulation_data"><code class="name flex">
-<span>def <span class="ident">load_simulation_data</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Load and apply the simulation data that affect exogenous variables.
-Load and apply the simulation data that affect state variables initial values.
-TODO: Check if there are simulations where shocks to state variable initial values are not allowed.</p>
-<p>When a variable has data in the simulation file, load that into the appropriate
-SYM-specified row of the exogenous variable projections, from the start projection year onwards.</p>
-<p>When a variable has data in the simulation file (control.csv by default), load that into the appropriate
-SYM-specified row of the state variable projection start year vector and ignore
-data in the control file for all years after that projection start year.</p>
-<p>Adjust the simulation data as follows, depending on the units of the variable:
-gdp - multiply by (projection base year YRATR / 100).
-mmgdp - same as gdp
-btugdp - same as gdp
-gwhgdp - same as gdp
-usgdp - divide the value in the control file by 100.
-All other units - divide the value in the control file by 100.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def load_simulation_data(self):
-    &#34;&#34;&#34;        
-    Load and apply the simulation data that affect exogenous variables. 
-    Load and apply the simulation data that affect state variables initial values.
-    TODO: Check if there are simulations where shocks to state variable initial values are not allowed.
-
-    When a variable has data in the simulation file, load that into the appropriate 
-    SYM-specified row of the exogenous variable projections, from the start projection year onwards.
-
-    When a variable has data in the simulation file (control.csv by default), load that into the appropriate 
-    SYM-specified row of the state variable projection start year vector and ignore
-    data in the control file for all years after that projection start year.
-
-    Adjust the simulation data as follows, depending on the units of the variable:
-        gdp - multiply by (projection base year YRATR / 100).
-        mmgdp - same as gdp
-        btugdp - same as gdp 
-        gwhgdp - same as gdp
-        usgdp - divide the value in the control file by 100.
-        All other units - divide the value in the control file by 100.
-    &#34;&#34;&#34;
-
-    # Load the simulation data.
-    filename: str = self.data_file
-    assert os.path.isfile(filename)
-    (self._simulation_variables, self._simulation_data) = self.load_data(filename)
-    if len(self._simulation_variables.index) == 0:
-        logging.warn(f&#34;The &#39;{self.name}&#39; simulation layer has no data. This will run but is not doing anything useful.&#34;)
-    self._simulation_variables.columns = [&#39;name&#39;]
-    self._simulation_variables.index = self._simulation_variables.name
-    self._simulation_data = self._simulation_data.astype(float)
-    self._simulation_data.index = self._simulation_variables.name
-
-    try:
-        self._simulation_data = self._simulation_data.loc[:, self.projection_years_column_labels]
-    except:
-        raise Exception(f&#34;The simulation data in {self.data_file} should have data from {self.event_year} to {self.end_year}&#34;)
-
-    # Iterate the shocks, allocating the shocks
-    yratr: pd.DataFrame = self.database.get_data(name_regular_expression=f&#34;^{CONSTANTS.US_REAL_GDP_RATIO_PREFIX}\(&#34;, years=[self.configuration.original_projection_base_year])
-    yratr.index = self.sym_data.regions_members
-
-    self._exo_projections = self.previous_projection_layer.exo_projections_as_dataframe.loc[:, self.projection_years_column_labels]
-    
-    self._yxr_initial_values: pd.DataFrame = self.previous_projection_layer.yxr_projections_as_dataframe.loc[:, [str(self.event_year)]].copy()
-
-    for variable_name in self._simulation_variables.index:
-        variable_region: str = str(self.baseline_projections.database.variables.loc[variable_name, &#39;region&#39;])
-        variable_units: str = str(self.sym_data.combined_variable_summary.loc[variable_name, &#39;units&#39;])
-        data: pd.DataFrame = self._simulation_data.loc[[variable_name], :] / 100
-        vector_name = self.sym_data.projection_vector_for_variable(variable_name=variable_name)
-        yratr_for_region: float = float(yratr.loc[variable_region, :].values[0])
-        match variable_units:
-            case &#39;gdp&#39; | &#39;mmgdp&#39; | &#39;btugdp&#39; | &#39;gwhgdp&#39;:
-                data *= yratr_for_region
-            case _:
-                pass
-
-        match vector_name:
-            case &#39;exo&#39;:
-                logging.info(f&#34;Augmenting exogenous variables, {variable_name}, from {self.event_year} on.&#34;)
-                self._exo_projections.loc[[variable_name], self.projection_years_column_labels] += data
-                pass
-
-            case &#39;x1l&#39;:
-                logging.info(f&#34;Augmenting initial state variables, {variable_name}, in {self.event_year}&#34;)
-                self._yxr_initial_values.loc[[variable_name], [str(self.event_year)]] += float(data[0])
-                pass</code></pre>
-</details>
-</dd>
-</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="gcubed.projections.projections.Projections" href="projections.html#gcubed.projections.projections.Projections">Projections</a></b></code>:
 <ul class="hlist">
-<li><code><a title="gcubed.projections.projections.Projections.base_year" href="projections.html#gcubed.projections.projections.Projections.base_year">base_year</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.compute_functions_of_future_exogenous_variables" href="projections.html#gcubed.projections.projections.Projections.compute_functions_of_future_exogenous_variables">compute_functions_of_future_exogenous_variables</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.configuration" href="projections.html#gcubed.projections.projections.Projections.configuration">configuration</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.database_projections" href="projections.html#gcubed.projections.projections.Projections.database_projections">database_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exo_projections" href="projections.html#gcubed.projections.projections.Projections.exo_projections">exo_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exo_projections_as_dataframe" href="projections.html#gcubed.projections.projections.Projections.exo_projections_as_dataframe">exo_projections_as_dataframe</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exz_projections" href="projections.html#gcubed.projections.projections.Projections.exz_projections">exz_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exz_projections_as_dataframe" href="projections.html#gcubed.projections.projections.Projections.exz_projections_as_dataframe">exz_projections_as_dataframe</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.generate_database_projections" href="projections.html#gcubed.projections.projections.Projections.generate_database_projections">generate_database_projections</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.generate_projections" href="projections.html#gcubed.projections.projections.Projections.generate_projections">generate_projections</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.generate_publishable_projections" href="projections.html#gcubed.projections.projections.Projections.generate_publishable_projections">generate_publishable_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.first_projection_year" href="projections.html#gcubed.projections.projections.Projections.first_projection_year">first_projection_year</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.get_differences_between_projections" href="projections.html#gcubed.projections.projections.Projections.get_differences_between_projections">get_differences_between_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.graphable_projections" href="projections.html#gcubed.projections.projections.Projections.graphable_projections">graphable_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.is_baseline_projections" href="projections.html#gcubed.projections.projections.Projections.is_baseline_projections">is_baseline_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.last_projection_year" href="projections.html#gcubed.projections.projections.Projections.last_projection_year">last_projection_year</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.long_rate_constants" href="projections.html#gcubed.projections.projections.Projections.long_rate_constants">long_rate_constants</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.longrate_calculation" href="projections.html#gcubed.projections.projections.Projections.longrate_calculation">longrate_calculation</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.preceding_projection_years" href="projections.html#gcubed.projections.projections.Projections.preceding_projection_years">preceding_projection_years</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.preceding_projection_years_count" href="projections.html#gcubed.projections.projections.Projections.preceding_projection_years_count">preceding_projection_years_count</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.model" href="projections.html#gcubed.projections.projections.Projections.model">model</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.parameters" href="projections.html#gcubed.projections.projections.Projections.parameters">parameters</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.projection_years" href="projections.html#gcubed.projections.projections.Projections.projection_years">projection_years</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.projection_years_column_labels" href="projections.html#gcubed.projections.projections.Projections.projection_years_column_labels">projection_years_column_labels</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.projections" href="projections.html#gcubed.projections.projections.Projections.projections">projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.publishable_projections" href="projections.html#gcubed.projections.projections.Projections.publishable_projections">publishable_projections</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.simulation_data_columns" href="projections.html#gcubed.projections.projections.Projections.simulation_data_columns">simulation_data_columns</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.stable_manifold" href="projections.html#gcubed.projections.projections.Projections.stable_manifold">stable_manifold</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.state_space_form" href="projections.html#gcubed.projections.projections.Projections.state_space_form">state_space_form</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.sym_data" href="projections.html#gcubed.projections.projections.Projections.sym_data">sym_data</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.yjr_projections" href="projections.html#gcubed.projections.projections.Projections.yjr_projections">yjr_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.yjr_projections_as_dataframe" href="projections.html#gcubed.projections.projections.Projections.yjr_projections_as_dataframe">yjr_projections_as_dataframe</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.yxr_initial_values" href="projections.html#gcubed.projections.projections.Projections.yxr_initial_values">yxr_initial_values</a></code></li>
@@ -1039,18 +794,12 @@ All other units - divide the value in the control file by 100.</p></div>
 <ul class="">
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.baseline_projections" href="#gcubed.projections.simulation_layer.SimulationLayer.baseline_projections">baseline_projections</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.c4t" href="#gcubed.projections.simulation_layer.SimulationLayer.c4t">c4t</a></code></li>
-<li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.data_file" href="#gcubed.projections.simulation_layer.SimulationLayer.data_file">data_file</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.database" href="#gcubed.projections.simulation_layer.SimulationLayer.database">database</a></code></li>
-<li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.description" href="#gcubed.projections.simulation_layer.SimulationLayer.description">description</a></code></li>
-<li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.event_year" href="#gcubed.projections.simulation_layer.SimulationLayer.event_year">event_year</a></code></li>
+<li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.definition" href="#gcubed.projections.simulation_layer.SimulationLayer.definition">definition</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.h3t" href="#gcubed.projections.simulation_layer.SimulationLayer.h3t">h3t</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.j1_constants" href="#gcubed.projections.simulation_layer.SimulationLayer.j1_constants">j1_constants</a></code></li>
-<li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.load_simulation_data" href="#gcubed.projections.simulation_layer.SimulationLayer.load_simulation_data">load_simulation_data</a></code></li>
-<li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.name" href="#gcubed.projections.simulation_layer.SimulationLayer.name">name</a></code></li>
-<li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.previous_projection_layer" href="#gcubed.projections.simulation_layer.SimulationLayer.previous_projection_layer">previous_projection_layer</a></code></li>
-<li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.previous_simulation_layer" href="#gcubed.projections.simulation_layer.SimulationLayer.previous_simulation_layer">previous_simulation_layer</a></code></li>
+<li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.previous_projections" href="#gcubed.projections.simulation_layer.SimulationLayer.previous_projections">previous_projections</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.simulation_data" href="#gcubed.projections.simulation_layer.SimulationLayer.simulation_data">simulation_data</a></code></li>
-<li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.simulation_layer_definition" href="#gcubed.projections.simulation_layer.SimulationLayer.simulation_layer_definition">simulation_layer_definition</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.simulation_variables" href="#gcubed.projections.simulation_layer.SimulationLayer.simulation_variables">simulation_variables</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.x1_constants" href="#gcubed.projections.simulation_layer.SimulationLayer.x1_constants">x1_constants</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.z1_constants" href="#gcubed.projections.simulation_layer.SimulationLayer.z1_constants">z1_constants</a></code></li>

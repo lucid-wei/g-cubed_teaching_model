@@ -32,6 +32,7 @@
 # Author: Geoff Shuetrim
 # ------------------------------------------------------------------
 import logging
+import time
 import pandas as pd
 import numpy as np
 import sys
@@ -39,7 +40,7 @@ import importlib
 from gcubed.data.gdp_scaled_database import GDPScaledDatabase
 from gcubed.model import Model
 from gcubed.base import Base
-import gcubed.constants as CONSTANTS
+from gcubed.constants import Constants
 from gcubed.sym_data import SymData
 from gcubed.model_configuration import ModelConfiguration
 from gcubed.linearisation.model_solver import ModelSolver
@@ -68,7 +69,7 @@ class LinearModel(Base):
     To use this class:
 
     1.  instantiate it with a model.
-    2.  run the compute_partial_derivatives() method.
+    2.  run the __compute_partial_derivatives() method.
 
     Once this sequence of steps has been completed without raising an exception,
     the matrices associated with the state space form will be accessible
@@ -95,8 +96,9 @@ class LinearModel(Base):
 
     def __init__(self, model: Model) -&gt; None:
         &#34;&#34;&#34;
-       ### Arguments
-        model (Model): The model that is to be linearised with the linearisation
+        ### Arguments
+
+        model: The model that is to be linearised with the linearisation
         year specified as part of the model configuration.
         &#34;&#34;&#34;
 
@@ -106,6 +108,7 @@ class LinearModel(Base):
         assert model is not None
         self._model = model
 
+        logging.info(f&#34;Linearising the model using data with a base year of {self.configuration.linearisation_year}&#34;)
         self._linearisation_database = GDPScaledDatabase(database=self.model.database, base_year=self.configuration.linearisation_year)
 
         # Set up the LHS vectors as vectors of zeros.
@@ -122,7 +125,7 @@ class LinearModel(Base):
             if not model_solver.solution_found:
                 raise Exception(f&#34;Failed to find a solution to the model for data values near those in the database for linearisation year {self.configuration.linearisation_year}. Linearisation cannot proceed.&#34;)
             for vector_name in self.sym_data.rhs_vector_names:
-                rhs_vector:pd.DataFrame = getattr(model.solver, f&#34;_{vector_name}&#34;)
+                rhs_vector:pd.DataFrame = getattr(model_solver, f&#34;_{vector_name}&#34;)
                 if rhs_vector is not None:
                     setattr(self, f&#34;_{vector_name}&#34;, rhs_vector)
                 else:
@@ -161,7 +164,7 @@ class LinearModel(Base):
         self.__load_equation_map()
 
         # Compute the partial derivatives
-        self.compute_partial_derivatives()
+        self.__compute_partial_derivatives()
 
         self.__validate()
 
@@ -218,62 +221,103 @@ class LinearModel(Base):
     @property
     def sym_data(self) -&gt; SymData:
         &#34;&#34;&#34;
-        (SymData): The SYM data for the model being linearised.
+        The SYM data for the model being linearised.
         &#34;&#34;&#34;
         return self.model.sym_data
 
     @property
     def configuration(self) -&gt; ModelConfiguration:
         &#34;&#34;&#34;
-        (ModelConfiguration): The configuration details for the model 
+        The configuration details for the model 
         being linearised.
         &#34;&#34;&#34;
         return self.model.configuration
 
     @property
-    def equations_map(self) -&gt; dict:
+    def equations_map(self) -&gt; dict[tuple[str, int], list[tuple[str, int]]]:
         &#34;&#34;&#34;
-        (dict[tuple[str, int], list[tuple[str, int]]]): The map from each 
-        RHS variable in the model to the list of LHS variable (equations) 
-        that depend on it.
+        ### Overview
 
         This is only a public property to assist with unit testing.
         Do not use it directly for other purposes.
 
-        It is populated from the SYM processor output and is used to make
+        The map is populated from the SYM processor output and is used to make
         the calculation of partial derivatives more efficient, only calculating
         those derivatives that are not zero by definition.
+
+        ### Returns
+
+        The map from each RHS variable in the model to the list of 
+        LHS variables (equations) that depend on it.
         &#34;&#34;&#34;
         return self._equations_map
 
     def get_vector_by_name(self, vector_name) -&gt; np.ndarray:
         &#34;&#34;&#34;
+        ### Overview
+
         Use the name of the vector to retrieve its numpy array value.
-        These values have been set using the linearisation database.
+        These values have been set using data in the database.
+
+        ### Arguments
+
+        vector_name: The name of the LHS or RHS vector.
+        
+        ### Returns
+        
+        The named column vector.
+        
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_{}&#34;.format(vector_name)):
             raise Exception(&#34;There is no vector for {}&#34;.format(vector_name))
         return getattr(self, &#34;_{}&#34;.format(vector_name))
 
-    def get_base_lhs_vector_by_name(self, lhs_vector_name:str) -&gt; np.ndarray:
+    def get_original_lhs_vector_by_name(self, lhs_vector_name:str) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        This function is useful for benchmarking the model equation evaluations.
+
+        ### Overview
+
+        This function is useful for benchmarking the model&#39;s nonlinear equation evaluations.
 
         Use the name of the vector to retrieve its numpy array value.
         These values have been set by evaluating the model&#39;s non-linear equations
         using the RHS vector values for the base year chosen for the linearisation.
+
+        ### Arguments
+
+        lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+        
+        ### Returns
+        
+        The named LHS column vector.
+
         &#34;&#34;&#34;
-        if not lhs_vector_name in self._base_lhs_vectors:
+        if not lhs_vector_name in self._original_lhs_vectors:
             raise Exception(f&#34;The requested vector, {lhs_vector_name}, is not a LHS vector in the model.&#34;)
-        return self._base_lhs_vectors[lhs_vector_name]
+        return self._original_lhs_vectors[lhs_vector_name]
 
     def get_partials(self, lhs_vector_name:str, rhs_vector_name:str) -&gt; np.ndarray:
         &#34;&#34;&#34;
+
+        ### Overview
+
         Use the name of the LHS vector and the RHS vector to retrieve 
         the numpy matrix value for the partial derivatives.
-        
+
         The matrices of partial derivatives are stored in a dictionary indexed
         by the lhs and rhs vector names.
+
+        ### Arguments
+
+        lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+
+        rhs_vector_name: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
+
+        ### Returns
+        
+        The required partial derivatives as a dataframe 
+        with variable names as the row and column labels.
+
         &#34;&#34;&#34;
         if self._partial_derivatives is None:
             raise Exception(f&#34;Attempted to access partial derivatives {lhs_vector_name} on {rhs_vector_name} before it was created.&#34;)
@@ -284,11 +328,21 @@ class LinearModel(Base):
 
     def get_partials_as_dataframe(self, lhs_vector_name, rhs_vector_name) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        Return the required partial derivatives with row and column labels that are variable names.
+
+        ### Arguments
+
+        lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+
+        rhs_vector_name: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
+
+        ### Returns
+        
+        The required partial derivatives as a dataframe 
+        with variable names as the row and column labels.
+
         &#34;&#34;&#34;
         if self._partial_derivatives is None:
-            raise Exception(
-                f&#34;Attempted to access partial derivatives {lhs_vector_name} on {rhs_vector_name} before it was created.&#34;)
+            raise Exception(f&#34;Attempted to access partial derivatives {lhs_vector_name} on {rhs_vector_name} before it was created.&#34;)
         key = (lhs_vector_name, rhs_vector_name)
         if key in self._partial_derivatives:
             result: pd.DataFrame = pd.DataFrame(self._partial_derivatives[key])
@@ -299,6 +353,8 @@ class LinearModel(Base):
 
     def __configure_lhs_vectors(self):
         &#34;&#34;&#34;
+        ### Overview
+
         Create the LHS vectors that are used by the model equations.
         Initialise LHS vectors with zeros.
         &#34;&#34;&#34;
@@ -308,12 +364,15 @@ class LinearModel(Base):
 
     def __load_rhs_vectors(self, linearisation_year: int):
         &#34;&#34;&#34;
+
+        ### Overview
+
         Create and set values for the RHS vectors that are used by the 
         model equations.
 
         Do not create vectors if they have no variables (are zero length).
 
-       ### Arguments
+        ### Arguments
 
         linearisation_year: The year in which the model is linearised.
         e.g. 2011 implies linearise model equations around the values
@@ -330,10 +389,13 @@ class LinearModel(Base):
 
     def __compute_benchmark_equation_results(self):
         &#34;&#34;&#34;
+        ### Overview
+
         Compute the benchmark LHS vector values using supplied RHS values.
         These are used in computing the non-linear equations in the model.
         &#34;&#34;&#34;
-        self._base_lhs_vectors: dict[str, np.ndarray] = dict()
+
+        self._original_lhs_vectors: dict[str, np.ndarray] = dict()
         for lhs_vector_name in self.sym_data.lhs_vector_names:
             lhs_vector = getattr(self, &#34;_{}&#34;.format(lhs_vector_name))
             for lhs_index in range(len(lhs_vector)):
@@ -342,13 +404,14 @@ class LinearModel(Base):
                     func = getattr(self.equations, function_name)
                     func()
                 else:
-                    # TODO: Reinstate this warning when we are done to ensure SYM models do not collect obsolete variables.
                     # logging.warning(&#34;No {} equation for element {}&#34;.format(lhs_vector_name, lhs_index))
                     pass
-            self._base_lhs_vectors[lhs_vector_name] = lhs_vector.copy()
+            self._original_lhs_vectors[lhs_vector_name] = lhs_vector.copy()
 
     def __load_equation_map(self):
         &#34;&#34;&#34;
+        ### Overview
+
         Uses the eqnmap output from the sym processor to create a map from each
         RHS variable (vector + index combination) to the equations that include
         that variable on the RHS.
@@ -390,13 +453,18 @@ class LinearModel(Base):
             else:
                 self._equations_map[rhs] = [lhs]
 
-    def compute_partial_derivatives(self):
+    def __compute_partial_derivatives(self):
         &#34;&#34;&#34;
+        ### Overview
+
         Generate the matrices that reflect the linear approximation
         to the model. The model is linearised around the data for 
         a specific year that is specified in the model configuration.
 
         Do not compute partial derivatives for any vectors with zero length.
+
+        Use the equation map to ensure that only non-zero partial derivatives
+        are calculated. The others are, obviously, zero.
         &#34;&#34;&#34;
 
         # Create the dictionary where the partial derivative matrices will be stored.
@@ -408,13 +476,17 @@ class LinearModel(Base):
             lhs_length = self.sym_data.vector_length(vector_name=lhs)
             if lhs_length == 0:
                 continue
+
             for rhs in self.sym_data.rhs_vector_names:
                 rhs_length = self.sym_data.vector_length(vector_name=rhs)
                 if rhs_length == 0:
                     continue
-                self._partial_derivatives[(lhs, rhs)] = np.zeros(shape=(lhs_length, rhs_length), dtype=float)
+                self._partial_derivatives[(lhs, rhs)] = np.zeros((lhs_length, rhs_length), dtype=float)
 
         for rhs in self.sym_data.rhs_vector_names:
+
+            start_time: float = time.time()
+
             rhs_length = self.sym_data.vector_length(vector_name=rhs)
             if rhs_length == 0:
                 continue
@@ -426,33 +498,41 @@ class LinearModel(Base):
 
                  if (rhs, rhs_index) in self._equations_map:
 
-                    original_value: float = rhs_vector[rhs_index].copy()
+                    original_RHS_value: float = rhs_vector[rhs_index].copy()
 
                     # Compute the partial by incrementing by delta then restore original value.
-                    rhs_vector[rhs_index] = original_value + CONSTANTS.delta
+                    rhs_vector[rhs_index] = original_RHS_value + Constants().DELTA
 
                     # Iterate all equations that use the RHS variable to compute the partial derivatives.
                     for (lhs, lhs_index) in self._equations_map[(rhs, rhs_index)]:
 
-                        # Run the relevant function to evaluate the model equation at the adjusted
-                        # RHS variable value.
+                        # Run the relevant function to evaluate the model equation 
+                        # at the adjusted RHS variable value.
                         func = getattr(self.equations, f&#34;{lhs}_{lhs_index}&#34;)
                         func()
 
-                        perturbed_value = self.get_vector_by_name(vector_name=lhs)[lhs_index]
-                        base_value = self.get_base_lhs_vector_by_name(lhs_vector_name=lhs)[lhs_index]
-                        partial_derivative: float = ((perturbed_value - base_value) / CONSTANTS.delta)
+                        perturbed_LHS_value: float = self.get_vector_by_name(vector_name=lhs)[lhs_index]
+                        original_LHS_value: float = self.get_original_lhs_vector_by_name(lhs_vector_name=lhs)[lhs_index]
+                        partial_derivative: float = ((perturbed_LHS_value - original_LHS_value) / Constants().DELTA)
 
                         # Store the value of the derivative in the partial derivatives matrix at the
                         # appropriate row and column index.
                         self.get_partials(lhs_vector_name=lhs, rhs_vector_name=rhs)[lhs_index, rhs_index] = partial_derivative
 
-                    rhs_vector[rhs_index] = original_value
+                    rhs_vector[rhs_index] = original_RHS_value
+
+            elapsed_time: float = time.time()- start_time
+            if elapsed_time &gt; 5:
+                execution_time: str = &#34;{:.3f}&#34;.format(elapsed_time)
+                logging.info(f&#34;Partial derivatives wrt variables in the {rhs} vector took {execution_time} seconds to calculate.&#34;)
+
 
         self._linear_model_is_available = True
 
     def __generate_nonlinear_equation_differences(self):
         &#34;&#34;&#34;
+        ### Overview
+        
         Generate a report of the differences between observed values and 
         non-linear equation solutions used in model linearisation.
         &#34;&#34;&#34;
@@ -478,7 +558,7 @@ class LinearModel(Base):
             ze_diff,
             z1_diff,
             exo_diff])
-        database_ordered_variable_list: pd.DataFrame = self._linearisation_database.variables.name
+        database_ordered_variable_list: pd.DataFrame = self.linearisation_database.variables.name
         self._nonlinear_equation_differences = pd.concat([database_ordered_variable_list, diffs], axis=1)
         self._nonlinear_equation_differences.drop(&#39;name&#39;, inplace=True, axis=1)
         self._nonlinear_equation_differences.insert(loc=0, column=&#39;vector&#39;, value=self.sym_data.combined_variable_summary.loc[:, &#39;vector&#39;])
@@ -487,7 +567,7 @@ class LinearModel(Base):
     @property
     def nonlinear_equation_differences(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        (pd.DataFrame): Details about the differences between the LHS and RHS values for all
+        Details about the differences between the LHS and RHS values for all
         endogenous variables as at the point of linearisation. This is only used for unit testing
         purposes.
         &#34;&#34;&#34;
@@ -526,7 +606,7 @@ the endogenous variables from the model via substitution.</li>
 <p>To use this class:</p>
 <ol>
 <li>instantiate it with a model.</li>
-<li>run the compute_partial_derivatives() method.</li>
+<li>run the __compute_partial_derivatives() method.</li>
 </ol>
 <p>Once this sequence of steps has been completed without raising an exception,
 the matrices associated with the state space form will be accessible
@@ -546,7 +626,7 @@ x1l with respect to z1r are stored in a property called x1l_z1r_partials.
 The same naming convention is used for all partials matrices:
 <LHS_vector_name>_<RHS_vector_name>_partials.</p>
 <h3 id="arguments">Arguments</h3>
-<p>model (Model): The model that is to be linearised with the linearisation
+<p>model: The model that is to be linearised with the linearisation
 year specified as part of the model configuration.</p></div>
 <details class="source">
 <summary>
@@ -575,7 +655,7 @@ year specified as part of the model configuration.</p></div>
     To use this class:
 
     1.  instantiate it with a model.
-    2.  run the compute_partial_derivatives() method.
+    2.  run the __compute_partial_derivatives() method.
 
     Once this sequence of steps has been completed without raising an exception,
     the matrices associated with the state space form will be accessible
@@ -602,8 +682,9 @@ year specified as part of the model configuration.</p></div>
 
     def __init__(self, model: Model) -&gt; None:
         &#34;&#34;&#34;
-       ### Arguments
-        model (Model): The model that is to be linearised with the linearisation
+        ### Arguments
+
+        model: The model that is to be linearised with the linearisation
         year specified as part of the model configuration.
         &#34;&#34;&#34;
 
@@ -613,6 +694,7 @@ year specified as part of the model configuration.</p></div>
         assert model is not None
         self._model = model
 
+        logging.info(f&#34;Linearising the model using data with a base year of {self.configuration.linearisation_year}&#34;)
         self._linearisation_database = GDPScaledDatabase(database=self.model.database, base_year=self.configuration.linearisation_year)
 
         # Set up the LHS vectors as vectors of zeros.
@@ -629,7 +711,7 @@ year specified as part of the model configuration.</p></div>
             if not model_solver.solution_found:
                 raise Exception(f&#34;Failed to find a solution to the model for data values near those in the database for linearisation year {self.configuration.linearisation_year}. Linearisation cannot proceed.&#34;)
             for vector_name in self.sym_data.rhs_vector_names:
-                rhs_vector:pd.DataFrame = getattr(model.solver, f&#34;_{vector_name}&#34;)
+                rhs_vector:pd.DataFrame = getattr(model_solver, f&#34;_{vector_name}&#34;)
                 if rhs_vector is not None:
                     setattr(self, f&#34;_{vector_name}&#34;, rhs_vector)
                 else:
@@ -668,7 +750,7 @@ year specified as part of the model configuration.</p></div>
         self.__load_equation_map()
 
         # Compute the partial derivatives
-        self.compute_partial_derivatives()
+        self.__compute_partial_derivatives()
 
         self.__validate()
 
@@ -725,62 +807,103 @@ year specified as part of the model configuration.</p></div>
     @property
     def sym_data(self) -&gt; SymData:
         &#34;&#34;&#34;
-        (SymData): The SYM data for the model being linearised.
+        The SYM data for the model being linearised.
         &#34;&#34;&#34;
         return self.model.sym_data
 
     @property
     def configuration(self) -&gt; ModelConfiguration:
         &#34;&#34;&#34;
-        (ModelConfiguration): The configuration details for the model 
+        The configuration details for the model 
         being linearised.
         &#34;&#34;&#34;
         return self.model.configuration
 
     @property
-    def equations_map(self) -&gt; dict:
+    def equations_map(self) -&gt; dict[tuple[str, int], list[tuple[str, int]]]:
         &#34;&#34;&#34;
-        (dict[tuple[str, int], list[tuple[str, int]]]): The map from each 
-        RHS variable in the model to the list of LHS variable (equations) 
-        that depend on it.
+        ### Overview
 
         This is only a public property to assist with unit testing.
         Do not use it directly for other purposes.
 
-        It is populated from the SYM processor output and is used to make
+        The map is populated from the SYM processor output and is used to make
         the calculation of partial derivatives more efficient, only calculating
         those derivatives that are not zero by definition.
+
+        ### Returns
+
+        The map from each RHS variable in the model to the list of 
+        LHS variables (equations) that depend on it.
         &#34;&#34;&#34;
         return self._equations_map
 
     def get_vector_by_name(self, vector_name) -&gt; np.ndarray:
         &#34;&#34;&#34;
+        ### Overview
+
         Use the name of the vector to retrieve its numpy array value.
-        These values have been set using the linearisation database.
+        These values have been set using data in the database.
+
+        ### Arguments
+
+        vector_name: The name of the LHS or RHS vector.
+        
+        ### Returns
+        
+        The named column vector.
+        
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_{}&#34;.format(vector_name)):
             raise Exception(&#34;There is no vector for {}&#34;.format(vector_name))
         return getattr(self, &#34;_{}&#34;.format(vector_name))
 
-    def get_base_lhs_vector_by_name(self, lhs_vector_name:str) -&gt; np.ndarray:
+    def get_original_lhs_vector_by_name(self, lhs_vector_name:str) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        This function is useful for benchmarking the model equation evaluations.
+
+        ### Overview
+
+        This function is useful for benchmarking the model&#39;s nonlinear equation evaluations.
 
         Use the name of the vector to retrieve its numpy array value.
         These values have been set by evaluating the model&#39;s non-linear equations
         using the RHS vector values for the base year chosen for the linearisation.
+
+        ### Arguments
+
+        lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+        
+        ### Returns
+        
+        The named LHS column vector.
+
         &#34;&#34;&#34;
-        if not lhs_vector_name in self._base_lhs_vectors:
+        if not lhs_vector_name in self._original_lhs_vectors:
             raise Exception(f&#34;The requested vector, {lhs_vector_name}, is not a LHS vector in the model.&#34;)
-        return self._base_lhs_vectors[lhs_vector_name]
+        return self._original_lhs_vectors[lhs_vector_name]
 
     def get_partials(self, lhs_vector_name:str, rhs_vector_name:str) -&gt; np.ndarray:
         &#34;&#34;&#34;
+
+        ### Overview
+
         Use the name of the LHS vector and the RHS vector to retrieve 
         the numpy matrix value for the partial derivatives.
-        
+
         The matrices of partial derivatives are stored in a dictionary indexed
         by the lhs and rhs vector names.
+
+        ### Arguments
+
+        lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+
+        rhs_vector_name: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
+
+        ### Returns
+        
+        The required partial derivatives as a dataframe 
+        with variable names as the row and column labels.
+
         &#34;&#34;&#34;
         if self._partial_derivatives is None:
             raise Exception(f&#34;Attempted to access partial derivatives {lhs_vector_name} on {rhs_vector_name} before it was created.&#34;)
@@ -791,11 +914,21 @@ year specified as part of the model configuration.</p></div>
 
     def get_partials_as_dataframe(self, lhs_vector_name, rhs_vector_name) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        Return the required partial derivatives with row and column labels that are variable names.
+
+        ### Arguments
+
+        lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+
+        rhs_vector_name: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
+
+        ### Returns
+        
+        The required partial derivatives as a dataframe 
+        with variable names as the row and column labels.
+
         &#34;&#34;&#34;
         if self._partial_derivatives is None:
-            raise Exception(
-                f&#34;Attempted to access partial derivatives {lhs_vector_name} on {rhs_vector_name} before it was created.&#34;)
+            raise Exception(f&#34;Attempted to access partial derivatives {lhs_vector_name} on {rhs_vector_name} before it was created.&#34;)
         key = (lhs_vector_name, rhs_vector_name)
         if key in self._partial_derivatives:
             result: pd.DataFrame = pd.DataFrame(self._partial_derivatives[key])
@@ -806,6 +939,8 @@ year specified as part of the model configuration.</p></div>
 
     def __configure_lhs_vectors(self):
         &#34;&#34;&#34;
+        ### Overview
+
         Create the LHS vectors that are used by the model equations.
         Initialise LHS vectors with zeros.
         &#34;&#34;&#34;
@@ -815,12 +950,15 @@ year specified as part of the model configuration.</p></div>
 
     def __load_rhs_vectors(self, linearisation_year: int):
         &#34;&#34;&#34;
+
+        ### Overview
+
         Create and set values for the RHS vectors that are used by the 
         model equations.
 
         Do not create vectors if they have no variables (are zero length).
 
-       ### Arguments
+        ### Arguments
 
         linearisation_year: The year in which the model is linearised.
         e.g. 2011 implies linearise model equations around the values
@@ -837,10 +975,13 @@ year specified as part of the model configuration.</p></div>
 
     def __compute_benchmark_equation_results(self):
         &#34;&#34;&#34;
+        ### Overview
+
         Compute the benchmark LHS vector values using supplied RHS values.
         These are used in computing the non-linear equations in the model.
         &#34;&#34;&#34;
-        self._base_lhs_vectors: dict[str, np.ndarray] = dict()
+
+        self._original_lhs_vectors: dict[str, np.ndarray] = dict()
         for lhs_vector_name in self.sym_data.lhs_vector_names:
             lhs_vector = getattr(self, &#34;_{}&#34;.format(lhs_vector_name))
             for lhs_index in range(len(lhs_vector)):
@@ -849,13 +990,14 @@ year specified as part of the model configuration.</p></div>
                     func = getattr(self.equations, function_name)
                     func()
                 else:
-                    # TODO: Reinstate this warning when we are done to ensure SYM models do not collect obsolete variables.
                     # logging.warning(&#34;No {} equation for element {}&#34;.format(lhs_vector_name, lhs_index))
                     pass
-            self._base_lhs_vectors[lhs_vector_name] = lhs_vector.copy()
+            self._original_lhs_vectors[lhs_vector_name] = lhs_vector.copy()
 
     def __load_equation_map(self):
         &#34;&#34;&#34;
+        ### Overview
+
         Uses the eqnmap output from the sym processor to create a map from each
         RHS variable (vector + index combination) to the equations that include
         that variable on the RHS.
@@ -897,13 +1039,18 @@ year specified as part of the model configuration.</p></div>
             else:
                 self._equations_map[rhs] = [lhs]
 
-    def compute_partial_derivatives(self):
+    def __compute_partial_derivatives(self):
         &#34;&#34;&#34;
+        ### Overview
+
         Generate the matrices that reflect the linear approximation
         to the model. The model is linearised around the data for 
         a specific year that is specified in the model configuration.
 
         Do not compute partial derivatives for any vectors with zero length.
+
+        Use the equation map to ensure that only non-zero partial derivatives
+        are calculated. The others are, obviously, zero.
         &#34;&#34;&#34;
 
         # Create the dictionary where the partial derivative matrices will be stored.
@@ -915,13 +1062,17 @@ year specified as part of the model configuration.</p></div>
             lhs_length = self.sym_data.vector_length(vector_name=lhs)
             if lhs_length == 0:
                 continue
+
             for rhs in self.sym_data.rhs_vector_names:
                 rhs_length = self.sym_data.vector_length(vector_name=rhs)
                 if rhs_length == 0:
                     continue
-                self._partial_derivatives[(lhs, rhs)] = np.zeros(shape=(lhs_length, rhs_length), dtype=float)
+                self._partial_derivatives[(lhs, rhs)] = np.zeros((lhs_length, rhs_length), dtype=float)
 
         for rhs in self.sym_data.rhs_vector_names:
+
+            start_time: float = time.time()
+
             rhs_length = self.sym_data.vector_length(vector_name=rhs)
             if rhs_length == 0:
                 continue
@@ -933,33 +1084,41 @@ year specified as part of the model configuration.</p></div>
 
                  if (rhs, rhs_index) in self._equations_map:
 
-                    original_value: float = rhs_vector[rhs_index].copy()
+                    original_RHS_value: float = rhs_vector[rhs_index].copy()
 
                     # Compute the partial by incrementing by delta then restore original value.
-                    rhs_vector[rhs_index] = original_value + CONSTANTS.delta
+                    rhs_vector[rhs_index] = original_RHS_value + Constants().DELTA
 
                     # Iterate all equations that use the RHS variable to compute the partial derivatives.
                     for (lhs, lhs_index) in self._equations_map[(rhs, rhs_index)]:
 
-                        # Run the relevant function to evaluate the model equation at the adjusted
-                        # RHS variable value.
+                        # Run the relevant function to evaluate the model equation 
+                        # at the adjusted RHS variable value.
                         func = getattr(self.equations, f&#34;{lhs}_{lhs_index}&#34;)
                         func()
 
-                        perturbed_value = self.get_vector_by_name(vector_name=lhs)[lhs_index]
-                        base_value = self.get_base_lhs_vector_by_name(lhs_vector_name=lhs)[lhs_index]
-                        partial_derivative: float = ((perturbed_value - base_value) / CONSTANTS.delta)
+                        perturbed_LHS_value: float = self.get_vector_by_name(vector_name=lhs)[lhs_index]
+                        original_LHS_value: float = self.get_original_lhs_vector_by_name(lhs_vector_name=lhs)[lhs_index]
+                        partial_derivative: float = ((perturbed_LHS_value - original_LHS_value) / Constants().DELTA)
 
                         # Store the value of the derivative in the partial derivatives matrix at the
                         # appropriate row and column index.
                         self.get_partials(lhs_vector_name=lhs, rhs_vector_name=rhs)[lhs_index, rhs_index] = partial_derivative
 
-                    rhs_vector[rhs_index] = original_value
+                    rhs_vector[rhs_index] = original_RHS_value
+
+            elapsed_time: float = time.time()- start_time
+            if elapsed_time &gt; 5:
+                execution_time: str = &#34;{:.3f}&#34;.format(elapsed_time)
+                logging.info(f&#34;Partial derivatives wrt variables in the {rhs} vector took {execution_time} seconds to calculate.&#34;)
+
 
         self._linear_model_is_available = True
 
     def __generate_nonlinear_equation_differences(self):
         &#34;&#34;&#34;
+        ### Overview
+        
         Generate a report of the differences between observed values and 
         non-linear equation solutions used in model linearisation.
         &#34;&#34;&#34;
@@ -985,7 +1144,7 @@ year specified as part of the model configuration.</p></div>
             ze_diff,
             z1_diff,
             exo_diff])
-        database_ordered_variable_list: pd.DataFrame = self._linearisation_database.variables.name
+        database_ordered_variable_list: pd.DataFrame = self.linearisation_database.variables.name
         self._nonlinear_equation_differences = pd.concat([database_ordered_variable_list, diffs], axis=1)
         self._nonlinear_equation_differences.drop(&#39;name&#39;, inplace=True, axis=1)
         self._nonlinear_equation_differences.insert(loc=0, column=&#39;vector&#39;, value=self.sym_data.combined_variable_summary.loc[:, &#39;vector&#39;])
@@ -994,7 +1153,7 @@ year specified as part of the model configuration.</p></div>
     @property
     def nonlinear_equation_differences(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        (pd.DataFrame): Details about the differences between the LHS and RHS values for all
+        Details about the differences between the LHS and RHS values for all
         endogenous variables as at the point of linearisation. This is only used for unit testing
         purposes.
         &#34;&#34;&#34;
@@ -1009,7 +1168,7 @@ year specified as part of the model configuration.</p></div>
 <dl>
 <dt id="gcubed.linearisation.linear_model.LinearModel.configuration"><code class="name">var <span class="ident">configuration</span> : <a title="gcubed.model_configuration.ModelConfiguration" href="../model_configuration.html#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a></code></dt>
 <dd>
-<div class="desc"><p>(ModelConfiguration): The configuration details for the model
+<div class="desc"><p>The configuration details for the model
 being linearised.</p></div>
 <details class="source">
 <summary>
@@ -1018,7 +1177,7 @@ being linearised.</p></div>
 <pre><code class="python">@property
 def configuration(self) -&gt; ModelConfiguration:
     &#34;&#34;&#34;
-    (ModelConfiguration): The configuration details for the model 
+    The configuration details for the model 
     being linearised.
     &#34;&#34;&#34;
     return self.model.configuration</code></pre>
@@ -1041,33 +1200,37 @@ def equations(self):
     return self._equations</code></pre>
 </details>
 </dd>
-<dt id="gcubed.linearisation.linear_model.LinearModel.equations_map"><code class="name">var <span class="ident">equations_map</span> : dict</code></dt>
+<dt id="gcubed.linearisation.linear_model.LinearModel.equations_map"><code class="name">var <span class="ident">equations_map</span> : dict[tuple[str, int], list[tuple[str, int]]]</code></dt>
 <dd>
-<div class="desc"><p>(dict[tuple[str, int], list[tuple[str, int]]]): The map from each
-RHS variable in the model to the list of LHS variable (equations)
-that depend on it.</p>
+<div class="desc"><h3 id="overview">Overview</h3>
 <p>This is only a public property to assist with unit testing.
 Do not use it directly for other purposes.</p>
-<p>It is populated from the SYM processor output and is used to make
+<p>The map is populated from the SYM processor output and is used to make
 the calculation of partial derivatives more efficient, only calculating
-those derivatives that are not zero by definition.</p></div>
+those derivatives that are not zero by definition.</p>
+<h3 id="returns">Returns</h3>
+<p>The map from each RHS variable in the model to the list of
+LHS variables (equations) that depend on it.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def equations_map(self) -&gt; dict:
+def equations_map(self) -&gt; dict[tuple[str, int], list[tuple[str, int]]]:
     &#34;&#34;&#34;
-    (dict[tuple[str, int], list[tuple[str, int]]]): The map from each 
-    RHS variable in the model to the list of LHS variable (equations) 
-    that depend on it.
+    ### Overview
 
     This is only a public property to assist with unit testing.
     Do not use it directly for other purposes.
 
-    It is populated from the SYM processor output and is used to make
+    The map is populated from the SYM processor output and is used to make
     the calculation of partial derivatives more efficient, only calculating
     those derivatives that are not zero by definition.
+
+    ### Returns
+
+    The map from each RHS variable in the model to the list of 
+    LHS variables (equations) that depend on it.
     &#34;&#34;&#34;
     return self._equations_map</code></pre>
 </details>
@@ -1127,7 +1290,7 @@ def model(self):
 </dd>
 <dt id="gcubed.linearisation.linear_model.LinearModel.nonlinear_equation_differences"><code class="name">var <span class="ident">nonlinear_equation_differences</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
-<div class="desc"><p>(pd.DataFrame): Details about the differences between the LHS and RHS values for all
+<div class="desc"><p>Details about the differences between the LHS and RHS values for all
 endogenous variables as at the point of linearisation. This is only used for unit testing
 purposes.</p></div>
 <details class="source">
@@ -1137,7 +1300,7 @@ purposes.</p></div>
 <pre><code class="python">@property
 def nonlinear_equation_differences(self) -&gt; pd.DataFrame:
     &#34;&#34;&#34;
-    (pd.DataFrame): Details about the differences between the LHS and RHS values for all
+    Details about the differences between the LHS and RHS values for all
     endogenous variables as at the point of linearisation. This is only used for unit testing
     purposes.
     &#34;&#34;&#34;
@@ -1147,7 +1310,7 @@ def nonlinear_equation_differences(self) -&gt; pd.DataFrame:
 </dd>
 <dt id="gcubed.linearisation.linear_model.LinearModel.sym_data"><code class="name">var <span class="ident">sym_data</span> : <a title="gcubed.sym_data.SymData" href="../sym_data.html#gcubed.sym_data.SymData">SymData</a></code></dt>
 <dd>
-<div class="desc"><p>(SymData): The SYM data for the model being linearised.</p></div>
+<div class="desc"><p>The SYM data for the model being linearised.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1155,7 +1318,7 @@ def nonlinear_equation_differences(self) -&gt; pd.DataFrame:
 <pre><code class="python">@property
 def sym_data(self) -&gt; SymData:
     &#34;&#34;&#34;
-    (SymData): The SYM data for the model being linearised.
+    The SYM data for the model being linearised.
     &#34;&#34;&#34;
     return self.model.sym_data</code></pre>
 </details>
@@ -1163,124 +1326,89 @@ def sym_data(self) -&gt; SymData:
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="gcubed.linearisation.linear_model.LinearModel.compute_partial_derivatives"><code class="name flex">
-<span>def <span class="ident">compute_partial_derivatives</span></span>(<span>self)</span>
+<dt id="gcubed.linearisation.linear_model.LinearModel.get_original_lhs_vector_by_name"><code class="name flex">
+<span>def <span class="ident">get_original_lhs_vector_by_name</span></span>(<span>self, lhs_vector_name: str) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Generate the matrices that reflect the linear approximation
-to the model. The model is linearised around the data for
-a specific year that is specified in the model configuration.</p>
-<p>Do not compute partial derivatives for any vectors with zero length.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def compute_partial_derivatives(self):
-    &#34;&#34;&#34;
-    Generate the matrices that reflect the linear approximation
-    to the model. The model is linearised around the data for 
-    a specific year that is specified in the model configuration.
-
-    Do not compute partial derivatives for any vectors with zero length.
-    &#34;&#34;&#34;
-
-    # Create the dictionary where the partial derivative matrices will be stored.
-    self._partial_derivatives: dict[tuple[str, str], np.ndarray] = dict()
-
-    # Initialise the matrices of partial derivatives
-
-    for lhs in self.sym_data.lhs_vector_names:
-        lhs_length = self.sym_data.vector_length(vector_name=lhs)
-        if lhs_length == 0:
-            continue
-        for rhs in self.sym_data.rhs_vector_names:
-            rhs_length = self.sym_data.vector_length(vector_name=rhs)
-            if rhs_length == 0:
-                continue
-            self._partial_derivatives[(lhs, rhs)] = np.zeros(shape=(lhs_length, rhs_length), dtype=float)
-
-    for rhs in self.sym_data.rhs_vector_names:
-        rhs_length = self.sym_data.vector_length(vector_name=rhs)
-        if rhs_length == 0:
-            continue
-
-        # Get the vector of RHS variables in the named rhs vector
-        rhs_vector = self.get_vector_by_name(vector_name=rhs)
-        
-        for rhs_index in range(rhs_length):
-
-             if (rhs, rhs_index) in self._equations_map:
-
-                original_value: float = rhs_vector[rhs_index].copy()
-
-                # Compute the partial by incrementing by delta then restore original value.
-                rhs_vector[rhs_index] = original_value + CONSTANTS.delta
-
-                # Iterate all equations that use the RHS variable to compute the partial derivatives.
-                for (lhs, lhs_index) in self._equations_map[(rhs, rhs_index)]:
-
-                    # Run the relevant function to evaluate the model equation at the adjusted
-                    # RHS variable value.
-                    func = getattr(self.equations, f&#34;{lhs}_{lhs_index}&#34;)
-                    func()
-
-                    perturbed_value = self.get_vector_by_name(vector_name=lhs)[lhs_index]
-                    base_value = self.get_base_lhs_vector_by_name(lhs_vector_name=lhs)[lhs_index]
-                    partial_derivative: float = ((perturbed_value - base_value) / CONSTANTS.delta)
-
-                    # Store the value of the derivative in the partial derivatives matrix at the
-                    # appropriate row and column index.
-                    self.get_partials(lhs_vector_name=lhs, rhs_vector_name=rhs)[lhs_index, rhs_index] = partial_derivative
-
-                rhs_vector[rhs_index] = original_value
-
-    self._linear_model_is_available = True</code></pre>
-</details>
-</dd>
-<dt id="gcubed.linearisation.linear_model.LinearModel.get_base_lhs_vector_by_name"><code class="name flex">
-<span>def <span class="ident">get_base_lhs_vector_by_name</span></span>(<span>self, lhs_vector_name: str) ‑> numpy.ndarray</span>
-</code></dt>
-<dd>
-<div class="desc"><p>This function is useful for benchmarking the model equation evaluations.</p>
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>This function is useful for benchmarking the model's nonlinear equation evaluations.</p>
 <p>Use the name of the vector to retrieve its numpy array value.
 These values have been set by evaluating the model's non-linear equations
-using the RHS vector values for the base year chosen for the linearisation.</p></div>
+using the RHS vector values for the base year chosen for the linearisation.</p>
+<h3 id="arguments">Arguments</h3>
+<p>lhs_vector_name: The name of the LHS vector, e.g. 'x1l' or 'j1l'.</p>
+<h3 id="returns">Returns</h3>
+<p>The named LHS column vector.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_base_lhs_vector_by_name(self, lhs_vector_name:str) -&gt; np.ndarray:
+<pre><code class="python">def get_original_lhs_vector_by_name(self, lhs_vector_name:str) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    This function is useful for benchmarking the model equation evaluations.
+
+    ### Overview
+
+    This function is useful for benchmarking the model&#39;s nonlinear equation evaluations.
 
     Use the name of the vector to retrieve its numpy array value.
     These values have been set by evaluating the model&#39;s non-linear equations
     using the RHS vector values for the base year chosen for the linearisation.
+
+    ### Arguments
+
+    lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+    
+    ### Returns
+    
+    The named LHS column vector.
+
     &#34;&#34;&#34;
-    if not lhs_vector_name in self._base_lhs_vectors:
+    if not lhs_vector_name in self._original_lhs_vectors:
         raise Exception(f&#34;The requested vector, {lhs_vector_name}, is not a LHS vector in the model.&#34;)
-    return self._base_lhs_vectors[lhs_vector_name]</code></pre>
+    return self._original_lhs_vectors[lhs_vector_name]</code></pre>
 </details>
 </dd>
 <dt id="gcubed.linearisation.linear_model.LinearModel.get_partials"><code class="name flex">
 <span>def <span class="ident">get_partials</span></span>(<span>self, lhs_vector_name: str, rhs_vector_name: str) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Use the name of the LHS vector and the RHS vector to retrieve
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Use the name of the LHS vector and the RHS vector to retrieve
 the numpy matrix value for the partial derivatives.</p>
 <p>The matrices of partial derivatives are stored in a dictionary indexed
-by the lhs and rhs vector names.</p></div>
+by the lhs and rhs vector names.</p>
+<h3 id="arguments">Arguments</h3>
+<p>lhs_vector_name: The name of the LHS vector, e.g. 'x1l' or 'j1l'.</p>
+<p>rhs_vector_name: The name of the RHS vector, e.g. 'yxr' or 'j1r'.</p>
+<h3 id="returns">Returns</h3>
+<p>The required partial derivatives as a dataframe
+with variable names as the row and column labels.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_partials(self, lhs_vector_name:str, rhs_vector_name:str) -&gt; np.ndarray:
     &#34;&#34;&#34;
+
+    ### Overview
+
     Use the name of the LHS vector and the RHS vector to retrieve 
     the numpy matrix value for the partial derivatives.
-    
+
     The matrices of partial derivatives are stored in a dictionary indexed
     by the lhs and rhs vector names.
+
+    ### Arguments
+
+    lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+
+    rhs_vector_name: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
+
+    ### Returns
+    
+    The required partial derivatives as a dataframe 
+    with variable names as the row and column labels.
+
     &#34;&#34;&#34;
     if self._partial_derivatives is None:
         raise Exception(f&#34;Attempted to access partial derivatives {lhs_vector_name} on {rhs_vector_name} before it was created.&#34;)
@@ -1294,18 +1422,33 @@ by the lhs and rhs vector names.</p></div>
 <span>def <span class="ident">get_partials_as_dataframe</span></span>(<span>self, lhs_vector_name, rhs_vector_name) ‑> pandas.core.frame.DataFrame</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return the required partial derivatives with row and column labels that are variable names.</p></div>
+<div class="desc"><h3 id="arguments">Arguments</h3>
+<p>lhs_vector_name: The name of the LHS vector, e.g. 'x1l' or 'j1l'.</p>
+<p>rhs_vector_name: The name of the RHS vector, e.g. 'yxr' or 'j1r'.</p>
+<h3 id="returns">Returns</h3>
+<p>The required partial derivatives as a dataframe
+with variable names as the row and column labels.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_partials_as_dataframe(self, lhs_vector_name, rhs_vector_name) -&gt; pd.DataFrame:
     &#34;&#34;&#34;
-    Return the required partial derivatives with row and column labels that are variable names.
+
+    ### Arguments
+
+    lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+
+    rhs_vector_name: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
+
+    ### Returns
+    
+    The required partial derivatives as a dataframe 
+    with variable names as the row and column labels.
+
     &#34;&#34;&#34;
     if self._partial_derivatives is None:
-        raise Exception(
-            f&#34;Attempted to access partial derivatives {lhs_vector_name} on {rhs_vector_name} before it was created.&#34;)
+        raise Exception(f&#34;Attempted to access partial derivatives {lhs_vector_name} on {rhs_vector_name} before it was created.&#34;)
     key = (lhs_vector_name, rhs_vector_name)
     if key in self._partial_derivatives:
         result: pd.DataFrame = pd.DataFrame(self._partial_derivatives[key])
@@ -1319,16 +1462,32 @@ by the lhs and rhs vector names.</p></div>
 <span>def <span class="ident">get_vector_by_name</span></span>(<span>self, vector_name) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Use the name of the vector to retrieve its numpy array value.
-These values have been set using the linearisation database.</p></div>
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Use the name of the vector to retrieve its numpy array value.
+These values have been set using data in the database.</p>
+<h3 id="arguments">Arguments</h3>
+<p>vector_name: The name of the LHS or RHS vector.</p>
+<h3 id="returns">Returns</h3>
+<p>The named column vector.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_vector_by_name(self, vector_name) -&gt; np.ndarray:
     &#34;&#34;&#34;
+    ### Overview
+
     Use the name of the vector to retrieve its numpy array value.
-    These values have been set using the linearisation database.
+    These values have been set using data in the database.
+
+    ### Arguments
+
+    vector_name: The name of the LHS or RHS vector.
+    
+    ### Returns
+    
+    The named column vector.
+    
     &#34;&#34;&#34;
     if not hasattr(self, &#34;_{}&#34;.format(vector_name)):
         raise Exception(&#34;There is no vector for {}&#34;.format(vector_name))
@@ -1366,11 +1525,10 @@ These values have been set using the linearisation database.</p></div>
 <li>
 <h4><code><a title="gcubed.linearisation.linear_model.LinearModel" href="#gcubed.linearisation.linear_model.LinearModel">LinearModel</a></code></h4>
 <ul class="">
-<li><code><a title="gcubed.linearisation.linear_model.LinearModel.compute_partial_derivatives" href="#gcubed.linearisation.linear_model.LinearModel.compute_partial_derivatives">compute_partial_derivatives</a></code></li>
 <li><code><a title="gcubed.linearisation.linear_model.LinearModel.configuration" href="#gcubed.linearisation.linear_model.LinearModel.configuration">configuration</a></code></li>
 <li><code><a title="gcubed.linearisation.linear_model.LinearModel.equations" href="#gcubed.linearisation.linear_model.LinearModel.equations">equations</a></code></li>
 <li><code><a title="gcubed.linearisation.linear_model.LinearModel.equations_map" href="#gcubed.linearisation.linear_model.LinearModel.equations_map">equations_map</a></code></li>
-<li><code><a title="gcubed.linearisation.linear_model.LinearModel.get_base_lhs_vector_by_name" href="#gcubed.linearisation.linear_model.LinearModel.get_base_lhs_vector_by_name">get_base_lhs_vector_by_name</a></code></li>
+<li><code><a title="gcubed.linearisation.linear_model.LinearModel.get_original_lhs_vector_by_name" href="#gcubed.linearisation.linear_model.LinearModel.get_original_lhs_vector_by_name">get_original_lhs_vector_by_name</a></code></li>
 <li><code><a title="gcubed.linearisation.linear_model.LinearModel.get_partials" href="#gcubed.linearisation.linear_model.LinearModel.get_partials">get_partials</a></code></li>
 <li><code><a title="gcubed.linearisation.linear_model.LinearModel.get_partials_as_dataframe" href="#gcubed.linearisation.linear_model.LinearModel.get_partials_as_dataframe">get_partials_as_dataframe</a></code></li>
 <li><code><a title="gcubed.linearisation.linear_model.LinearModel.get_vector_by_name" href="#gcubed.linearisation.linear_model.LinearModel.get_vector_by_name">get_vector_by_name</a></code></li>

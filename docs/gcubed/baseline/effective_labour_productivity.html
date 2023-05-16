@@ -195,8 +195,8 @@ class EffectiveLabourProductivity(Base):
 
             # logging.debug(f&#34;{region} deviations\n{effective_productivity_deviations}&#34;)
 
-            effective_productivity_deviations_in_base_year = effective_productivity_deviations.loc[:, [str(self.configuration.projection_base_year)]].copy().to_numpy()
-            effective_productivity_deviations.iloc[:,:] = effective_productivity_deviations.to_numpy() - effective_productivity_deviations_in_base_year
+            effective_productivity_deviations_in_first_projection_year: np.ndarray = effective_productivity_deviations.loc[:, [str(self.configuration.first_projection_year)]].copy().to_numpy()
+            effective_productivity_deviations.iloc[:,:] = effective_productivity_deviations.to_numpy() - effective_productivity_deviations_in_first_projection_year
             self._effective_productivity_deviations[region] = effective_productivity_deviations
 
 
@@ -225,14 +225,14 @@ class EffectiveLabourProductivity(Base):
         Then take the t minus t-1 difference of that dataframe, using zeros for t-1 for the start year.
         weight the change in the values for each year, from the previous year, using the weights computed from OUP for the region we are calculating data for.
         &#34;&#34;&#34;
-        self._rogy: pd.DataFrame = pd.DataFrame(0, index=self.sym_data.regions_members, columns=self.configuration.start_to_end_year_column_labels)
+        self._rogy: pd.DataFrame = pd.DataFrame(0, index=self.sym_data.regions_members, columns=self.configuration.projection_years_column_labels)
 
         # Get the OUP data for each region/sector combination to create the weights dataframe
         weights: pd.DataFrame = pd.DataFrame(0, index=self.sym_data.sectors_members, columns=self.sym_data.regions_members)
 
         decimal.getcontext().prec = 10
         for region in self.sym_data.regions_members:
-            oup: pd.DataFrame = self.calibration_database.get_data(name_regular_expression=f&#34;^OUP\(.*{region}.*$&#34;, years=self.configuration.projection_base_year)
+            oup: pd.DataFrame = self.calibration_database.get_data(name_regular_expression=f&#34;^OUP\(.*{region}.*$&#34;, years=self.configuration.first_projection_year)
             region_weights = oup / oup.sum(axis=0)
             w = region_weights.to_numpy().reshape(1,self.sym_data.sectors_count)
             weights.loc[:, [region]] = np.transpose(w)
@@ -245,8 +245,8 @@ class EffectiveLabourProductivity(Base):
             # region_SHL = region_SHL.drop(self.sym_data.capital_sectors_members, axis=0)
 
             # Calculate the first difference in the US SHL data.
-            lagged_region_SHL = region_SHL.copy().drop(str(self.configuration.end_year), axis=1)
-            lagged_region_SHL.insert(loc=0, column=str(self.configuration.start_year-1), value = 0)
+            lagged_region_SHL = region_SHL.copy().drop(str(self.configuration.last_projection_year), axis=1)
+            lagged_region_SHL.insert(loc=0, column=str(self.configuration.first_projection_year-1), value = 0)
             lagged_region_SHL.columns = region_SHL.columns
             region_SHL_first_difference = (region_SHL - lagged_region_SHL).to_numpy()
             self._rogy.loc[[region], :] = w @ region_SHL_first_difference
@@ -434,8 +434,8 @@ for all regions and all sectors within each region including sector Y and sector
 
             # logging.debug(f&#34;{region} deviations\n{effective_productivity_deviations}&#34;)
 
-            effective_productivity_deviations_in_base_year = effective_productivity_deviations.loc[:, [str(self.configuration.projection_base_year)]].copy().to_numpy()
-            effective_productivity_deviations.iloc[:,:] = effective_productivity_deviations.to_numpy() - effective_productivity_deviations_in_base_year
+            effective_productivity_deviations_in_first_projection_year: np.ndarray = effective_productivity_deviations.loc[:, [str(self.configuration.first_projection_year)]].copy().to_numpy()
+            effective_productivity_deviations.iloc[:,:] = effective_productivity_deviations.to_numpy() - effective_productivity_deviations_in_first_projection_year
             self._effective_productivity_deviations[region] = effective_productivity_deviations
 
 
@@ -464,14 +464,14 @@ for all regions and all sectors within each region including sector Y and sector
         Then take the t minus t-1 difference of that dataframe, using zeros for t-1 for the start year.
         weight the change in the values for each year, from the previous year, using the weights computed from OUP for the region we are calculating data for.
         &#34;&#34;&#34;
-        self._rogy: pd.DataFrame = pd.DataFrame(0, index=self.sym_data.regions_members, columns=self.configuration.start_to_end_year_column_labels)
+        self._rogy: pd.DataFrame = pd.DataFrame(0, index=self.sym_data.regions_members, columns=self.configuration.projection_years_column_labels)
 
         # Get the OUP data for each region/sector combination to create the weights dataframe
         weights: pd.DataFrame = pd.DataFrame(0, index=self.sym_data.sectors_members, columns=self.sym_data.regions_members)
 
         decimal.getcontext().prec = 10
         for region in self.sym_data.regions_members:
-            oup: pd.DataFrame = self.calibration_database.get_data(name_regular_expression=f&#34;^OUP\(.*{region}.*$&#34;, years=self.configuration.projection_base_year)
+            oup: pd.DataFrame = self.calibration_database.get_data(name_regular_expression=f&#34;^OUP\(.*{region}.*$&#34;, years=self.configuration.first_projection_year)
             region_weights = oup / oup.sum(axis=0)
             w = region_weights.to_numpy().reshape(1,self.sym_data.sectors_count)
             weights.loc[:, [region]] = np.transpose(w)
@@ -484,8 +484,8 @@ for all regions and all sectors within each region including sector Y and sector
             # region_SHL = region_SHL.drop(self.sym_data.capital_sectors_members, axis=0)
 
             # Calculate the first difference in the US SHL data.
-            lagged_region_SHL = region_SHL.copy().drop(str(self.configuration.end_year), axis=1)
-            lagged_region_SHL.insert(loc=0, column=str(self.configuration.start_year-1), value = 0)
+            lagged_region_SHL = region_SHL.copy().drop(str(self.configuration.last_projection_year), axis=1)
+            lagged_region_SHL.insert(loc=0, column=str(self.configuration.first_projection_year-1), value = 0)
             lagged_region_SHL.columns = region_SHL.columns
             region_SHL_first_difference = (region_SHL - lagged_region_SHL).to_numpy()
             self._rogy.loc[[region], :] = w @ region_SHL_first_difference

@@ -30,8 +30,6 @@
 # Purpose: Manage loading and provision of linearisation database.
 # Author: Geoff Shuetrim
 # ------------------------------------------------------------------
-
-from __future__ import annotations
 import logging
 import pandas as pd
 import numpy as np
@@ -69,7 +67,7 @@ class GDPScaledDatabase(Database):
         else:
             self._base_year = base_year
         self._data = self.data / 100
-        self.multiply_data_by_gdp_ratio()
+        self.__multiply_data_by_gdp_ratio()
 
         self.__validate()
 
@@ -81,11 +79,12 @@ class GDPScaledDatabase(Database):
     def configuration(self) -&gt; ModelConfiguration:
         return self._configuration
 
-    def multiply_data_by_gdp_ratio(self):
+    def __multiply_data_by_gdp_ratio(self):
         &#34;&#34;&#34;
         Scale &#39;gdp&#39; units data for each region by the ratio of 
-        that region&#39;s real GDP to US real GDP, as in the database&#39;s base year.
-        Perform this function before the model linearisation occurs.
+        that region&#39;s real GDP to US real GDP, in the database&#39;s base year.
+        Perform this function before using the database for linearisation or
+        for projections.
 
         TODO: Should we apply this scaling factor using the ratio 
         for the same year as the data being scaled rather than using 
@@ -128,7 +127,7 @@ class GDPScaledDatabase(Database):
 <dl>
 <dt id="gcubed.data.gdp_scaled_database.GDPScaledDatabase"><code class="flex name class">
 <span>class <span class="ident">GDPScaledDatabase</span></span>
-<span>(</span><span>database: Database, base_year: int)</span>
+<span>(</span><span>database: <a title="gcubed.data.database.Database" href="database.html#gcubed.data.database.Database">Database</a>, base_year: int)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Encapsulates all of the information about the linearisation data used by a Model.</p>
@@ -173,7 +172,7 @@ base_year: the base year for the database.
         else:
             self._base_year = base_year
         self._data = self.data / 100
-        self.multiply_data_by_gdp_ratio()
+        self.__multiply_data_by_gdp_ratio()
 
         self.__validate()
 
@@ -185,11 +184,12 @@ base_year: the base year for the database.
     def configuration(self) -&gt; ModelConfiguration:
         return self._configuration
 
-    def multiply_data_by_gdp_ratio(self):
+    def __multiply_data_by_gdp_ratio(self):
         &#34;&#34;&#34;
         Scale &#39;gdp&#39; units data for each region by the ratio of 
-        that region&#39;s real GDP to US real GDP, as in the database&#39;s base year.
-        Perform this function before the model linearisation occurs.
+        that region&#39;s real GDP to US real GDP, in the database&#39;s base year.
+        Perform this function before using the database for linearisation or
+        for projections.
 
         TODO: Should we apply this scaling factor using the ratio 
         for the same year as the data being scaled rather than using 
@@ -225,50 +225,6 @@ base_year: the base year for the database.
 <li><a title="gcubed.data.database.Database" href="database.html#gcubed.data.database.Database">Database</a></li>
 <li><a title="gcubed.base.Base" href="../base.html#gcubed.base.Base">Base</a></li>
 </ul>
-<h3>Methods</h3>
-<dl>
-<dt id="gcubed.data.gdp_scaled_database.GDPScaledDatabase.multiply_data_by_gdp_ratio"><code class="name flex">
-<span>def <span class="ident">multiply_data_by_gdp_ratio</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Scale 'gdp' units data for each region by the ratio of
-that region's real GDP to US real GDP, as in the database's base year.
-Perform this function before the model linearisation occurs.</p>
-<p>TODO: Should we apply this scaling factor using the ratio
-for the same year as the data being scaled rather than using
-the one ratio from the base year for all years in the database?</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def multiply_data_by_gdp_ratio(self):
-    &#34;&#34;&#34;
-    Scale &#39;gdp&#39; units data for each region by the ratio of 
-    that region&#39;s real GDP to US real GDP, as in the database&#39;s base year.
-    Perform this function before the model linearisation occurs.
-
-    TODO: Should we apply this scaling factor using the ratio 
-    for the same year as the data being scaled rather than using 
-    the one ratio from the base year for all years in the database?
-    &#34;&#34;&#34;
-
-    regions: list[str] = self._sym_data.regions_members
-
-    # Get the GDP ratios for all regions
-    yratr_data = self.data.loc[self.variables.name.str.startswith(&#34;YRATR(&#34;), str(self.base_year)].copy()
-    yratr_data.index = regions
-
-    # Iterate over regions, selecting the data to scale by each region
-    # This will scale all variables with units equal to gdp, mmtgdp, btugdp, or gwhgdp but not the usgdp unit vars that are all the YRAT variables.
-    variables_to_scale = (~(self.variables.name.str.contains(&#34;^YRAT.\(&#34;)) &amp; self.variables.units.str.contains(&#34;gdp&#34;))
-    for region in regions:
-        scale_ratio = yratr_data.loc[region]
-        regions_to_scale = self.variables.loc[:, &#34;region&#34;] == region
-        rows_to_scale = (variables_to_scale &amp; regions_to_scale)
-        self.data.loc[rows_to_scale, :] = self.data.loc[rows_to_scale, :] * scale_ratio</code></pre>
-</details>
-</dd>
-</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="gcubed.data.database.Database" href="database.html#gcubed.data.database.Database">Database</a></b></code>:
@@ -277,12 +233,14 @@ the one ratio from the base year for all years in the database?</p></div>
 <li><code><a title="gcubed.data.database.Database.configuration" href="database.html#gcubed.data.database.Database.configuration">configuration</a></code></li>
 <li><code><a title="gcubed.data.database.Database.data" href="database.html#gcubed.data.database.Database.data">data</a></code></li>
 <li><code><a title="gcubed.data.database.Database.export_to_csv" href="database.html#gcubed.data.database.Database.export_to_csv">export_to_csv</a></code></li>
+<li><code><a title="gcubed.data.database.Database.first_available_year" href="database.html#gcubed.data.database.Database.first_available_year">first_available_year</a></code></li>
 <li><code><a title="gcubed.data.database.Database.get_data" href="database.html#gcubed.data.database.Database.get_data">get_data</a></code></li>
 <li><code><a title="gcubed.data.database.Database.get_data_and_varmap_indices" href="database.html#gcubed.data.database.Database.get_data_and_varmap_indices">get_data_and_varmap_indices</a></code></li>
 <li><code><a title="gcubed.data.database.Database.get_data_and_varmap_indices_for_matching_variables" href="database.html#gcubed.data.database.Database.get_data_and_varmap_indices_for_matching_variables">get_data_and_varmap_indices_for_matching_variables</a></code></li>
 <li><code><a title="gcubed.data.database.Database.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.data.database.Database.has_data" href="database.html#gcubed.data.database.Database.has_data">has_data</a></code></li>
 <li><code><a title="gcubed.data.database.Database.has_data_for_all_projection_years" href="database.html#gcubed.data.database.Database.has_data_for_all_projection_years">has_data_for_all_projection_years</a></code></li>
+<li><code><a title="gcubed.data.database.Database.last_available_year" href="database.html#gcubed.data.database.Database.last_available_year">last_available_year</a></code></li>
 <li><code><a title="gcubed.data.database.Database.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
 <li><code><a title="gcubed.data.database.Database.rebase" href="database.html#gcubed.data.database.Database.rebase">rebase</a></code></li>
 <li><code><a title="gcubed.data.database.Database.rhs_vector_value" href="database.html#gcubed.data.database.Database.rhs_vector_value">rhs_vector_value</a></code></li>
@@ -315,9 +273,6 @@ the one ratio from the base year for all years in the database?</p></div>
 <ul>
 <li>
 <h4><code><a title="gcubed.data.gdp_scaled_database.GDPScaledDatabase" href="#gcubed.data.gdp_scaled_database.GDPScaledDatabase">GDPScaledDatabase</a></code></h4>
-<ul class="">
-<li><code><a title="gcubed.data.gdp_scaled_database.GDPScaledDatabase.multiply_data_by_gdp_ratio" href="#gcubed.data.gdp_scaled_database.GDPScaledDatabase.multiply_data_by_gdp_ratio">multiply_data_by_gdp_ratio</a></code></li>
-</ul>
 </li>
 </ul>
 </li>

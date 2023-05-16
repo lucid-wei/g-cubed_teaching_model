@@ -36,7 +36,7 @@ import os.path
 import pandas as pd
 from gcubed.base import Base
 from gcubed.model_configuration import ModelConfiguration
-import gcubed.constants as CONSTANTS
+from gcubed.constants import Constants
 from gcubed.sym_data import SymData
 
 class Productivity(Base):
@@ -72,14 +72,11 @@ class Productivity(Base):
         assert self.label_regional_sector_ratio_to_us is not None
 
         # The productivity information must extend to the end year for the simulations
-        if not self.configuration.end_year == int(
-            self._us_productivity_growth_rates.columns[-1]):
-            logging.warn(f&#34;The end year for productivity projections, {self.configuration.end_year}, does not match the final year, {self._us_productivity_growth_rates.columns[-1]}, of the productivity data in {self._filename}&#34;)
+        if not self.configuration.last_projection_year == int(self._us_productivity_growth_rates.columns[-1]):
+            logging.warn(f&#34;The end year for productivity projections, {self.configuration.last_projection_year}, does not match the final year, {self._us_productivity_growth_rates.columns[-1]}, of the productivity data in {self._filename}&#34;)
 
         # Make sure the productivity data starts early enough to include the years specified in the model configuration.
-        assert str(self.configuration.projection_base_year) in self._data_column_names
-        assert str(self.configuration.start_year) in self._data_column_names
-        assert str(self.configuration._last_available_year) in self._data_column_names
+        assert str(self.configuration.original_first_projection_year) in self._data_column_names
 
     @property
     def configuration(self):
@@ -151,7 +148,7 @@ class Productivity(Base):
             raise Exception(f&#34;The US sector productivity data is available for {us_productivity_rows} sectors but the model has {self.sym_data.sectors_count} sectors.&#34;)
         self._us_productivity_growth_rates = self._input.iloc[us_productivity_rows, table_columns].copy()
         self._us_productivity_growth_rates = self._us_productivity_growth_rates.head(self.sym_data.sectors_count)
-        self._us_productivity_growth_rates = self._us_productivity_growth_rates.loc[:, self.configuration.start_to_end_year_column_labels]
+        self._us_productivity_growth_rates = self._us_productivity_growth_rates.loc[:, self.configuration.projection_years_column_labels]
         self._us_productivity_growth_rates = self._us_productivity_growth_rates / 100
         self._us_productivity_growth_rates.index = sectors_members
 
@@ -200,19 +197,19 @@ class Productivity(Base):
         self._region_productivity_indices: dict[str, pd.DataFrame] = dict()
 
         # Project levels for the US, setting the level to 1 for each sector in the base year.
-        us_productivity_indices = self._us_productivity_growth_rates.loc[:,self.configuration.start_to_end_year_column_labels]
-        us_productivity_indices.loc[:, str(self.configuration.projection_base_year)] = 1
-        for year in self.configuration.start_to_end_years[1:]:
+        us_productivity_indices = self._us_productivity_growth_rates.loc[:,self.configuration.projection_years_column_labels]
+        us_productivity_indices.loc[:, str(self.configuration.first_projection_year)] = 1
+        for year in self.configuration.projection_years[1:]:
             us_productivity_indices.loc[:, str(year)] = (us_productivity_indices.loc[:, str(year)] + 1) * us_productivity_indices.loc[:, str(year - 1)]
         self._region_productivity_indices[self.sym_data.us_region] = us_productivity_indices
         
         # Iterate the other regions, apply the catchup rates.
         for region in self.sym_data.regions_members:
-            if region == CONSTANTS.USA_REGION_CODE:
+            if region == Constants().USA_REGION_CODE:
                 continue
-            region_productivity_indices = self._region_catchup_rates[region].loc[:,self.configuration.start_to_end_year_column_labels]
-            region_productivity_indices.loc[:, str(self.configuration.projection_base_year)] = us_productivity_indices.loc[:, str(self.configuration.projection_base_year)] * self._region_productivity_ratios[region].loc[:, &#34;ratio&#34;]
-            for year in self.configuration.start_to_end_years[1:]:
+            region_productivity_indices = self._region_catchup_rates[region].loc[:,self.configuration.projection_years_column_labels]
+            region_productivity_indices.loc[:, str(self.configuration.first_projection_year)] = us_productivity_indices.loc[:, str(self.configuration.first_projection_year)] * self._region_productivity_ratios[region].loc[:, &#34;ratio&#34;]
+            for year in self.configuration.projection_years[1:]:
                 # The productivity index in year is determined as US index in the same 
                 # # year percentage gap in previous year adjusted for 
                 # a year of catch-up based on the catch-up rate over the previous year.
@@ -226,22 +223,18 @@ class Productivity(Base):
         self._region_productivity_growth_rates[self.sym_data.regions_members[0]] = self._us_productivity_growth_rates
         for region in self.sym_data.regions_members[1:]:
             region_productivity_growth_rates = self._region_productivity_indices[region]
-            for year in self.configuration.start_to_end_years[:-1]: # For all but the last year...
+            for year in self.configuration.projection_years[:-1]: # For all but the last year...
                 region_productivity_growth_rates.loc[:,str(year)] = region_productivity_growth_rates.loc[:, str(year+1)] / region_productivity_growth_rates.loc[:, str(year)] - 1
 
             # Handle the final year by assuming continuation of the most recently available growth and catchup.
-            final_year_region_productivity_indices = self._region_productivity_indices[region].loc[:, str(self.configuration.end_year)]
-            final_year_region_catchup_rates = self._region_catchup_rates[region].loc[:, str(self.configuration.end_year)]
-            final_year_us_productivity_indices = us_productivity_indices.loc[:, str(self.configuration.end_year)]
-            next_us_productivity_indices: float = final_year_us_productivity_indices * (1 + self._us_productivity_growth_rates.loc[:, str(self.configuration.end_year)])
+            final_year_region_productivity_indices = self._region_productivity_indices[region].loc[:, str(self.configuration.last_projection_year)]
+            final_year_region_catchup_rates = self._region_catchup_rates[region].loc[:, str(self.configuration.last_projection_year)]
+            final_year_us_productivity_indices = us_productivity_indices.loc[:, str(self.configuration.last_projection_year)]
+            next_us_productivity_indices: float = final_year_us_productivity_indices * (1 + self._us_productivity_growth_rates.loc[:, str(self.configuration.last_projection_year)])
             next_region_productivity_indices = next_us_productivity_indices * \
                 (1 + (1-final_year_region_catchup_rates) * \
                     (final_year_region_productivity_indices / final_year_us_productivity_indices - 1) )
-            region_productivity_growth_rates.loc[:, str(self.configuration.end_year)] = next_region_productivity_indices / final_year_region_productivity_indices - 1
-
-            # The following commented out line is the Ox implementation, which is more naive 
-            # # imposing the same growth as in previous year - so no catchup in the final year.
-            # region_productivity_growth_rates.loc[:, str(self.configuration.end_year)] = region_productivity_growth_rates.loc[:, str(self.configuration.end_year-1)]
+            region_productivity_growth_rates.loc[:, str(self.configuration.last_projection_year)] = next_region_productivity_indices / final_year_region_productivity_indices - 1
 
             self._region_productivity_growth_rates[region] = region_productivity_growth_rates</code></pre>
 </details>
@@ -302,14 +295,11 @@ for all regions and all sectors within each region.</p>
         assert self.label_regional_sector_ratio_to_us is not None
 
         # The productivity information must extend to the end year for the simulations
-        if not self.configuration.end_year == int(
-            self._us_productivity_growth_rates.columns[-1]):
-            logging.warn(f&#34;The end year for productivity projections, {self.configuration.end_year}, does not match the final year, {self._us_productivity_growth_rates.columns[-1]}, of the productivity data in {self._filename}&#34;)
+        if not self.configuration.last_projection_year == int(self._us_productivity_growth_rates.columns[-1]):
+            logging.warn(f&#34;The end year for productivity projections, {self.configuration.last_projection_year}, does not match the final year, {self._us_productivity_growth_rates.columns[-1]}, of the productivity data in {self._filename}&#34;)
 
         # Make sure the productivity data starts early enough to include the years specified in the model configuration.
-        assert str(self.configuration.projection_base_year) in self._data_column_names
-        assert str(self.configuration.start_year) in self._data_column_names
-        assert str(self.configuration._last_available_year) in self._data_column_names
+        assert str(self.configuration.original_first_projection_year) in self._data_column_names
 
     @property
     def configuration(self):
@@ -381,7 +371,7 @@ for all regions and all sectors within each region.</p>
             raise Exception(f&#34;The US sector productivity data is available for {us_productivity_rows} sectors but the model has {self.sym_data.sectors_count} sectors.&#34;)
         self._us_productivity_growth_rates = self._input.iloc[us_productivity_rows, table_columns].copy()
         self._us_productivity_growth_rates = self._us_productivity_growth_rates.head(self.sym_data.sectors_count)
-        self._us_productivity_growth_rates = self._us_productivity_growth_rates.loc[:, self.configuration.start_to_end_year_column_labels]
+        self._us_productivity_growth_rates = self._us_productivity_growth_rates.loc[:, self.configuration.projection_years_column_labels]
         self._us_productivity_growth_rates = self._us_productivity_growth_rates / 100
         self._us_productivity_growth_rates.index = sectors_members
 
@@ -430,19 +420,19 @@ for all regions and all sectors within each region.</p>
         self._region_productivity_indices: dict[str, pd.DataFrame] = dict()
 
         # Project levels for the US, setting the level to 1 for each sector in the base year.
-        us_productivity_indices = self._us_productivity_growth_rates.loc[:,self.configuration.start_to_end_year_column_labels]
-        us_productivity_indices.loc[:, str(self.configuration.projection_base_year)] = 1
-        for year in self.configuration.start_to_end_years[1:]:
+        us_productivity_indices = self._us_productivity_growth_rates.loc[:,self.configuration.projection_years_column_labels]
+        us_productivity_indices.loc[:, str(self.configuration.first_projection_year)] = 1
+        for year in self.configuration.projection_years[1:]:
             us_productivity_indices.loc[:, str(year)] = (us_productivity_indices.loc[:, str(year)] + 1) * us_productivity_indices.loc[:, str(year - 1)]
         self._region_productivity_indices[self.sym_data.us_region] = us_productivity_indices
         
         # Iterate the other regions, apply the catchup rates.
         for region in self.sym_data.regions_members:
-            if region == CONSTANTS.USA_REGION_CODE:
+            if region == Constants().USA_REGION_CODE:
                 continue
-            region_productivity_indices = self._region_catchup_rates[region].loc[:,self.configuration.start_to_end_year_column_labels]
-            region_productivity_indices.loc[:, str(self.configuration.projection_base_year)] = us_productivity_indices.loc[:, str(self.configuration.projection_base_year)] * self._region_productivity_ratios[region].loc[:, &#34;ratio&#34;]
-            for year in self.configuration.start_to_end_years[1:]:
+            region_productivity_indices = self._region_catchup_rates[region].loc[:,self.configuration.projection_years_column_labels]
+            region_productivity_indices.loc[:, str(self.configuration.first_projection_year)] = us_productivity_indices.loc[:, str(self.configuration.first_projection_year)] * self._region_productivity_ratios[region].loc[:, &#34;ratio&#34;]
+            for year in self.configuration.projection_years[1:]:
                 # The productivity index in year is determined as US index in the same 
                 # # year percentage gap in previous year adjusted for 
                 # a year of catch-up based on the catch-up rate over the previous year.
@@ -456,22 +446,18 @@ for all regions and all sectors within each region.</p>
         self._region_productivity_growth_rates[self.sym_data.regions_members[0]] = self._us_productivity_growth_rates
         for region in self.sym_data.regions_members[1:]:
             region_productivity_growth_rates = self._region_productivity_indices[region]
-            for year in self.configuration.start_to_end_years[:-1]: # For all but the last year...
+            for year in self.configuration.projection_years[:-1]: # For all but the last year...
                 region_productivity_growth_rates.loc[:,str(year)] = region_productivity_growth_rates.loc[:, str(year+1)] / region_productivity_growth_rates.loc[:, str(year)] - 1
 
             # Handle the final year by assuming continuation of the most recently available growth and catchup.
-            final_year_region_productivity_indices = self._region_productivity_indices[region].loc[:, str(self.configuration.end_year)]
-            final_year_region_catchup_rates = self._region_catchup_rates[region].loc[:, str(self.configuration.end_year)]
-            final_year_us_productivity_indices = us_productivity_indices.loc[:, str(self.configuration.end_year)]
-            next_us_productivity_indices: float = final_year_us_productivity_indices * (1 + self._us_productivity_growth_rates.loc[:, str(self.configuration.end_year)])
+            final_year_region_productivity_indices = self._region_productivity_indices[region].loc[:, str(self.configuration.last_projection_year)]
+            final_year_region_catchup_rates = self._region_catchup_rates[region].loc[:, str(self.configuration.last_projection_year)]
+            final_year_us_productivity_indices = us_productivity_indices.loc[:, str(self.configuration.last_projection_year)]
+            next_us_productivity_indices: float = final_year_us_productivity_indices * (1 + self._us_productivity_growth_rates.loc[:, str(self.configuration.last_projection_year)])
             next_region_productivity_indices = next_us_productivity_indices * \
                 (1 + (1-final_year_region_catchup_rates) * \
                     (final_year_region_productivity_indices / final_year_us_productivity_indices - 1) )
-            region_productivity_growth_rates.loc[:, str(self.configuration.end_year)] = next_region_productivity_indices / final_year_region_productivity_indices - 1
-
-            # The following commented out line is the Ox implementation, which is more naive 
-            # # imposing the same growth as in previous year - so no catchup in the final year.
-            # region_productivity_growth_rates.loc[:, str(self.configuration.end_year)] = region_productivity_growth_rates.loc[:, str(self.configuration.end_year-1)]
+            region_productivity_growth_rates.loc[:, str(self.configuration.last_projection_year)] = next_region_productivity_indices / final_year_region_productivity_indices - 1
 
             self._region_productivity_growth_rates[region] = region_productivity_growth_rates</code></pre>
 </details>

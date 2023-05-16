@@ -87,16 +87,15 @@ class SimulationExperiment(Base):
         Create the simulation layers, one for each definition.
         &#34;&#34;&#34;
         self._simulation_layers: list[SimulationLayer] = []
-        previous_simulation_layer: SimulationLayer = None
+        previous_projections: Projections = self.baseline_projections
         for simulation_layer_definition in self.simulation_layer_definitions:
             self.simulation_layers.append(
                 SimulationLayer(
                     simulation_layer_definition=simulation_layer_definition,
-                    baseline_projections=self.baseline_projections,
-                    previous_simulation_layer=previous_simulation_layer
+                    previous_projections=previous_projections
                 )
             )
-            previous_simulation_layer = self.simulation_layers[-1]
+            previous_projections = self.simulation_layers[-1]
 
     @property
     def baseline_projections(self) -&gt; BaselineProjections:
@@ -194,16 +193,15 @@ the simulation layers described in the experiment's design file.</p>
         Create the simulation layers, one for each definition.
         &#34;&#34;&#34;
         self._simulation_layers: list[SimulationLayer] = []
-        previous_simulation_layer: SimulationLayer = None
+        previous_projections: Projections = self.baseline_projections
         for simulation_layer_definition in self.simulation_layer_definitions:
             self.simulation_layers.append(
                 SimulationLayer(
                     simulation_layer_definition=simulation_layer_definition,
-                    baseline_projections=self.baseline_projections,
-                    previous_simulation_layer=previous_simulation_layer
+                    previous_projections=previous_projections
                 )
             )
-            previous_simulation_layer = self.simulation_layers[-1]
+            previous_projections = self.simulation_layers[-1]
 
     @property
     def baseline_projections(self) -&gt; BaselineProjections:

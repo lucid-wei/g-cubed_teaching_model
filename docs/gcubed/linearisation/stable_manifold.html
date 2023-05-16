@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>gcubed.stable_manifold API documentation</title>
+<title>gcubed.linearisation.stable_manifold API documentation</title>
 <meta name="description" content="Contains the StableManifold class" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -19,7 +19,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>gcubed.stable_manifold</code></h1>
+<h1 class="title">Module <code>gcubed.linearisation.stable_manifold</code></h1>
 </header>
 <section id="section-intro">
 <p>Contains the StableManifold class</p>
@@ -39,7 +39,7 @@ import sys
 import numpy as np
 import pandas as pd
 from gcubed.base import Base
-from gcubed.state_space_form import StateSpaceForm
+from gcubed.linearisation.state_space_form import StateSpaceForm
 from gcubed.model import Model
 
 class StableManifold(Base):
@@ -607,9 +607,9 @@ class StableManifold(Base):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="gcubed.stable_manifold.StableManifold"><code class="flex name class">
+<dt id="gcubed.linearisation.stable_manifold.StableManifold"><code class="flex name class">
 <span>class <span class="ident">StableManifold</span></span>
-<span>(</span><span>state_space_form: <a title="gcubed.state_space_form.StateSpaceForm" href="state_space_form.html#gcubed.state_space_form.StateSpaceForm">StateSpaceForm</a>)</span>
+<span>(</span><span>state_space_form: <a title="gcubed.linearisation.state_space_form.StateSpaceForm" href="state_space_form.html#gcubed.linearisation.state_space_form.StateSpaceForm">StateSpaceForm</a>)</span>
 </code></dt>
 <dd>
 <div class="desc"><h3 id="overview">Overview</h3>
@@ -1210,11 +1210,11 @@ the coefficient matrices that define the state-space form itself.</p></div>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="gcubed.base.Base" href="base.html#gcubed.base.Base">Base</a></li>
+<li><a title="gcubed.base.Base" href="../base.html#gcubed.base.Base">Base</a></li>
 </ul>
 <h3>Instance variables</h3>
 <dl>
-<dt id="gcubed.stable_manifold.StableManifold.Anew"><code class="name">var <span class="ident">Anew</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.Anew"><code class="name">var <span class="ident">Anew</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>The matrix relating endogenous state variables (x1) s_{t+1} to previous state variables (x1) s_{t}
 See the model solution documentation equation 75.</p></div>
@@ -1233,7 +1233,7 @@ def Anew(self) -&gt; np.ndarray:
     return self._Anew</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.Anew_as_dataframe"><code class="name">var <span class="ident">Anew_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.Anew_as_dataframe"><code class="name">var <span class="ident">Anew_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
 <div class="desc"><p>A dataframe representation of Anew that labels the rows and
 columns of Anew with the relevant variables.</p></div>
@@ -1253,7 +1253,7 @@ def Anew_as_dataframe(self) -&gt; pd.DataFrame:
     return result</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.Gamma_jT"><code class="name">var <span class="ident">Gamma_jT</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.Gamma_jT"><code class="name">var <span class="ident">Gamma_jT</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>A matrix that is used when generating projections.
 See equation 37.</p></div>
@@ -1272,7 +1272,7 @@ def Gamma_jT(self) -&gt; np.ndarray:
     return self._Gamma_jT</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.Gamma_jt"><code class="name">var <span class="ident">Gamma_jt</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.Gamma_jt"><code class="name">var <span class="ident">Gamma_jt</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>A matrix that is used when generating projections.
 See the model solution documentation equation 62</p></div>
@@ -1289,7 +1289,7 @@ def Gamma_jt(self) -&gt; np.ndarray:
     return self._Gamma_jt</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.Gamma_rT"><code class="name">var <span class="ident">Gamma_rT</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.Gamma_rT"><code class="name">var <span class="ident">Gamma_rT</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>A matrix that is used when generating projections.
 See the model solution documentation equation 31.</p>
@@ -1317,7 +1317,7 @@ def Gamma_rT(self) -&gt; np.ndarray:
     return self._Gamma_rT</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.Gamma_st"><code class="name">var <span class="ident">Gamma_st</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.Gamma_st"><code class="name">var <span class="ident">Gamma_st</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>A matrix that is used when generating projections.
 See the model solution documentation equation 52</p></div>
@@ -1334,7 +1334,7 @@ def Gamma_st(self) -&gt; np.ndarray:
     return self._Gamma_st</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.H1"><code class="name">var <span class="ident">H1</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.H1"><code class="name">var <span class="ident">H1</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>The matrix relating J1 (costate variables) to X1 (state variables) in the equation
 used to project costate variables.
@@ -1357,7 +1357,7 @@ def H1(self) -&gt; np.ndarray:
     return self._H1t</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.H1_as_dataframe"><code class="name">var <span class="ident">H1_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.H1_as_dataframe"><code class="name">var <span class="ident">H1_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
 <div class="desc"><p>A dataframe representation of H1 that labels the rows and
 columns of H1 with the relevant variables.</p></div>
@@ -1377,7 +1377,7 @@ def H1_as_dataframe(self) -&gt; pd.DataFrame:
     return result</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.H1_changed"><code class="name">var <span class="ident">H1_changed</span> : bool</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.H1_changed"><code class="name">var <span class="ident">H1_changed</span> : bool</code></dt>
 <dd>
 <div class="desc"><p>True if there is an alteration in H1 in the last iteration and False otherwise.</p></div>
 <details class="source">
@@ -1394,7 +1394,7 @@ def H1_changed(self) -&gt; bool:
     return  average_deviation &gt; self.model.configuration.stable_manifold_tolerance</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.H2"><code class="name">var <span class="ident">H2</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.H2"><code class="name">var <span class="ident">H2</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>The matrix relating J1 (costate variables) to EXO (exogenous variables) in the equation
 used to project costate variables.
@@ -1417,7 +1417,7 @@ def H2(self) -&gt; np.ndarray:
     return self._H2t</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.H2_as_dataframe"><code class="name">var <span class="ident">H2_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.H2_as_dataframe"><code class="name">var <span class="ident">H2_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
 <div class="desc"><p>A dataframe representation of H2 that labels the rows and
 columns of H2 with the relevant variables.</p></div>
@@ -1437,7 +1437,7 @@ def H2_as_dataframe(self) -&gt; pd.DataFrame:
     return result</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.H2_changed"><code class="name">var <span class="ident">H2_changed</span> : bool</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.H2_changed"><code class="name">var <span class="ident">H2_changed</span> : bool</code></dt>
 <dd>
 <div class="desc"><p>True if there is an alteration in H2 in the last iteration and False otherwise.</p></div>
 <details class="source">
@@ -1454,7 +1454,7 @@ def H2_changed(self) -&gt; bool:
     return average_deviation &gt; self.model.configuration.stable_manifold_tolerance</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.M1"><code class="name">var <span class="ident">M1</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.M1"><code class="name">var <span class="ident">M1</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>The matrix relating ZE (expected endogenous variables) to X1 (state variables) in the
 equation that can be used to project state variables.
@@ -1475,7 +1475,7 @@ def M1(self) -&gt; np.ndarray:
     return self._M1t</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.M1_as_dataframe"><code class="name">var <span class="ident">M1_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.M1_as_dataframe"><code class="name">var <span class="ident">M1_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
 <div class="desc"><p>A dataframe representation of M1 that labels the rows and
 columns of M1 with the relevant variables.</p></div>
@@ -1495,7 +1495,7 @@ def M1_as_dataframe(self) -&gt; pd.DataFrame:
     return result</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.M1_lead"><code class="name">var <span class="ident">M1_lead</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.M1_lead"><code class="name">var <span class="ident">M1_lead</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>The 1 period lead (t+1) for M1t</p></div>
 <details class="source">
@@ -1512,7 +1512,7 @@ def M1_lead(self) -&gt; np.ndarray:
     return self._M1t_lead</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.M2"><code class="name">var <span class="ident">M2</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.M2"><code class="name">var <span class="ident">M2</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>The matrix relating ze (expected endogenous variables) to exo (exogenous variables) in the
 equation that can be used to project state variables.
@@ -1533,7 +1533,7 @@ def M2(self) -&gt; np.ndarray:
     return self._M2t</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.M2_as_dataframe"><code class="name">var <span class="ident">M2_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.M2_as_dataframe"><code class="name">var <span class="ident">M2_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
 <div class="desc"><p>A dataframe representation of M2 that labels the rows and
 columns of M2 with the relevant variables.</p></div>
@@ -1553,7 +1553,7 @@ def M2_as_dataframe(self) -&gt; pd.DataFrame:
     return result</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.Znew"><code class="name">var <span class="ident">Znew</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.Znew"><code class="name">var <span class="ident">Znew</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>The matrix relating state variables (x1) s_{t+1} to previous exogenous variables (exo) x_{t}
 See the model solution documentation equation 75.</p></div>
@@ -1572,7 +1572,7 @@ def Znew(self) -&gt; np.ndarray:
     return self._Znew</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.Znew_as_dataframe"><code class="name">var <span class="ident">Znew_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.Znew_as_dataframe"><code class="name">var <span class="ident">Znew_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
 <div class="desc"><p>A dataframe representation of Znew that labels the rows and
 columns of Znew with the relevant variables.</p></div>
@@ -1592,7 +1592,7 @@ def Znew_as_dataframe(self) -&gt; pd.DataFrame:
     return result</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.common_factor"><code class="name">var <span class="ident">common_factor</span></code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.common_factor"><code class="name">var <span class="ident">common_factor</span></code></dt>
 <dd>
 <div class="desc"><p>A matrix that is exposed as part of unit testing the Python implementation.
 th6t in Ox</p></div>
@@ -1609,7 +1609,7 @@ def common_factor(self):
     return self._common_factor</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.converged"><code class="name">var <span class="ident">converged</span> : bool</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.converged"><code class="name">var <span class="ident">converged</span> : bool</code></dt>
 <dd>
 <div class="desc"><p>True if the model has converged to a solution (stable or otherwise) and False if
 the model has not converged.</p></div>
@@ -1634,7 +1634,7 @@ def converged(self) -&gt; bool:
     return True</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.eigenvalues"><code class="name">var <span class="ident">eigenvalues</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.eigenvalues"><code class="name">var <span class="ident">eigenvalues</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>The eigenvalues of the Anew matrix, returned as a column vector of complex numbers.</p></div>
 <details class="source">
@@ -1649,7 +1649,7 @@ def eigenvalues(self) -&gt; np.ndarray:
     return np.linalg.eigvals(self.Anew)</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.model"><code class="name">var <span class="ident">model</span> : <a title="gcubed.model.Model" href="model.html#gcubed.model.Model">Model</a></code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.model"><code class="name">var <span class="ident">model</span> : <a title="gcubed.model.Model" href="../model.html#gcubed.model.Model">Model</a></code></dt>
 <dd>
 <div class="desc"><p>The model for which the stable manifold is being sought.</p></div>
 <details class="source">
@@ -1664,7 +1664,7 @@ def model(self) -&gt; Model:
     return self.ssf.model</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.mu1"><code class="name">var <span class="ident">mu1</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.mu1"><code class="name">var <span class="ident">mu1</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>The matrix relating time t expectations of endogenous variables in t+1 to state in period t.
 See the model solution documentation equation 77.</p></div>
@@ -1684,7 +1684,7 @@ def mu1(self) -&gt; np.ndarray:
     return self._mu1t</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.mu2"><code class="name">var <span class="ident">mu2</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.mu2"><code class="name">var <span class="ident">mu2</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>The matrix relating time t expectations of endogenous variables in t+1 to exogenous variables in period t.
 See the model solution documentation equation 78.</p></div>
@@ -1704,7 +1704,7 @@ def mu2(self) -&gt; np.ndarray:
     return self._mu2t</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.psi_rj"><code class="name">var <span class="ident">psi_rj</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.psi_rj"><code class="name">var <span class="ident">psi_rj</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>A matrix that is used when generating projections.
 See the model solution documentation equation 33.</p></div>
@@ -1721,7 +1721,7 @@ def psi_rj(self) -&gt; np.ndarray:
     return self.Gamma_rT @ self.ssf.delta(&#34;zel&#34;, &#34;yjr&#34;)</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.psi_rs"><code class="name">var <span class="ident">psi_rs</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.psi_rs"><code class="name">var <span class="ident">psi_rs</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>A matrix that is used when generating projections.
 See the model solution documentation equation 32.</p></div>
@@ -1738,7 +1738,7 @@ def psi_rs(self) -&gt; np.ndarray:
     return self.Gamma_rT @ self.ssf.delta(&#34;zel&#34;, &#34;yxr&#34;) </code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.psi_rx"><code class="name">var <span class="ident">psi_rx</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.psi_rx"><code class="name">var <span class="ident">psi_rx</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>A matrix that is used when generating projections.
 See the model solution documentation equation 34.</p></div>
@@ -1755,7 +1755,7 @@ def psi_rx(self) -&gt; np.ndarray:
     return self.Gamma_rT @ self.ssf.delta(&#34;zel&#34;, &#34;exo&#34;)</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.roots_outside_unit_circle"><code class="name">var <span class="ident">roots_outside_unit_circle</span> : int</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.roots_outside_unit_circle"><code class="name">var <span class="ident">roots_outside_unit_circle</span> : int</code></dt>
 <dd>
 <div class="desc"><p>The number of roots outside the unit circle.</p></div>
 <details class="source">
@@ -1770,7 +1770,7 @@ def roots_outside_unit_circle(self) -&gt; int:
     return self._roots_outside_unit_circle</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.solution_is_stable"><code class="name">var <span class="ident">solution_is_stable</span> : bool</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.solution_is_stable"><code class="name">var <span class="ident">solution_is_stable</span> : bool</code></dt>
 <dd>
 <div class="desc"><p>True if the model is stable and False otherwise.</p></div>
 <details class="source">
@@ -1785,7 +1785,7 @@ def solution_is_stable(self) -&gt; bool:
     return (self.roots_outside_unit_circle == 0)</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.ssf"><code class="name">var <span class="ident">ssf</span> : <a title="gcubed.state_space_form.StateSpaceForm" href="state_space_form.html#gcubed.state_space_form.StateSpaceForm">StateSpaceForm</a></code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.ssf"><code class="name">var <span class="ident">ssf</span> : <a title="gcubed.linearisation.state_space_form.StateSpaceForm" href="state_space_form.html#gcubed.linearisation.state_space_form.StateSpaceForm">StateSpaceForm</a></code></dt>
 <dd>
 <div class="desc"><p>The state space form of the model, based on algebraic manipulation
 of the linear approximation to the original model.</p></div>
@@ -1802,7 +1802,7 @@ def ssf(self) -&gt; StateSpaceForm:
     return self._state_space_form</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.tau_sjt"><code class="name">var <span class="ident">tau_sjt</span></code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.tau_sjt"><code class="name">var <span class="ident">tau_sjt</span></code></dt>
 <dd>
 <div class="desc"><p>A matrix that is exposed as part of unit testing the Python implementation.</p>
 <p>th2t in Ox</p></div>
@@ -1820,7 +1820,7 @@ def tau_sjt(self):
     return self._tau_sjt</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.tau_sst"><code class="name">var <span class="ident">tau_sst</span></code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.tau_sst"><code class="name">var <span class="ident">tau_sst</span></code></dt>
 <dd>
 <div class="desc"><p>A matrix that is exposed as part of unit testing the Python implementation.</p></div>
 <details class="source">
@@ -1835,7 +1835,7 @@ def tau_sst(self):
     return self._tau_sst</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.tau_sxt"><code class="name">var <span class="ident">tau_sxt</span></code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.tau_sxt"><code class="name">var <span class="ident">tau_sxt</span></code></dt>
 <dd>
 <div class="desc"><p>A matrix that is exposed as part of unit testing the Python implementation.</p></div>
 <details class="source">
@@ -1850,7 +1850,7 @@ def tau_sxt(self):
     return self._tau_sxt</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.unit_roots"><code class="name">var <span class="ident">unit_roots</span> : int</code></dt>
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.unit_roots"><code class="name">var <span class="ident">unit_roots</span> : int</code></dt>
 <dd>
 <div class="desc"><p>The number of unit roots in the model.</p></div>
 <details class="source">
@@ -1868,7 +1868,7 @@ def unit_roots(self) -&gt; int:
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="gcubed.stable_manifold.StableManifold.analyse_eigenvalues"><code class="name flex">
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.analyse_eigenvalues"><code class="name flex">
 <span>def <span class="ident">analyse_eigenvalues</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1899,7 +1899,7 @@ in the model).</p></div>
         raise Exception(f&#34;There are {self.roots_outside_unit_circle} roots outside the unit circle. All eigenvalues must be on or inside the unit circle for stability.&#34;)</code></pre>
 </details>
 </dd>
-<dt id="gcubed.stable_manifold.StableManifold.solve"><code class="name flex">
+<dt id="gcubed.linearisation.stable_manifold.StableManifold.solve"><code class="name flex">
 <span>def <span class="ident">solve</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1946,11 +1946,11 @@ or the maximum number of iterations has occurred.</p></div>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="gcubed.base.Base" href="base.html#gcubed.base.Base">Base</a></b></code>:
+<li><code><b><a title="gcubed.base.Base" href="../base.html#gcubed.base.Base">Base</a></b></code>:
 <ul class="hlist">
-<li><code><a title="gcubed.base.Base.get_year_labels" href="base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
-<li><code><a title="gcubed.base.Base.load_data" href="base.html#gcubed.base.Base.load_data">load_data</a></code></li>
-<li><code><a title="gcubed.base.Base.zeros" href="base.html#gcubed.base.Base.zeros">zeros</a></code></li>
+<li><code><a title="gcubed.base.Base.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
+<li><code><a title="gcubed.base.Base.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.zeros" href="../base.html#gcubed.base.Base.zeros">zeros</a></code></li>
 </ul>
 </li>
 </ul>
@@ -1966,51 +1966,51 @@ or the maximum number of iterations has occurred.</p></div>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="gcubed" href="index.html">gcubed</a></code></li>
+<li><code><a title="gcubed.linearisation" href="index.html">gcubed.linearisation</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="gcubed.stable_manifold.StableManifold" href="#gcubed.stable_manifold.StableManifold">StableManifold</a></code></h4>
+<h4><code><a title="gcubed.linearisation.stable_manifold.StableManifold" href="#gcubed.linearisation.stable_manifold.StableManifold">StableManifold</a></code></h4>
 <ul class="">
-<li><code><a title="gcubed.stable_manifold.StableManifold.Anew" href="#gcubed.stable_manifold.StableManifold.Anew">Anew</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.Anew_as_dataframe" href="#gcubed.stable_manifold.StableManifold.Anew_as_dataframe">Anew_as_dataframe</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.Gamma_jT" href="#gcubed.stable_manifold.StableManifold.Gamma_jT">Gamma_jT</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.Gamma_jt" href="#gcubed.stable_manifold.StableManifold.Gamma_jt">Gamma_jt</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.Gamma_rT" href="#gcubed.stable_manifold.StableManifold.Gamma_rT">Gamma_rT</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.Gamma_st" href="#gcubed.stable_manifold.StableManifold.Gamma_st">Gamma_st</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.H1" href="#gcubed.stable_manifold.StableManifold.H1">H1</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.H1_as_dataframe" href="#gcubed.stable_manifold.StableManifold.H1_as_dataframe">H1_as_dataframe</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.H1_changed" href="#gcubed.stable_manifold.StableManifold.H1_changed">H1_changed</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.H2" href="#gcubed.stable_manifold.StableManifold.H2">H2</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.H2_as_dataframe" href="#gcubed.stable_manifold.StableManifold.H2_as_dataframe">H2_as_dataframe</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.H2_changed" href="#gcubed.stable_manifold.StableManifold.H2_changed">H2_changed</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.M1" href="#gcubed.stable_manifold.StableManifold.M1">M1</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.M1_as_dataframe" href="#gcubed.stable_manifold.StableManifold.M1_as_dataframe">M1_as_dataframe</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.M1_lead" href="#gcubed.stable_manifold.StableManifold.M1_lead">M1_lead</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.M2" href="#gcubed.stable_manifold.StableManifold.M2">M2</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.M2_as_dataframe" href="#gcubed.stable_manifold.StableManifold.M2_as_dataframe">M2_as_dataframe</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.Znew" href="#gcubed.stable_manifold.StableManifold.Znew">Znew</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.Znew_as_dataframe" href="#gcubed.stable_manifold.StableManifold.Znew_as_dataframe">Znew_as_dataframe</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.analyse_eigenvalues" href="#gcubed.stable_manifold.StableManifold.analyse_eigenvalues">analyse_eigenvalues</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.common_factor" href="#gcubed.stable_manifold.StableManifold.common_factor">common_factor</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.converged" href="#gcubed.stable_manifold.StableManifold.converged">converged</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.eigenvalues" href="#gcubed.stable_manifold.StableManifold.eigenvalues">eigenvalues</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.model" href="#gcubed.stable_manifold.StableManifold.model">model</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.mu1" href="#gcubed.stable_manifold.StableManifold.mu1">mu1</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.mu2" href="#gcubed.stable_manifold.StableManifold.mu2">mu2</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.psi_rj" href="#gcubed.stable_manifold.StableManifold.psi_rj">psi_rj</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.psi_rs" href="#gcubed.stable_manifold.StableManifold.psi_rs">psi_rs</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.psi_rx" href="#gcubed.stable_manifold.StableManifold.psi_rx">psi_rx</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.roots_outside_unit_circle" href="#gcubed.stable_manifold.StableManifold.roots_outside_unit_circle">roots_outside_unit_circle</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.solution_is_stable" href="#gcubed.stable_manifold.StableManifold.solution_is_stable">solution_is_stable</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.solve" href="#gcubed.stable_manifold.StableManifold.solve">solve</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.ssf" href="#gcubed.stable_manifold.StableManifold.ssf">ssf</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.tau_sjt" href="#gcubed.stable_manifold.StableManifold.tau_sjt">tau_sjt</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.tau_sst" href="#gcubed.stable_manifold.StableManifold.tau_sst">tau_sst</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.tau_sxt" href="#gcubed.stable_manifold.StableManifold.tau_sxt">tau_sxt</a></code></li>
-<li><code><a title="gcubed.stable_manifold.StableManifold.unit_roots" href="#gcubed.stable_manifold.StableManifold.unit_roots">unit_roots</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.Anew" href="#gcubed.linearisation.stable_manifold.StableManifold.Anew">Anew</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.Anew_as_dataframe" href="#gcubed.linearisation.stable_manifold.StableManifold.Anew_as_dataframe">Anew_as_dataframe</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.Gamma_jT" href="#gcubed.linearisation.stable_manifold.StableManifold.Gamma_jT">Gamma_jT</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.Gamma_jt" href="#gcubed.linearisation.stable_manifold.StableManifold.Gamma_jt">Gamma_jt</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.Gamma_rT" href="#gcubed.linearisation.stable_manifold.StableManifold.Gamma_rT">Gamma_rT</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.Gamma_st" href="#gcubed.linearisation.stable_manifold.StableManifold.Gamma_st">Gamma_st</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.H1" href="#gcubed.linearisation.stable_manifold.StableManifold.H1">H1</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.H1_as_dataframe" href="#gcubed.linearisation.stable_manifold.StableManifold.H1_as_dataframe">H1_as_dataframe</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.H1_changed" href="#gcubed.linearisation.stable_manifold.StableManifold.H1_changed">H1_changed</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.H2" href="#gcubed.linearisation.stable_manifold.StableManifold.H2">H2</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.H2_as_dataframe" href="#gcubed.linearisation.stable_manifold.StableManifold.H2_as_dataframe">H2_as_dataframe</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.H2_changed" href="#gcubed.linearisation.stable_manifold.StableManifold.H2_changed">H2_changed</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.M1" href="#gcubed.linearisation.stable_manifold.StableManifold.M1">M1</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.M1_as_dataframe" href="#gcubed.linearisation.stable_manifold.StableManifold.M1_as_dataframe">M1_as_dataframe</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.M1_lead" href="#gcubed.linearisation.stable_manifold.StableManifold.M1_lead">M1_lead</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.M2" href="#gcubed.linearisation.stable_manifold.StableManifold.M2">M2</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.M2_as_dataframe" href="#gcubed.linearisation.stable_manifold.StableManifold.M2_as_dataframe">M2_as_dataframe</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.Znew" href="#gcubed.linearisation.stable_manifold.StableManifold.Znew">Znew</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.Znew_as_dataframe" href="#gcubed.linearisation.stable_manifold.StableManifold.Znew_as_dataframe">Znew_as_dataframe</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.analyse_eigenvalues" href="#gcubed.linearisation.stable_manifold.StableManifold.analyse_eigenvalues">analyse_eigenvalues</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.common_factor" href="#gcubed.linearisation.stable_manifold.StableManifold.common_factor">common_factor</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.converged" href="#gcubed.linearisation.stable_manifold.StableManifold.converged">converged</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.eigenvalues" href="#gcubed.linearisation.stable_manifold.StableManifold.eigenvalues">eigenvalues</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.model" href="#gcubed.linearisation.stable_manifold.StableManifold.model">model</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.mu1" href="#gcubed.linearisation.stable_manifold.StableManifold.mu1">mu1</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.mu2" href="#gcubed.linearisation.stable_manifold.StableManifold.mu2">mu2</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.psi_rj" href="#gcubed.linearisation.stable_manifold.StableManifold.psi_rj">psi_rj</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.psi_rs" href="#gcubed.linearisation.stable_manifold.StableManifold.psi_rs">psi_rs</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.psi_rx" href="#gcubed.linearisation.stable_manifold.StableManifold.psi_rx">psi_rx</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.roots_outside_unit_circle" href="#gcubed.linearisation.stable_manifold.StableManifold.roots_outside_unit_circle">roots_outside_unit_circle</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.solution_is_stable" href="#gcubed.linearisation.stable_manifold.StableManifold.solution_is_stable">solution_is_stable</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.solve" href="#gcubed.linearisation.stable_manifold.StableManifold.solve">solve</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.ssf" href="#gcubed.linearisation.stable_manifold.StableManifold.ssf">ssf</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.tau_sjt" href="#gcubed.linearisation.stable_manifold.StableManifold.tau_sjt">tau_sjt</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.tau_sst" href="#gcubed.linearisation.stable_manifold.StableManifold.tau_sst">tau_sst</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.tau_sxt" href="#gcubed.linearisation.stable_manifold.StableManifold.tau_sxt">tau_sxt</a></code></li>
+<li><code><a title="gcubed.linearisation.stable_manifold.StableManifold.unit_roots" href="#gcubed.linearisation.stable_manifold.StableManifold.unit_roots">unit_roots</a></code></li>
 </ul>
 </li>
 </ul>

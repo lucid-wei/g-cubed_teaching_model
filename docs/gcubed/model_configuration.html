@@ -44,16 +44,16 @@ import sys
 import importlib
 from gcubed.base import Base
 
+# Ensure pdoc generated API documentation includes the following methods.
+__pdoc__ = {}
+__pdoc__[&#39;ModelConfiguration._load_configuration_details&#39;] = True
 
 class ModelConfiguration(Base):
-
     &#34;&#34;&#34;
-
     ### Overview
 
     Provides access to model configuration details that have been
     read in from the model configuration CSV file.
-
     &#34;&#34;&#34;
 
     def __init__(self, configuration_file: str) -&gt; None:
@@ -82,7 +82,7 @@ class ModelConfiguration(Base):
         self._model_directory = os.path.dirname(os.path.realpath(configuration_file))
 
         data: pd.DataFrame = pd.read_csv(configuration_file, header=None)
-        self.load_configuration_details(configuration_details = data)
+        self._load_configuration_details(configuration_details = data)
         self.__validate()
 
         logging.info(f&#34;Preparing to use model {self.version} {self.build}.&#34;)
@@ -361,158 +361,68 @@ class ModelConfiguration(Base):
         return self._calibration_of_carbon_coefficients_year
 
     @property
-    def first_available_year(self):
-        &#34;&#34;&#34;
-        The first year of actual data that is available to us in the database file.
-        &#34;&#34;&#34;
-        return self._first_available_year
-
-    @property
-    def last_available_year(self):
-        &#34;&#34;&#34;
-        The last year of actual data that is available to us in the database file.
-        &#34;&#34;&#34;
-        return self._last_available_year
-
-    @property
     def base_year(self):
         &#34;&#34;&#34;
         The year in which all indices are based at 1 (so their log values are 0).
-        This is currently required to be the same as the start_year but we may relax that.
+        Typically, this is chosen to be the first projection year, noting that
+        the first year of projections are matched up to observed data in that first
+        year.
         &#34;&#34;&#34;
         return self._base_year
 
     @property
-    def start_year(self):
+    def original_first_projection_year(self):
         &#34;&#34;&#34;
-        The first year to include in the analysis that will produce projections.
-        TODO: Can this be made redundant, given the start_projection_year and the base_year?
+        The original first projection year. This is tracked 
+        because, for projections that iterate forward through the projection years, 
+        the first projection year will be updated with each iteration.
         &#34;&#34;&#34;
-        return self._start_year
+        return self._original_first_projection_year
 
     @property
-    def start_projection_year(self):
+    def first_projection_year(self):
         &#34;&#34;&#34;
-        The start_year specified in the Ox build/baseinfo.csv file.
-        This is currently required to be start_year+1.
+        The first year that projections are to be generated for.
+        Note that for baseline projections, the projections are start
+        in a year where the model&#39;s database has data. so the projections
+        can be lined up with the observed data in the database.
         &#34;&#34;&#34;
-        return self._start_projection_year
+        return self._first_projection_year
+    
+    @first_projection_year.setter
+    def first_projection_year(self, value: int):
+        &#34;&#34;&#34;
+        Set the new first projection year, updating the linearisation year also.
+        The first projection year should only ever be incremented.
+        &#34;&#34;&#34;
+        assert value is not None
+        assert isinstance(value, int)
+        assert value &gt; self.first_projection_year
+        self._first_projection_year = value
+        self._linearisation_year = value
 
     @property
-    def projection_base_year(self):
-        &#34;&#34;&#34;
-        The base year for index variables in the database used for projections.
-        &#34;&#34;&#34;
-        return self._projection_base_year
-
-    @property
-    def original_projection_base_year(self):
-        &#34;&#34;&#34;
-        The original base year for index variables in the database used for projections.
-
-        This is used because for iterative projections the projection base year
-        will be updated.
-        &#34;&#34;&#34;
-        return self._original_projection_base_year
-
-    @property
-    def end_year(self):
+    def last_projection_year(self):
         &#34;&#34;&#34;
         The last year for which data will be projected.
         &#34;&#34;&#34;
-        return self._end_year
-
-    @property
-    def start_to_base_years(self) -&gt; list[int]:
-        &#34;&#34;&#34;
-        The list of years from the start year to the database&#39;s base year.
-        &#34;&#34;&#34;
-        return range(self.start_year, self.base_year+1)
-
-    @property
-    def start_to_base_year_column_labels(self) -&gt; list[str]:
-        return [str(x) for x in self.start_to_base_years]
-
-    @property
-    def base_to_end_years(self) -&gt; list[int]:
-        return range(self.base_year, self.end_year+1)
-
-    @property
-    def base_to_end_year_column_labels(self) -&gt; list[str]:
-        return [str(x) for x in self.base_to_end_years]
-
-    @property
-    def start_to_end_years(self) -&gt; list[int]:
-        return range(self.start_year, self.end_year+1)
-
-    @property
-    def start_to_end_year_column_labels(self) -&gt; list[str]:
-        return [str(x) for x in self.start_to_end_years]
+        return self._last_projection_year
 
     @property
     def projection_years(self) -&gt; list[int]:
-        return range(self.start_projection_year, self.end_year+1)
-
-    @property
-    def base_and_projection_years(self) -&gt; list[int]:
-        return range(self.projection_base_year, self.end_year+1)
+        return range(self.first_projection_year, self.last_projection_year+1)
 
     @property
     def projection_years_column_labels(self) -&gt; list[str]:
         return [str(x) for x in self.projection_years]
 
     @property
-    def base_and_projection_years_column_labels(self) -&gt; list[str]:
-        return [str(x) for x in self.base_and_projection_years]
-
-    @property
-    def projection_year_count(self) -&gt; int:
-        return (self.end_year - self.start_projection_year + 1)
-
-    @property
-    def base_and_projection_year_count(self) -&gt; int:
+    def projection_years_count(self) -&gt; int:
         &#34;&#34;&#34;
         Returns the number of years that projections are done for plus one for the base projection
         year that is the year before the start of the projection years.
         &#34;&#34;&#34;
-        return (self.end_year - self.projection_base_year + 1)
-
-    @property
-    def available_years(self) -&gt; list[int]:
-        &#34;&#34;&#34;
-        The list of years with available data.
-        &#34;&#34;&#34;
-        return range(self.first_available_year, self.last_available_year+1)
-
-    @property
-    def available_years_column_labels(self) -&gt; list[str]:
-        &#34;&#34;&#34;
-        The list of years with available data, as string column names.
-        &#34;&#34;&#34;
-        return [str(x) for x in self.available_years]
-
-    @property
-    def all_years(self) -&gt; list[int]:
-        &#34;&#34;&#34;
-        the list of all years from the first 
-        year with data in the database to the last year of 
-        the projections horizon.
-        
-        This is used for the publishable projections that 
-        includes the actual data and the projections.
-        &#34;&#34;&#34;
-        return range(self.first_available_year, self.end_year+1)
-
-    @property
-    def all_year_count(self) -&gt; int:
-        &#34;&#34;&#34;
-        The number of years from the first year with data to the
-        last projection year.
-        &#34;&#34;&#34;
-        return (self.end_year - self.first_available_year + 1)
-
-    def available_years_column_labels(self) -&gt; list[str]:
-        return [str(x) for x in self.all_years]
+        return (self.last_projection_year - self.first_projection_year + 1)
 
     @property
     def stable_manifold_tolerance(self):
@@ -577,16 +487,33 @@ class ModelConfiguration(Base):
         solve all of the equations in the model before then linearising around
         those similar values.
 
+        This property can be modified after the model has been loaded if a different
+        behaviour is required.
+
         If not specified in the configuration file, then this model configuration
         property defaults to False.
 
         The name for this property in the configuration file is LineariseAroundStrictModelSolution.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_linearise_around_strict_model_solution&#34;):
-            self.self._linearise_around_strict_model_solution = False
+            self._linearise_around_strict_model_solution = False
         return self._linearise_around_strict_model_solution
 
-    def load_configuration_details(self, configuration_details: pd.DataFrame):
+    @linearise_around_strict_model_solution.setter
+    def linearise_around_strict_model_solution(self, value):
+        &#34;&#34;&#34;
+        ### Overview
+        
+        Set the value to True if the model linearisation is done around a strict model
+        solution and False if the model linearisation is to instead be done
+        around actual data values sourced from the model database or from a 
+        previous model projection.
+        &#34;&#34;&#34;
+        assert value is not None
+        assert isinstance(value, bool)
+        self._linearise_around_strict_model_solution = value
+
+    def _load_configuration_details(self, configuration_details: pd.DataFrame):
         &#34;&#34;&#34;
 
         ### Overview
@@ -639,21 +566,13 @@ class ModelConfiguration(Base):
                     self._calibration_year: int = int(row[1])
                 case &#34;CalibrationOfCarbonCoefficientsYear&#34;:
                     self._calibration_of_carbon_coefficients_year: int = int(row[1])
-                case &#34;FirstAvailableYear&#34;:
-                    self._first_available_year: int = int(row[1])
-                case &#34;LastAvailableYear&#34;:
-                    self._last_available_year: int = int(row[1])
                 case &#34;BaseYear&#34;:
                     self._base_year: int = int(row[1])
-                case &#34;ProjectionBaseYear&#34;:
-                    self._projection_base_year: int = int(row[1])
-                    self._original_projection_base_year: int = self.projection_base_year
-                case &#34;StartYear&#34;:
-                    self._start_year: int = int(row[1])
-                case &#34;StartProjectionYear&#34;:
-                    self._start_projection_year: int = int(row[1])
-                case &#34;EndYear&#34;:
-                    self._end_year: int = int(row[1])
+                case &#34;FirstProjectionYear&#34;:
+                    self._first_projection_year: int = int(row[1])
+                    self._original_first_projection_year: int = self.first_projection_year
+                case &#34;LastProjectionYear&#34;:
+                    self._last_projection_year: int = int(row[1])
                 case &#34;StableManifoldTolerance&#34;:
                     self._stable_manifold_tolerance = float(row[1])
                 case &#34;StableManifoldMaximumIterations&#34;:
@@ -698,51 +617,15 @@ class ModelConfiguration(Base):
         assert equations_module is not None
         assert getattr(equations_module, &#34;Equations&#34;) is not None
 
-        assert self.first_available_year &gt; 1900
-        assert self.last_available_year &lt; 2050
+        assert self.base_year &lt;= self.first_projection_year
 
-        assert self.start_year &gt;= self.first_available_year
-        assert self.start_year &lt; self.end_year
-
-        assert self.base_year &gt;= self.first_available_year
-        assert self.base_year &lt;= self.last_available_year
-
-        assert self.calibration_year &gt;= self.first_available_year
-        assert self.calibration_year &lt;= self.last_available_year
-
-        assert self.projection_base_year &gt;= self.start_year
-        assert self.projection_base_year &lt;= self.end_year
-
-        assert self.start_projection_year &gt; self.start_year
-        assert self.start_projection_year &lt; self.end_year
+        assert self.first_projection_year &lt; self.last_projection_year
         
         if self.stable_manifold_tolerance &gt; 0.0001:
             raise Exception(&#34;The convergence tolerance when searching for the stable manifold must be less than 1e-4.&#34;)
 
         if self.stable_manifold_maximum_iterations &lt; 100:
             raise Exception(&#34;You must allow for at least 100 iterations in converging to the stable manifold&#34;)
-        
-    def shift_forward(self, steps:int):
-        &#34;&#34;&#34;
-
-        ### Overview
-
-        Adjusts this model configuration by incrementing the start and base years for the projection by steps.
-
-        This shift operation is used to roll the model forward by steps years.
-
-        Note that the linearisation year is set equal to the updated projection base year.
-
-        ### Arguments
-
-        steps: The number of years to shift forard the model configuration projection base year, and projection
-        start year. 
-        
-
-        &#34;&#34;&#34;
-        self._projection_base_year += steps
-        self._start_projection_year += steps
-        self._linearisation_year = self.projection_base_year
         </code></pre>
 </details>
 </section>
@@ -777,14 +660,11 @@ current working directory, to the model configuration file.
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class ModelConfiguration(Base):
-
     &#34;&#34;&#34;
-
     ### Overview
 
     Provides access to model configuration details that have been
     read in from the model configuration CSV file.
-
     &#34;&#34;&#34;
 
     def __init__(self, configuration_file: str) -&gt; None:
@@ -813,7 +693,7 @@ current working directory, to the model configuration file.
         self._model_directory = os.path.dirname(os.path.realpath(configuration_file))
 
         data: pd.DataFrame = pd.read_csv(configuration_file, header=None)
-        self.load_configuration_details(configuration_details = data)
+        self._load_configuration_details(configuration_details = data)
         self.__validate()
 
         logging.info(f&#34;Preparing to use model {self.version} {self.build}.&#34;)
@@ -1092,158 +972,68 @@ current working directory, to the model configuration file.
         return self._calibration_of_carbon_coefficients_year
 
     @property
-    def first_available_year(self):
-        &#34;&#34;&#34;
-        The first year of actual data that is available to us in the database file.
-        &#34;&#34;&#34;
-        return self._first_available_year
-
-    @property
-    def last_available_year(self):
-        &#34;&#34;&#34;
-        The last year of actual data that is available to us in the database file.
-        &#34;&#34;&#34;
-        return self._last_available_year
-
-    @property
     def base_year(self):
         &#34;&#34;&#34;
         The year in which all indices are based at 1 (so their log values are 0).
-        This is currently required to be the same as the start_year but we may relax that.
+        Typically, this is chosen to be the first projection year, noting that
+        the first year of projections are matched up to observed data in that first
+        year.
         &#34;&#34;&#34;
         return self._base_year
 
     @property
-    def start_year(self):
+    def original_first_projection_year(self):
         &#34;&#34;&#34;
-        The first year to include in the analysis that will produce projections.
-        TODO: Can this be made redundant, given the start_projection_year and the base_year?
+        The original first projection year. This is tracked 
+        because, for projections that iterate forward through the projection years, 
+        the first projection year will be updated with each iteration.
         &#34;&#34;&#34;
-        return self._start_year
+        return self._original_first_projection_year
 
     @property
-    def start_projection_year(self):
+    def first_projection_year(self):
         &#34;&#34;&#34;
-        The start_year specified in the Ox build/baseinfo.csv file.
-        This is currently required to be start_year+1.
+        The first year that projections are to be generated for.
+        Note that for baseline projections, the projections are start
+        in a year where the model&#39;s database has data. so the projections
+        can be lined up with the observed data in the database.
         &#34;&#34;&#34;
-        return self._start_projection_year
+        return self._first_projection_year
+    
+    @first_projection_year.setter
+    def first_projection_year(self, value: int):
+        &#34;&#34;&#34;
+        Set the new first projection year, updating the linearisation year also.
+        The first projection year should only ever be incremented.
+        &#34;&#34;&#34;
+        assert value is not None
+        assert isinstance(value, int)
+        assert value &gt; self.first_projection_year
+        self._first_projection_year = value
+        self._linearisation_year = value
 
     @property
-    def projection_base_year(self):
-        &#34;&#34;&#34;
-        The base year for index variables in the database used for projections.
-        &#34;&#34;&#34;
-        return self._projection_base_year
-
-    @property
-    def original_projection_base_year(self):
-        &#34;&#34;&#34;
-        The original base year for index variables in the database used for projections.
-
-        This is used because for iterative projections the projection base year
-        will be updated.
-        &#34;&#34;&#34;
-        return self._original_projection_base_year
-
-    @property
-    def end_year(self):
+    def last_projection_year(self):
         &#34;&#34;&#34;
         The last year for which data will be projected.
         &#34;&#34;&#34;
-        return self._end_year
-
-    @property
-    def start_to_base_years(self) -&gt; list[int]:
-        &#34;&#34;&#34;
-        The list of years from the start year to the database&#39;s base year.
-        &#34;&#34;&#34;
-        return range(self.start_year, self.base_year+1)
-
-    @property
-    def start_to_base_year_column_labels(self) -&gt; list[str]:
-        return [str(x) for x in self.start_to_base_years]
-
-    @property
-    def base_to_end_years(self) -&gt; list[int]:
-        return range(self.base_year, self.end_year+1)
-
-    @property
-    def base_to_end_year_column_labels(self) -&gt; list[str]:
-        return [str(x) for x in self.base_to_end_years]
-
-    @property
-    def start_to_end_years(self) -&gt; list[int]:
-        return range(self.start_year, self.end_year+1)
-
-    @property
-    def start_to_end_year_column_labels(self) -&gt; list[str]:
-        return [str(x) for x in self.start_to_end_years]
+        return self._last_projection_year
 
     @property
     def projection_years(self) -&gt; list[int]:
-        return range(self.start_projection_year, self.end_year+1)
-
-    @property
-    def base_and_projection_years(self) -&gt; list[int]:
-        return range(self.projection_base_year, self.end_year+1)
+        return range(self.first_projection_year, self.last_projection_year+1)
 
     @property
     def projection_years_column_labels(self) -&gt; list[str]:
         return [str(x) for x in self.projection_years]
 
     @property
-    def base_and_projection_years_column_labels(self) -&gt; list[str]:
-        return [str(x) for x in self.base_and_projection_years]
-
-    @property
-    def projection_year_count(self) -&gt; int:
-        return (self.end_year - self.start_projection_year + 1)
-
-    @property
-    def base_and_projection_year_count(self) -&gt; int:
+    def projection_years_count(self) -&gt; int:
         &#34;&#34;&#34;
         Returns the number of years that projections are done for plus one for the base projection
         year that is the year before the start of the projection years.
         &#34;&#34;&#34;
-        return (self.end_year - self.projection_base_year + 1)
-
-    @property
-    def available_years(self) -&gt; list[int]:
-        &#34;&#34;&#34;
-        The list of years with available data.
-        &#34;&#34;&#34;
-        return range(self.first_available_year, self.last_available_year+1)
-
-    @property
-    def available_years_column_labels(self) -&gt; list[str]:
-        &#34;&#34;&#34;
-        The list of years with available data, as string column names.
-        &#34;&#34;&#34;
-        return [str(x) for x in self.available_years]
-
-    @property
-    def all_years(self) -&gt; list[int]:
-        &#34;&#34;&#34;
-        the list of all years from the first 
-        year with data in the database to the last year of 
-        the projections horizon.
-        
-        This is used for the publishable projections that 
-        includes the actual data and the projections.
-        &#34;&#34;&#34;
-        return range(self.first_available_year, self.end_year+1)
-
-    @property
-    def all_year_count(self) -&gt; int:
-        &#34;&#34;&#34;
-        The number of years from the first year with data to the
-        last projection year.
-        &#34;&#34;&#34;
-        return (self.end_year - self.first_available_year + 1)
-
-    def available_years_column_labels(self) -&gt; list[str]:
-        return [str(x) for x in self.all_years]
+        return (self.last_projection_year - self.first_projection_year + 1)
 
     @property
     def stable_manifold_tolerance(self):
@@ -1308,16 +1098,33 @@ current working directory, to the model configuration file.
         solve all of the equations in the model before then linearising around
         those similar values.
 
+        This property can be modified after the model has been loaded if a different
+        behaviour is required.
+
         If not specified in the configuration file, then this model configuration
         property defaults to False.
 
         The name for this property in the configuration file is LineariseAroundStrictModelSolution.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_linearise_around_strict_model_solution&#34;):
-            self.self._linearise_around_strict_model_solution = False
+            self._linearise_around_strict_model_solution = False
         return self._linearise_around_strict_model_solution
 
-    def load_configuration_details(self, configuration_details: pd.DataFrame):
+    @linearise_around_strict_model_solution.setter
+    def linearise_around_strict_model_solution(self, value):
+        &#34;&#34;&#34;
+        ### Overview
+        
+        Set the value to True if the model linearisation is done around a strict model
+        solution and False if the model linearisation is to instead be done
+        around actual data values sourced from the model database or from a 
+        previous model projection.
+        &#34;&#34;&#34;
+        assert value is not None
+        assert isinstance(value, bool)
+        self._linearise_around_strict_model_solution = value
+
+    def _load_configuration_details(self, configuration_details: pd.DataFrame):
         &#34;&#34;&#34;
 
         ### Overview
@@ -1370,21 +1177,13 @@ current working directory, to the model configuration file.
                     self._calibration_year: int = int(row[1])
                 case &#34;CalibrationOfCarbonCoefficientsYear&#34;:
                     self._calibration_of_carbon_coefficients_year: int = int(row[1])
-                case &#34;FirstAvailableYear&#34;:
-                    self._first_available_year: int = int(row[1])
-                case &#34;LastAvailableYear&#34;:
-                    self._last_available_year: int = int(row[1])
                 case &#34;BaseYear&#34;:
                     self._base_year: int = int(row[1])
-                case &#34;ProjectionBaseYear&#34;:
-                    self._projection_base_year: int = int(row[1])
-                    self._original_projection_base_year: int = self.projection_base_year
-                case &#34;StartYear&#34;:
-                    self._start_year: int = int(row[1])
-                case &#34;StartProjectionYear&#34;:
-                    self._start_projection_year: int = int(row[1])
-                case &#34;EndYear&#34;:
-                    self._end_year: int = int(row[1])
+                case &#34;FirstProjectionYear&#34;:
+                    self._first_projection_year: int = int(row[1])
+                    self._original_first_projection_year: int = self.first_projection_year
+                case &#34;LastProjectionYear&#34;:
+                    self._last_projection_year: int = int(row[1])
                 case &#34;StableManifoldTolerance&#34;:
                     self._stable_manifold_tolerance = float(row[1])
                 case &#34;StableManifoldMaximumIterations&#34;:
@@ -1429,51 +1228,15 @@ current working directory, to the model configuration file.
         assert equations_module is not None
         assert getattr(equations_module, &#34;Equations&#34;) is not None
 
-        assert self.first_available_year &gt; 1900
-        assert self.last_available_year &lt; 2050
+        assert self.base_year &lt;= self.first_projection_year
 
-        assert self.start_year &gt;= self.first_available_year
-        assert self.start_year &lt; self.end_year
-
-        assert self.base_year &gt;= self.first_available_year
-        assert self.base_year &lt;= self.last_available_year
-
-        assert self.calibration_year &gt;= self.first_available_year
-        assert self.calibration_year &lt;= self.last_available_year
-
-        assert self.projection_base_year &gt;= self.start_year
-        assert self.projection_base_year &lt;= self.end_year
-
-        assert self.start_projection_year &gt; self.start_year
-        assert self.start_projection_year &lt; self.end_year
+        assert self.first_projection_year &lt; self.last_projection_year
         
         if self.stable_manifold_tolerance &gt; 0.0001:
             raise Exception(&#34;The convergence tolerance when searching for the stable manifold must be less than 1e-4.&#34;)
 
         if self.stable_manifold_maximum_iterations &lt; 100:
-            raise Exception(&#34;You must allow for at least 100 iterations in converging to the stable manifold&#34;)
-        
-    def shift_forward(self, steps:int):
-        &#34;&#34;&#34;
-
-        ### Overview
-
-        Adjusts this model configuration by incrementing the start and base years for the projection by steps.
-
-        This shift operation is used to roll the model forward by steps years.
-
-        Note that the linearisation year is set equal to the updated projection base year.
-
-        ### Arguments
-
-        steps: The number of years to shift forard the model configuration projection base year, and projection
-        start year. 
-        
-
-        &#34;&#34;&#34;
-        self._projection_base_year += steps
-        self._start_projection_year += steps
-        self._linearisation_year = self.projection_base_year</code></pre>
+            raise Exception(&#34;You must allow for at least 100 iterations in converging to the stable manifold&#34;)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -1498,131 +1261,12 @@ def aeei_file(self):
     return f&#34;{self.data_directory}{self._aeei_file}&#34;</code></pre>
 </details>
 </dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.all_year_count"><code class="name">var <span class="ident">all_year_count</span> : int</code></dt>
-<dd>
-<div class="desc"><p>The number of years from the first year with data to the
-last projection year.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def all_year_count(self) -&gt; int:
-    &#34;&#34;&#34;
-    The number of years from the first year with data to the
-    last projection year.
-    &#34;&#34;&#34;
-    return (self.end_year - self.first_available_year + 1)</code></pre>
-</details>
-</dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.all_years"><code class="name">var <span class="ident">all_years</span> : list[int]</code></dt>
-<dd>
-<div class="desc"><p>the list of all years from the first
-year with data in the database to the last year of
-the projections horizon.</p>
-<p>This is used for the publishable projections that
-includes the actual data and the projections.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def all_years(self) -&gt; list[int]:
-    &#34;&#34;&#34;
-    the list of all years from the first 
-    year with data in the database to the last year of 
-    the projections horizon.
-    
-    This is used for the publishable projections that 
-    includes the actual data and the projections.
-    &#34;&#34;&#34;
-    return range(self.first_available_year, self.end_year+1)</code></pre>
-</details>
-</dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.available_years"><code class="name">var <span class="ident">available_years</span> : list[int]</code></dt>
-<dd>
-<div class="desc"><p>The list of years with available data.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def available_years(self) -&gt; list[int]:
-    &#34;&#34;&#34;
-    The list of years with available data.
-    &#34;&#34;&#34;
-    return range(self.first_available_year, self.last_available_year+1)</code></pre>
-</details>
-</dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.base_and_projection_year_count"><code class="name">var <span class="ident">base_and_projection_year_count</span> : int</code></dt>
-<dd>
-<div class="desc"><p>Returns the number of years that projections are done for plus one for the base projection
-year that is the year before the start of the projection years.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def base_and_projection_year_count(self) -&gt; int:
-    &#34;&#34;&#34;
-    Returns the number of years that projections are done for plus one for the base projection
-    year that is the year before the start of the projection years.
-    &#34;&#34;&#34;
-    return (self.end_year - self.projection_base_year + 1)</code></pre>
-</details>
-</dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.base_and_projection_years"><code class="name">var <span class="ident">base_and_projection_years</span> : list[int]</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def base_and_projection_years(self) -&gt; list[int]:
-    return range(self.projection_base_year, self.end_year+1)</code></pre>
-</details>
-</dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.base_and_projection_years_column_labels"><code class="name">var <span class="ident">base_and_projection_years_column_labels</span> : list[str]</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def base_and_projection_years_column_labels(self) -&gt; list[str]:
-    return [str(x) for x in self.base_and_projection_years]</code></pre>
-</details>
-</dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.base_to_end_year_column_labels"><code class="name">var <span class="ident">base_to_end_year_column_labels</span> : list[str]</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def base_to_end_year_column_labels(self) -&gt; list[str]:
-    return [str(x) for x in self.base_to_end_years]</code></pre>
-</details>
-</dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.base_to_end_years"><code class="name">var <span class="ident">base_to_end_years</span> : list[int]</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def base_to_end_years(self) -&gt; list[int]:
-    return range(self.base_year, self.end_year+1)</code></pre>
-</details>
-</dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.base_year"><code class="name">var <span class="ident">base_year</span></code></dt>
 <dd>
 <div class="desc"><p>The year in which all indices are based at 1 (so their log values are 0).
-This is currently required to be the same as the start_year but we may relax that.</p></div>
+Typically, this is chosen to be the first projection year, noting that
+the first year of projections are matched up to observed data in that first
+year.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1631,7 +1275,9 @@ This is currently required to be the same as the start_year but we may relax tha
 def base_year(self):
     &#34;&#34;&#34;
     The year in which all indices are based at 1 (so their log values are 0).
-    This is currently required to be the same as the start_year but we may relax that.
+    Typically, this is chosen to be the first projection year, noting that
+    the first year of projections are matched up to observed data in that first
+    year.
     &#34;&#34;&#34;
     return self._base_year</code></pre>
 </details>
@@ -1769,21 +1415,6 @@ def database_file(self):
     return f&#34;{self.data_directory}{self._database_file}&#34;</code></pre>
 </details>
 </dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.end_year"><code class="name">var <span class="ident">end_year</span></code></dt>
-<dd>
-<div class="desc"><p>The last year for which data will be projected.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def end_year(self):
-    &#34;&#34;&#34;
-    The last year for which data will be projected.
-    &#34;&#34;&#34;
-    return self._end_year</code></pre>
-</details>
-</dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.eqnmap_file"><code class="name">var <span class="ident">eqnmap_file</span></code></dt>
 <dd>
 <div class="desc"><p>The absolute path to the SYM processor generated eqnmap file.</p>
@@ -1838,19 +1469,25 @@ def equations_python_module_file(self):
     return f&#34;{self.sym_directory}{self.sym_output_filename_prefix}.py&#34;</code></pre>
 </details>
 </dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.first_available_year"><code class="name">var <span class="ident">first_available_year</span></code></dt>
+<dt id="gcubed.model_configuration.ModelConfiguration.first_projection_year"><code class="name">var <span class="ident">first_projection_year</span></code></dt>
 <dd>
-<div class="desc"><p>The first year of actual data that is available to us in the database file.</p></div>
+<div class="desc"><p>The first year that projections are to be generated for.
+Note that for baseline projections, the projections are start
+in a year where the model's database has data. so the projections
+can be lined up with the observed data in the database.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def first_available_year(self):
+def first_projection_year(self):
     &#34;&#34;&#34;
-    The first year of actual data that is available to us in the database file.
+    The first year that projections are to be generated for.
+    Note that for baseline projections, the projections are start
+    in a year where the model&#39;s database has data. so the projections
+    can be lined up with the observed data in the database.
     &#34;&#34;&#34;
-    return self._first_available_year</code></pre>
+    return self._first_projection_year</code></pre>
 </details>
 </dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.fully_qualified_equations_module_name"><code class="name">var <span class="ident">fully_qualified_equations_module_name</span></code></dt>
@@ -1885,19 +1522,19 @@ def io_table_file(self):
     return f&#34;{self.data_directory}{self._io_table_file}&#34;</code></pre>
 </details>
 </dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.last_available_year"><code class="name">var <span class="ident">last_available_year</span></code></dt>
+<dt id="gcubed.model_configuration.ModelConfiguration.last_projection_year"><code class="name">var <span class="ident">last_projection_year</span></code></dt>
 <dd>
-<div class="desc"><p>The last year of actual data that is available to us in the database file.</p></div>
+<div class="desc"><p>The last year for which data will be projected.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def last_available_year(self):
+def last_projection_year(self):
     &#34;&#34;&#34;
-    The last year of actual data that is available to us in the database file.
+    The last year for which data will be projected.
     &#34;&#34;&#34;
-    return self._last_available_year</code></pre>
+    return self._last_projection_year</code></pre>
 </details>
 </dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.linearisation_year"><code class="name">var <span class="ident">linearisation_year</span></code></dt>
@@ -1927,6 +1564,8 @@ as has been done for G-Cubed for decades. Set this to True if the
 actual data values are to be adjusted to find similar values that exactly
 solve all of the equations in the model before then linearising around
 those similar values.</p>
+<p>This property can be modified after the model has been loaded if a different
+behaviour is required.</p>
 <p>If not specified in the configuration file, then this model configuration
 property defaults to False.</p>
 <p>The name for this property in the configuration file is LineariseAroundStrictModelSolution.</p></div>
@@ -1946,13 +1585,16 @@ def linearise_around_strict_model_solution(self) -&gt; bool:
     solve all of the equations in the model before then linearising around
     those similar values.
 
+    This property can be modified after the model has been loaded if a different
+    behaviour is required.
+
     If not specified in the configuration file, then this model configuration
     property defaults to False.
 
     The name for this property in the configuration file is LineariseAroundStrictModelSolution.
     &#34;&#34;&#34;
     if not hasattr(self, &#34;_linearise_around_strict_model_solution&#34;):
-        self.self._linearise_around_strict_model_solution = False
+        self._linearise_around_strict_model_solution = False
     return self._linearise_around_strict_model_solution</code></pre>
 </details>
 </dd>
@@ -2029,24 +1671,23 @@ def opt_map_file(self):
     return f&#34;{self.sym_output_file_path_and_prefix}_optmap.csv&#34;</code></pre>
 </details>
 </dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.original_projection_base_year"><code class="name">var <span class="ident">original_projection_base_year</span></code></dt>
+<dt id="gcubed.model_configuration.ModelConfiguration.original_first_projection_year"><code class="name">var <span class="ident">original_first_projection_year</span></code></dt>
 <dd>
-<div class="desc"><p>The original base year for index variables in the database used for projections.</p>
-<p>This is used because for iterative projections the projection base year
-will be updated.</p></div>
+<div class="desc"><p>The original first projection year. This is tracked
+because, for projections that iterate forward through the projection years,
+the first projection year will be updated with each iteration.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def original_projection_base_year(self):
+def original_first_projection_year(self):
     &#34;&#34;&#34;
-    The original base year for index variables in the database used for projections.
-
-    This is used because for iterative projections the projection base year
-    will be updated.
+    The original first projection year. This is tracked 
+    because, for projections that iterate forward through the projection years, 
+    the first projection year will be updated with each iteration.
     &#34;&#34;&#34;
-    return self._original_projection_base_year</code></pre>
+    return self._original_first_projection_year</code></pre>
 </details>
 </dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.ox_directory"><code class="name">var <span class="ident">ox_directory</span></code></dt>
@@ -2119,33 +1760,6 @@ def productivity_file(self):
     return f&#34;{self.data_directory}{self._productivity_file}&#34;</code></pre>
 </details>
 </dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.projection_base_year"><code class="name">var <span class="ident">projection_base_year</span></code></dt>
-<dd>
-<div class="desc"><p>The base year for index variables in the database used for projections.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def projection_base_year(self):
-    &#34;&#34;&#34;
-    The base year for index variables in the database used for projections.
-    &#34;&#34;&#34;
-    return self._projection_base_year</code></pre>
-</details>
-</dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.projection_year_count"><code class="name">var <span class="ident">projection_year_count</span> : int</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def projection_year_count(self) -&gt; int:
-    return (self.end_year - self.start_projection_year + 1)</code></pre>
-</details>
-</dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.projection_years"><code class="name">var <span class="ident">projection_years</span> : list[int]</code></dt>
 <dd>
 <div class="desc"></div>
@@ -2155,7 +1769,7 @@ def projection_year_count(self) -&gt; int:
 </summary>
 <pre><code class="python">@property
 def projection_years(self) -&gt; list[int]:
-    return range(self.start_projection_year, self.end_year+1)</code></pre>
+    return range(self.first_projection_year, self.last_projection_year+1)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.projection_years_column_labels"><code class="name">var <span class="ident">projection_years_column_labels</span> : list[str]</code></dt>
@@ -2168,6 +1782,23 @@ def projection_years(self) -&gt; list[int]:
 <pre><code class="python">@property
 def projection_years_column_labels(self) -&gt; list[str]:
     return [str(x) for x in self.projection_years]</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.projection_years_count"><code class="name">var <span class="ident">projection_years_count</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Returns the number of years that projections are done for plus one for the base projection
+year that is the year before the start of the projection years.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def projection_years_count(self) -&gt; int:
+    &#34;&#34;&#34;
+    Returns the number of years that projections are done for plus one for the base projection
+    year that is the year before the start of the projection years.
+    &#34;&#34;&#34;
+    return (self.last_projection_year - self.first_projection_year + 1)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.simulations_directory"><code class="name">var <span class="ident">simulations_directory</span> : str</code></dt>
@@ -2257,91 +1888,6 @@ def stable_manifold_tolerance(self):
     if not hasattr(self, &#34;_stable_manifold_tolerance&#34;):
         self.self._stable_manifold_tolerance = 0.00001
     return self._stable_manifold_tolerance</code></pre>
-</details>
-</dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.start_projection_year"><code class="name">var <span class="ident">start_projection_year</span></code></dt>
-<dd>
-<div class="desc"><p>The start_year specified in the Ox build/baseinfo.csv file.
-This is currently required to be start_year+1.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def start_projection_year(self):
-    &#34;&#34;&#34;
-    The start_year specified in the Ox build/baseinfo.csv file.
-    This is currently required to be start_year+1.
-    &#34;&#34;&#34;
-    return self._start_projection_year</code></pre>
-</details>
-</dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.start_to_base_year_column_labels"><code class="name">var <span class="ident">start_to_base_year_column_labels</span> : list[str]</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def start_to_base_year_column_labels(self) -&gt; list[str]:
-    return [str(x) for x in self.start_to_base_years]</code></pre>
-</details>
-</dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.start_to_base_years"><code class="name">var <span class="ident">start_to_base_years</span> : list[int]</code></dt>
-<dd>
-<div class="desc"><p>The list of years from the start year to the database's base year.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def start_to_base_years(self) -&gt; list[int]:
-    &#34;&#34;&#34;
-    The list of years from the start year to the database&#39;s base year.
-    &#34;&#34;&#34;
-    return range(self.start_year, self.base_year+1)</code></pre>
-</details>
-</dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.start_to_end_year_column_labels"><code class="name">var <span class="ident">start_to_end_year_column_labels</span> : list[str]</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def start_to_end_year_column_labels(self) -&gt; list[str]:
-    return [str(x) for x in self.start_to_end_years]</code></pre>
-</details>
-</dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.start_to_end_years"><code class="name">var <span class="ident">start_to_end_years</span> : list[int]</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def start_to_end_years(self) -&gt; list[int]:
-    return range(self.start_year, self.end_year+1)</code></pre>
-</details>
-</dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.start_year"><code class="name">var <span class="ident">start_year</span></code></dt>
-<dd>
-<div class="desc"><p>The first year to include in the analysis that will produce projections.
-TODO: Can this be made redundant, given the start_projection_year and the base_year?</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def start_year(self):
-    &#34;&#34;&#34;
-    The first year to include in the analysis that will produce projections.
-    TODO: Can this be made redundant, given the start_projection_year and the base_year?
-    &#34;&#34;&#34;
-    return self._start_year</code></pre>
 </details>
 </dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.sym_directory"><code class="name">var <span class="ident">sym_directory</span></code></dt>
@@ -2492,21 +2038,8 @@ def version(self):
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="gcubed.model_configuration.ModelConfiguration.available_years_column_labels"><code class="name flex">
-<span>def <span class="ident">available_years_column_labels</span></span>(<span>self) ‑> list[str]</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def available_years_column_labels(self) -&gt; list[str]:
-    return [str(x) for x in self.all_years]</code></pre>
-</details>
-</dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.load_configuration_details"><code class="name flex">
-<span>def <span class="ident">load_configuration_details</span></span>(<span>self, configuration_details: pandas.core.frame.DataFrame)</span>
+<dt id="gcubed.model_configuration.ModelConfiguration._load_configuration_details"><code class="name flex">
+<span>def <span class="ident">_load_configuration_details</span></span>(<span>self, configuration_details: pandas.core.frame.DataFrame)</span>
 </code></dt>
 <dd>
 <div class="desc"><h3 id="overview">Overview</h3>
@@ -2522,7 +2055,7 @@ the CSV model configuration file.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def load_configuration_details(self, configuration_details: pd.DataFrame):
+<pre><code class="python">def _load_configuration_details(self, configuration_details: pd.DataFrame):
     &#34;&#34;&#34;
 
     ### Overview
@@ -2575,21 +2108,13 @@ the CSV model configuration file.</p>
                 self._calibration_year: int = int(row[1])
             case &#34;CalibrationOfCarbonCoefficientsYear&#34;:
                 self._calibration_of_carbon_coefficients_year: int = int(row[1])
-            case &#34;FirstAvailableYear&#34;:
-                self._first_available_year: int = int(row[1])
-            case &#34;LastAvailableYear&#34;:
-                self._last_available_year: int = int(row[1])
             case &#34;BaseYear&#34;:
                 self._base_year: int = int(row[1])
-            case &#34;ProjectionBaseYear&#34;:
-                self._projection_base_year: int = int(row[1])
-                self._original_projection_base_year: int = self.projection_base_year
-            case &#34;StartYear&#34;:
-                self._start_year: int = int(row[1])
-            case &#34;StartProjectionYear&#34;:
-                self._start_projection_year: int = int(row[1])
-            case &#34;EndYear&#34;:
-                self._end_year: int = int(row[1])
+            case &#34;FirstProjectionYear&#34;:
+                self._first_projection_year: int = int(row[1])
+                self._original_first_projection_year: int = self.first_projection_year
+            case &#34;LastProjectionYear&#34;:
+                self._last_projection_year: int = int(row[1])
             case &#34;StableManifoldTolerance&#34;:
                 self._stable_manifold_tolerance = float(row[1])
             case &#34;StableManifoldMaximumIterations&#34;:
@@ -2600,44 +2125,6 @@ the CSV model configuration file.</p>
                 self._linearise_around_strict_model_solution = bool(row[1])
             case _:
                 raise Exception(f&#34;Configuration parameter {row[0]} is not recognised.&#34;)</code></pre>
-</details>
-</dd>
-<dt id="gcubed.model_configuration.ModelConfiguration.shift_forward"><code class="name flex">
-<span>def <span class="ident">shift_forward</span></span>(<span>self, steps: int)</span>
-</code></dt>
-<dd>
-<div class="desc"><h3 id="overview">Overview</h3>
-<p>Adjusts this model configuration by incrementing the start and base years for the projection by steps.</p>
-<p>This shift operation is used to roll the model forward by steps years.</p>
-<p>Note that the linearisation year is set equal to the updated projection base year.</p>
-<h3 id="arguments">Arguments</h3>
-<p>steps: The number of years to shift forard the model configuration projection base year, and projection
-start year.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def shift_forward(self, steps:int):
-    &#34;&#34;&#34;
-
-    ### Overview
-
-    Adjusts this model configuration by incrementing the start and base years for the projection by steps.
-
-    This shift operation is used to roll the model forward by steps years.
-
-    Note that the linearisation year is set equal to the updated projection base year.
-
-    ### Arguments
-
-    steps: The number of years to shift forard the model configuration projection base year, and projection
-    start year. 
-    
-
-    &#34;&#34;&#34;
-    self._projection_base_year += steps
-    self._start_projection_year += steps
-    self._linearisation_year = self.projection_base_year</code></pre>
 </details>
 </dd>
 </dl>
@@ -2671,16 +2158,8 @@ start year.</p></div>
 <li>
 <h4><code><a title="gcubed.model_configuration.ModelConfiguration" href="#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a></code></h4>
 <ul class="">
+<li><code><a title="gcubed.model_configuration.ModelConfiguration._load_configuration_details" href="#gcubed.model_configuration.ModelConfiguration._load_configuration_details">_load_configuration_details</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.aeei_file" href="#gcubed.model_configuration.ModelConfiguration.aeei_file">aeei_file</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.all_year_count" href="#gcubed.model_configuration.ModelConfiguration.all_year_count">all_year_count</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.all_years" href="#gcubed.model_configuration.ModelConfiguration.all_years">all_years</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.available_years" href="#gcubed.model_configuration.ModelConfiguration.available_years">available_years</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.available_years_column_labels" href="#gcubed.model_configuration.ModelConfiguration.available_years_column_labels">available_years_column_labels</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.base_and_projection_year_count" href="#gcubed.model_configuration.ModelConfiguration.base_and_projection_year_count">base_and_projection_year_count</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.base_and_projection_years" href="#gcubed.model_configuration.ModelConfiguration.base_and_projection_years">base_and_projection_years</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.base_and_projection_years_column_labels" href="#gcubed.model_configuration.ModelConfiguration.base_and_projection_years_column_labels">base_and_projection_years_column_labels</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.base_to_end_year_column_labels" href="#gcubed.model_configuration.ModelConfiguration.base_to_end_year_column_labels">base_to_end_year_column_labels</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.base_to_end_years" href="#gcubed.model_configuration.ModelConfiguration.base_to_end_years">base_to_end_years</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.base_year" href="#gcubed.model_configuration.ModelConfiguration.base_year">base_year</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.benchmarking_reports_directory" href="#gcubed.model_configuration.ModelConfiguration.benchmarking_reports_directory">benchmarking_reports_directory</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.build" href="#gcubed.model_configuration.ModelConfiguration.build">build</a></code></li>
@@ -2689,39 +2168,29 @@ start year.</p></div>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.calibration_year" href="#gcubed.model_configuration.ModelConfiguration.calibration_year">calibration_year</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.data_directory" href="#gcubed.model_configuration.ModelConfiguration.data_directory">data_directory</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.database_file" href="#gcubed.model_configuration.ModelConfiguration.database_file">database_file</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.end_year" href="#gcubed.model_configuration.ModelConfiguration.end_year">end_year</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.eqnmap_file" href="#gcubed.model_configuration.ModelConfiguration.eqnmap_file">eqnmap_file</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.equations_python_module_file" href="#gcubed.model_configuration.ModelConfiguration.equations_python_module_file">equations_python_module_file</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.first_available_year" href="#gcubed.model_configuration.ModelConfiguration.first_available_year">first_available_year</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.first_projection_year" href="#gcubed.model_configuration.ModelConfiguration.first_projection_year">first_projection_year</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.fully_qualified_equations_module_name" href="#gcubed.model_configuration.ModelConfiguration.fully_qualified_equations_module_name">fully_qualified_equations_module_name</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.io_table_file" href="#gcubed.model_configuration.ModelConfiguration.io_table_file">io_table_file</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.last_available_year" href="#gcubed.model_configuration.ModelConfiguration.last_available_year">last_available_year</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.last_projection_year" href="#gcubed.model_configuration.ModelConfiguration.last_projection_year">last_projection_year</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.linearisation_year" href="#gcubed.model_configuration.ModelConfiguration.linearisation_year">linearisation_year</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.linearise_around_strict_model_solution" href="#gcubed.model_configuration.ModelConfiguration.linearise_around_strict_model_solution">linearise_around_strict_model_solution</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.load_configuration_details" href="#gcubed.model_configuration.ModelConfiguration.load_configuration_details">load_configuration_details</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.model_directory" href="#gcubed.model_configuration.ModelConfiguration.model_directory">model_directory</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.model_summary_file" href="#gcubed.model_configuration.ModelConfiguration.model_summary_file">model_summary_file</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.neutral_real_interest_rate" href="#gcubed.model_configuration.ModelConfiguration.neutral_real_interest_rate">neutral_real_interest_rate</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.opt_map_file" href="#gcubed.model_configuration.ModelConfiguration.opt_map_file">opt_map_file</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.original_projection_base_year" href="#gcubed.model_configuration.ModelConfiguration.original_projection_base_year">original_projection_base_year</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.original_first_projection_year" href="#gcubed.model_configuration.ModelConfiguration.original_first_projection_year">original_first_projection_year</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.ox_directory" href="#gcubed.model_configuration.ModelConfiguration.ox_directory">ox_directory</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.parameters_file" href="#gcubed.model_configuration.ModelConfiguration.parameters_file">parameters_file</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.population_file" href="#gcubed.model_configuration.ModelConfiguration.population_file">population_file</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.productivity_file" href="#gcubed.model_configuration.ModelConfiguration.productivity_file">productivity_file</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.projection_base_year" href="#gcubed.model_configuration.ModelConfiguration.projection_base_year">projection_base_year</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.projection_year_count" href="#gcubed.model_configuration.ModelConfiguration.projection_year_count">projection_year_count</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.projection_years" href="#gcubed.model_configuration.ModelConfiguration.projection_years">projection_years</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.projection_years_column_labels" href="#gcubed.model_configuration.ModelConfiguration.projection_years_column_labels">projection_years_column_labels</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.shift_forward" href="#gcubed.model_configuration.ModelConfiguration.shift_forward">shift_forward</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.projection_years_count" href="#gcubed.model_configuration.ModelConfiguration.projection_years_count">projection_years_count</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.simulations_directory" href="#gcubed.model_configuration.ModelConfiguration.simulations_directory">simulations_directory</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.stable_manifold_maximum_iterations" href="#gcubed.model_configuration.ModelConfiguration.stable_manifold_maximum_iterations">stable_manifold_maximum_iterations</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.stable_manifold_tolerance" href="#gcubed.model_configuration.ModelConfiguration.stable_manifold_tolerance">stable_manifold_tolerance</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.start_projection_year" href="#gcubed.model_configuration.ModelConfiguration.start_projection_year">start_projection_year</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.start_to_base_year_column_labels" href="#gcubed.model_configuration.ModelConfiguration.start_to_base_year_column_labels">start_to_base_year_column_labels</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.start_to_base_years" href="#gcubed.model_configuration.ModelConfiguration.start_to_base_years">start_to_base_years</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.start_to_end_year_column_labels" href="#gcubed.model_configuration.ModelConfiguration.start_to_end_year_column_labels">start_to_end_year_column_labels</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.start_to_end_years" href="#gcubed.model_configuration.ModelConfiguration.start_to_end_years">start_to_end_years</a></code></li>
-<li><code><a title="gcubed.model_configuration.ModelConfiguration.start_year" href="#gcubed.model_configuration.ModelConfiguration.start_year">start_year</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.sym_directory" href="#gcubed.model_configuration.ModelConfiguration.sym_directory">sym_directory</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.sym_input_file" href="#gcubed.model_configuration.ModelConfiguration.sym_input_file">sym_input_file</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.sym_output_file_path_and_prefix" href="#gcubed.model_configuration.ModelConfiguration.sym_output_file_path_and_prefix">sym_output_file_path_and_prefix</a></code></li>

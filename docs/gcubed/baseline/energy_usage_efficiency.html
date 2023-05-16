@@ -110,7 +110,7 @@ class EnergyUsageEfficiency(Base):
             raise Exception(f&#34;The energy usage efficiency (AEEI) file, {self._filename}, does not exist. Check the model configuration.&#34;)
         input: pd.DataFrame = pd.read_csv(self._filename)
         input.index = input.iloc[:,0]
-        input = input.loc[:, self.configuration.base_and_projection_years_column_labels]
+        input = input.loc[:, self.configuration.projection_years_column_labels]
 
         # Get the consumption energy usage efficiency first.
         self._consumption_energy_usage_efficiency = input.tail(self.sym_data.regions_count)
@@ -125,7 +125,7 @@ class EnergyUsageEfficiency(Base):
         self._sector_aeei = dict()
         self._sector_cumulative_aeei = dict()
         for region in self.sym_data.regions_members:
-            region_aeei = sectors_input.loc[sectors_input.index.str.endswith(region, na=False), self.configuration.base_and_projection_years_column_labels].copy()
+            region_aeei = sectors_input.loc[sectors_input.index.str.endswith(region, na=False), self.configuration.projection_years_column_labels].copy()
             region_aeei.index = self.sym_data.sectors_members
 
             # logging.debug(f&#34;{region} aeei index\n{region_aeei}&#34;)
@@ -234,7 +234,7 @@ class EnergyUsageEfficiency(Base):
             raise Exception(f&#34;The energy usage efficiency (AEEI) file, {self._filename}, does not exist. Check the model configuration.&#34;)
         input: pd.DataFrame = pd.read_csv(self._filename)
         input.index = input.iloc[:,0]
-        input = input.loc[:, self.configuration.base_and_projection_years_column_labels]
+        input = input.loc[:, self.configuration.projection_years_column_labels]
 
         # Get the consumption energy usage efficiency first.
         self._consumption_energy_usage_efficiency = input.tail(self.sym_data.regions_count)
@@ -249,7 +249,7 @@ class EnergyUsageEfficiency(Base):
         self._sector_aeei = dict()
         self._sector_cumulative_aeei = dict()
         for region in self.sym_data.regions_members:
-            region_aeei = sectors_input.loc[sectors_input.index.str.endswith(region, na=False), self.configuration.base_and_projection_years_column_labels].copy()
+            region_aeei = sectors_input.loc[sectors_input.index.str.endswith(region, na=False), self.configuration.projection_years_column_labels].copy()
             region_aeei.index = self.sym_data.sectors_members
 
             # logging.debug(f&#34;{region} aeei index\n{region_aeei}&#34;)

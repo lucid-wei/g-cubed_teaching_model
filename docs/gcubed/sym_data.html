@@ -40,7 +40,7 @@ from ast import match_case
 from concurrent.futures import process
 import logging
 import os
-import gcubed.constants as CONSTANTS
+from gcubed.constants import Constants
 from gcubed.model_configuration import ModelConfiguration
 import pandas as pd
 import regex as re
@@ -55,15 +55,15 @@ class SymData:
     Each vector is a different type of variable.
     Note the naming conventions for the lefthand side (LHS) variable vectors:
 
-    a. X1l (the vector of state variables) X=S=State
-    b. J1l (the vector of costate or jump variables) J=C=Costate
+    a. X1L (the vector of state variables) X=S=State
+    b. J1L (the vector of costate or jump variables) J=C=Costate
     c. ZEL (the endogenous variables LOGY, PRCT, PRID) 
     d. Z1L (the other endogenous variables)
 
     These 4 vectors of variables are functions of:
 
-    1. X1r is right hand side (RHS) state variables
-    2. J1r is RHS costate or jump variables
+    1. X1R is right hand side (RHS) state variables
+    2. J1R is RHS costate or jump variables
     3. ZER is RHS endogenous variables LOGY, PRCT, PRID
     4. EXZ is RHS the lead expected ze variables
     5. YXR is RHS state variables lagged by 1 period
@@ -92,7 +92,7 @@ class SymData:
         
         ### Arguments
 
-        configuration: The configuration details for the model.
+        `configuration`: The configuration details for the model.
 
         &#34;&#34;&#34;
         
@@ -153,7 +153,7 @@ class SymData:
         
        ### Arguments
 
-        lhs_vector_name: the name of the LHS vector.
+        `lhs_vector_name`: the name of the LHS vector.
 
        ### Returns 
         
@@ -190,9 +190,11 @@ class SymData:
         &#34;&#34;&#34;
        ### Arguments
 
-        vector_name: The fully qualified name of the variable
+        `vector_name`: The fully qualified name of the variable
         
-        Returns the string ID of the projection vector that the variable is in.
+        ### Returns
+        
+        The string ID of the projection vector that the variable is in.
         &#34;&#34;&#34;
         var_types: pd.Series = self.var_map.loc[[variable_name], &#39;var_type&#39;]
         if len(var_types) == 0:
@@ -202,18 +204,40 @@ class SymData:
 
 
     @property
-    def sym_sets(self) -&gt; dict:
+    def sym_sets(self) -&gt; dict[str, list[str]]:
         &#34;&#34;&#34;
-        Mapping from set name to set members list
+        A dictionary mapping from the name of the SYM model definition of the set 
+        to the SYM members of the set, contained in a list of strings.
         &#34;&#34;&#34;
         return self._sym_sets
 
     def __set_members(self, set_name: str) -&gt; list[str]:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        `set_name`: The name of the SYM model definition set of interest, e.g. &#39;region&#39;.
+
+        ### Returns
+
+        The members of the named set, as a list of strings, or the empty list if
+        the named set is not part of the SYM model definition.
+        &#34;&#34;&#34;
         if set_name in self.sym_sets:
             return self.sym_sets[set_name].copy()
-        return list()
+        else:
+            return list()
 
     def __set_members_count(self, set_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        `set_name`: The name of the SYM model definition set of interest, e.g. &#39;region&#39;.
+
+        ### Returns
+
+        The number of members of the named set.
+        
+        &#34;&#34;&#34;
         members = self.__set_members(set_name)
         if members:
             return len(members)
@@ -221,30 +245,72 @@ class SymData:
 
     @property
     def goods_members(self) -&gt; list[str]:
-        return self.__set_members(&#34;goods&#34;)
+        &#34;&#34;&#34;
+        The list of goods produced in the economy. These are the members of the
+        `goods` set, that is a part of every G-Cubed model SYM definition.
+        &#34;&#34;&#34;
+        return self.__set_members(&#39;goods&#39;)
 
     @property
     def goods_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of goods produced in the economy. These are the members of the
+        `goods` set, that is a part of every G-Cubed model SYM definition.
+        &#34;&#34;&#34;
         return self.__set_members_count(&#39;goods&#39;)
 
     @property
     def energy_goods_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of energy goods produced in the economy. These are the outputs 
+        of the energy producing sectors in the economy.
+
+        They are identified by being  members of the `goods_e` set, that is a part of 
+        every G-Cubed model SYM definition.
+        &#34;&#34;&#34;
         return self.__set_members(&#34;goods_e&#34;)
 
     @property  # numener # g01 for version R of the model
     def energy_goods_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of energy goods produced in the economy. These are the outputs 
+        of sectors in the economy that deal with extraction and value addition for
+        fuel sources (e.g.coal, gas, oil, petroleum refining etc) as well as the 
+        electricity distribution sector.
+
+        They are identified by being members of the `goods_e` set, that is a part of 
+        every G-Cubed model SYM definition.
+        &#34;&#34;&#34;        
         return self.__set_members_count(&#39;goods_e&#39;)
 
     @property
     def electricity_generation_goods_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of goods in the economy that are produced by electricity generation sectors. 
+        All of those sectors produce electricity, so their output is the same in some sense. However,
+        the output of each industry is identified by its own &#39;good&#39; identifier.
+
+        They are identified by being  members of the `goods_g` set.
+        &#34;&#34;&#34;
         return self.__set_members(&#34;goods_g&#34;)
 
     @property
     def electricity_generation_goods_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of goods in the economy that are produced by electricity generation sectors. 
+        All of those sectors produce electricity, so their output is the same in some sense. However,
+        the output of each industry is identified by its own &#39;good&#39; identifier.
+
+        They are identified by being  members of the `goods_g` set.
+        &#34;&#34;&#34;
         return self.__set_members_count(&#39;goods_g&#39;)
 
     @property
     def non_energy_goods_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of goods in the economy that are not 
+        energy goods (those that are members of the `goods_e` set).
+        &#34;&#34;&#34;
         all_goods_members = self.goods_members
         energy_members = self.energy_goods_members
         result = [x for x in all_goods_members if x not in energy_members]
@@ -252,10 +318,18 @@ class SymData:
 
     @property
     def non_energy_goods_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of goods in the economy that are not 
+        energy goods (those that are members of the `goods_e` set).
+        &#34;&#34;&#34;
         return len(self.non_energy_goods_members)
 
     @property
     def non_electricity_generation_goods_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of goods in the economy that are not 
+        electricity generation goods (those that are members of the `goods_g` set).
+        &#34;&#34;&#34;
         all_goods_members = self.goods_members
         generation_members = self.electricity_generation_goods_members
         result = [x for x in all_goods_members if x not in generation_members]
@@ -263,10 +337,18 @@ class SymData:
 
     @property
     def non_electricity_generation_goods_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of goods in the economy that are not 
+        electricity generation goods (those that are members of the `goods_g` set).
+        &#34;&#34;&#34;
         return len(self.non_electricity_generation_goods_members)
 
     @property
     def non_energy_or_generation_goods_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of goods in the economy that are not energy goods or
+        electricity generation goods.
+        &#34;&#34;&#34;
         result = [
             x for x in self.goods_members if x not in self.energy_goods_members]
         result = [
@@ -275,89 +357,153 @@ class SymData:
 
     @property
     def non_energy_or_generation_goods_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of goods in the economy that are not energy goods or
+        electricity generation goods.
+        &#34;&#34;&#34;
         return len(self.non_energy_or_generation_goods_members)
 
     @property
     def capital_sectors_members(self) -&gt; list[str]:
         &#34;&#34;&#34;
-        sector Y, the capital producing sector
-        sector Z, the household capital producing sector
+        The capital sectors that are part of all G-Cubed models. There are two of them:
+
+        1. sector Y, the sector that produces capital for firms.
+
+        2. sector Z, the sector that produces capital for households.
+
         &#34;&#34;&#34;
         return [&#34;Y&#34;, &#34;Z&#34;]
 
     @property
     def all_sectors_members(self) -&gt; list[str]:
         &#34;&#34;&#34;
-        Returns the set of members defined in the model SYM file
-        plus sector Y, the capital producing sector
-        and sector Z, the household capital producing sector.
-        These sectors, Y and Z, are common to all model versions.
+        The list of all sectors defined in the SYM model definition plus the
+        two capital producing sectors that are common to all model versions.
         &#34;&#34;&#34;
         result = self.__set_members(&#34;sectors&#34;)
         for capital_sector in self.capital_sectors_members:
             result.append(capital_sector)
         return result
 
+    @property  # numsect # a01,a02, Y and Z for version R of the model
+    def all_sectors_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of sectors defined in the SYM model definition plus the
+        two capital producing sectors that are common to all model versions.
+        &#34;&#34;&#34;
+        return len(self.all_sectors_members)
+    
     @property
     def sectors_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of sectors that are explicitly defined in the SYM model definition. 
+        These are the members of the `sectors` set.
+
+        The list does not include the two capital producing sectors 
+        that are common to all model versions.
+        &#34;&#34;&#34;
         return self.__set_members(&#34;sectors&#34;)
 
     @property  # numsect # a01,a02 for version R of the model
     def sectors_count(self) -&gt; int:
         &#34;&#34;&#34;
-        Returns N: the number of sectors defined in the SYM file (a01 ...aN).
+        The number of sectors that are explicitly defined in the SYM model definition. 
+        These are the members of the `sectors` set.
+
+        The number does not include the two capital producing sectors 
+        that are common to all model versions.
         &#34;&#34;&#34;
         return self.__set_members_count(&#39;sectors&#39;)
 
-    @property  # numsect # a01,a02, Y and Z for version R of the model
-    def all_sectors_count(self) -&gt; int:
-        &#34;&#34;&#34;
-        Returns N+2: the number of sectors defined in the SYM file (a01 ...aN) + the Y and the Z sectors.
-        &#34;&#34;&#34;
-        return len(self.all_sectors_members)
-
     @property
     def non_energy_or_generation_sectors_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of sectors explicitly defined in the SYM model definition except
+        for sectors that are involved in electricity generation or energy.
+        &#34;&#34;&#34;
         return self.sectors_producing(self.non_energy_or_generation_goods_members)
 
     @property
     def energy_distribution_sectors_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The number of sectors explicitly defined in the SYM model definition except
+        for sectors that are involved in electricity generation or energy.
+
+        This is typically just the first sector, in those models that include such a sector.
+
+        &#34;&#34;&#34;
         return self.__set_members(&#39;sec_ed&#39;)
 
     @property
-    def energy_distribution_sectors_count(self) -&gt; int:
+    def electricity_distribution_sectors_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The list of sectors explicitly defined in the SYM model definition that are
+        responsible for electricity distribution.
+        &#34;&#34;&#34;        
         return self.__set_members_count(&#39;sec_ed&#39;)
 
     @property
-    def non_energy_distribution_sectors_members(self) -&gt; list[str]:
+    def non_electricity_distribution_sectors_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of sectors explicitly defined in the SYM model definition that are
+        not responsible for electricity distribution.
+        &#34;&#34;&#34;
         return self.__set_members(&#39;sec_std&#39;)
 
     # Note that if there is no electricity distribution sectors, then distribution is lumped in with
     # the more broadly defined energy sector(s).
     @property  # numsecstd
-    def non_energy_distribution_sectors_count(self) -&gt; int:
+    def non_electricity_distribution_sectors_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of sectors explicitly defined in the SYM model definition that are
+        not responsible for electricity distribution.
+        &#34;&#34;&#34;
         return self.__set_members_count(&#39;sec_std&#39;)
 
     @property
     def regions_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of regions explicitly defined in the SYM model definition as part
+        of the `regions` set.
+        &#34;&#34;&#34;
         return self.__set_members(
             &#34;regions&#34;)
 
     @property  # countopt
     def regions_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of regions explicitly defined in the SYM model definition as part
+        of the `regions` set.
+        &#34;&#34;&#34;
         return self.__set_members_count(&#39;regions&#39;)
 
     @property
     def us_region(self) -&gt; str:
+        &#34;&#34;&#34;
+        The string identifier of the USA region. This must always be the first region
+        defined in the SYM `regions` set and it will be the first region in the list
+        of region members.
+        &#34;&#34;&#34;
         return self.regions_members[0]
 
     @property
     def gas_sector_good(self) -&gt; str:
         &#34;&#34;&#34;
-        Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+        The string identifier of the good , `g02`, produced by the sector that 
+        includes gas extraction and gas utilities. This is the sector associated 
+        with gas-related carbon emissions.
 
-        Model version J has 5 energy sectors: gas and gas utilities are aggregated and
-        the gas emissions are applied to gas utilities a02 producing good g02.
+        Model versions with more than 2 sectors typically include a gas sector.
+        That sector must be the second member of the `sectors` set in the
+        model&#39;s SYM definition.
+
+        Model version R has 2 sectors, the first is energy, and it is 
+        associated with gas, oil and coal. It has no explicit gas sector so it
+        has no good associated with such a sector.
+
+        TODO: Add SYM attributes to this good to identify it appropriately so it
+        is not order dependent in the SYM definitions.
         &#34;&#34;&#34;
         match self.configuration.version:
             case &#39;2R&#39;:
@@ -370,12 +516,20 @@ class SymData:
     @property
     def oil_sector_good(self) -&gt; str:
         &#34;&#34;&#34;
-        Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+        The string identifier of the good , `g03`, produced by the petroleum sector. 
+        This is the sector associated with oil-related carbon emissions.
 
-        Model version J has 5 energy sectors: gas and gas utilities are aggregated and
-        the gas emissions are applied to gas utilities a03 producing good g03.
+        Model that include a petroleum sector must have that sector 
+        as the third member of the `sectors` set in the
+        model&#39;s SYM definition.
+
+        Model version R has 2 sectors, the first is energy, and it is 
+        associated with gas, oil and coal. It has no explicit petroleum sector so it
+        has no good associated with such a sector.
+
+        TODO: Add SYM attributes to this good to identify it appropriately so it
+        is not order dependent in the SYM definitions.
         &#34;&#34;&#34;
-
         match self.configuration.version:
             case &#39;2R&#39;:
                 return None
@@ -387,11 +541,20 @@ class SymData:
     @property
     def coal_sector_good(self) -&gt; str:
         &#34;&#34;&#34;
-        Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+        The string identifier of the good , `g04`, produced by the petroleum sector. 
+        This is the sector associated with oil-related carbon emissions.
 
-        Model version J has 5 energy sectors: gas and gas utilities are aggregated and
-        the gas emissions are applied to gas utilities a04 producing good g04.
-        &#34;&#34;&#34;
+        Model that include a coal sector must have that sector 
+        as the fourth member of the `sectors` set in the
+        model&#39;s SYM definition.
+
+        Model version R has 2 sectors, the first is energy, and it is 
+        associated with gas, oil and coal. It has no explicit coal sector so it
+        has no good associated with such a sector.
+
+        TODO: Add SYM attributes to this good to identify it appropriately so it
+        is not order dependent in the SYM definitions.
+        &#34;&#34;&#34;        
         match self.configuration.version:
             case &#39;2R&#39;:
                 return None
@@ -402,103 +565,168 @@ class SymData:
 
     @property
     def sector_prefix(self) -&gt; str:
+        &#34;&#34;&#34;
+        The first letter of the first sector identifier.
+        This is typically `a`.
+        &#34;&#34;&#34;
         return self.sectors_members[0][0]
 
     @property
     def good_prefix(self) -&gt; str:
+        &#34;&#34;&#34;
+        The first letter of the first good identifier.
+        This is typically `g`.
+        &#34;&#34;&#34;
         return self.goods_members[0][0]
 
     def sector_producing(self, good: str) -&gt; str:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        `good`: The identifier of the good produced by the sector of interest.
+
+        ### Returns
+
+        the sector identifier for the sector that produces the
+        specified good.
+        &#34;&#34;&#34;
         return (self.sector_prefix + good[1:])
 
     def sectors_producing(self, goods: list[str]) -&gt; str:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        `goods`: The list of identifiers of the goods produced by the sectors of interest.
+
+        ### Returns
+
+        the list of sector identifiers for the sectors that produces the
+        goods in the supplied list.
+        &#34;&#34;&#34;
         return [self.sector_producing(x) for x in goods]
 
     def good_produced_by(self, sector: str) -&gt; str:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        `sector`: The identifier of the sector that produces the good of interest.
+
+        ### Returns
+
+        the good identifier produced by the specified sector.
+        &#34;&#34;&#34;
         return (self.good_prefix + sector[1:])
 
     def goods_produced_by(self, sectors: list[str]) -&gt; str:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        `sectors`: The list of identifiers of the sectors that produce 
+        the goods of interest.
+
+        ### Returns
+
+        the list of good identifiers for the goods produced by the 
+        specified sectors.
+        &#34;&#34;&#34;
         return [self.good_produced_by(x) for x in sectors]
 
     def __vector_length(self, vector_name: str) -&gt; int:
         &#34;&#34;&#34;
-        Provides access to information about the lengths of various vectors
-        used in the model based on SYM information.
+        ### Arguments
+        `vector_name`: The name of a LHS or RHS vector in the model.
+        
+        One of:
+
+        1. x1l or x1r or yxr (all equal to the number of state variables in the model)
+        2. j1l or j1r or yjr (all equal to the number of costate variables in the model)
+        3. zel or zer or exz (all equal to the number of expected endogenous variables in the model)
+        4. z1l or z1r (all equal to the number of other endogenous variables in the model)
+        5. exo (equal to the number of exogenous variables in the model)
+
+        ### Returns
+        The lengths of various vectors used to express the model equations. 
+        These vector lengths are determined from the SYM definition of the model.
         &#34;&#34;&#34;
         return self._vector_length[vector_name]
 
     @property  # nxg
     def exogenous_variable_count(self):
+        &#34;&#34;&#34;
+        The number of exogenous variables in the model (The length of the EXO vector).
+        &#34;&#34;&#34;
         return self.__vector_length(&#34;exogenous_variables&#34;)
 
     @property  # nz and nz1
     def endogenous_variable_count(self):
+        &#34;&#34;&#34;
+        The number of endogenous variables in the model (The length of the Z1L, Z1R vectors).
+        &#34;&#34;&#34;
         return self.__vector_length(&#34;endogenous_variables&#34;)
 
     @property  # nez
     def expected_endogenous_variable_count(self):
+        &#34;&#34;&#34;
+        The number of expected endogenous variables in the model 
+        (The length of the ZEL, ZER and EXZ vectors).
+        &#34;&#34;&#34;
         return self.__vector_length(&#34;expected_endogenous_variables&#34;)
 
     @property  # njm
     def jump_variable_count(self):
+        &#34;&#34;&#34;
+        The number of costate or jump variables in the model 
+        (The length of the J1L, J1R and YJR vectors).
+        &#34;&#34;&#34;
         return self.__vector_length(&#34;jump_variables&#34;)
 
     @property  # nst
     def state_variable_count(self):
+        &#34;&#34;&#34;
+        The number of state variables in the model 
+        (The length of the X1L, X1R and XJR vectors).
+        &#34;&#34;&#34;
         return self.__vector_length(&#34;state_variables&#34;)
 
     @property  # npar
     def parameter_count(self):
+        &#34;&#34;&#34;
+        The number of parameters in the model.
+        &#34;&#34;&#34;
         return self.__vector_length(&#34;parameters&#34;)
-
-    @property  # swtch
-    def swtch(self) -&gt; tuple[bool]:
-        &#34;&#34;&#34;
-        Return a tuple of boolean values used to track various types of variables in the model.
-        In the Ox implementation these are ones and zeros.
-        &#34;&#34;&#34;
-        return (
-            self.jump_variable_count == 0,
-            self.exogenous_variable_count == 0,
-            self.expected_endogenous_variable_count == 0,
-            False,
-            self.jump_variable_count == 0,
-            False)
-
-    @property  # dimenson Note the spelling error in the Ox variable name.
-    def dimension(self):
-        return (0,
-                self.parameter_count,
-                self.state_variable_count,
-                max(self.jump_variable_count, 1),
-                max(self.exogenous_variable_count, 1),
-                self.endogenous_variable_count,
-                max(self.expected_endogenous_variable_count, 1),
-                0)
-
-    # TODO: Remove this convenience method once the re-implementation is done.
-    @property
-    def dimenson(self):
-        return self.dimension()
 
     @property
     # TODO: Consider adding these factors of production (K,L,E,M) to the
     # SYM model definition so they are not hard-coded.
     def factors_of_production_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The four string identifiers of the factors of production:
+
+        1. `K` for capital
+        1. `L` for labour
+        1. `E` for energy
+        1. `M` for material
+        &#34;&#34;&#34;
         return (&#34;K&#34;, &#34;L&#34;, &#34;E&#34;, &#34;M&#34;)
 
     @property
     def factors_of_production_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of factors of production (4).
+        &#34;&#34;&#34;
         return len(self.factors_of_production_members)
 
     @property
     def lhs_vector_names(self) -&gt; list[str]:
         &#34;&#34;&#34;
-        Note the naming conventions for the lefthand side (LHS) variable vectors:
-        a. x1l (the vector of state variables) X=S=State
-        b. j1l (the vector of costate or jump variables) J=C=Costate
-        c. zel (the endogenous variables LOGY, PRCT, PRID) 
-        d. z1l (the other endogenous variables)
+        A list of the model&#39;s LHS vector names.
+
+        Note the lowercase naming conventions for the lefthand side (LHS) variable vectors:
+
+        1. `x1l` (the vector of state variables) X=S=State
+        2. `j1l` (the vector of costate or jump variables) J=C=Costate
+        3. `zel` (the endogenous variables LOGY, PRCT, PRID) 
+        4. `z1l` (the other endogenous variables)
         &#34;&#34;&#34;
         return SymData._lhs_vector_names
 
@@ -764,14 +992,36 @@ class SymData:
 
     def has_variables(self, variable_name_prefix: str) -&gt; bool:
         &#34;&#34;&#34;
-        Returns true iff the SYM model definition includes a variable with the given root name.
+
+        ### Overview
+
+        Used to check whether the model includes variables with names that start with the
+        supplied prefix. The prefix is matched as a string rather than a regular expression.
+        
+        ### Arguments
+
+        `variable_name_prefix`: The variable name prefix string.
+
+        ### Returns
+        True iff the SYM model definition includes a variable with the given root name.
         &#34;&#34;&#34;
         return self.var_map.name.str.startswith(variable_name_prefix).any()
 
     def has_variable(self, variable_name: str) -&gt; bool:
         &#34;&#34;&#34;
-        Returns true iff the SYM model definition includes a variable with the given complete name including
-        the set qualifier in round brackets.
+
+        ### Overview
+
+        Used to check whether the model includes the named variable.
+        
+        ### Arguments
+
+        `variable_name`: The complete variable name including
+        the set qualifier in round brackets (e.g. `INFL(UU)`).
+
+        ### Returns
+        True if the SYM model definition includes 
+        a variable with the given complete name.
         &#34;&#34;&#34;
         return (self.var_map.name == variable_name).any()
 
@@ -839,11 +1089,11 @@ class SymData:
 
         # Check for the existence of any variables with the given name prefixes and add them 
         # to the results if they are defined in the SYM model.
-        for (prefix, vector_name) in CONSTANTS.NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES:
+        for (prefix, vector_name) in Constants().NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES:
             matches: pd.Series = self.var_map.name.str.startswith(f&#34;{prefix}(&#34;) &amp; (self.var_map.var_type == vector_name)
             result: pd.DataFrame = pd.concat([result, self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]])            
 
-        result = result.loc[result.name != CONSTANTS.REXC_FOR_USA, :]
+        result = result.loc[result.name != Constants().REXC_FOR_USA, :]
 
         result.index = result.name
 
@@ -875,11 +1125,11 @@ class SymData:
 
         # Check for the existence of any variables with the given name prefixes and add them
         # to the results if they are defined in the SYM model.
-        for (prefix, vector_name) in CONSTANTS.NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES:
+        for (prefix, vector_name) in Constants().NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES:
             matches: pd.Series = self.var_map.name.str.startswith(f&#34;{prefix}(&#34;) &amp; (self.var_map.var_type == vector_name)
             result: pd.DataFrame = pd.concat([result, self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]])
 
-        result = result.loc[result.name != CONSTANTS.REXC_FOR_USA, :]
+        result = result.loc[result.name != Constants().REXC_FOR_USA, :]
 
         result.index = result.name
 
@@ -1039,14 +1289,14 @@ class SymData:
 <p>The model equations are expressed in terms of various vectors of variables.
 Each vector is a different type of variable.
 Note the naming conventions for the lefthand side (LHS) variable vectors:</p>
-<p>a. X1l (the vector of state variables) X=S=State
-b. J1l (the vector of costate or jump variables) J=C=Costate
+<p>a. X1L (the vector of state variables) X=S=State
+b. J1L (the vector of costate or jump variables) J=C=Costate
 c. ZEL (the endogenous variables LOGY, PRCT, PRID)
 d. Z1L (the other endogenous variables)</p>
 <p>These 4 vectors of variables are functions of:</p>
 <ol>
-<li>X1r is right hand side (RHS) state variables</li>
-<li>J1r is RHS costate or jump variables</li>
+<li>X1R is right hand side (RHS) state variables</li>
+<li>J1R is RHS costate or jump variables</li>
 <li>ZER is RHS endogenous variables LOGY, PRCT, PRID</li>
 <li>EXZ is RHS the lead expected ze variables</li>
 <li>YXR is RHS state variables lagged by 1 period</li>
@@ -1058,7 +1308,7 @@ d. Z1L (the other endogenous variables)</p>
 <p>Loads and provides access to all of the information about the model contained
 in the SYM model definition.</p>
 <h3 id="arguments">Arguments</h3>
-<p>configuration: The configuration details for the model.</p></div>
+<p><code>configuration</code>: The configuration details for the model.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1072,15 +1322,15 @@ in the SYM model definition.</p>
     Each vector is a different type of variable.
     Note the naming conventions for the lefthand side (LHS) variable vectors:
 
-    a. X1l (the vector of state variables) X=S=State
-    b. J1l (the vector of costate or jump variables) J=C=Costate
+    a. X1L (the vector of state variables) X=S=State
+    b. J1L (the vector of costate or jump variables) J=C=Costate
     c. ZEL (the endogenous variables LOGY, PRCT, PRID) 
     d. Z1L (the other endogenous variables)
 
     These 4 vectors of variables are functions of:
 
-    1. X1r is right hand side (RHS) state variables
-    2. J1r is RHS costate or jump variables
+    1. X1R is right hand side (RHS) state variables
+    2. J1R is RHS costate or jump variables
     3. ZER is RHS endogenous variables LOGY, PRCT, PRID
     4. EXZ is RHS the lead expected ze variables
     5. YXR is RHS state variables lagged by 1 period
@@ -1109,7 +1359,7 @@ in the SYM model definition.</p>
         
         ### Arguments
 
-        configuration: The configuration details for the model.
+        `configuration`: The configuration details for the model.
 
         &#34;&#34;&#34;
         
@@ -1170,7 +1420,7 @@ in the SYM model definition.</p>
         
        ### Arguments
 
-        lhs_vector_name: the name of the LHS vector.
+        `lhs_vector_name`: the name of the LHS vector.
 
        ### Returns 
         
@@ -1207,9 +1457,11 @@ in the SYM model definition.</p>
         &#34;&#34;&#34;
        ### Arguments
 
-        vector_name: The fully qualified name of the variable
+        `vector_name`: The fully qualified name of the variable
         
-        Returns the string ID of the projection vector that the variable is in.
+        ### Returns
+        
+        The string ID of the projection vector that the variable is in.
         &#34;&#34;&#34;
         var_types: pd.Series = self.var_map.loc[[variable_name], &#39;var_type&#39;]
         if len(var_types) == 0:
@@ -1219,18 +1471,40 @@ in the SYM model definition.</p>
 
 
     @property
-    def sym_sets(self) -&gt; dict:
+    def sym_sets(self) -&gt; dict[str, list[str]]:
         &#34;&#34;&#34;
-        Mapping from set name to set members list
+        A dictionary mapping from the name of the SYM model definition of the set 
+        to the SYM members of the set, contained in a list of strings.
         &#34;&#34;&#34;
         return self._sym_sets
 
     def __set_members(self, set_name: str) -&gt; list[str]:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        `set_name`: The name of the SYM model definition set of interest, e.g. &#39;region&#39;.
+
+        ### Returns
+
+        The members of the named set, as a list of strings, or the empty list if
+        the named set is not part of the SYM model definition.
+        &#34;&#34;&#34;
         if set_name in self.sym_sets:
             return self.sym_sets[set_name].copy()
-        return list()
+        else:
+            return list()
 
     def __set_members_count(self, set_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        `set_name`: The name of the SYM model definition set of interest, e.g. &#39;region&#39;.
+
+        ### Returns
+
+        The number of members of the named set.
+        
+        &#34;&#34;&#34;
         members = self.__set_members(set_name)
         if members:
             return len(members)
@@ -1238,30 +1512,72 @@ in the SYM model definition.</p>
 
     @property
     def goods_members(self) -&gt; list[str]:
-        return self.__set_members(&#34;goods&#34;)
+        &#34;&#34;&#34;
+        The list of goods produced in the economy. These are the members of the
+        `goods` set, that is a part of every G-Cubed model SYM definition.
+        &#34;&#34;&#34;
+        return self.__set_members(&#39;goods&#39;)
 
     @property
     def goods_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of goods produced in the economy. These are the members of the
+        `goods` set, that is a part of every G-Cubed model SYM definition.
+        &#34;&#34;&#34;
         return self.__set_members_count(&#39;goods&#39;)
 
     @property
     def energy_goods_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of energy goods produced in the economy. These are the outputs 
+        of the energy producing sectors in the economy.
+
+        They are identified by being  members of the `goods_e` set, that is a part of 
+        every G-Cubed model SYM definition.
+        &#34;&#34;&#34;
         return self.__set_members(&#34;goods_e&#34;)
 
     @property  # numener # g01 for version R of the model
     def energy_goods_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of energy goods produced in the economy. These are the outputs 
+        of sectors in the economy that deal with extraction and value addition for
+        fuel sources (e.g.coal, gas, oil, petroleum refining etc) as well as the 
+        electricity distribution sector.
+
+        They are identified by being members of the `goods_e` set, that is a part of 
+        every G-Cubed model SYM definition.
+        &#34;&#34;&#34;        
         return self.__set_members_count(&#39;goods_e&#39;)
 
     @property
     def electricity_generation_goods_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of goods in the economy that are produced by electricity generation sectors. 
+        All of those sectors produce electricity, so their output is the same in some sense. However,
+        the output of each industry is identified by its own &#39;good&#39; identifier.
+
+        They are identified by being  members of the `goods_g` set.
+        &#34;&#34;&#34;
         return self.__set_members(&#34;goods_g&#34;)
 
     @property
     def electricity_generation_goods_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of goods in the economy that are produced by electricity generation sectors. 
+        All of those sectors produce electricity, so their output is the same in some sense. However,
+        the output of each industry is identified by its own &#39;good&#39; identifier.
+
+        They are identified by being  members of the `goods_g` set.
+        &#34;&#34;&#34;
         return self.__set_members_count(&#39;goods_g&#39;)
 
     @property
     def non_energy_goods_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of goods in the economy that are not 
+        energy goods (those that are members of the `goods_e` set).
+        &#34;&#34;&#34;
         all_goods_members = self.goods_members
         energy_members = self.energy_goods_members
         result = [x for x in all_goods_members if x not in energy_members]
@@ -1269,10 +1585,18 @@ in the SYM model definition.</p>
 
     @property
     def non_energy_goods_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of goods in the economy that are not 
+        energy goods (those that are members of the `goods_e` set).
+        &#34;&#34;&#34;
         return len(self.non_energy_goods_members)
 
     @property
     def non_electricity_generation_goods_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of goods in the economy that are not 
+        electricity generation goods (those that are members of the `goods_g` set).
+        &#34;&#34;&#34;
         all_goods_members = self.goods_members
         generation_members = self.electricity_generation_goods_members
         result = [x for x in all_goods_members if x not in generation_members]
@@ -1280,10 +1604,18 @@ in the SYM model definition.</p>
 
     @property
     def non_electricity_generation_goods_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of goods in the economy that are not 
+        electricity generation goods (those that are members of the `goods_g` set).
+        &#34;&#34;&#34;
         return len(self.non_electricity_generation_goods_members)
 
     @property
     def non_energy_or_generation_goods_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of goods in the economy that are not energy goods or
+        electricity generation goods.
+        &#34;&#34;&#34;
         result = [
             x for x in self.goods_members if x not in self.energy_goods_members]
         result = [
@@ -1292,89 +1624,153 @@ in the SYM model definition.</p>
 
     @property
     def non_energy_or_generation_goods_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of goods in the economy that are not energy goods or
+        electricity generation goods.
+        &#34;&#34;&#34;
         return len(self.non_energy_or_generation_goods_members)
 
     @property
     def capital_sectors_members(self) -&gt; list[str]:
         &#34;&#34;&#34;
-        sector Y, the capital producing sector
-        sector Z, the household capital producing sector
+        The capital sectors that are part of all G-Cubed models. There are two of them:
+
+        1. sector Y, the sector that produces capital for firms.
+
+        2. sector Z, the sector that produces capital for households.
+
         &#34;&#34;&#34;
         return [&#34;Y&#34;, &#34;Z&#34;]
 
     @property
     def all_sectors_members(self) -&gt; list[str]:
         &#34;&#34;&#34;
-        Returns the set of members defined in the model SYM file
-        plus sector Y, the capital producing sector
-        and sector Z, the household capital producing sector.
-        These sectors, Y and Z, are common to all model versions.
+        The list of all sectors defined in the SYM model definition plus the
+        two capital producing sectors that are common to all model versions.
         &#34;&#34;&#34;
         result = self.__set_members(&#34;sectors&#34;)
         for capital_sector in self.capital_sectors_members:
             result.append(capital_sector)
         return result
 
+    @property  # numsect # a01,a02, Y and Z for version R of the model
+    def all_sectors_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of sectors defined in the SYM model definition plus the
+        two capital producing sectors that are common to all model versions.
+        &#34;&#34;&#34;
+        return len(self.all_sectors_members)
+    
     @property
     def sectors_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of sectors that are explicitly defined in the SYM model definition. 
+        These are the members of the `sectors` set.
+
+        The list does not include the two capital producing sectors 
+        that are common to all model versions.
+        &#34;&#34;&#34;
         return self.__set_members(&#34;sectors&#34;)
 
     @property  # numsect # a01,a02 for version R of the model
     def sectors_count(self) -&gt; int:
         &#34;&#34;&#34;
-        Returns N: the number of sectors defined in the SYM file (a01 ...aN).
+        The number of sectors that are explicitly defined in the SYM model definition. 
+        These are the members of the `sectors` set.
+
+        The number does not include the two capital producing sectors 
+        that are common to all model versions.
         &#34;&#34;&#34;
         return self.__set_members_count(&#39;sectors&#39;)
 
-    @property  # numsect # a01,a02, Y and Z for version R of the model
-    def all_sectors_count(self) -&gt; int:
-        &#34;&#34;&#34;
-        Returns N+2: the number of sectors defined in the SYM file (a01 ...aN) + the Y and the Z sectors.
-        &#34;&#34;&#34;
-        return len(self.all_sectors_members)
-
     @property
     def non_energy_or_generation_sectors_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of sectors explicitly defined in the SYM model definition except
+        for sectors that are involved in electricity generation or energy.
+        &#34;&#34;&#34;
         return self.sectors_producing(self.non_energy_or_generation_goods_members)
 
     @property
     def energy_distribution_sectors_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The number of sectors explicitly defined in the SYM model definition except
+        for sectors that are involved in electricity generation or energy.
+
+        This is typically just the first sector, in those models that include such a sector.
+
+        &#34;&#34;&#34;
         return self.__set_members(&#39;sec_ed&#39;)
 
     @property
-    def energy_distribution_sectors_count(self) -&gt; int:
+    def electricity_distribution_sectors_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The list of sectors explicitly defined in the SYM model definition that are
+        responsible for electricity distribution.
+        &#34;&#34;&#34;        
         return self.__set_members_count(&#39;sec_ed&#39;)
 
     @property
-    def non_energy_distribution_sectors_members(self) -&gt; list[str]:
+    def non_electricity_distribution_sectors_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of sectors explicitly defined in the SYM model definition that are
+        not responsible for electricity distribution.
+        &#34;&#34;&#34;
         return self.__set_members(&#39;sec_std&#39;)
 
     # Note that if there is no electricity distribution sectors, then distribution is lumped in with
     # the more broadly defined energy sector(s).
     @property  # numsecstd
-    def non_energy_distribution_sectors_count(self) -&gt; int:
+    def non_electricity_distribution_sectors_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of sectors explicitly defined in the SYM model definition that are
+        not responsible for electricity distribution.
+        &#34;&#34;&#34;
         return self.__set_members_count(&#39;sec_std&#39;)
 
     @property
     def regions_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The list of regions explicitly defined in the SYM model definition as part
+        of the `regions` set.
+        &#34;&#34;&#34;
         return self.__set_members(
             &#34;regions&#34;)
 
     @property  # countopt
     def regions_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of regions explicitly defined in the SYM model definition as part
+        of the `regions` set.
+        &#34;&#34;&#34;
         return self.__set_members_count(&#39;regions&#39;)
 
     @property
     def us_region(self) -&gt; str:
+        &#34;&#34;&#34;
+        The string identifier of the USA region. This must always be the first region
+        defined in the SYM `regions` set and it will be the first region in the list
+        of region members.
+        &#34;&#34;&#34;
         return self.regions_members[0]
 
     @property
     def gas_sector_good(self) -&gt; str:
         &#34;&#34;&#34;
-        Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+        The string identifier of the good , `g02`, produced by the sector that 
+        includes gas extraction and gas utilities. This is the sector associated 
+        with gas-related carbon emissions.
 
-        Model version J has 5 energy sectors: gas and gas utilities are aggregated and
-        the gas emissions are applied to gas utilities a02 producing good g02.
+        Model versions with more than 2 sectors typically include a gas sector.
+        That sector must be the second member of the `sectors` set in the
+        model&#39;s SYM definition.
+
+        Model version R has 2 sectors, the first is energy, and it is 
+        associated with gas, oil and coal. It has no explicit gas sector so it
+        has no good associated with such a sector.
+
+        TODO: Add SYM attributes to this good to identify it appropriately so it
+        is not order dependent in the SYM definitions.
         &#34;&#34;&#34;
         match self.configuration.version:
             case &#39;2R&#39;:
@@ -1387,12 +1783,20 @@ in the SYM model definition.</p>
     @property
     def oil_sector_good(self) -&gt; str:
         &#34;&#34;&#34;
-        Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+        The string identifier of the good , `g03`, produced by the petroleum sector. 
+        This is the sector associated with oil-related carbon emissions.
 
-        Model version J has 5 energy sectors: gas and gas utilities are aggregated and
-        the gas emissions are applied to gas utilities a03 producing good g03.
+        Model that include a petroleum sector must have that sector 
+        as the third member of the `sectors` set in the
+        model&#39;s SYM definition.
+
+        Model version R has 2 sectors, the first is energy, and it is 
+        associated with gas, oil and coal. It has no explicit petroleum sector so it
+        has no good associated with such a sector.
+
+        TODO: Add SYM attributes to this good to identify it appropriately so it
+        is not order dependent in the SYM definitions.
         &#34;&#34;&#34;
-
         match self.configuration.version:
             case &#39;2R&#39;:
                 return None
@@ -1404,11 +1808,20 @@ in the SYM model definition.</p>
     @property
     def coal_sector_good(self) -&gt; str:
         &#34;&#34;&#34;
-        Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+        The string identifier of the good , `g04`, produced by the petroleum sector. 
+        This is the sector associated with oil-related carbon emissions.
 
-        Model version J has 5 energy sectors: gas and gas utilities are aggregated and
-        the gas emissions are applied to gas utilities a04 producing good g04.
-        &#34;&#34;&#34;
+        Model that include a coal sector must have that sector 
+        as the fourth member of the `sectors` set in the
+        model&#39;s SYM definition.
+
+        Model version R has 2 sectors, the first is energy, and it is 
+        associated with gas, oil and coal. It has no explicit coal sector so it
+        has no good associated with such a sector.
+
+        TODO: Add SYM attributes to this good to identify it appropriately so it
+        is not order dependent in the SYM definitions.
+        &#34;&#34;&#34;        
         match self.configuration.version:
             case &#39;2R&#39;:
                 return None
@@ -1419,103 +1832,168 @@ in the SYM model definition.</p>
 
     @property
     def sector_prefix(self) -&gt; str:
+        &#34;&#34;&#34;
+        The first letter of the first sector identifier.
+        This is typically `a`.
+        &#34;&#34;&#34;
         return self.sectors_members[0][0]
 
     @property
     def good_prefix(self) -&gt; str:
+        &#34;&#34;&#34;
+        The first letter of the first good identifier.
+        This is typically `g`.
+        &#34;&#34;&#34;
         return self.goods_members[0][0]
 
     def sector_producing(self, good: str) -&gt; str:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        `good`: The identifier of the good produced by the sector of interest.
+
+        ### Returns
+
+        the sector identifier for the sector that produces the
+        specified good.
+        &#34;&#34;&#34;
         return (self.sector_prefix + good[1:])
 
     def sectors_producing(self, goods: list[str]) -&gt; str:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        `goods`: The list of identifiers of the goods produced by the sectors of interest.
+
+        ### Returns
+
+        the list of sector identifiers for the sectors that produces the
+        goods in the supplied list.
+        &#34;&#34;&#34;
         return [self.sector_producing(x) for x in goods]
 
     def good_produced_by(self, sector: str) -&gt; str:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        `sector`: The identifier of the sector that produces the good of interest.
+
+        ### Returns
+
+        the good identifier produced by the specified sector.
+        &#34;&#34;&#34;
         return (self.good_prefix + sector[1:])
 
     def goods_produced_by(self, sectors: list[str]) -&gt; str:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        `sectors`: The list of identifiers of the sectors that produce 
+        the goods of interest.
+
+        ### Returns
+
+        the list of good identifiers for the goods produced by the 
+        specified sectors.
+        &#34;&#34;&#34;
         return [self.good_produced_by(x) for x in sectors]
 
     def __vector_length(self, vector_name: str) -&gt; int:
         &#34;&#34;&#34;
-        Provides access to information about the lengths of various vectors
-        used in the model based on SYM information.
+        ### Arguments
+        `vector_name`: The name of a LHS or RHS vector in the model.
+        
+        One of:
+
+        1. x1l or x1r or yxr (all equal to the number of state variables in the model)
+        2. j1l or j1r or yjr (all equal to the number of costate variables in the model)
+        3. zel or zer or exz (all equal to the number of expected endogenous variables in the model)
+        4. z1l or z1r (all equal to the number of other endogenous variables in the model)
+        5. exo (equal to the number of exogenous variables in the model)
+
+        ### Returns
+        The lengths of various vectors used to express the model equations. 
+        These vector lengths are determined from the SYM definition of the model.
         &#34;&#34;&#34;
         return self._vector_length[vector_name]
 
     @property  # nxg
     def exogenous_variable_count(self):
+        &#34;&#34;&#34;
+        The number of exogenous variables in the model (The length of the EXO vector).
+        &#34;&#34;&#34;
         return self.__vector_length(&#34;exogenous_variables&#34;)
 
     @property  # nz and nz1
     def endogenous_variable_count(self):
+        &#34;&#34;&#34;
+        The number of endogenous variables in the model (The length of the Z1L, Z1R vectors).
+        &#34;&#34;&#34;
         return self.__vector_length(&#34;endogenous_variables&#34;)
 
     @property  # nez
     def expected_endogenous_variable_count(self):
+        &#34;&#34;&#34;
+        The number of expected endogenous variables in the model 
+        (The length of the ZEL, ZER and EXZ vectors).
+        &#34;&#34;&#34;
         return self.__vector_length(&#34;expected_endogenous_variables&#34;)
 
     @property  # njm
     def jump_variable_count(self):
+        &#34;&#34;&#34;
+        The number of costate or jump variables in the model 
+        (The length of the J1L, J1R and YJR vectors).
+        &#34;&#34;&#34;
         return self.__vector_length(&#34;jump_variables&#34;)
 
     @property  # nst
     def state_variable_count(self):
+        &#34;&#34;&#34;
+        The number of state variables in the model 
+        (The length of the X1L, X1R and XJR vectors).
+        &#34;&#34;&#34;
         return self.__vector_length(&#34;state_variables&#34;)
 
     @property  # npar
     def parameter_count(self):
+        &#34;&#34;&#34;
+        The number of parameters in the model.
+        &#34;&#34;&#34;
         return self.__vector_length(&#34;parameters&#34;)
-
-    @property  # swtch
-    def swtch(self) -&gt; tuple[bool]:
-        &#34;&#34;&#34;
-        Return a tuple of boolean values used to track various types of variables in the model.
-        In the Ox implementation these are ones and zeros.
-        &#34;&#34;&#34;
-        return (
-            self.jump_variable_count == 0,
-            self.exogenous_variable_count == 0,
-            self.expected_endogenous_variable_count == 0,
-            False,
-            self.jump_variable_count == 0,
-            False)
-
-    @property  # dimenson Note the spelling error in the Ox variable name.
-    def dimension(self):
-        return (0,
-                self.parameter_count,
-                self.state_variable_count,
-                max(self.jump_variable_count, 1),
-                max(self.exogenous_variable_count, 1),
-                self.endogenous_variable_count,
-                max(self.expected_endogenous_variable_count, 1),
-                0)
-
-    # TODO: Remove this convenience method once the re-implementation is done.
-    @property
-    def dimenson(self):
-        return self.dimension()
 
     @property
     # TODO: Consider adding these factors of production (K,L,E,M) to the
     # SYM model definition so they are not hard-coded.
     def factors_of_production_members(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The four string identifiers of the factors of production:
+
+        1. `K` for capital
+        1. `L` for labour
+        1. `E` for energy
+        1. `M` for material
+        &#34;&#34;&#34;
         return (&#34;K&#34;, &#34;L&#34;, &#34;E&#34;, &#34;M&#34;)
 
     @property
     def factors_of_production_count(self) -&gt; int:
+        &#34;&#34;&#34;
+        The number of factors of production (4).
+        &#34;&#34;&#34;
         return len(self.factors_of_production_members)
 
     @property
     def lhs_vector_names(self) -&gt; list[str]:
         &#34;&#34;&#34;
-        Note the naming conventions for the lefthand side (LHS) variable vectors:
-        a. x1l (the vector of state variables) X=S=State
-        b. j1l (the vector of costate or jump variables) J=C=Costate
-        c. zel (the endogenous variables LOGY, PRCT, PRID) 
-        d. z1l (the other endogenous variables)
+        A list of the model&#39;s LHS vector names.
+
+        Note the lowercase naming conventions for the lefthand side (LHS) variable vectors:
+
+        1. `x1l` (the vector of state variables) X=S=State
+        2. `j1l` (the vector of costate or jump variables) J=C=Costate
+        3. `zel` (the endogenous variables LOGY, PRCT, PRID) 
+        4. `z1l` (the other endogenous variables)
         &#34;&#34;&#34;
         return SymData._lhs_vector_names
 
@@ -1781,14 +2259,36 @@ in the SYM model definition.</p>
 
     def has_variables(self, variable_name_prefix: str) -&gt; bool:
         &#34;&#34;&#34;
-        Returns true iff the SYM model definition includes a variable with the given root name.
+
+        ### Overview
+
+        Used to check whether the model includes variables with names that start with the
+        supplied prefix. The prefix is matched as a string rather than a regular expression.
+        
+        ### Arguments
+
+        `variable_name_prefix`: The variable name prefix string.
+
+        ### Returns
+        True iff the SYM model definition includes a variable with the given root name.
         &#34;&#34;&#34;
         return self.var_map.name.str.startswith(variable_name_prefix).any()
 
     def has_variable(self, variable_name: str) -&gt; bool:
         &#34;&#34;&#34;
-        Returns true iff the SYM model definition includes a variable with the given complete name including
-        the set qualifier in round brackets.
+
+        ### Overview
+
+        Used to check whether the model includes the named variable.
+        
+        ### Arguments
+
+        `variable_name`: The complete variable name including
+        the set qualifier in round brackets (e.g. `INFL(UU)`).
+
+        ### Returns
+        True if the SYM model definition includes 
+        a variable with the given complete name.
         &#34;&#34;&#34;
         return (self.var_map.name == variable_name).any()
 
@@ -1856,11 +2356,11 @@ in the SYM model definition.</p>
 
         # Check for the existence of any variables with the given name prefixes and add them 
         # to the results if they are defined in the SYM model.
-        for (prefix, vector_name) in CONSTANTS.NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES:
+        for (prefix, vector_name) in Constants().NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES:
             matches: pd.Series = self.var_map.name.str.startswith(f&#34;{prefix}(&#34;) &amp; (self.var_map.var_type == vector_name)
             result: pd.DataFrame = pd.concat([result, self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]])            
 
-        result = result.loc[result.name != CONSTANTS.REXC_FOR_USA, :]
+        result = result.loc[result.name != Constants().REXC_FOR_USA, :]
 
         result.index = result.name
 
@@ -1892,11 +2392,11 @@ in the SYM model definition.</p>
 
         # Check for the existence of any variables with the given name prefixes and add them
         # to the results if they are defined in the SYM model.
-        for (prefix, vector_name) in CONSTANTS.NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES:
+        for (prefix, vector_name) in Constants().NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES:
             matches: pd.Series = self.var_map.name.str.startswith(f&#34;{prefix}(&#34;) &amp; (self.var_map.var_type == vector_name)
             result: pd.DataFrame = pd.concat([result, self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]])
 
-        result = result.loc[result.name != CONSTANTS.REXC_FOR_USA, :]
+        result = result.loc[result.name != Constants().REXC_FOR_USA, :]
 
         result.index = result.name
 
@@ -2041,7 +2541,8 @@ in the SYM model definition.</p>
 <dl>
 <dt id="gcubed.sym_data.SymData.all_sectors_count"><code class="name">var <span class="ident">all_sectors_count</span> : int</code></dt>
 <dd>
-<div class="desc"><p>Returns N+2: the number of sectors defined in the SYM file (a01 &hellip;aN) + the Y and the Z sectors.</p></div>
+<div class="desc"><p>The number of sectors defined in the SYM model definition plus the
+two capital producing sectors that are common to all model versions.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2049,17 +2550,16 @@ in the SYM model definition.</p>
 <pre><code class="python">@property  # numsect # a01,a02, Y and Z for version R of the model
 def all_sectors_count(self) -&gt; int:
     &#34;&#34;&#34;
-    Returns N+2: the number of sectors defined in the SYM file (a01 ...aN) + the Y and the Z sectors.
+    The number of sectors defined in the SYM model definition plus the
+    two capital producing sectors that are common to all model versions.
     &#34;&#34;&#34;
     return len(self.all_sectors_members)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.all_sectors_members"><code class="name">var <span class="ident">all_sectors_members</span> : list[str]</code></dt>
 <dd>
-<div class="desc"><p>Returns the set of members defined in the model SYM file
-plus sector Y, the capital producing sector
-and sector Z, the household capital producing sector.
-These sectors, Y and Z, are common to all model versions.</p></div>
+<div class="desc"><p>The list of all sectors defined in the SYM model definition plus the
+two capital producing sectors that are common to all model versions.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2067,10 +2567,8 @@ These sectors, Y and Z, are common to all model versions.</p></div>
 <pre><code class="python">@property
 def all_sectors_members(self) -&gt; list[str]:
     &#34;&#34;&#34;
-    Returns the set of members defined in the model SYM file
-    plus sector Y, the capital producing sector
-    and sector Z, the household capital producing sector.
-    These sectors, Y and Z, are common to all model versions.
+    The list of all sectors defined in the SYM model definition plus the
+    two capital producing sectors that are common to all model versions.
     &#34;&#34;&#34;
     result = self.__set_members(&#34;sectors&#34;)
     for capital_sector in self.capital_sectors_members:
@@ -2080,8 +2578,15 @@ def all_sectors_members(self) -&gt; list[str]:
 </dd>
 <dt id="gcubed.sym_data.SymData.capital_sectors_members"><code class="name">var <span class="ident">capital_sectors_members</span> : list[str]</code></dt>
 <dd>
-<div class="desc"><p>sector Y, the capital producing sector
-sector Z, the household capital producing sector</p></div>
+<div class="desc"><p>The capital sectors that are part of all G-Cubed models. There are two of them:</p>
+<ol>
+<li>
+<p>sector Y, the sector that produces capital for firms.</p>
+</li>
+<li>
+<p>sector Z, the sector that produces capital for households.</p>
+</li>
+</ol></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2089,17 +2594,28 @@ sector Z, the household capital producing sector</p></div>
 <pre><code class="python">@property
 def capital_sectors_members(self) -&gt; list[str]:
     &#34;&#34;&#34;
-    sector Y, the capital producing sector
-    sector Z, the household capital producing sector
+    The capital sectors that are part of all G-Cubed models. There are two of them:
+
+    1. sector Y, the sector that produces capital for firms.
+
+    2. sector Z, the sector that produces capital for households.
+
     &#34;&#34;&#34;
     return [&#34;Y&#34;, &#34;Z&#34;]</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.coal_sector_good"><code class="name">var <span class="ident">coal_sector_good</span> : str</code></dt>
 <dd>
-<div class="desc"><p>Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.</p>
-<p>Model version J has 5 energy sectors: gas and gas utilities are aggregated and
-the gas emissions are applied to gas utilities a04 producing good g04.</p></div>
+<div class="desc"><p>The string identifier of the good , <code>g04</code>, produced by the petroleum sector.
+This is the sector associated with oil-related carbon emissions.</p>
+<p>Model that include a coal sector must have that sector
+as the fourth member of the <code>sectors</code> set in the
+model's SYM definition.</p>
+<p>Model version R has 2 sectors, the first is energy, and it is
+associated with gas, oil and coal. It has no explicit coal sector so it
+has no good associated with such a sector.</p>
+<p>TODO: Add SYM attributes to this good to identify it appropriately so it
+is not order dependent in the SYM definitions.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2107,11 +2623,20 @@ the gas emissions are applied to gas utilities a04 producing good g04.</p></div>
 <pre><code class="python">@property
 def coal_sector_good(self) -&gt; str:
     &#34;&#34;&#34;
-    Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+    The string identifier of the good , `g04`, produced by the petroleum sector. 
+    This is the sector associated with oil-related carbon emissions.
 
-    Model version J has 5 energy sectors: gas and gas utilities are aggregated and
-    the gas emissions are applied to gas utilities a04 producing good g04.
-    &#34;&#34;&#34;
+    Model that include a coal sector must have that sector 
+    as the fourth member of the `sectors` set in the
+    model&#39;s SYM definition.
+
+    Model version R has 2 sectors, the first is energy, and it is 
+    associated with gas, oil and coal. It has no explicit coal sector so it
+    has no good associated with such a sector.
+
+    TODO: Add SYM attributes to this good to identify it appropriately so it
+    is not order dependent in the SYM definitions.
+    &#34;&#34;&#34;        
     match self.configuration.version:
         case &#39;2R&#39;:
             return None
@@ -2193,160 +2718,210 @@ def configuration(self):
     return self._configuration</code></pre>
 </details>
 </dd>
-<dt id="gcubed.sym_data.SymData.dimension"><code class="name">var <span class="ident">dimension</span></code></dt>
+<dt id="gcubed.sym_data.SymData.electricity_distribution_sectors_count"><code class="name">var <span class="ident">electricity_distribution_sectors_count</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property  # dimenson Note the spelling error in the Ox variable name.
-def dimension(self):
-    return (0,
-            self.parameter_count,
-            self.state_variable_count,
-            max(self.jump_variable_count, 1),
-            max(self.exogenous_variable_count, 1),
-            self.endogenous_variable_count,
-            max(self.expected_endogenous_variable_count, 1),
-            0)</code></pre>
-</details>
-</dd>
-<dt id="gcubed.sym_data.SymData.dimenson"><code class="name">var <span class="ident">dimenson</span></code></dt>
-<dd>
-<div class="desc"></div>
+<div class="desc"><p>The list of sectors explicitly defined in the SYM model definition that are
+responsible for electricity distribution.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def dimenson(self):
-    return self.dimension()</code></pre>
+def electricity_distribution_sectors_count(self) -&gt; int:
+    &#34;&#34;&#34;
+    The list of sectors explicitly defined in the SYM model definition that are
+    responsible for electricity distribution.
+    &#34;&#34;&#34;        
+    return self.__set_members_count(&#39;sec_ed&#39;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.electricity_generation_goods_count"><code class="name">var <span class="ident">electricity_generation_goods_count</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The number of goods in the economy that are produced by electricity generation sectors.
+All of those sectors produce electricity, so their output is the same in some sense. However,
+the output of each industry is identified by its own 'good' identifier.</p>
+<p>They are identified by being
+members of the <code>goods_g</code> set.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def electricity_generation_goods_count(self) -&gt; int:
+    &#34;&#34;&#34;
+    The number of goods in the economy that are produced by electricity generation sectors. 
+    All of those sectors produce electricity, so their output is the same in some sense. However,
+    the output of each industry is identified by its own &#39;good&#39; identifier.
+
+    They are identified by being  members of the `goods_g` set.
+    &#34;&#34;&#34;
     return self.__set_members_count(&#39;goods_g&#39;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.electricity_generation_goods_members"><code class="name">var <span class="ident">electricity_generation_goods_members</span> : list[str]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The list of goods in the economy that are produced by electricity generation sectors.
+All of those sectors produce electricity, so their output is the same in some sense. However,
+the output of each industry is identified by its own 'good' identifier.</p>
+<p>They are identified by being
+members of the <code>goods_g</code> set.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def electricity_generation_goods_members(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    The list of goods in the economy that are produced by electricity generation sectors. 
+    All of those sectors produce electricity, so their output is the same in some sense. However,
+    the output of each industry is identified by its own &#39;good&#39; identifier.
+
+    They are identified by being  members of the `goods_g` set.
+    &#34;&#34;&#34;
     return self.__set_members(&#34;goods_g&#34;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.endogenous_variable_count"><code class="name">var <span class="ident">endogenous_variable_count</span></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The number of endogenous variables in the model (The length of the Z1L, Z1R vectors).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property  # nz and nz1
 def endogenous_variable_count(self):
+    &#34;&#34;&#34;
+    The number of endogenous variables in the model (The length of the Z1L, Z1R vectors).
+    &#34;&#34;&#34;
     return self.__vector_length(&#34;endogenous_variables&#34;)</code></pre>
-</details>
-</dd>
-<dt id="gcubed.sym_data.SymData.energy_distribution_sectors_count"><code class="name">var <span class="ident">energy_distribution_sectors_count</span> : int</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def energy_distribution_sectors_count(self) -&gt; int:
-    return self.__set_members_count(&#39;sec_ed&#39;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.energy_distribution_sectors_members"><code class="name">var <span class="ident">energy_distribution_sectors_members</span> : list[str]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The number of sectors explicitly defined in the SYM model definition except
+for sectors that are involved in electricity generation or energy.</p>
+<p>This is typically just the first sector, in those models that include such a sector.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def energy_distribution_sectors_members(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    The number of sectors explicitly defined in the SYM model definition except
+    for sectors that are involved in electricity generation or energy.
+
+    This is typically just the first sector, in those models that include such a sector.
+
+    &#34;&#34;&#34;
     return self.__set_members(&#39;sec_ed&#39;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.energy_goods_count"><code class="name">var <span class="ident">energy_goods_count</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The number of energy goods produced in the economy. These are the outputs
+of sectors in the economy that deal with extraction and value addition for
+fuel sources (e.g.coal, gas, oil, petroleum refining etc) as well as the
+electricity distribution sector.</p>
+<p>They are identified by being members of the <code>goods_e</code> set, that is a part of
+every G-Cubed model SYM definition.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property  # numener # g01 for version R of the model
 def energy_goods_count(self) -&gt; int:
+    &#34;&#34;&#34;
+    The number of energy goods produced in the economy. These are the outputs 
+    of sectors in the economy that deal with extraction and value addition for
+    fuel sources (e.g.coal, gas, oil, petroleum refining etc) as well as the 
+    electricity distribution sector.
+
+    They are identified by being members of the `goods_e` set, that is a part of 
+    every G-Cubed model SYM definition.
+    &#34;&#34;&#34;        
     return self.__set_members_count(&#39;goods_e&#39;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.energy_goods_members"><code class="name">var <span class="ident">energy_goods_members</span> : list[str]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The list of energy goods produced in the economy. These are the outputs
+of the energy producing sectors in the economy.</p>
+<p>They are identified by being
+members of the <code>goods_e</code> set, that is a part of
+every G-Cubed model SYM definition.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def energy_goods_members(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    The list of energy goods produced in the economy. These are the outputs 
+    of the energy producing sectors in the economy.
+
+    They are identified by being  members of the `goods_e` set, that is a part of 
+    every G-Cubed model SYM definition.
+    &#34;&#34;&#34;
     return self.__set_members(&#34;goods_e&#34;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.exogenous_variable_count"><code class="name">var <span class="ident">exogenous_variable_count</span></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The number of exogenous variables in the model (The length of the EXO vector).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property  # nxg
 def exogenous_variable_count(self):
+    &#34;&#34;&#34;
+    The number of exogenous variables in the model (The length of the EXO vector).
+    &#34;&#34;&#34;
     return self.__vector_length(&#34;exogenous_variables&#34;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.expected_endogenous_variable_count"><code class="name">var <span class="ident">expected_endogenous_variable_count</span></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The number of expected endogenous variables in the model
+(The length of the ZEL, ZER and EXZ vectors).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property  # nez
 def expected_endogenous_variable_count(self):
+    &#34;&#34;&#34;
+    The number of expected endogenous variables in the model 
+    (The length of the ZEL, ZER and EXZ vectors).
+    &#34;&#34;&#34;
     return self.__vector_length(&#34;expected_endogenous_variables&#34;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.factors_of_production_count"><code class="name">var <span class="ident">factors_of_production_count</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The number of factors of production (4).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def factors_of_production_count(self) -&gt; int:
+    &#34;&#34;&#34;
+    The number of factors of production (4).
+    &#34;&#34;&#34;
     return len(self.factors_of_production_members)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.factors_of_production_members"><code class="name">var <span class="ident">factors_of_production_members</span> : list[str]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The four string identifiers of the factors of production:</p>
+<ol>
+<li><code>K</code> for capital</li>
+<li><code>L</code> for labour</li>
+<li><code>E</code> for energy</li>
+<li><code>M</code> for material</li>
+</ol></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2355,14 +2930,30 @@ def factors_of_production_count(self) -&gt; int:
 # TODO: Consider adding these factors of production (K,L,E,M) to the
 # SYM model definition so they are not hard-coded.
 def factors_of_production_members(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    The four string identifiers of the factors of production:
+
+    1. `K` for capital
+    1. `L` for labour
+    1. `E` for energy
+    1. `M` for material
+    &#34;&#34;&#34;
     return (&#34;K&#34;, &#34;L&#34;, &#34;E&#34;, &#34;M&#34;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.gas_sector_good"><code class="name">var <span class="ident">gas_sector_good</span> : str</code></dt>
 <dd>
-<div class="desc"><p>Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.</p>
-<p>Model version J has 5 energy sectors: gas and gas utilities are aggregated and
-the gas emissions are applied to gas utilities a02 producing good g02.</p></div>
+<div class="desc"><p>The string identifier of the good , <code>g02</code>, produced by the sector that
+includes gas extraction and gas utilities. This is the sector associated
+with gas-related carbon emissions.</p>
+<p>Model versions with more than 2 sectors typically include a gas sector.
+That sector must be the second member of the <code>sectors</code> set in the
+model's SYM definition.</p>
+<p>Model version R has 2 sectors, the first is energy, and it is
+associated with gas, oil and coal. It has no explicit gas sector so it
+has no good associated with such a sector.</p>
+<p>TODO: Add SYM attributes to this good to identify it appropriately so it
+is not order dependent in the SYM definitions.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2370,10 +2961,20 @@ the gas emissions are applied to gas utilities a02 producing good g02.</p></div>
 <pre><code class="python">@property
 def gas_sector_good(self) -&gt; str:
     &#34;&#34;&#34;
-    Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+    The string identifier of the good , `g02`, produced by the sector that 
+    includes gas extraction and gas utilities. This is the sector associated 
+    with gas-related carbon emissions.
 
-    Model version J has 5 energy sectors: gas and gas utilities are aggregated and
-    the gas emissions are applied to gas utilities a02 producing good g02.
+    Model versions with more than 2 sectors typically include a gas sector.
+    That sector must be the second member of the `sectors` set in the
+    model&#39;s SYM definition.
+
+    Model version R has 2 sectors, the first is energy, and it is 
+    associated with gas, oil and coal. It has no explicit gas sector so it
+    has no good associated with such a sector.
+
+    TODO: Add SYM attributes to this good to identify it appropriately so it
+    is not order dependent in the SYM definitions.
     &#34;&#34;&#34;
     match self.configuration.version:
         case &#39;2R&#39;:
@@ -2386,38 +2987,53 @@ def gas_sector_good(self) -&gt; str:
 </dd>
 <dt id="gcubed.sym_data.SymData.good_prefix"><code class="name">var <span class="ident">good_prefix</span> : str</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The first letter of the first good identifier.
+This is typically <code>g</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def good_prefix(self) -&gt; str:
+    &#34;&#34;&#34;
+    The first letter of the first good identifier.
+    This is typically `g`.
+    &#34;&#34;&#34;
     return self.goods_members[0][0]</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.goods_count"><code class="name">var <span class="ident">goods_count</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The number of goods produced in the economy. These are the members of the
+<code>goods</code> set, that is a part of every G-Cubed model SYM definition.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def goods_count(self) -&gt; int:
+    &#34;&#34;&#34;
+    The number of goods produced in the economy. These are the members of the
+    `goods` set, that is a part of every G-Cubed model SYM definition.
+    &#34;&#34;&#34;
     return self.__set_members_count(&#39;goods&#39;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.goods_members"><code class="name">var <span class="ident">goods_members</span> : list[str]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The list of goods produced in the economy. These are the members of the
+<code>goods</code> set, that is a part of every G-Cubed model SYM definition.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def goods_members(self) -&gt; list[str]:
-    return self.__set_members(&#34;goods&#34;)</code></pre>
+    &#34;&#34;&#34;
+    The list of goods produced in the economy. These are the members of the
+    `goods` set, that is a part of every G-Cubed model SYM definition.
+    &#34;&#34;&#34;
+    return self.__set_members(&#39;goods&#39;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.intertemporal_constant_variables"><code class="name">var <span class="ident">intertemporal_constant_variables</span> : pandas.core.frame.DataFrame</code></dt>
@@ -2461,11 +3077,11 @@ def intertemporal_constant_variables(self) -&gt; pd.DataFrame:
 
     # Check for the existence of any variables with the given name prefixes and add them 
     # to the results if they are defined in the SYM model.
-    for (prefix, vector_name) in CONSTANTS.NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES:
+    for (prefix, vector_name) in Constants().NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES:
         matches: pd.Series = self.var_map.name.str.startswith(f&#34;{prefix}(&#34;) &amp; (self.var_map.var_type == vector_name)
         result: pd.DataFrame = pd.concat([result, self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]])            
 
-    result = result.loc[result.name != CONSTANTS.REXC_FOR_USA, :]
+    result = result.loc[result.name != Constants().REXC_FOR_USA, :]
 
     result.index = result.name
 
@@ -2475,23 +3091,31 @@ def intertemporal_constant_variables(self) -&gt; pd.DataFrame:
 </dd>
 <dt id="gcubed.sym_data.SymData.jump_variable_count"><code class="name">var <span class="ident">jump_variable_count</span></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The number of costate or jump variables in the model
+(The length of the J1L, J1R and YJR vectors).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property  # njm
 def jump_variable_count(self):
+    &#34;&#34;&#34;
+    The number of costate or jump variables in the model 
+    (The length of the J1L, J1R and YJR vectors).
+    &#34;&#34;&#34;
     return self.__vector_length(&#34;jump_variables&#34;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.lhs_vector_names"><code class="name">var <span class="ident">lhs_vector_names</span> : list[str]</code></dt>
 <dd>
-<div class="desc"><p>Note the naming conventions for the lefthand side (LHS) variable vectors:
-a. x1l (the vector of state variables) X=S=State
-b. j1l (the vector of costate or jump variables) J=C=Costate
-c. zel (the endogenous variables LOGY, PRCT, PRID)
-d. z1l (the other endogenous variables)</p></div>
+<div class="desc"><p>A list of the model's LHS vector names.</p>
+<p>Note the lowercase naming conventions for the lefthand side (LHS) variable vectors:</p>
+<ol>
+<li><code>x1l</code> (the vector of state variables) X=S=State</li>
+<li><code>j1l</code> (the vector of costate or jump variables) J=C=Costate</li>
+<li><code>zel</code> (the endogenous variables LOGY, PRCT, PRID) </li>
+<li><code>z1l</code> (the other endogenous variables)</li>
+</ol></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2499,11 +3123,14 @@ d. z1l (the other endogenous variables)</p></div>
 <pre><code class="python">@property
 def lhs_vector_names(self) -&gt; list[str]:
     &#34;&#34;&#34;
-    Note the naming conventions for the lefthand side (LHS) variable vectors:
-    a. x1l (the vector of state variables) X=S=State
-    b. j1l (the vector of costate or jump variables) J=C=Costate
-    c. zel (the endogenous variables LOGY, PRCT, PRID) 
-    d. z1l (the other endogenous variables)
+    A list of the model&#39;s LHS vector names.
+
+    Note the lowercase naming conventions for the lefthand side (LHS) variable vectors:
+
+    1. `x1l` (the vector of state variables) X=S=State
+    2. `j1l` (the vector of costate or jump variables) J=C=Costate
+    3. `zel` (the endogenous variables LOGY, PRCT, PRID) 
+    4. `z1l` (the other endogenous variables)
     &#34;&#34;&#34;
     return SymData._lhs_vector_names</code></pre>
 </details>
@@ -2553,78 +3180,108 @@ def no_jump_variables(self) -&gt; bool:
     return self.vector_length(&#34;j1r&#34;) == 0</code></pre>
 </details>
 </dd>
+<dt id="gcubed.sym_data.SymData.non_electricity_distribution_sectors_count"><code class="name">var <span class="ident">non_electricity_distribution_sectors_count</span> : int</code></dt>
+<dd>
+<div class="desc"><p>The number of sectors explicitly defined in the SYM model definition that are
+not responsible for electricity distribution.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property  # numsecstd
+def non_electricity_distribution_sectors_count(self) -&gt; int:
+    &#34;&#34;&#34;
+    The number of sectors explicitly defined in the SYM model definition that are
+    not responsible for electricity distribution.
+    &#34;&#34;&#34;
+    return self.__set_members_count(&#39;sec_std&#39;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.non_electricity_distribution_sectors_members"><code class="name">var <span class="ident">non_electricity_distribution_sectors_members</span> : list[str]</code></dt>
+<dd>
+<div class="desc"><p>The list of sectors explicitly defined in the SYM model definition that are
+not responsible for electricity distribution.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def non_electricity_distribution_sectors_members(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    The list of sectors explicitly defined in the SYM model definition that are
+    not responsible for electricity distribution.
+    &#34;&#34;&#34;
+    return self.__set_members(&#39;sec_std&#39;)</code></pre>
+</details>
+</dd>
 <dt id="gcubed.sym_data.SymData.non_electricity_generation_goods_count"><code class="name">var <span class="ident">non_electricity_generation_goods_count</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The number of goods in the economy that are not
+electricity generation goods (those that are members of the <code>goods_g</code> set).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def non_electricity_generation_goods_count(self) -&gt; int:
+    &#34;&#34;&#34;
+    The number of goods in the economy that are not 
+    electricity generation goods (those that are members of the `goods_g` set).
+    &#34;&#34;&#34;
     return len(self.non_electricity_generation_goods_members)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.non_electricity_generation_goods_members"><code class="name">var <span class="ident">non_electricity_generation_goods_members</span> : list[str]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The list of goods in the economy that are not
+electricity generation goods (those that are members of the <code>goods_g</code> set).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def non_electricity_generation_goods_members(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    The list of goods in the economy that are not 
+    electricity generation goods (those that are members of the `goods_g` set).
+    &#34;&#34;&#34;
     all_goods_members = self.goods_members
     generation_members = self.electricity_generation_goods_members
     result = [x for x in all_goods_members if x not in generation_members]
     return result</code></pre>
 </details>
 </dd>
-<dt id="gcubed.sym_data.SymData.non_energy_distribution_sectors_count"><code class="name">var <span class="ident">non_energy_distribution_sectors_count</span> : int</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property  # numsecstd
-def non_energy_distribution_sectors_count(self) -&gt; int:
-    return self.__set_members_count(&#39;sec_std&#39;)</code></pre>
-</details>
-</dd>
-<dt id="gcubed.sym_data.SymData.non_energy_distribution_sectors_members"><code class="name">var <span class="ident">non_energy_distribution_sectors_members</span> : list[str]</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def non_energy_distribution_sectors_members(self) -&gt; list[str]:
-    return self.__set_members(&#39;sec_std&#39;)</code></pre>
-</details>
-</dd>
 <dt id="gcubed.sym_data.SymData.non_energy_goods_count"><code class="name">var <span class="ident">non_energy_goods_count</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The number of goods in the economy that are not
+energy goods (those that are members of the <code>goods_e</code> set).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def non_energy_goods_count(self) -&gt; int:
+    &#34;&#34;&#34;
+    The number of goods in the economy that are not 
+    energy goods (those that are members of the `goods_e` set).
+    &#34;&#34;&#34;
     return len(self.non_energy_goods_members)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.non_energy_goods_members"><code class="name">var <span class="ident">non_energy_goods_members</span> : list[str]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The list of goods in the economy that are not
+energy goods (those that are members of the <code>goods_e</code> set).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def non_energy_goods_members(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    The list of goods in the economy that are not 
+    energy goods (those that are members of the `goods_e` set).
+    &#34;&#34;&#34;
     all_goods_members = self.goods_members
     energy_members = self.energy_goods_members
     result = [x for x in all_goods_members if x not in energy_members]
@@ -2633,25 +3290,35 @@ def non_energy_goods_members(self) -&gt; list[str]:
 </dd>
 <dt id="gcubed.sym_data.SymData.non_energy_or_generation_goods_count"><code class="name">var <span class="ident">non_energy_or_generation_goods_count</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The number of goods in the economy that are not energy goods or
+electricity generation goods.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def non_energy_or_generation_goods_count(self) -&gt; int:
+    &#34;&#34;&#34;
+    The number of goods in the economy that are not energy goods or
+    electricity generation goods.
+    &#34;&#34;&#34;
     return len(self.non_energy_or_generation_goods_members)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.non_energy_or_generation_goods_members"><code class="name">var <span class="ident">non_energy_or_generation_goods_members</span> : list[str]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The list of goods in the economy that are not energy goods or
+electricity generation goods.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def non_energy_or_generation_goods_members(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    The list of goods in the economy that are not energy goods or
+    electricity generation goods.
+    &#34;&#34;&#34;
     result = [
         x for x in self.goods_members if x not in self.energy_goods_members]
     result = [
@@ -2661,21 +3328,33 @@ def non_energy_or_generation_goods_members(self) -&gt; list[str]:
 </dd>
 <dt id="gcubed.sym_data.SymData.non_energy_or_generation_sectors_members"><code class="name">var <span class="ident">non_energy_or_generation_sectors_members</span> : list[str]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The list of sectors explicitly defined in the SYM model definition except
+for sectors that are involved in electricity generation or energy.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def non_energy_or_generation_sectors_members(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    The list of sectors explicitly defined in the SYM model definition except
+    for sectors that are involved in electricity generation or energy.
+    &#34;&#34;&#34;
     return self.sectors_producing(self.non_energy_or_generation_goods_members)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.oil_sector_good"><code class="name">var <span class="ident">oil_sector_good</span> : str</code></dt>
 <dd>
-<div class="desc"><p>Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.</p>
-<p>Model version J has 5 energy sectors: gas and gas utilities are aggregated and
-the gas emissions are applied to gas utilities a03 producing good g03.</p></div>
+<div class="desc"><p>The string identifier of the good , <code>g03</code>, produced by the petroleum sector.
+This is the sector associated with oil-related carbon emissions.</p>
+<p>Model that include a petroleum sector must have that sector
+as the third member of the <code>sectors</code> set in the
+model's SYM definition.</p>
+<p>Model version R has 2 sectors, the first is energy, and it is
+associated with gas, oil and coal. It has no explicit petroleum sector so it
+has no good associated with such a sector.</p>
+<p>TODO: Add SYM attributes to this good to identify it appropriately so it
+is not order dependent in the SYM definitions.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2683,12 +3362,20 @@ the gas emissions are applied to gas utilities a03 producing good g03.</p></div>
 <pre><code class="python">@property
 def oil_sector_good(self) -&gt; str:
     &#34;&#34;&#34;
-    Model version R has 2 sectors, the first is energy, and it is associated with gas, oil and coal.
+    The string identifier of the good , `g03`, produced by the petroleum sector. 
+    This is the sector associated with oil-related carbon emissions.
 
-    Model version J has 5 energy sectors: gas and gas utilities are aggregated and
-    the gas emissions are applied to gas utilities a03 producing good g03.
+    Model that include a petroleum sector must have that sector 
+    as the third member of the `sectors` set in the
+    model&#39;s SYM definition.
+
+    Model version R has 2 sectors, the first is energy, and it is 
+    associated with gas, oil and coal. It has no explicit petroleum sector so it
+    has no good associated with such a sector.
+
+    TODO: Add SYM attributes to this good to identify it appropriately so it
+    is not order dependent in the SYM definitions.
     &#34;&#34;&#34;
-
     match self.configuration.version:
         case &#39;2R&#39;:
             return None
@@ -2720,13 +3407,16 @@ def opt_map(self) -&gt; pd.DataFrame:
 </dd>
 <dt id="gcubed.sym_data.SymData.parameter_count"><code class="name">var <span class="ident">parameter_count</span></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The number of parameters in the model.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property  # npar
 def parameter_count(self):
+    &#34;&#34;&#34;
+    The number of parameters in the model.
+    &#34;&#34;&#34;
     return self.__vector_length(&#34;parameters&#34;)</code></pre>
 </details>
 </dd>
@@ -2760,25 +3450,35 @@ def projection_vector_names(self) -&gt; list[str]:
 </dd>
 <dt id="gcubed.sym_data.SymData.regions_count"><code class="name">var <span class="ident">regions_count</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The number of regions explicitly defined in the SYM model definition as part
+of the <code>regions</code> set.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property  # countopt
 def regions_count(self) -&gt; int:
+    &#34;&#34;&#34;
+    The number of regions explicitly defined in the SYM model definition as part
+    of the `regions` set.
+    &#34;&#34;&#34;
     return self.__set_members_count(&#39;regions&#39;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.regions_members"><code class="name">var <span class="ident">regions_members</span> : list[str]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The list of regions explicitly defined in the SYM model definition as part
+of the <code>regions</code> set.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def regions_members(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    The list of regions explicitly defined in the SYM model definition as part
+    of the `regions` set.
+    &#34;&#34;&#34;
     return self.__set_members(
         &#34;regions&#34;)</code></pre>
 </details>
@@ -2816,19 +3516,27 @@ def rhs_vector_names(self) -&gt; list[str]:
 </dd>
 <dt id="gcubed.sym_data.SymData.sector_prefix"><code class="name">var <span class="ident">sector_prefix</span> : str</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The first letter of the first sector identifier.
+This is typically <code>a</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def sector_prefix(self) -&gt; str:
+    &#34;&#34;&#34;
+    The first letter of the first sector identifier.
+    This is typically `a`.
+    &#34;&#34;&#34;
     return self.sectors_members[0][0]</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.sectors_count"><code class="name">var <span class="ident">sectors_count</span> : int</code></dt>
 <dd>
-<div class="desc"><p>Returns N: the number of sectors defined in the SYM file (a01 &hellip;aN).</p></div>
+<div class="desc"><p>The number of sectors that are explicitly defined in the SYM model definition.
+These are the members of the <code>sectors</code> set.</p>
+<p>The number does not include the two capital producing sectors
+that are common to all model versions.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2836,20 +3544,34 @@ def sector_prefix(self) -&gt; str:
 <pre><code class="python">@property  # numsect # a01,a02 for version R of the model
 def sectors_count(self) -&gt; int:
     &#34;&#34;&#34;
-    Returns N: the number of sectors defined in the SYM file (a01 ...aN).
+    The number of sectors that are explicitly defined in the SYM model definition. 
+    These are the members of the `sectors` set.
+
+    The number does not include the two capital producing sectors 
+    that are common to all model versions.
     &#34;&#34;&#34;
     return self.__set_members_count(&#39;sectors&#39;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.sectors_members"><code class="name">var <span class="ident">sectors_members</span> : list[str]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The list of sectors that are explicitly defined in the SYM model definition.
+These are the members of the <code>sectors</code> set.</p>
+<p>The list does not include the two capital producing sectors
+that are common to all model versions.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def sectors_members(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    The list of sectors that are explicitly defined in the SYM model definition. 
+    These are the members of the `sectors` set.
+
+    The list does not include the two capital producing sectors 
+    that are common to all model versions.
+    &#34;&#34;&#34;
     return self.__set_members(&#34;sectors&#34;)</code></pre>
 </details>
 </dd>
@@ -2878,63 +3600,54 @@ def ssf_rhs_vector_names(self) -&gt; list[str]:
 </dd>
 <dt id="gcubed.sym_data.SymData.state_variable_count"><code class="name">var <span class="ident">state_variable_count</span></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The number of state variables in the model
+(The length of the X1L, X1R and XJR vectors).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property  # nst
 def state_variable_count(self):
+    &#34;&#34;&#34;
+    The number of state variables in the model 
+    (The length of the X1L, X1R and XJR vectors).
+    &#34;&#34;&#34;
     return self.__vector_length(&#34;state_variables&#34;)</code></pre>
 </details>
 </dd>
-<dt id="gcubed.sym_data.SymData.swtch"><code class="name">var <span class="ident">swtch</span> : tuple[bool]</code></dt>
+<dt id="gcubed.sym_data.SymData.sym_sets"><code class="name">var <span class="ident">sym_sets</span> : dict[str, list[str]]</code></dt>
 <dd>
-<div class="desc"><p>Return a tuple of boolean values used to track various types of variables in the model.
-In the Ox implementation these are ones and zeros.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property  # swtch
-def swtch(self) -&gt; tuple[bool]:
-    &#34;&#34;&#34;
-    Return a tuple of boolean values used to track various types of variables in the model.
-    In the Ox implementation these are ones and zeros.
-    &#34;&#34;&#34;
-    return (
-        self.jump_variable_count == 0,
-        self.exogenous_variable_count == 0,
-        self.expected_endogenous_variable_count == 0,
-        False,
-        self.jump_variable_count == 0,
-        False)</code></pre>
-</details>
-</dd>
-<dt id="gcubed.sym_data.SymData.sym_sets"><code class="name">var <span class="ident">sym_sets</span> : dict</code></dt>
-<dd>
-<div class="desc"><p>Mapping from set name to set members list</p></div>
+<div class="desc"><p>A dictionary mapping from the name of the SYM model definition of the set
+to the SYM members of the set, contained in a list of strings.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def sym_sets(self) -&gt; dict:
+def sym_sets(self) -&gt; dict[str, list[str]]:
     &#34;&#34;&#34;
-    Mapping from set name to set members list
+    A dictionary mapping from the name of the SYM model definition of the set 
+    to the SYM members of the set, contained in a list of strings.
     &#34;&#34;&#34;
     return self._sym_sets</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.us_region"><code class="name">var <span class="ident">us_region</span> : str</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The string identifier of the USA region. This must always be the first region
+defined in the SYM <code>regions</code> set and it will be the first region in the list
+of region members.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def us_region(self) -&gt; str:
+    &#34;&#34;&#34;
+    The string identifier of the USA region. This must always be the first region
+    defined in the SYM `regions` set and it will be the first region in the list
+    of region members.
+    &#34;&#34;&#34;
     return self.regions_members[0]</code></pre>
 </details>
 </dd>
@@ -3015,11 +3728,11 @@ def variables_adjusted_by_intertemporal_constants(self) -&gt; pd.DataFrame:
 
     # Check for the existence of any variables with the given name prefixes and add them
     # to the results if they are defined in the SYM model.
-    for (prefix, vector_name) in CONSTANTS.NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES:
+    for (prefix, vector_name) in Constants().NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES:
         matches: pd.Series = self.var_map.name.str.startswith(f&#34;{prefix}(&#34;) &amp; (self.var_map.var_type == vector_name)
         result: pd.DataFrame = pd.concat([result, self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]])
 
-    result = result.loc[result.name != CONSTANTS.REXC_FOR_USA, :]
+    result = result.loc[result.name != Constants().REXC_FOR_USA, :]
 
     result.index = result.name
 
@@ -3036,12 +3749,24 @@ def variables_adjusted_by_intertemporal_constants(self) -&gt; pd.DataFrame:
 <span>def <span class="ident">good_produced_by</span></span>(<span>self, sector: str) ‑> str</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><h3 id="arguments">Arguments</h3>
+<p><code>sector</code>: The identifier of the sector that produces the good of interest.</p>
+<h3 id="returns">Returns</h3>
+<p>the good identifier produced by the specified sector.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def good_produced_by(self, sector: str) -&gt; str:
+    &#34;&#34;&#34;
+    ### Arguments
+
+    `sector`: The identifier of the sector that produces the good of interest.
+
+    ### Returns
+
+    the good identifier produced by the specified sector.
+    &#34;&#34;&#34;
     return (self.good_prefix + sector[1:])</code></pre>
 </details>
 </dd>
@@ -3049,12 +3774,28 @@ def variables_adjusted_by_intertemporal_constants(self) -&gt; pd.DataFrame:
 <span>def <span class="ident">goods_produced_by</span></span>(<span>self, sectors: list[str]) ‑> str</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><h3 id="arguments">Arguments</h3>
+<p><code>sectors</code>: The list of identifiers of the sectors that produce
+the goods of interest.</p>
+<h3 id="returns">Returns</h3>
+<p>the list of good identifiers for the goods produced by the
+specified sectors.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def goods_produced_by(self, sectors: list[str]) -&gt; str:
+    &#34;&#34;&#34;
+    ### Arguments
+
+    `sectors`: The list of identifiers of the sectors that produce 
+    the goods of interest.
+
+    ### Returns
+
+    the list of good identifiers for the goods produced by the 
+    specified sectors.
+    &#34;&#34;&#34;
     return [self.good_produced_by(x) for x in sectors]</code></pre>
 </details>
 </dd>
@@ -3062,16 +3803,33 @@ def variables_adjusted_by_intertemporal_constants(self) -&gt; pd.DataFrame:
 <span>def <span class="ident">has_variable</span></span>(<span>self, variable_name: str) ‑> bool</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Returns true iff the SYM model definition includes a variable with the given complete name including
-the set qualifier in round brackets.</p></div>
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Used to check whether the model includes the named variable.</p>
+<h3 id="arguments">Arguments</h3>
+<p><code>variable_name</code>: The complete variable name including
+the set qualifier in round brackets (e.g. <code>INFL(UU)</code>).</p>
+<h3 id="returns">Returns</h3>
+<p>True if the SYM model definition includes
+a variable with the given complete name.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def has_variable(self, variable_name: str) -&gt; bool:
     &#34;&#34;&#34;
-    Returns true iff the SYM model definition includes a variable with the given complete name including
-    the set qualifier in round brackets.
+
+    ### Overview
+
+    Used to check whether the model includes the named variable.
+    
+    ### Arguments
+
+    `variable_name`: The complete variable name including
+    the set qualifier in round brackets (e.g. `INFL(UU)`).
+
+    ### Returns
+    True if the SYM model definition includes 
+    a variable with the given complete name.
     &#34;&#34;&#34;
     return (self.var_map.name == variable_name).any()</code></pre>
 </details>
@@ -3080,14 +3838,31 @@ the set qualifier in round brackets.</p></div>
 <span>def <span class="ident">has_variables</span></span>(<span>self, variable_name_prefix: str) ‑> bool</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Returns true iff the SYM model definition includes a variable with the given root name.</p></div>
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Used to check whether the model includes variables with names that start with the
+supplied prefix. The prefix is matched as a string rather than a regular expression.</p>
+<h3 id="arguments">Arguments</h3>
+<p><code>variable_name_prefix</code>: The variable name prefix string.</p>
+<h3 id="returns">Returns</h3>
+<p>True iff the SYM model definition includes a variable with the given root name.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def has_variables(self, variable_name_prefix: str) -&gt; bool:
     &#34;&#34;&#34;
-    Returns true iff the SYM model definition includes a variable with the given root name.
+
+    ### Overview
+
+    Used to check whether the model includes variables with names that start with the
+    supplied prefix. The prefix is matched as a string rather than a regular expression.
+    
+    ### Arguments
+
+    `variable_name_prefix`: The variable name prefix string.
+
+    ### Returns
+    True iff the SYM model definition includes a variable with the given root name.
     &#34;&#34;&#34;
     return self.var_map.name.str.startswith(variable_name_prefix).any()</code></pre>
 </details>
@@ -3097,7 +3872,7 @@ the set qualifier in round brackets.</p></div>
 </code></dt>
 <dd>
 <div class="desc"><h3 id="arguments">Arguments</h3>
-<p>lhs_vector_name: the name of the LHS vector.</p>
+<p><code>lhs_vector_name</code>: the name of the LHS vector.</p>
 <h3 id="returns">Returns</h3>
 <p>the matching RHS vector name, replacing the last character, l, with an r.</p></div>
 <details class="source">
@@ -3109,7 +3884,7 @@ the set qualifier in round brackets.</p></div>
     
    ### Arguments
 
-    lhs_vector_name: the name of the LHS vector.
+    `lhs_vector_name`: the name of the LHS vector.
 
    ### Returns 
     
@@ -3123,8 +3898,9 @@ the set qualifier in round brackets.</p></div>
 </code></dt>
 <dd>
 <div class="desc"><h3 id="arguments">Arguments</h3>
-<p>vector_name: The fully qualified name of the variable</p>
-<p>Returns the string ID of the projection vector that the variable is in.</p></div>
+<p><code>vector_name</code>: The fully qualified name of the variable</p>
+<p>### Returns</p>
+<p>The string ID of the projection vector that the variable is in.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -3133,9 +3909,11 @@ the set qualifier in round brackets.</p></div>
     &#34;&#34;&#34;
    ### Arguments
 
-    vector_name: The fully qualified name of the variable
+    `vector_name`: The fully qualified name of the variable
     
-    Returns the string ID of the projection vector that the variable is in.
+    ### Returns
+    
+    The string ID of the projection vector that the variable is in.
     &#34;&#34;&#34;
     var_types: pd.Series = self.var_map.loc[[variable_name], &#39;var_type&#39;]
     if len(var_types) == 0:
@@ -3148,12 +3926,26 @@ the set qualifier in round brackets.</p></div>
 <span>def <span class="ident">sector_producing</span></span>(<span>self, good: str) ‑> str</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><h3 id="arguments">Arguments</h3>
+<p><code>good</code>: The identifier of the good produced by the sector of interest.</p>
+<h3 id="returns">Returns</h3>
+<p>the sector identifier for the sector that produces the
+specified good.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def sector_producing(self, good: str) -&gt; str:
+    &#34;&#34;&#34;
+    ### Arguments
+
+    `good`: The identifier of the good produced by the sector of interest.
+
+    ### Returns
+
+    the sector identifier for the sector that produces the
+    specified good.
+    &#34;&#34;&#34;
     return (self.sector_prefix + good[1:])</code></pre>
 </details>
 </dd>
@@ -3161,12 +3953,26 @@ the set qualifier in round brackets.</p></div>
 <span>def <span class="ident">sectors_producing</span></span>(<span>self, goods: list[str]) ‑> str</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><h3 id="arguments">Arguments</h3>
+<p><code>goods</code>: The list of identifiers of the goods produced by the sectors of interest.</p>
+<h3 id="returns">Returns</h3>
+<p>the list of sector identifiers for the sectors that produces the
+goods in the supplied list.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def sectors_producing(self, goods: list[str]) -&gt; str:
+    &#34;&#34;&#34;
+    ### Arguments
+
+    `goods`: The list of identifiers of the goods produced by the sectors of interest.
+
+    ### Returns
+
+    the list of sector identifiers for the sectors that produces the
+    goods in the supplied list.
+    &#34;&#34;&#34;
     return [self.sector_producing(x) for x in goods]</code></pre>
 </details>
 </dd>
@@ -3371,12 +4177,10 @@ linear model partial derivatives, and SSF matrices.</p></div>
 <li><code><a title="gcubed.sym_data.SymData.coal_sector_good" href="#gcubed.sym_data.SymData.coal_sector_good">coal_sector_good</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.combined_variable_summary" href="#gcubed.sym_data.SymData.combined_variable_summary">combined_variable_summary</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.configuration" href="#gcubed.sym_data.SymData.configuration">configuration</a></code></li>
-<li><code><a title="gcubed.sym_data.SymData.dimension" href="#gcubed.sym_data.SymData.dimension">dimension</a></code></li>
-<li><code><a title="gcubed.sym_data.SymData.dimenson" href="#gcubed.sym_data.SymData.dimenson">dimenson</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.electricity_distribution_sectors_count" href="#gcubed.sym_data.SymData.electricity_distribution_sectors_count">electricity_distribution_sectors_count</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.electricity_generation_goods_count" href="#gcubed.sym_data.SymData.electricity_generation_goods_count">electricity_generation_goods_count</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.electricity_generation_goods_members" href="#gcubed.sym_data.SymData.electricity_generation_goods_members">electricity_generation_goods_members</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.endogenous_variable_count" href="#gcubed.sym_data.SymData.endogenous_variable_count">endogenous_variable_count</a></code></li>
-<li><code><a title="gcubed.sym_data.SymData.energy_distribution_sectors_count" href="#gcubed.sym_data.SymData.energy_distribution_sectors_count">energy_distribution_sectors_count</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.energy_distribution_sectors_members" href="#gcubed.sym_data.SymData.energy_distribution_sectors_members">energy_distribution_sectors_members</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.energy_goods_count" href="#gcubed.sym_data.SymData.energy_goods_count">energy_goods_count</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.energy_goods_members" href="#gcubed.sym_data.SymData.energy_goods_members">energy_goods_members</a></code></li>
@@ -3399,10 +4203,10 @@ linear model partial derivatives, and SSF matrices.</p></div>
 <li><code><a title="gcubed.sym_data.SymData.no_exogenous_variables" href="#gcubed.sym_data.SymData.no_exogenous_variables">no_exogenous_variables</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.no_expected_exogenous_variables" href="#gcubed.sym_data.SymData.no_expected_exogenous_variables">no_expected_exogenous_variables</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.no_jump_variables" href="#gcubed.sym_data.SymData.no_jump_variables">no_jump_variables</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.non_electricity_distribution_sectors_count" href="#gcubed.sym_data.SymData.non_electricity_distribution_sectors_count">non_electricity_distribution_sectors_count</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.non_electricity_distribution_sectors_members" href="#gcubed.sym_data.SymData.non_electricity_distribution_sectors_members">non_electricity_distribution_sectors_members</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.non_electricity_generation_goods_count" href="#gcubed.sym_data.SymData.non_electricity_generation_goods_count">non_electricity_generation_goods_count</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.non_electricity_generation_goods_members" href="#gcubed.sym_data.SymData.non_electricity_generation_goods_members">non_electricity_generation_goods_members</a></code></li>
-<li><code><a title="gcubed.sym_data.SymData.non_energy_distribution_sectors_count" href="#gcubed.sym_data.SymData.non_energy_distribution_sectors_count">non_energy_distribution_sectors_count</a></code></li>
-<li><code><a title="gcubed.sym_data.SymData.non_energy_distribution_sectors_members" href="#gcubed.sym_data.SymData.non_energy_distribution_sectors_members">non_energy_distribution_sectors_members</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.non_energy_goods_count" href="#gcubed.sym_data.SymData.non_energy_goods_count">non_energy_goods_count</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.non_energy_goods_members" href="#gcubed.sym_data.SymData.non_energy_goods_members">non_energy_goods_members</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.non_energy_or_generation_goods_count" href="#gcubed.sym_data.SymData.non_energy_or_generation_goods_count">non_energy_or_generation_goods_count</a></code></li>
@@ -3424,7 +4228,6 @@ linear model partial derivatives, and SSF matrices.</p></div>
 <li><code><a title="gcubed.sym_data.SymData.sectors_producing" href="#gcubed.sym_data.SymData.sectors_producing">sectors_producing</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.ssf_rhs_vector_names" href="#gcubed.sym_data.SymData.ssf_rhs_vector_names">ssf_rhs_vector_names</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.state_variable_count" href="#gcubed.sym_data.SymData.state_variable_count">state_variable_count</a></code></li>
-<li><code><a title="gcubed.sym_data.SymData.swtch" href="#gcubed.sym_data.SymData.swtch">swtch</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.sym_sets" href="#gcubed.sym_data.SymData.sym_sets">sym_sets</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.us_region" href="#gcubed.sym_data.SymData.us_region">us_region</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.var_info" href="#gcubed.sym_data.SymData.var_info">var_info</a></code></li>

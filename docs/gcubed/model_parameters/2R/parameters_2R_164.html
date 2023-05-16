@@ -30,7 +30,6 @@
 # Purpose: Custom model parameter calibration
 # Author: Geoff Shuetrim
 # ------------------------------------------------------------------
-from __future__ import annotations
 import logging
 from gcubed.model_parameters.parameters import Parameters
 from gcubed.data.database import Database
@@ -38,10 +37,19 @@ from gcubed.data.database import Database
 
 class Parameters2R164(Parameters):
     &#34;&#34;&#34;
-    Customise parameter calibration for model 2R 164.
+    Customised parameter calibration for model 2R 164.
     &#34;&#34;&#34;
 
     def __init__(self, database: Database, base_year: int) -&gt; None:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        database: The database used to calibrate the parameters.
+
+        base_year: The base year that the database needs to be rebased to before
+        calibration of the parameters.
+        
+        &#34;&#34;&#34;        
         super().__init__(database=database, base_year = base_year)
 
         # Required statements in all final subclasses of the parameter class.
@@ -49,7 +57,8 @@ class Parameters2R164(Parameters):
         self.validate()
 
     def validate(self):
-        super().validate()</code></pre>
+        super().validate()
+        logging.info(f&#34;Calibrated the model parameters using a database with base year {self.calibration_database.base_year}.&#34;)</code></pre>
 </details>
 </section>
 <section>
@@ -63,23 +72,33 @@ class Parameters2R164(Parameters):
 <dl>
 <dt id="gcubed.model_parameters.2R.parameters_2R_164.Parameters2R164"><code class="flex name class">
 <span>class <span class="ident">Parameters2R164</span></span>
-<span>(</span><span>database: Database, base_year: int)</span>
+<span>(</span><span>database: <a title="gcubed.data.database.Database" href="../../data/database.html#gcubed.data.database.Database">Database</a>, base_year: int)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Customise parameter calibration for model 2R 164.</p>
-<h3 id="constructor">Constructor</h3>
-<p>Does constructor operations required by all classes that inherit from this base class.</p>
-<p>These currently just set up numpy array print options.</p></div>
+<div class="desc"><p>Customised parameter calibration for model 2R 164.</p>
+<h3 id="arguments">Arguments</h3>
+<p>database: The database used to calibrate the parameters.</p>
+<p>base_year: The base year that the database needs to be rebased to before
+calibration of the parameters.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Parameters2R164(Parameters):
     &#34;&#34;&#34;
-    Customise parameter calibration for model 2R 164.
+    Customised parameter calibration for model 2R 164.
     &#34;&#34;&#34;
 
     def __init__(self, database: Database, base_year: int) -&gt; None:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        database: The database used to calibrate the parameters.
+
+        base_year: The base year that the database needs to be rebased to before
+        calibration of the parameters.
+        
+        &#34;&#34;&#34;        
         super().__init__(database=database, base_year = base_year)
 
         # Required statements in all final subclasses of the parameter class.
@@ -87,7 +106,8 @@ class Parameters2R164(Parameters):
         self.validate()
 
     def validate(self):
-        super().validate()</code></pre>
+        super().validate()
+        logging.info(f&#34;Calibrated the model parameters using a database with base year {self.calibration_database.base_year}.&#34;)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">

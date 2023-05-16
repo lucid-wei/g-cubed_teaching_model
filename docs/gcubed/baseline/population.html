@@ -61,16 +61,11 @@ class Population(Base):
         assert self._population_growth_rates is not None
 
         # The productivity information must extend to the end year for the simulations
-        if not self.configuration.end_year == int(
-                self._population_growth_rates.columns[-1]):
-            logging.warn(
-                f&#34;The end year for population projections, {self.configuration.end_year}, does not match the final year, {self._population_growth_rates.columns[-1]}, of the productivity data in {self._filename}&#34;)
+        if not self.configuration.last_projection_year == int(self._population_growth_rates.columns[-1]):
+            logging.warning(f&#34;The end year for population projections, {self.configuration.last_projection_year}, does not match the final year, {self._population_growth_rates.columns[-1]}, of the productivity data in {self._filename}&#34;)
 
         # Make sure the productivity data starts early enough to include the years specified in the model configuration.
-        assert str(
-            self.configuration.projection_base_year) in self._data_column_names
-        assert str(self.configuration.start_year) in self._data_column_names
-        assert str(self.configuration._last_available_year) in self._data_column_names
+        assert str(self.configuration.first_projection_year) in self._data_column_names
 
     @property
     def configuration(self):
@@ -98,7 +93,7 @@ class Population(Base):
         population_growth_rates.index = population_growth_rates.iloc[:,0]
         self._data_column_names = self.get_year_labels(labels=population_growth_rates.columns)
         population_growth_rates = population_growth_rates.loc[:, self._data_column_names] / 100
-        population_growth_rates = population_growth_rates.loc[:,self.configuration.start_to_end_year_column_labels]
+        population_growth_rates = population_growth_rates.loc[:,self.configuration.projection_years_column_labels]
         self._population_growth_rates = population_growth_rates</code></pre>
 </details>
 </section>
@@ -147,16 +142,11 @@ class Population(Base):
         assert self._population_growth_rates is not None
 
         # The productivity information must extend to the end year for the simulations
-        if not self.configuration.end_year == int(
-                self._population_growth_rates.columns[-1]):
-            logging.warn(
-                f&#34;The end year for population projections, {self.configuration.end_year}, does not match the final year, {self._population_growth_rates.columns[-1]}, of the productivity data in {self._filename}&#34;)
+        if not self.configuration.last_projection_year == int(self._population_growth_rates.columns[-1]):
+            logging.warning(f&#34;The end year for population projections, {self.configuration.last_projection_year}, does not match the final year, {self._population_growth_rates.columns[-1]}, of the productivity data in {self._filename}&#34;)
 
         # Make sure the productivity data starts early enough to include the years specified in the model configuration.
-        assert str(
-            self.configuration.projection_base_year) in self._data_column_names
-        assert str(self.configuration.start_year) in self._data_column_names
-        assert str(self.configuration._last_available_year) in self._data_column_names
+        assert str(self.configuration.first_projection_year) in self._data_column_names
 
     @property
     def configuration(self):
@@ -184,7 +174,7 @@ class Population(Base):
         population_growth_rates.index = population_growth_rates.iloc[:,0]
         self._data_column_names = self.get_year_labels(labels=population_growth_rates.columns)
         population_growth_rates = population_growth_rates.loc[:, self._data_column_names] / 100
-        population_growth_rates = population_growth_rates.loc[:,self.configuration.start_to_end_year_column_labels]
+        population_growth_rates = population_growth_rates.loc[:,self.configuration.projection_years_column_labels]
         self._population_growth_rates = population_growth_rates</code></pre>
 </details>
 <h3>Ancestors</h3>

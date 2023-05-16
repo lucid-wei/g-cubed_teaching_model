@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>gcubed.state_space_form API documentation</title>
+<title>gcubed.linearisation.state_space_form API documentation</title>
 <meta name="description" content="Contains the StateSpaceForm class" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -19,7 +19,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>gcubed.state_space_form</code></h1>
+<h1 class="title">Module <code>gcubed.linearisation.state_space_form</code></h1>
 </header>
 <section id="section-intro">
 <p>Contains the StateSpaceForm class</p>
@@ -174,8 +174,7 @@ class StateSpaceForm(Base):
         and columns with RHS variable names.
         &#34;&#34;&#34;
         if self._ssf_matrices is None:
-            raise Exception(
-                f&#34;Attempted to access SSF matrix relating {lhs_vector_name} to {rhs_vector_name} before it was created.&#34;)
+            raise Exception(f&#34;Attempted to access SSF matrix relating {lhs_vector_name} to {rhs_vector_name} before it was created.&#34;)
         key = (lhs_vector_name, rhs_vector_name)
         if key in self._ssf_matrices:
             result: pd.DataFrame = pd.DataFrame(self._ssf_matrices[key])
@@ -230,8 +229,6 @@ class StateSpaceForm(Base):
         &#34;&#34;&#34;
         matched_rhs_vector_name: str = self.sym_data.matching_rhs_vector_name(lhs_vector_name)
 
-        # logging.debug(f&#34;Processing {lhs_vector_name} and {matched_rhs_vector_name}&#34;)
-
         square_matrix: np.ndarray = self.delta(lhs_vector_name, matched_rhs_vector_name)
 
         # If the LHS is not related to itself on the RHS, nothing to do otherwise ...s
@@ -249,8 +246,6 @@ class StateSpaceForm(Base):
                     continue
                 self._ssf_matrices[(lhs_vector_name, rhs_vector_name)] = lu_solve(
                     (lu, piv), self.delta(lhs_vector_name, rhs_vector_name))
-                # logging.debug(f&#34;\t\t{self._counter} SSF update {lhs_vector_name}_{rhs_vector_name} = Inv(I-{lhs_vector_name}_{matched_rhs_vector_name}) * {lhs_vector_name}_{rhs_vector_name}&#34;)
-                # np.savetxt(f&#34;{self.configuration.ox_directory}{&#39; % 02d&#39; % (self._counter)}_{lhs_vector_name}_{rhs_vector_name}_ssf_python.csv&#34;, self.get_ssf_matrix_by_name(lhs_vector_name, rhs_vector_name), delimiter=&#34;,&#34;)
                 self._counter = self._counter + 1
 
         self._RHS_vectors_to_skip.append(matched_rhs_vector_name)
@@ -264,7 +259,6 @@ class StateSpaceForm(Base):
 
             # Avoid matrix operations that have no effect because this matrix is all zeros.
             if not np.any(self.delta(other_lhs_vector_name, matched_rhs_vector_name)):
-                # logging.debug(f&#34;{other_lhs_vector_name}_{matched_rhs_vector_name}_ssf is zero.&#34;)
                 continue
 
             for rhs_vector_name in self.sym_data.rhs_vector_names:
@@ -277,15 +271,12 @@ class StateSpaceForm(Base):
 
                 # Avoid matrix operations that have no effect because this matrix is all zeros.
                 if not np.any(self.delta(lhs_vector_name, rhs_vector_name)):
-                    # logging.debug(f&#34;{other_lhs_vector_name}_{rhs_vector_name}_ssf is zero.&#34;)
                     continue
                 
                 self._ssf_matrices[(other_lhs_vector_name, rhs_vector_name)] = \
                     self.delta(other_lhs_vector_name, rhs_vector_name) + \
                     self.delta(other_lhs_vector_name, matched_rhs_vector_name) @ \
                     self.delta(lhs_vector_name, rhs_vector_name)
-                # logging.debug(f&#34;\t\t{self._counter} SSF update {other_lhs_vector_name}_{rhs_vector_name} = {other_lhs_vector_name}_{rhs_vector_name} + {other_lhs_vector_name}_{matched_rhs_vector_name} * {lhs_vector_name}_{rhs_vector_name}&#34;)
-                # np.savetxt(f&#34;{self.configuration.ox_directory}{&#39; % 02d&#39; % (self._counter)}_{other_lhs_vector_name}_{rhs_vector_name}_ssf_python.csv&#34;,self.get_ssf_matrix_by_name(other_lhs_vector_name, rhs_vector_name), delimiter=&#34;,&#34;)
                 self._counter = self._counter + 1</code></pre>
 </details>
 </section>
@@ -298,9 +289,9 @@ class StateSpaceForm(Base):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="gcubed.state_space_form.StateSpaceForm"><code class="flex name class">
+<dt id="gcubed.linearisation.state_space_form.StateSpaceForm"><code class="flex name class">
 <span>class <span class="ident">StateSpaceForm</span></span>
-<span>(</span><span>linear_model: <a title="gcubed.linearisation.linear_model.LinearModel" href="linearisation/linear_model.html#gcubed.linearisation.linear_model.LinearModel">LinearModel</a>)</span>
+<span>(</span><span>linear_model: <a title="gcubed.linearisation.linear_model.LinearModel" href="linear_model.html#gcubed.linearisation.linear_model.LinearModel">LinearModel</a>)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>The algebra embodied in this class follows
@@ -455,8 +446,7 @@ manipulated to produce the state-space form of that linear approximation.</p></d
         and columns with RHS variable names.
         &#34;&#34;&#34;
         if self._ssf_matrices is None:
-            raise Exception(
-                f&#34;Attempted to access SSF matrix relating {lhs_vector_name} to {rhs_vector_name} before it was created.&#34;)
+            raise Exception(f&#34;Attempted to access SSF matrix relating {lhs_vector_name} to {rhs_vector_name} before it was created.&#34;)
         key = (lhs_vector_name, rhs_vector_name)
         if key in self._ssf_matrices:
             result: pd.DataFrame = pd.DataFrame(self._ssf_matrices[key])
@@ -511,8 +501,6 @@ manipulated to produce the state-space form of that linear approximation.</p></d
         &#34;&#34;&#34;
         matched_rhs_vector_name: str = self.sym_data.matching_rhs_vector_name(lhs_vector_name)
 
-        # logging.debug(f&#34;Processing {lhs_vector_name} and {matched_rhs_vector_name}&#34;)
-
         square_matrix: np.ndarray = self.delta(lhs_vector_name, matched_rhs_vector_name)
 
         # If the LHS is not related to itself on the RHS, nothing to do otherwise ...s
@@ -530,8 +518,6 @@ manipulated to produce the state-space form of that linear approximation.</p></d
                     continue
                 self._ssf_matrices[(lhs_vector_name, rhs_vector_name)] = lu_solve(
                     (lu, piv), self.delta(lhs_vector_name, rhs_vector_name))
-                # logging.debug(f&#34;\t\t{self._counter} SSF update {lhs_vector_name}_{rhs_vector_name} = Inv(I-{lhs_vector_name}_{matched_rhs_vector_name}) * {lhs_vector_name}_{rhs_vector_name}&#34;)
-                # np.savetxt(f&#34;{self.configuration.ox_directory}{&#39; % 02d&#39; % (self._counter)}_{lhs_vector_name}_{rhs_vector_name}_ssf_python.csv&#34;, self.get_ssf_matrix_by_name(lhs_vector_name, rhs_vector_name), delimiter=&#34;,&#34;)
                 self._counter = self._counter + 1
 
         self._RHS_vectors_to_skip.append(matched_rhs_vector_name)
@@ -545,7 +531,6 @@ manipulated to produce the state-space form of that linear approximation.</p></d
 
             # Avoid matrix operations that have no effect because this matrix is all zeros.
             if not np.any(self.delta(other_lhs_vector_name, matched_rhs_vector_name)):
-                # logging.debug(f&#34;{other_lhs_vector_name}_{matched_rhs_vector_name}_ssf is zero.&#34;)
                 continue
 
             for rhs_vector_name in self.sym_data.rhs_vector_names:
@@ -558,24 +543,21 @@ manipulated to produce the state-space form of that linear approximation.</p></d
 
                 # Avoid matrix operations that have no effect because this matrix is all zeros.
                 if not np.any(self.delta(lhs_vector_name, rhs_vector_name)):
-                    # logging.debug(f&#34;{other_lhs_vector_name}_{rhs_vector_name}_ssf is zero.&#34;)
                     continue
                 
                 self._ssf_matrices[(other_lhs_vector_name, rhs_vector_name)] = \
                     self.delta(other_lhs_vector_name, rhs_vector_name) + \
                     self.delta(other_lhs_vector_name, matched_rhs_vector_name) @ \
                     self.delta(lhs_vector_name, rhs_vector_name)
-                # logging.debug(f&#34;\t\t{self._counter} SSF update {other_lhs_vector_name}_{rhs_vector_name} = {other_lhs_vector_name}_{rhs_vector_name} + {other_lhs_vector_name}_{matched_rhs_vector_name} * {lhs_vector_name}_{rhs_vector_name}&#34;)
-                # np.savetxt(f&#34;{self.configuration.ox_directory}{&#39; % 02d&#39; % (self._counter)}_{other_lhs_vector_name}_{rhs_vector_name}_ssf_python.csv&#34;,self.get_ssf_matrix_by_name(other_lhs_vector_name, rhs_vector_name), delimiter=&#34;,&#34;)
                 self._counter = self._counter + 1</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="gcubed.base.Base" href="base.html#gcubed.base.Base">Base</a></li>
+<li><a title="gcubed.base.Base" href="../base.html#gcubed.base.Base">Base</a></li>
 </ul>
 <h3>Instance variables</h3>
 <dl>
-<dt id="gcubed.state_space_form.StateSpaceForm.configuration"><code class="name">var <span class="ident">configuration</span> : <a title="gcubed.model_configuration.ModelConfiguration" href="model_configuration.html#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a></code></dt>
+<dt id="gcubed.linearisation.state_space_form.StateSpaceForm.configuration"><code class="name">var <span class="ident">configuration</span> : <a title="gcubed.model_configuration.ModelConfiguration" href="../model_configuration.html#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a></code></dt>
 <dd>
 <div class="desc"><p>The model configuration details.</p></div>
 <details class="source">
@@ -590,7 +572,7 @@ def configuration(self) -&gt; ModelConfiguration:
     return self.model.configuration</code></pre>
 </details>
 </dd>
-<dt id="gcubed.state_space_form.StateSpaceForm.linear_model"><code class="name">var <span class="ident">linear_model</span> : <a title="gcubed.linearisation.linear_model.LinearModel" href="linearisation/linear_model.html#gcubed.linearisation.linear_model.LinearModel">LinearModel</a></code></dt>
+<dt id="gcubed.linearisation.state_space_form.StateSpaceForm.linear_model"><code class="name">var <span class="ident">linear_model</span> : <a title="gcubed.linearisation.linear_model.LinearModel" href="linear_model.html#gcubed.linearisation.linear_model.LinearModel">LinearModel</a></code></dt>
 <dd>
 <div class="desc"><p>The linear model underpinning this state-space form.</p></div>
 <details class="source">
@@ -605,7 +587,7 @@ def linear_model(self) -&gt; LinearModel:
     return self._linear_model</code></pre>
 </details>
 </dd>
-<dt id="gcubed.state_space_form.StateSpaceForm.model"><code class="name">var <span class="ident">model</span> : <a title="gcubed.model.Model" href="model.html#gcubed.model.Model">Model</a></code></dt>
+<dt id="gcubed.linearisation.state_space_form.StateSpaceForm.model"><code class="name">var <span class="ident">model</span> : <a title="gcubed.model.Model" href="../model.html#gcubed.model.Model">Model</a></code></dt>
 <dd>
 <div class="desc"><p>The full, non-linear model that has this state-space form for the
 given linear approximation.</p></div>
@@ -622,7 +604,7 @@ def model(self) -&gt; Model:
     return self.linear_model.model</code></pre>
 </details>
 </dd>
-<dt id="gcubed.state_space_form.StateSpaceForm.sym_data"><code class="name">var <span class="ident">sym_data</span> : <a title="gcubed.sym_data.SymData" href="sym_data.html#gcubed.sym_data.SymData">SymData</a></code></dt>
+<dt id="gcubed.linearisation.state_space_form.StateSpaceForm.sym_data"><code class="name">var <span class="ident">sym_data</span> : <a title="gcubed.sym_data.SymData" href="../sym_data.html#gcubed.sym_data.SymData">SymData</a></code></dt>
 <dd>
 <div class="desc"><p>The SYM definition of the model.</p></div>
 <details class="source">
@@ -640,7 +622,7 @@ def sym_data(self) -&gt; SymData:
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="gcubed.state_space_form.StateSpaceForm.delta"><code class="name flex">
+<dt id="gcubed.linearisation.state_space_form.StateSpaceForm.delta"><code class="name flex">
 <span>def <span class="ident">delta</span></span>(<span>self, lhs_vector_name, rhs_vector_name) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
@@ -683,7 +665,7 @@ an one column for each variable in the RHS vector.</p></div>
     return None</code></pre>
 </details>
 </dd>
-<dt id="gcubed.state_space_form.StateSpaceForm.delta_as_dataframe"><code class="name flex">
+<dt id="gcubed.linearisation.state_space_form.StateSpaceForm.delta_as_dataframe"><code class="name flex">
 <span>def <span class="ident">delta_as_dataframe</span></span>(<span>self, lhs_vector_name, rhs_vector_name) ‑> pandas.core.frame.DataFrame</span>
 </code></dt>
 <dd>
@@ -711,8 +693,7 @@ and columns with RHS variable names.</p></div>
     and columns with RHS variable names.
     &#34;&#34;&#34;
     if self._ssf_matrices is None:
-        raise Exception(
-            f&#34;Attempted to access SSF matrix relating {lhs_vector_name} to {rhs_vector_name} before it was created.&#34;)
+        raise Exception(f&#34;Attempted to access SSF matrix relating {lhs_vector_name} to {rhs_vector_name} before it was created.&#34;)
     key = (lhs_vector_name, rhs_vector_name)
     if key in self._ssf_matrices:
         result: pd.DataFrame = pd.DataFrame(self._ssf_matrices[key])
@@ -722,7 +703,7 @@ and columns with RHS variable names.</p></div>
     return None</code></pre>
 </details>
 </dd>
-<dt id="gcubed.state_space_form.StateSpaceForm.process"><code class="name flex">
+<dt id="gcubed.linearisation.state_space_form.StateSpaceForm.process"><code class="name flex">
 <span>def <span class="ident">process</span></span>(<span>self, lhs_vector_name: str)</span>
 </code></dt>
 <dd>
@@ -750,8 +731,6 @@ associated with the given LHS vector name.</p>
     &#34;&#34;&#34;
     matched_rhs_vector_name: str = self.sym_data.matching_rhs_vector_name(lhs_vector_name)
 
-    # logging.debug(f&#34;Processing {lhs_vector_name} and {matched_rhs_vector_name}&#34;)
-
     square_matrix: np.ndarray = self.delta(lhs_vector_name, matched_rhs_vector_name)
 
     # If the LHS is not related to itself on the RHS, nothing to do otherwise ...s
@@ -769,8 +748,6 @@ associated with the given LHS vector name.</p>
                 continue
             self._ssf_matrices[(lhs_vector_name, rhs_vector_name)] = lu_solve(
                 (lu, piv), self.delta(lhs_vector_name, rhs_vector_name))
-            # logging.debug(f&#34;\t\t{self._counter} SSF update {lhs_vector_name}_{rhs_vector_name} = Inv(I-{lhs_vector_name}_{matched_rhs_vector_name}) * {lhs_vector_name}_{rhs_vector_name}&#34;)
-            # np.savetxt(f&#34;{self.configuration.ox_directory}{&#39; % 02d&#39; % (self._counter)}_{lhs_vector_name}_{rhs_vector_name}_ssf_python.csv&#34;, self.get_ssf_matrix_by_name(lhs_vector_name, rhs_vector_name), delimiter=&#34;,&#34;)
             self._counter = self._counter + 1
 
     self._RHS_vectors_to_skip.append(matched_rhs_vector_name)
@@ -784,7 +761,6 @@ associated with the given LHS vector name.</p>
 
         # Avoid matrix operations that have no effect because this matrix is all zeros.
         if not np.any(self.delta(other_lhs_vector_name, matched_rhs_vector_name)):
-            # logging.debug(f&#34;{other_lhs_vector_name}_{matched_rhs_vector_name}_ssf is zero.&#34;)
             continue
 
         for rhs_vector_name in self.sym_data.rhs_vector_names:
@@ -797,26 +773,23 @@ associated with the given LHS vector name.</p>
 
             # Avoid matrix operations that have no effect because this matrix is all zeros.
             if not np.any(self.delta(lhs_vector_name, rhs_vector_name)):
-                # logging.debug(f&#34;{other_lhs_vector_name}_{rhs_vector_name}_ssf is zero.&#34;)
                 continue
             
             self._ssf_matrices[(other_lhs_vector_name, rhs_vector_name)] = \
                 self.delta(other_lhs_vector_name, rhs_vector_name) + \
                 self.delta(other_lhs_vector_name, matched_rhs_vector_name) @ \
                 self.delta(lhs_vector_name, rhs_vector_name)
-            # logging.debug(f&#34;\t\t{self._counter} SSF update {other_lhs_vector_name}_{rhs_vector_name} = {other_lhs_vector_name}_{rhs_vector_name} + {other_lhs_vector_name}_{matched_rhs_vector_name} * {lhs_vector_name}_{rhs_vector_name}&#34;)
-            # np.savetxt(f&#34;{self.configuration.ox_directory}{&#39; % 02d&#39; % (self._counter)}_{other_lhs_vector_name}_{rhs_vector_name}_ssf_python.csv&#34;,self.get_ssf_matrix_by_name(other_lhs_vector_name, rhs_vector_name), delimiter=&#34;,&#34;)
             self._counter = self._counter + 1</code></pre>
 </details>
 </dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="gcubed.base.Base" href="base.html#gcubed.base.Base">Base</a></b></code>:
+<li><code><b><a title="gcubed.base.Base" href="../base.html#gcubed.base.Base">Base</a></b></code>:
 <ul class="hlist">
-<li><code><a title="gcubed.base.Base.get_year_labels" href="base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
-<li><code><a title="gcubed.base.Base.load_data" href="base.html#gcubed.base.Base.load_data">load_data</a></code></li>
-<li><code><a title="gcubed.base.Base.zeros" href="base.html#gcubed.base.Base.zeros">zeros</a></code></li>
+<li><code><a title="gcubed.base.Base.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
+<li><code><a title="gcubed.base.Base.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.zeros" href="../base.html#gcubed.base.Base.zeros">zeros</a></code></li>
 </ul>
 </li>
 </ul>
@@ -832,21 +805,21 @@ associated with the given LHS vector name.</p>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="gcubed" href="index.html">gcubed</a></code></li>
+<li><code><a title="gcubed.linearisation" href="index.html">gcubed.linearisation</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="gcubed.state_space_form.StateSpaceForm" href="#gcubed.state_space_form.StateSpaceForm">StateSpaceForm</a></code></h4>
+<h4><code><a title="gcubed.linearisation.state_space_form.StateSpaceForm" href="#gcubed.linearisation.state_space_form.StateSpaceForm">StateSpaceForm</a></code></h4>
 <ul class="two-column">
-<li><code><a title="gcubed.state_space_form.StateSpaceForm.configuration" href="#gcubed.state_space_form.StateSpaceForm.configuration">configuration</a></code></li>
-<li><code><a title="gcubed.state_space_form.StateSpaceForm.delta" href="#gcubed.state_space_form.StateSpaceForm.delta">delta</a></code></li>
-<li><code><a title="gcubed.state_space_form.StateSpaceForm.delta_as_dataframe" href="#gcubed.state_space_form.StateSpaceForm.delta_as_dataframe">delta_as_dataframe</a></code></li>
-<li><code><a title="gcubed.state_space_form.StateSpaceForm.linear_model" href="#gcubed.state_space_form.StateSpaceForm.linear_model">linear_model</a></code></li>
-<li><code><a title="gcubed.state_space_form.StateSpaceForm.model" href="#gcubed.state_space_form.StateSpaceForm.model">model</a></code></li>
-<li><code><a title="gcubed.state_space_form.StateSpaceForm.process" href="#gcubed.state_space_form.StateSpaceForm.process">process</a></code></li>
-<li><code><a title="gcubed.state_space_form.StateSpaceForm.sym_data" href="#gcubed.state_space_form.StateSpaceForm.sym_data">sym_data</a></code></li>
+<li><code><a title="gcubed.linearisation.state_space_form.StateSpaceForm.configuration" href="#gcubed.linearisation.state_space_form.StateSpaceForm.configuration">configuration</a></code></li>
+<li><code><a title="gcubed.linearisation.state_space_form.StateSpaceForm.delta" href="#gcubed.linearisation.state_space_form.StateSpaceForm.delta">delta</a></code></li>
+<li><code><a title="gcubed.linearisation.state_space_form.StateSpaceForm.delta_as_dataframe" href="#gcubed.linearisation.state_space_form.StateSpaceForm.delta_as_dataframe">delta_as_dataframe</a></code></li>
+<li><code><a title="gcubed.linearisation.state_space_form.StateSpaceForm.linear_model" href="#gcubed.linearisation.state_space_form.StateSpaceForm.linear_model">linear_model</a></code></li>
+<li><code><a title="gcubed.linearisation.state_space_form.StateSpaceForm.model" href="#gcubed.linearisation.state_space_form.StateSpaceForm.model">model</a></code></li>
+<li><code><a title="gcubed.linearisation.state_space_form.StateSpaceForm.process" href="#gcubed.linearisation.state_space_form.StateSpaceForm.process">process</a></code></li>
+<li><code><a title="gcubed.linearisation.state_space_form.StateSpaceForm.sym_data" href="#gcubed.linearisation.state_space_form.StateSpaceForm.sym_data">sym_data</a></code></li>
 </ul>
 </li>
 </ul>

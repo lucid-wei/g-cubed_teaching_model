@@ -45,14 +45,14 @@ import os
 from gcubed import baseline
 import pandas as pd
 import numpy as np
-import gcubed.constants as CONSTANTS
+from gcubed.constants import Constants
 from gcubed.sym_data import SymData
 from gcubed.model_parameters.parameters import Parameters
 from gcubed.model_configuration import ModelConfiguration
 from gcubed.model import Model
 from gcubed.linearisation.linear_model import LinearModel
-from gcubed.stable_manifold import StableManifold
-from gcubed.state_space_form import StateSpaceForm
+from gcubed.linearisation.stable_manifold import StableManifold
+from gcubed.linearisation.state_space_form import StateSpaceForm
 from gcubed.data.gdp_scaled_database import GDPScaledDatabase
 from gcubed.projections.model_updater import ModelUpdater
 from gcubed.projections.projections import Projections
@@ -67,7 +67,7 @@ class RelinearisationProjections(Projections):
     through to the last projection year.
     &#34;&#34;&#34;
 
-    def __init__(self, baseline_projections: BaselineProjections, previous_projections: Projections, new_base_year: int, simulation_layer_definitions: SimulationLayerDefinitions = []) -&gt; None:
+    def __init__(self, baseline_projections: BaselineProjections, previous_projections: Projections, relinearisation_year: int, simulation_layer_definitions: SimulationLayerDefinitions = []) -&gt; None:
         &#34;&#34;&#34;
 
         ### Constructor
@@ -80,7 +80,7 @@ class RelinearisationProjections(Projections):
 
         previous_projections: The previous projections.
 
-        new_base_year: The base year for these new projections.
+        relinearisation_year: The year that the relinearisation is being done.
 
         simulation_layer_definitions: 
         An optional input that provides an ordered list of simulation layer 
@@ -101,36 +101,86 @@ class RelinearisationProjections(Projections):
         # and augmenting the database for the model to include values from the old projections for each 
         # of the projection years.
         self._old_projections: Projections = previous_projections if previous_projections is not None else baseline_projections
-        new_model: Model = ModelUpdater.get_updated_model(projections=self.previous_projections, new_base_year=new_base_year)
-        assert new_model.configuration.projection_base_year == new_base_year
+        new_model: Model = ModelUpdater.get_updated_model(projections=self.previous_projections, new_first_projection_year=relinearisation_year)
+
+        assert new_model.configuration.first_projection_year == relinearisation_year
+        assert new_model.configuration.linearisation_year == relinearisation_year
 
         self._long_rate_constants = self.baseline_projections.long_rate_constants
-        self._database = GDPScaledDatabase(database=new_model.database, base_year=self.baseline_projections.base_year)
 
         # Relinearise the updated model around the new projection base year to get the revised stable manifold.
         linear_model: LinearModel = LinearModel(model=new_model)
         state_space_form: StateSpaceForm = StateSpaceForm(linear_model=linear_model)
         stable_manifold: StableManifold = StableManifold(state_space_form=state_space_form)
         super().__init__(stable_manifold=stable_manifold)
+        self._is_baseline_projections = False
+
+        self._database = GDPScaledDatabase(database=new_model.database, base_year=self.configuration.base_year)
 
         self.populate_exogenous_projections_and_initial_state_vector()
 
-        self.generate_projections()
+        self._generate_projections()
 
-        self.generate_database_projections()
+        self._generate_database_projections()
 
-        self.generate_publishable_projections()
+        self._generate_publishable_projections()
 
         self.__validate()
-
-        logging.info(f&#34;The {self.base_year} relinearised projections have been generated.&#34;)
-
 
     def __validate(self):
         &#34;&#34;&#34;
         TODO:  Validate the relinearised projections
         &#34;&#34;&#34;
-        pass
+        logging.info(f&#34;The {self.first_projection_year} relinearised projections have been generated.&#34;)
+    
+    @property
+    def stable_manifold(self) -&gt; StableManifold:
+        &#34;&#34;&#34;
+        The stable manifold after doing the relinearisation.
+        &#34;&#34;&#34;
+        return self._stable_manifold
+
+    @property
+    def state_space_form(self) -&gt; StateSpaceForm:
+        &#34;&#34;&#34;
+        The state-space form after doing the relinearisation.
+        &#34;&#34;&#34;
+        return self.stable_manifold.ssf
+
+    @property
+    def model(self) -&gt; Model:
+        &#34;&#34;&#34;
+        The model to relinearise.
+        &#34;&#34;&#34;
+        return self.state_space_form.model
+
+    @property
+    def sym_data(self) -&gt; SymData:
+        &#34;&#34;&#34;
+        The SYM generated data about the model.
+        &#34;&#34;&#34;
+        return self.model.sym_data
+
+    @property
+    def parameters(self) -&gt; Parameters:
+        &#34;&#34;&#34;
+        The calibrated model parameters.
+        &#34;&#34;&#34;
+        return self.model.parameters
+
+    @property
+    def configuration(self) -&gt; ModelConfiguration:
+        &#34;&#34;&#34;
+        The model configuration.
+        &#34;&#34;&#34;
+        return self.sym_data.configuration
+
+    @property
+    def database(self) -&gt; GDPScaledDatabase:
+        &#34;&#34;&#34;
+        The database used for the relinearisation and projections.
+        &#34;&#34;&#34;
+        return self._database
 
     @property
     def baseline_projections(self) -&gt; BaselineProjections:
@@ -139,54 +189,6 @@ class RelinearisationProjections(Projections):
         &#34;&#34;&#34;
         return self._baseline_projections
     
-    @property
-    def event_year(self) -&gt; str:
-        &#34;&#34;&#34;
-        The event year for the simulation layer.
-        This is the first year that knowledge of the simulation event becomes available
-        to agents.
-        &#34;&#34;&#34;
-        return self.base_year
-    
-    @property
-    def stable_manifold(self) -&gt; StableManifold:
-        return self._stable_manifold
-
-    @property
-    def state_space_form(self) -&gt; StateSpaceForm:
-        return self.stable_manifold.ssf
-
-    @property
-    def model(self) -&gt; Model:
-        return self.state_space_form.model
-
-    @property
-    def sym_data(self) -&gt; SymData:
-        return self.model.sym_data
-
-    @property
-    def parameters(self) -&gt; Parameters:
-        return self.model.parameters
-
-    @property
-    def configuration(self) -&gt; ModelConfiguration:
-        return self.sym_data.configuration
-
-    @property
-    def database(self) -&gt; GDPScaledDatabase:
-        return self._database
-
-    @property
-    def base_year(self) -&gt; int:
-        return self.configuration.projection_base_year
-
-    @property
-    def baseline_projections(self) -&gt; BaselineProjections:
-        &#34;&#34;&#34;
-        Returns the baseline projections underpinning this simulation
-        &#34;&#34;&#34;
-        return self._baseline_projections
-
     @property
     def previous_projections(self) -&gt; Projections:
         &#34;&#34;&#34;
@@ -197,22 +199,22 @@ class RelinearisationProjections(Projections):
     @property
     def simulation_layer_definitions(self) -&gt; SimulationLayerDefinitions:
         &#34;&#34;&#34;
-        Returns the list of simulation layer definitions, in their appropriate order
-        from the first to be applied to the last to be applied. 
+        The list of simulation layer definitions, in their appropriate order
+        from the first to be applied to the last to be applied.
         &#34;&#34;&#34;
         return self._simulation_layer_definitions
     
     @property
     def simulation_variables(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        Returns the variable summary information for the simulation data.
+        The variable summary information for the simulation data.
         &#34;&#34;&#34;
         return self._simulation_variables
 
     @property
     def simulation_data(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        Returns the simulation data.
+        The simulation data.
         &#34;&#34;&#34;
         return self._simulation_data
 
@@ -228,7 +230,7 @@ class RelinearisationProjections(Projections):
 
         self._exo_projections = self.previous_projections.exo_projections_as_dataframe.loc[:, self.projection_years_column_labels]
 
-        self._yxr_initial_values: pd.DataFrame = self.previous_projections.yxr_projections_as_dataframe.loc[:, [str(self.event_year)]].copy()
+        self._yxr_initial_values: pd.DataFrame = self.previous_projections.yxr_projections_as_dataframe.loc[:, [str(self.first_projection_year)]].copy()
 
         for simulation_layer_definition in self.simulation_layer_definitions:
             self.__apply_simulation_layer(simulation_layer_definition=simulation_layer_definition)
@@ -237,7 +239,7 @@ class RelinearisationProjections(Projections):
         &#34;&#34;&#34;
         Apply adjustments to exogenous variables and any state variables for the given simulation layer
         &#34;&#34;&#34;
-        if simulation_layer_definition.event_year != self.base_year:
+        if simulation_layer_definition.event_year != self.first_projection_year:
             return
 
         filename: str = simulation_layer_definition.data_filename
@@ -248,10 +250,10 @@ class RelinearisationProjections(Projections):
         self._simulation_data = self._simulation_data.astype(float)
         self._simulation_data.index = self._simulation_variables.name
         try:
-            self._simulation_data = self._simulation_data.loc[:, self.configuration.base_and_projection_years_column_labels]
+            self._simulation_data = self._simulation_data.loc[:, self.configuration.projection_years_column_labels]
         except:
-            raise Exception(f&#34;The simulation data in {self.simulation_file} should have data from {self.event_year} to {self.end_year}&#34;)
-        yratr: pd.DataFrame = self.baseline_projections.database.get_data(name_regular_expression=f&#34;^{CONSTANTS.US_REAL_GDP_RATIO_PREFIX}\(&#34;, years=[self.configuration.original_projection_base_year])
+            raise Exception(f&#34;The simulation data in {self.simulation_file} should have data from {self.first_projection_year} to {self.last_projection_year}&#34;)
+        yratr: pd.DataFrame = self.baseline_projections.database.get_data(name_regular_expression=f&#34;^{Constants().US_REAL_GDP_RATIO_PREFIX}\(&#34;, years=[self.configuration.original_first_projection_year])
         yratr.index = self.sym_data.regions_members
 
         for variable_name in self._simulation_variables.index:
@@ -268,11 +270,11 @@ class RelinearisationProjections(Projections):
 
             match vector_name:
                 case &#39;exo&#39;:
-                    self._exo_projections.loc[[variable_name], self.configuration.base_and_projection_years_column_labels] += data
+                    self._exo_projections.loc[[variable_name], self.projection_years_column_labels] += data
                     pass
 
                 case &#39;x1l&#39;:
-                    self._yxr_initial_values.loc[[variable_name], [str(self.base_year)]] += float(data[0])
+                    self._yxr_initial_values.loc[[variable_name], [str(self.first_projection_year)]] += float(data[0])
                     pass
 
     @property
@@ -319,7 +321,7 @@ class RelinearisationProjections(Projections):
 <dl>
 <dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections"><code class="flex name class">
 <span>class <span class="ident">RelinearisationProjections</span></span>
-<span>(</span><span>baseline_projections: <a title="gcubed.projections.baseline_projections.BaselineProjections" href="baseline_projections.html#gcubed.projections.baseline_projections.BaselineProjections">BaselineProjections</a>, previous_projections: <a title="gcubed.projections.projections.Projections" href="projections.html#gcubed.projections.projections.Projections">Projections</a>, new_base_year: int, simulation_layer_definitions: <a title="gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions" href="simulation_layer_definitions.html#gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions">SimulationLayerDefinitions</a> = [])</span>
+<span>(</span><span>baseline_projections: <a title="gcubed.projections.baseline_projections.BaselineProjections" href="baseline_projections.html#gcubed.projections.baseline_projections.BaselineProjections">BaselineProjections</a>, previous_projections: <a title="gcubed.projections.projections.Projections" href="projections.html#gcubed.projections.projections.Projections">Projections</a>, relinearisation_year: int, simulation_layer_definitions: <a title="gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions" href="simulation_layer_definitions.html#gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions">SimulationLayerDefinitions</a> = [])</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Compute the relinearisation model projections over the projection horizon
@@ -330,7 +332,7 @@ through to the last projection year.</p>
 <h3 id="arguments">Arguments</h3>
 <p>baseline_projections: The baseline projections.</p>
 <p>previous_projections: The previous projections.</p>
-<p>new_base_year: The base year for these new projections.</p>
+<p>relinearisation_year: The year that the relinearisation is being done.</p>
 <p>simulation_layer_definitions:
 An optional input that provides an ordered list of simulation layer
 definitions that can be used to augment the initial state vector and
@@ -348,7 +350,7 @@ is not equal to the base projection year.</p></div>
     through to the last projection year.
     &#34;&#34;&#34;
 
-    def __init__(self, baseline_projections: BaselineProjections, previous_projections: Projections, new_base_year: int, simulation_layer_definitions: SimulationLayerDefinitions = []) -&gt; None:
+    def __init__(self, baseline_projections: BaselineProjections, previous_projections: Projections, relinearisation_year: int, simulation_layer_definitions: SimulationLayerDefinitions = []) -&gt; None:
         &#34;&#34;&#34;
 
         ### Constructor
@@ -361,7 +363,7 @@ is not equal to the base projection year.</p></div>
 
         previous_projections: The previous projections.
 
-        new_base_year: The base year for these new projections.
+        relinearisation_year: The year that the relinearisation is being done.
 
         simulation_layer_definitions: 
         An optional input that provides an ordered list of simulation layer 
@@ -382,36 +384,86 @@ is not equal to the base projection year.</p></div>
         # and augmenting the database for the model to include values from the old projections for each 
         # of the projection years.
         self._old_projections: Projections = previous_projections if previous_projections is not None else baseline_projections
-        new_model: Model = ModelUpdater.get_updated_model(projections=self.previous_projections, new_base_year=new_base_year)
-        assert new_model.configuration.projection_base_year == new_base_year
+        new_model: Model = ModelUpdater.get_updated_model(projections=self.previous_projections, new_first_projection_year=relinearisation_year)
+
+        assert new_model.configuration.first_projection_year == relinearisation_year
+        assert new_model.configuration.linearisation_year == relinearisation_year
 
         self._long_rate_constants = self.baseline_projections.long_rate_constants
-        self._database = GDPScaledDatabase(database=new_model.database, base_year=self.baseline_projections.base_year)
 
         # Relinearise the updated model around the new projection base year to get the revised stable manifold.
         linear_model: LinearModel = LinearModel(model=new_model)
         state_space_form: StateSpaceForm = StateSpaceForm(linear_model=linear_model)
         stable_manifold: StableManifold = StableManifold(state_space_form=state_space_form)
         super().__init__(stable_manifold=stable_manifold)
+        self._is_baseline_projections = False
+
+        self._database = GDPScaledDatabase(database=new_model.database, base_year=self.configuration.base_year)
 
         self.populate_exogenous_projections_and_initial_state_vector()
 
-        self.generate_projections()
+        self._generate_projections()
 
-        self.generate_database_projections()
+        self._generate_database_projections()
 
-        self.generate_publishable_projections()
+        self._generate_publishable_projections()
 
         self.__validate()
-
-        logging.info(f&#34;The {self.base_year} relinearised projections have been generated.&#34;)
-
 
     def __validate(self):
         &#34;&#34;&#34;
         TODO:  Validate the relinearised projections
         &#34;&#34;&#34;
-        pass
+        logging.info(f&#34;The {self.first_projection_year} relinearised projections have been generated.&#34;)
+    
+    @property
+    def stable_manifold(self) -&gt; StableManifold:
+        &#34;&#34;&#34;
+        The stable manifold after doing the relinearisation.
+        &#34;&#34;&#34;
+        return self._stable_manifold
+
+    @property
+    def state_space_form(self) -&gt; StateSpaceForm:
+        &#34;&#34;&#34;
+        The state-space form after doing the relinearisation.
+        &#34;&#34;&#34;
+        return self.stable_manifold.ssf
+
+    @property
+    def model(self) -&gt; Model:
+        &#34;&#34;&#34;
+        The model to relinearise.
+        &#34;&#34;&#34;
+        return self.state_space_form.model
+
+    @property
+    def sym_data(self) -&gt; SymData:
+        &#34;&#34;&#34;
+        The SYM generated data about the model.
+        &#34;&#34;&#34;
+        return self.model.sym_data
+
+    @property
+    def parameters(self) -&gt; Parameters:
+        &#34;&#34;&#34;
+        The calibrated model parameters.
+        &#34;&#34;&#34;
+        return self.model.parameters
+
+    @property
+    def configuration(self) -&gt; ModelConfiguration:
+        &#34;&#34;&#34;
+        The model configuration.
+        &#34;&#34;&#34;
+        return self.sym_data.configuration
+
+    @property
+    def database(self) -&gt; GDPScaledDatabase:
+        &#34;&#34;&#34;
+        The database used for the relinearisation and projections.
+        &#34;&#34;&#34;
+        return self._database
 
     @property
     def baseline_projections(self) -&gt; BaselineProjections:
@@ -420,54 +472,6 @@ is not equal to the base projection year.</p></div>
         &#34;&#34;&#34;
         return self._baseline_projections
     
-    @property
-    def event_year(self) -&gt; str:
-        &#34;&#34;&#34;
-        The event year for the simulation layer.
-        This is the first year that knowledge of the simulation event becomes available
-        to agents.
-        &#34;&#34;&#34;
-        return self.base_year
-    
-    @property
-    def stable_manifold(self) -&gt; StableManifold:
-        return self._stable_manifold
-
-    @property
-    def state_space_form(self) -&gt; StateSpaceForm:
-        return self.stable_manifold.ssf
-
-    @property
-    def model(self) -&gt; Model:
-        return self.state_space_form.model
-
-    @property
-    def sym_data(self) -&gt; SymData:
-        return self.model.sym_data
-
-    @property
-    def parameters(self) -&gt; Parameters:
-        return self.model.parameters
-
-    @property
-    def configuration(self) -&gt; ModelConfiguration:
-        return self.sym_data.configuration
-
-    @property
-    def database(self) -&gt; GDPScaledDatabase:
-        return self._database
-
-    @property
-    def base_year(self) -&gt; int:
-        return self.configuration.projection_base_year
-
-    @property
-    def baseline_projections(self) -&gt; BaselineProjections:
-        &#34;&#34;&#34;
-        Returns the baseline projections underpinning this simulation
-        &#34;&#34;&#34;
-        return self._baseline_projections
-
     @property
     def previous_projections(self) -&gt; Projections:
         &#34;&#34;&#34;
@@ -478,22 +482,22 @@ is not equal to the base projection year.</p></div>
     @property
     def simulation_layer_definitions(self) -&gt; SimulationLayerDefinitions:
         &#34;&#34;&#34;
-        Returns the list of simulation layer definitions, in their appropriate order
-        from the first to be applied to the last to be applied. 
+        The list of simulation layer definitions, in their appropriate order
+        from the first to be applied to the last to be applied.
         &#34;&#34;&#34;
         return self._simulation_layer_definitions
     
     @property
     def simulation_variables(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        Returns the variable summary information for the simulation data.
+        The variable summary information for the simulation data.
         &#34;&#34;&#34;
         return self._simulation_variables
 
     @property
     def simulation_data(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        Returns the simulation data.
+        The simulation data.
         &#34;&#34;&#34;
         return self._simulation_data
 
@@ -509,7 +513,7 @@ is not equal to the base projection year.</p></div>
 
         self._exo_projections = self.previous_projections.exo_projections_as_dataframe.loc[:, self.projection_years_column_labels]
 
-        self._yxr_initial_values: pd.DataFrame = self.previous_projections.yxr_projections_as_dataframe.loc[:, [str(self.event_year)]].copy()
+        self._yxr_initial_values: pd.DataFrame = self.previous_projections.yxr_projections_as_dataframe.loc[:, [str(self.first_projection_year)]].copy()
 
         for simulation_layer_definition in self.simulation_layer_definitions:
             self.__apply_simulation_layer(simulation_layer_definition=simulation_layer_definition)
@@ -518,7 +522,7 @@ is not equal to the base projection year.</p></div>
         &#34;&#34;&#34;
         Apply adjustments to exogenous variables and any state variables for the given simulation layer
         &#34;&#34;&#34;
-        if simulation_layer_definition.event_year != self.base_year:
+        if simulation_layer_definition.event_year != self.first_projection_year:
             return
 
         filename: str = simulation_layer_definition.data_filename
@@ -529,10 +533,10 @@ is not equal to the base projection year.</p></div>
         self._simulation_data = self._simulation_data.astype(float)
         self._simulation_data.index = self._simulation_variables.name
         try:
-            self._simulation_data = self._simulation_data.loc[:, self.configuration.base_and_projection_years_column_labels]
+            self._simulation_data = self._simulation_data.loc[:, self.configuration.projection_years_column_labels]
         except:
-            raise Exception(f&#34;The simulation data in {self.simulation_file} should have data from {self.event_year} to {self.end_year}&#34;)
-        yratr: pd.DataFrame = self.baseline_projections.database.get_data(name_regular_expression=f&#34;^{CONSTANTS.US_REAL_GDP_RATIO_PREFIX}\(&#34;, years=[self.configuration.original_projection_base_year])
+            raise Exception(f&#34;The simulation data in {self.simulation_file} should have data from {self.first_projection_year} to {self.last_projection_year}&#34;)
+        yratr: pd.DataFrame = self.baseline_projections.database.get_data(name_regular_expression=f&#34;^{Constants().US_REAL_GDP_RATIO_PREFIX}\(&#34;, years=[self.configuration.original_first_projection_year])
         yratr.index = self.sym_data.regions_members
 
         for variable_name in self._simulation_variables.index:
@@ -549,11 +553,11 @@ is not equal to the base projection year.</p></div>
 
             match vector_name:
                 case &#39;exo&#39;:
-                    self._exo_projections.loc[[variable_name], self.configuration.base_and_projection_years_column_labels] += data
+                    self._exo_projections.loc[[variable_name], self.projection_years_column_labels] += data
                     pass
 
                 case &#39;x1l&#39;:
-                    self._yxr_initial_values.loc[[variable_name], [str(self.base_year)]] += float(data[0])
+                    self._yxr_initial_values.loc[[variable_name], [str(self.first_projection_year)]] += float(data[0])
                     pass
 
     @property
@@ -597,7 +601,7 @@ is not equal to the base projection year.</p></div>
 <dl>
 <dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.baseline_projections"><code class="name">var <span class="ident">baseline_projections</span> : <a title="gcubed.projections.baseline_projections.BaselineProjections" href="baseline_projections.html#gcubed.projections.baseline_projections.BaselineProjections">BaselineProjections</a></code></dt>
 <dd>
-<div class="desc"><p>Returns the baseline projections underpinning this simulation</p></div>
+<div class="desc"><p>The baseline projections that this relinearisation projections builds upon.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -605,52 +609,24 @@ is not equal to the base projection year.</p></div>
 <pre><code class="python">@property
 def baseline_projections(self) -&gt; BaselineProjections:
     &#34;&#34;&#34;
-    Returns the baseline projections underpinning this simulation
+    The baseline projections that this relinearisation projections builds upon.
     &#34;&#34;&#34;
     return self._baseline_projections</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.configuration"><code class="name">var <span class="ident">configuration</span> : <a title="gcubed.model_configuration.ModelConfiguration" href="../model_configuration.html#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a></code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def configuration(self) -&gt; ModelConfiguration:
-    return self.sym_data.configuration</code></pre>
-</details>
-</dd>
 <dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.database"><code class="name">var <span class="ident">database</span> : <a title="gcubed.data.gdp_scaled_database.GDPScaledDatabase" href="../data/gdp_scaled_database.html#gcubed.data.gdp_scaled_database.GDPScaledDatabase">GDPScaledDatabase</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The database used for the relinearisation and projections.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def database(self) -&gt; GDPScaledDatabase:
+    &#34;&#34;&#34;
+    The database used for the relinearisation and projections.
+    &#34;&#34;&#34;
     return self._database</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.event_year"><code class="name">var <span class="ident">event_year</span> : str</code></dt>
-<dd>
-<div class="desc"><p>The event year for the simulation layer.
-This is the first year that knowledge of the simulation event becomes available
-to agents.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def event_year(self) -&gt; str:
-    &#34;&#34;&#34;
-    The event year for the simulation layer.
-    This is the first year that knowledge of the simulation event becomes available
-    to agents.
-    &#34;&#34;&#34;
-    return self.base_year</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.j1_constants"><code class="name">var <span class="ident">j1_constants</span> : numpy.ndarray</code></dt>
@@ -672,25 +648,31 @@ def j1_constants(self) -&gt; np.ndarray:
 </dd>
 <dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.model"><code class="name">var <span class="ident">model</span> : <a title="gcubed.model.Model" href="../model.html#gcubed.model.Model">Model</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The model to relinearise.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def model(self) -&gt; Model:
+    &#34;&#34;&#34;
+    The model to relinearise.
+    &#34;&#34;&#34;
     return self.state_space_form.model</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.parameters"><code class="name">var <span class="ident">parameters</span> : <a title="gcubed.model_parameters.parameters.Parameters" href="../model_parameters/parameters.html#gcubed.model_parameters.parameters.Parameters">Parameters</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The calibrated model parameters.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def parameters(self) -&gt; Parameters:
+    &#34;&#34;&#34;
+    The calibrated model parameters.
+    &#34;&#34;&#34;
     return self.model.parameters</code></pre>
 </details>
 </dd>
@@ -711,7 +693,7 @@ def previous_projections(self) -&gt; Projections:
 </dd>
 <dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.simulation_data"><code class="name">var <span class="ident">simulation_data</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
-<div class="desc"><p>Returns the simulation data.</p></div>
+<div class="desc"><p>The simulation data.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -719,14 +701,14 @@ def previous_projections(self) -&gt; Projections:
 <pre><code class="python">@property
 def simulation_data(self) -&gt; pd.DataFrame:
     &#34;&#34;&#34;
-    Returns the simulation data.
+    The simulation data.
     &#34;&#34;&#34;
     return self._simulation_data</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.simulation_layer_definitions"><code class="name">var <span class="ident">simulation_layer_definitions</span> : <a title="gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions" href="simulation_layer_definitions.html#gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions">SimulationLayerDefinitions</a></code></dt>
 <dd>
-<div class="desc"><p>Returns the list of simulation layer definitions, in their appropriate order
+<div class="desc"><p>The list of simulation layer definitions, in their appropriate order
 from the first to be applied to the last to be applied.</p></div>
 <details class="source">
 <summary>
@@ -735,15 +717,15 @@ from the first to be applied to the last to be applied.</p></div>
 <pre><code class="python">@property
 def simulation_layer_definitions(self) -&gt; SimulationLayerDefinitions:
     &#34;&#34;&#34;
-    Returns the list of simulation layer definitions, in their appropriate order
-    from the first to be applied to the last to be applied. 
+    The list of simulation layer definitions, in their appropriate order
+    from the first to be applied to the last to be applied.
     &#34;&#34;&#34;
     return self._simulation_layer_definitions</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.simulation_variables"><code class="name">var <span class="ident">simulation_variables</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
-<div class="desc"><p>Returns the variable summary information for the simulation data.</p></div>
+<div class="desc"><p>The variable summary information for the simulation data.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -751,44 +733,53 @@ def simulation_layer_definitions(self) -&gt; SimulationLayerDefinitions:
 <pre><code class="python">@property
 def simulation_variables(self) -&gt; pd.DataFrame:
     &#34;&#34;&#34;
-    Returns the variable summary information for the simulation data.
+    The variable summary information for the simulation data.
     &#34;&#34;&#34;
     return self._simulation_variables</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.stable_manifold"><code class="name">var <span class="ident">stable_manifold</span> : <a title="gcubed.stable_manifold.StableManifold" href="../stable_manifold.html#gcubed.stable_manifold.StableManifold">StableManifold</a></code></dt>
+<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.stable_manifold"><code class="name">var <span class="ident">stable_manifold</span> : <a title="gcubed.linearisation.stable_manifold.StableManifold" href="../linearisation/stable_manifold.html#gcubed.linearisation.stable_manifold.StableManifold">StableManifold</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The stable manifold after doing the relinearisation.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def stable_manifold(self) -&gt; StableManifold:
+    &#34;&#34;&#34;
+    The stable manifold after doing the relinearisation.
+    &#34;&#34;&#34;
     return self._stable_manifold</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.state_space_form"><code class="name">var <span class="ident">state_space_form</span> : <a title="gcubed.state_space_form.StateSpaceForm" href="../state_space_form.html#gcubed.state_space_form.StateSpaceForm">StateSpaceForm</a></code></dt>
+<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.state_space_form"><code class="name">var <span class="ident">state_space_form</span> : <a title="gcubed.linearisation.state_space_form.StateSpaceForm" href="../linearisation/state_space_form.html#gcubed.linearisation.state_space_form.StateSpaceForm">StateSpaceForm</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The state-space form after doing the relinearisation.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def state_space_form(self) -&gt; StateSpaceForm:
+    &#34;&#34;&#34;
+    The state-space form after doing the relinearisation.
+    &#34;&#34;&#34;
     return self.stable_manifold.ssf</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.sym_data"><code class="name">var <span class="ident">sym_data</span> : <a title="gcubed.sym_data.SymData" href="../sym_data.html#gcubed.sym_data.SymData">SymData</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The SYM generated data about the model.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def sym_data(self) -&gt; SymData:
+    &#34;&#34;&#34;
+    The SYM generated data about the model.
+    &#34;&#34;&#34;
     return self.model.sym_data</code></pre>
 </details>
 </dd>
@@ -871,7 +862,7 @@ vector with supplied simulation layer data.</p></div>
 
     self._exo_projections = self.previous_projections.exo_projections_as_dataframe.loc[:, self.projection_years_column_labels]
 
-    self._yxr_initial_values: pd.DataFrame = self.previous_projections.yxr_projections_as_dataframe.loc[:, [str(self.event_year)]].copy()
+    self._yxr_initial_values: pd.DataFrame = self.previous_projections.yxr_projections_as_dataframe.loc[:, [str(self.first_projection_year)]].copy()
 
     for simulation_layer_definition in self.simulation_layer_definitions:
         self.__apply_simulation_layer(simulation_layer_definition=simulation_layer_definition)</code></pre>
@@ -882,31 +873,26 @@ vector with supplied simulation layer data.</p></div>
 <ul class="hlist">
 <li><code><b><a title="gcubed.projections.projections.Projections" href="projections.html#gcubed.projections.projections.Projections">Projections</a></b></code>:
 <ul class="hlist">
-<li><code><a title="gcubed.projections.projections.Projections.base_year" href="projections.html#gcubed.projections.projections.Projections.base_year">base_year</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.c4t" href="projections.html#gcubed.projections.projections.Projections.c4t">c4t</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.compute_functions_of_future_exogenous_variables" href="projections.html#gcubed.projections.projections.Projections.compute_functions_of_future_exogenous_variables">compute_functions_of_future_exogenous_variables</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.configuration" href="projections.html#gcubed.projections.projections.Projections.configuration">configuration</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.database_projections" href="projections.html#gcubed.projections.projections.Projections.database_projections">database_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exo_projections" href="projections.html#gcubed.projections.projections.Projections.exo_projections">exo_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exo_projections_as_dataframe" href="projections.html#gcubed.projections.projections.Projections.exo_projections_as_dataframe">exo_projections_as_dataframe</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exz_projections" href="projections.html#gcubed.projections.projections.Projections.exz_projections">exz_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exz_projections_as_dataframe" href="projections.html#gcubed.projections.projections.Projections.exz_projections_as_dataframe">exz_projections_as_dataframe</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.generate_database_projections" href="projections.html#gcubed.projections.projections.Projections.generate_database_projections">generate_database_projections</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.generate_projections" href="projections.html#gcubed.projections.projections.Projections.generate_projections">generate_projections</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.generate_publishable_projections" href="projections.html#gcubed.projections.projections.Projections.generate_publishable_projections">generate_publishable_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.first_projection_year" href="projections.html#gcubed.projections.projections.Projections.first_projection_year">first_projection_year</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.get_differences_between_projections" href="projections.html#gcubed.projections.projections.Projections.get_differences_between_projections">get_differences_between_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.graphable_projections" href="projections.html#gcubed.projections.projections.Projections.graphable_projections">graphable_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.h3t" href="projections.html#gcubed.projections.projections.Projections.h3t">h3t</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.is_baseline_projections" href="projections.html#gcubed.projections.projections.Projections.is_baseline_projections">is_baseline_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.last_projection_year" href="projections.html#gcubed.projections.projections.Projections.last_projection_year">last_projection_year</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.long_rate_constants" href="projections.html#gcubed.projections.projections.Projections.long_rate_constants">long_rate_constants</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.longrate_calculation" href="projections.html#gcubed.projections.projections.Projections.longrate_calculation">longrate_calculation</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.preceding_projection_years" href="projections.html#gcubed.projections.projections.Projections.preceding_projection_years">preceding_projection_years</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.preceding_projection_years_count" href="projections.html#gcubed.projections.projections.Projections.preceding_projection_years_count">preceding_projection_years_count</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.projection_years" href="projections.html#gcubed.projections.projections.Projections.projection_years">projection_years</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.projection_years_column_labels" href="projections.html#gcubed.projections.projections.Projections.projection_years_column_labels">projection_years_column_labels</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.projections" href="projections.html#gcubed.projections.projections.Projections.projections">projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.publishable_projections" href="projections.html#gcubed.projections.projections.Projections.publishable_projections">publishable_projections</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.simulation_data_columns" href="projections.html#gcubed.projections.projections.Projections.simulation_data_columns">simulation_data_columns</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.yjr_projections" href="projections.html#gcubed.projections.projections.Projections.yjr_projections">yjr_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.yjr_projections_as_dataframe" href="projections.html#gcubed.projections.projections.Projections.yjr_projections_as_dataframe">yjr_projections_as_dataframe</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.yxr_initial_values" href="projections.html#gcubed.projections.projections.Projections.yxr_initial_values">yxr_initial_values</a></code></li>
@@ -941,9 +927,7 @@ vector with supplied simulation layer data.</p></div>
 <h4><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections">RelinearisationProjections</a></code></h4>
 <ul class="">
 <li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.baseline_projections" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.baseline_projections">baseline_projections</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.configuration" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.configuration">configuration</a></code></li>
 <li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.database" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.database">database</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.event_year" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.event_year">event_year</a></code></li>
 <li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.j1_constants" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.j1_constants">j1_constants</a></code></li>
 <li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.model" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.model">model</a></code></li>
 <li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.parameters" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.parameters">parameters</a></code></li>

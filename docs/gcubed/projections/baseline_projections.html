@@ -35,13 +35,11 @@
 Contains the BaselineProjections class, for doing baseline projections.
 &#34;&#34;&#34;
 import logging
-import os
 import pandas as pd
 import numpy as np
-import gcubed.constants as CONSTANTS
-from gcubed.stable_manifold import StableManifold
+from gcubed.linearisation.stable_manifold import StableManifold
 from gcubed.model import Model
-from gcubed.state_space_form import StateSpaceForm
+from gcubed.linearisation.state_space_form import StateSpaceForm
 from gcubed.sym_data import SymData
 from gcubed.model_parameters.parameters import Parameters
 from gcubed.model_configuration import ModelConfiguration
@@ -53,9 +51,11 @@ from gcubed.projections.projections import Projections
 
 class BaselineProjections(Projections):
     &#34;&#34;&#34;
+    ### Overview
+
     Compute the baseline model projections over the projection horizon 
-    from the base projection year (the last year with available data)
-    through to the last projection year.
+    from the first projection year (a year with available data to be 
+    matched by the projections) through to the last projection year.
     &#34;&#34;&#34;
 
     # The perturbation to use when computing partial derivatives for intertemporal constant determination.
@@ -65,40 +65,40 @@ class BaselineProjections(Projections):
         &#34;&#34;&#34;
        ### Arguments
 
-        stable_manifold: The stable manifold that provides access to all of the model information required to produce projections.
+        stable_manifold: The stable manifold that provides access to all 
+        of the model information required to produce projections.
         &#34;&#34;&#34;
+        logging.info(&#34;Setting up the baseline projections.&#34;)
+
         super().__init__(stable_manifold=stable_manifold)
+        self._is_baseline_projections = True
+        
+        self._database = GDPScaledDatabase(database=self.model.database, base_year=self.configuration.base_year)
 
-        self._database = GDPScaledDatabase(database=self.model.database, base_year=self.configuration.projection_base_year)
+        self.__set_first_projection_year_observed_values()
 
-        self._event_year = self.base_year
-
-        self.__set_base_year_observed_values()
-
-        self.__store_observed_x1_values()
+        self.__store_observed_yxr_values_in_first_projection_year()
 
         # Set up the exogenous variable projections
         self.__create_exogenous_variable_projections()
 
-
-        self.__store_observed_values_of_variables_adjusted_by_intertemporal_constants()
-        self.__compute_base_year_ssf_deviations_from_observed_values()
+        self.__store_observed_values_of_variables_adjusted_by_intertemporal_constants_in_first_projection_year()
+        self.__compute_first_projection_year_ssf_deviations_from_observed_values()
 
         if not self.using_rolled_projections:
             self.__calculate_intertemporal_constants()
 
         # Generate the baseline projections
-        self.generate_projections()
+        self._generate_projections()
 
         # Generate the database projections
-        self.generate_database_projections()
+        self._generate_database_projections()
 
         # Generate publishable version of the projections
-        self.generate_publishable_projections()
+        self._generate_publishable_projections()
 
         self.__validate()
 
-        logging.info(&#34;The baseline projections have been generated.&#34;)
 
     def __validate(self):
         &#34;&#34;&#34;
@@ -106,54 +106,34 @@ class BaselineProjections(Projections):
         1. check that they are available for the expected projection years.
         2. Check that the base year projections are equal to the base year data values.
         &#34;&#34;&#34;
-        pass
-
-    @property
-    def stable_manifold(self) -&gt; StableManifold:
-        return self._stable_manifold
-
-    @property
-    def state_space_form(self) -&gt; StateSpaceForm:
-        return self.stable_manifold.ssf
-
-    @property
-    def model(self) -&gt; Model:
-        return self.state_space_form.model
-
-    @property
-    def sym_data(self) -&gt; SymData:
-        return self.model.sym_data
-
-    @property
-    def parameters(self) -&gt; Parameters:
-        return self.model.parameters
-
-    @property
-    def configuration(self) -&gt; ModelConfiguration:
-        return self.sym_data.configuration
+        logging.info(&#34;The baseline projections have been generated.&#34;)
 
     @property
     def database(self) -&gt; GDPScaledDatabase:
+        &#34;&#34;&#34;
+        The database used as the starting point for the projections.
+        &#34;&#34;&#34;
         return self._database
-
-    @property
-    def base_year(self) -&gt; int:
-        return self.configuration.projection_base_year
 
     @property
     def using_rolled_projections(self) -&gt; bool:
         &#34;&#34;&#34;
-        Returns true if these projections are building on
+        True if these projections are building on
         previous projections rather than just observed data.
+
         This affects how the baseline projections are set up in terms
-        of the constants used 
+        of the constants used.
         &#34;&#34;&#34;
         return self.database.has_data_for_all_projection_years
 
     def __update_perturbed_variable(self, variable_details: pd.Series):
         &#34;&#34;&#34;
-        Change the perturbed variable, preparing for the next evaluation of the values needed to compute
-        partial derivatives relevant to the determination of the intertemporal constants.
+        ### Overview
+
+        Changes the perturbed variable, preparing for the
+        next evaluation of the values needed to compute
+        partial derivatives relevant to the determination 
+        of the intertemporal constants.
         &#34;&#34;&#34;
 
         if hasattr(self, &#39;_perturbed_variable_details&#39;):
@@ -191,7 +171,7 @@ class BaselineProjections(Projections):
     @property
     def perturbed_variable_details(self) -&gt; pd.Series:
         &#34;&#34;&#34;
-        Returns the var_map details of the variable being perturbed to as part of computing
+        The var_map details of the variable being perturbed to as part of computing
         derivatives needed to set intertemporal constants or none if just doing projections.
         &#34;&#34;&#34;
         if hasattr(self, &#39;_perturbed_variable_details&#39;):
@@ -199,12 +179,12 @@ class BaselineProjections(Projections):
         return None
 
     @property
-    def base_year_projections_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
+    def first_year_projections_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Extract the values of the variables that have been changed by the perturbation to 
+        The values of the variables that have been changed by the perturbation to 
         an intertemporal constant as part of computing partial derivatives for setting the
         intertemporal constants appropriately. These values are a column vector
-        for the base project year only.
+        for the first projection year only.
         &#34;&#34;&#34;
         result = np.zeros(shape=(len(self.sym_data.variables_adjusted_by_intertemporal_constants), 1))
         i = 0
@@ -212,67 +192,69 @@ class BaselineProjections(Projections):
             sequence = adjusted_variable_details[&#39;sequence&#39;]
             match adjusted_variable_details[&#39;var_type&#39;]:
                 case &#39;x1l&#39;:
-                    result[i, 0] = self.yxr_base_year_projections[[sequence]]
+                    result[i, 0] = self.yxr_first_year_projections[[sequence]]
                 case &#39;j1l&#39;:
-                    result[i, 0] = self.yjr_base_year_projections[[sequence]]
+                    result[i, 0] = self.yjr_first_year_projections[[sequence]]
                 case &#39;zel&#39;:
-                    result[i, 0] = self.exz_base_year_projections[[sequence]]
+                    result[i, 0] = self.exz_first_year_projections[[sequence]]
                 case &#39;z1l&#39;:
-                    result[i, 0] = self.z1l_base_year_projections[[sequence]]
+                    result[i, 0] = self.z1l_first_year_projections[[sequence]]
             i += 1
         return result
 
-    def __set_base_year_observed_values(self):
+    def __set_first_projection_year_observed_values(self):
         &#34;&#34;&#34;
-        Get the database values for the various vectors in the model in the projection base year.
+        ### Overview
+
+        Sets the database values for the vectors in 
+        the model in the first projection year.
         &#34;&#34;&#34;
         # RHS (identical to LHS) vector values to be compared to SSF calculated values
-        self._base_year_x1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;x1r&#39;, year=self.base_year, use_neutral_real_interest_rate=True)  # t+1
-        self._base_year_j1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;j1r&#39;, year=self.base_year, use_neutral_real_interest_rate=True)  # t+1
-        self._base_year_zer: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;zer&#39;, year=self.base_year, use_neutral_real_interest_rate=True)  # t
-        self._base_year_z1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;z1r&#39;, year=self.base_year, use_neutral_real_interest_rate=True)  # t
+        self._first_projection_year_x1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;x1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t+1
+        self._first_projection_year_j1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;j1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t+1
+        self._first_projection_year_zer: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;zer&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
+        self._first_projection_year_z1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;z1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
 
         # SSF RHS vector values
-        self._base_year_yxr: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;yxr&#39;, year=self.base_year, use_neutral_real_interest_rate=True)  # t
-        self._base_year_yjr: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;yjr&#39;, year=self.base_year, use_neutral_real_interest_rate=True)  # t
-        self._base_year_exz: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;exz&#39;, year=self.base_year, use_neutral_real_interest_rate=True)  # t+1
-        self._base_year_exo: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;exo&#39;, year=self.base_year, use_neutral_real_interest_rate=True)  # t
+        self._first_projection_year_yxr: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;yxr&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
+        self._first_projection_year_yjr: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;yjr&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
+        self._first_projection_year_exz: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;exz&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t+1
+        self._first_projection_year_exo: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;exo&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
 
-    def __store_observed_x1_values(self):
+    def __store_observed_yxr_values_in_first_projection_year(self):
         &#34;&#34;&#34;
         Save the values of the state vector in the base projection year to use in
         initiating the projection process.
         &#34;&#34;&#34;
-        yxr_initial_values = pd.DataFrame(self.base_year_yxr.copy())
+        yxr_initial_values = pd.DataFrame(self.first_projection_year_yxr.copy())
         yxr_initial_values.index = self.sym_data.vector_variable_names(vector_name=&#39;yxr&#39;)
-        yxr_initial_values.columns = [str(self.base_year)]
+        yxr_initial_values.columns = [str(self.first_projection_year)]
         self._yxr_initial_values: pd.DataFrame = yxr_initial_values
 
-    def __store_observed_values_of_variables_adjusted_by_intertemporal_constants(self):
+    def __store_observed_values_of_variables_adjusted_by_intertemporal_constants_in_first_projection_year(self):
         &#34;&#34;&#34;
         Save the database values of the variables
         that are adjusted by intertemporal constants so that we can use
         those as the values we adjust the variables to using the intertemporal
         constants.
         &#34;&#34;&#34;
-        self._base_year_observed_values_of_variables_adjusted_by_intertemporal_constants: np.ndarray = \
+        self._first_year_observed_values_of_variables_adjusted_by_intertemporal_constants: np.ndarray = \
             np.zeros(shape=(len(self.sym_data.variables_adjusted_by_intertemporal_constants), 1))
         i = 0
         for index, adjusted_variable_details in self.sym_data.variables_adjusted_by_intertemporal_constants.iterrows():
             sequence = adjusted_variable_details[&#39;sequence&#39;]
             match adjusted_variable_details[&#39;var_type&#39;]:
                 case &#39;x1l&#39;:
-                    self._base_year_observed_values_of_variables_adjusted_by_intertemporal_constants[i, 0] = self.base_year_yxr[[sequence]]  # t = base year
+                    self._first_year_observed_values_of_variables_adjusted_by_intertemporal_constants[i, 0] = self.first_projection_year_yxr[[sequence]]  # t = base year
                 case &#39;j1l&#39;:
-                    self._base_year_observed_values_of_variables_adjusted_by_intertemporal_constants[i, 0] = self.base_year_yjr[[sequence]]  # t = base year
+                    self._first_year_observed_values_of_variables_adjusted_by_intertemporal_constants[i, 0] = self.first_projection_year_yjr[[sequence]]  # t = base year
                 case &#39;zel&#39;:
-                    self._base_year_observed_values_of_variables_adjusted_by_intertemporal_constants[i, 0] = self.base_year_exz[[
-                        sequence]]  # t+1 = year after base year
+                    self._first_year_observed_values_of_variables_adjusted_by_intertemporal_constants[i, 0] = self.first_projection_year_exz[[sequence]]  # t+1 = year after base year
                 case &#39;z1l&#39;:
-                    self._base_year_observed_values_of_variables_adjusted_by_intertemporal_constants[i, 0] = self.base_year_z1r[[sequence]]  # t = base year
+                    self._first_year_observed_values_of_variables_adjusted_by_intertemporal_constants[i, 0] = self.first_projection_year_z1r[[sequence]]  # t = base year
             i += 1
 
-    def __compute_base_year_ssf_deviations_from_observed_values(self):
+    def __compute_first_projection_year_ssf_deviations_from_observed_values(self):
         &#34;&#34;&#34;
         Compute the SSF values for the base projection year and calculate the differences from
         observed variable values for all system-determined variables (not the exogenous ones).
@@ -296,95 +278,95 @@ class BaselineProjections(Projections):
         # We got here so we must be done the initial baseline projections that require a constant adjustment
         # for the SSF differences from observed data values in the base projection year.
 
-        self.x1l_ssf_calculations_using_base_year_data = self.state_space_form.delta(&#39;x1l&#39;, &#39;yxr&#39;) @ self.base_year_yxr + \
-            self.state_space_form.delta(&#39;x1l&#39;, &#39;yjr&#39;) @ self.base_year_yjr + \
-            self.state_space_form.delta(&#39;x1l&#39;, &#39;exz&#39;) @ self.base_year_exz + \
-            self.state_space_form.delta(&#39;x1l&#39;, &#39;exo&#39;) @ self.base_year_exo
+        self.x1l_ssf_calculations_using_first_projection_year_data = self.state_space_form.delta(&#39;x1l&#39;, &#39;yxr&#39;) @ self.first_projection_year_yxr + \
+            self.state_space_form.delta(&#39;x1l&#39;, &#39;yjr&#39;) @ self.first_projection_year_yjr + \
+            self.state_space_form.delta(&#39;x1l&#39;, &#39;exz&#39;) @ self.first_projection_year_exz + \
+            self.state_space_form.delta(&#39;x1l&#39;, &#39;exo&#39;) @ self.first_projection_year_exo
 
-        self.j1l_ssf_calculations_using_base_year_data = self.state_space_form.delta(&#39;j1l&#39;, &#39;yxr&#39;) @ self.base_year_yxr + \
-            self.state_space_form.delta(&#39;j1l&#39;, &#39;yjr&#39;) @ self.base_year_yjr + \
-            self.state_space_form.delta(&#39;j1l&#39;, &#39;exz&#39;) @ self.base_year_exz + \
-            self.state_space_form.delta(&#39;j1l&#39;, &#39;exo&#39;) @ self.base_year_exo
+        self.j1l_ssf_calculations_using_first_projection_year_data = self.state_space_form.delta(&#39;j1l&#39;, &#39;yxr&#39;) @ self.first_projection_year_yxr + \
+            self.state_space_form.delta(&#39;j1l&#39;, &#39;yjr&#39;) @ self.first_projection_year_yjr + \
+            self.state_space_form.delta(&#39;j1l&#39;, &#39;exz&#39;) @ self.first_projection_year_exz + \
+            self.state_space_form.delta(&#39;j1l&#39;, &#39;exo&#39;) @ self.first_projection_year_exo
 
-        self.zel_ssf_calculations_using_base_year_data = self.state_space_form.delta(&#39;zel&#39;, &#39;yxr&#39;) @ self.base_year_yxr + \
-            self.state_space_form.delta(&#39;zel&#39;, &#39;yjr&#39;) @ self.base_year_yjr + \
-            self.state_space_form.delta(&#39;zel&#39;, &#39;exz&#39;) @ self.base_year_exz + \
-            self.state_space_form.delta(&#39;zel&#39;, &#39;exo&#39;) @ self.base_year_exo
+        self.zel_ssf_calculations_using_first_projection_year_data = self.state_space_form.delta(&#39;zel&#39;, &#39;yxr&#39;) @ self.first_projection_year_yxr + \
+            self.state_space_form.delta(&#39;zel&#39;, &#39;yjr&#39;) @ self.first_projection_year_yjr + \
+            self.state_space_form.delta(&#39;zel&#39;, &#39;exz&#39;) @ self.first_projection_year_exz + \
+            self.state_space_form.delta(&#39;zel&#39;, &#39;exo&#39;) @ self.first_projection_year_exo
 
-        self.z1l_ssf_calculations_using_base_year_data = self.state_space_form.delta(&#39;z1l&#39;, &#39;yxr&#39;) @ self.base_year_yxr + \
-            self.state_space_form.delta(&#39;z1l&#39;, &#39;yjr&#39;) @ self.base_year_yjr + \
-            self.state_space_form.delta(&#39;z1l&#39;, &#39;exz&#39;) @ self.base_year_exz + \
-            self.state_space_form.delta(&#39;z1l&#39;, &#39;exo&#39;) @ self.base_year_exo
+        self.z1l_ssf_calculations_using_first_projection_year_data = self.state_space_form.delta(&#39;z1l&#39;, &#39;yxr&#39;) @ self.first_projection_year_yxr + \
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;yjr&#39;) @ self.first_projection_year_yjr + \
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;exz&#39;) @ self.first_projection_year_exz + \
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;exo&#39;) @ self.first_projection_year_exo
 
-        self._x1r_difference_from_ssf = self.base_year_x1r - self.x1l_ssf_calculations_using_base_year_data  # t+1 = year after base year
-        self._j1r_difference_from_ssf = self.base_year_j1r - self.j1l_ssf_calculations_using_base_year_data  # t+1 = year after base year
-        self._zer_difference_from_ssf = self.base_year_zer - self.zel_ssf_calculations_using_base_year_data  # t = base year
-        self._z1r_difference_from_ssf = self.base_year_z1r - self.z1l_ssf_calculations_using_base_year_data  # t = base year
+        self._x1r_difference_from_ssf = self.first_projection_year_x1r - self.x1l_ssf_calculations_using_first_projection_year_data  # t+1 = year after base year
+        self._j1r_difference_from_ssf = self.first_projection_year_j1r - self.j1l_ssf_calculations_using_first_projection_year_data  # t+1 = year after base year
+        self._zer_difference_from_ssf = self.first_projection_year_zer - self.zel_ssf_calculations_using_first_projection_year_data  # t = base year
+        self._z1r_difference_from_ssf = self.first_projection_year_z1r - self.z1l_ssf_calculations_using_first_projection_year_data  # t = base year
 
     @property
-    def base_year_x1r(self) -&gt; np.ndarray:
+    def first_projection_year_x1r(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the base year = t:
+        If the first projection year = t:
         Returns the value of x1r from the database as the value of x1 in period t+1
         &#34;&#34;&#34;
-        return self._base_year_x1r
+        return self._first_projection_year_x1r
 
     @property
-    def base_year_j1r(self) -&gt; np.ndarray:
+    def first_projection_year_j1r(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the base year = t:
+        If the first projection year = t:
         Returns the value of j1r from the database as the value of j1 in period t+1
         &#34;&#34;&#34;
-        return self._base_year_j1r
+        return self._first_projection_year_j1r
 
     @property
-    def base_year_zer(self) -&gt; np.ndarray:
+    def first_projection_year_zer(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the base year = t:
+        If the first projection year = t:
         Returns the value of zer from the database as the value of x1 in period t
         &#34;&#34;&#34;
-        return self._base_year_zer
+        return self._first_projection_year_zer
 
     @property
-    def base_year_z1r(self) -&gt; np.ndarray:
+    def first_projection_year_z1r(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the base year = t:
+        If the first projection year = t:
         Returns the value of z1r from the database as the value of z1 in period t
         &#34;&#34;&#34;
-        return self._base_year_z1r
+        return self._first_projection_year_z1r
 
     @property
-    def base_year_yxr(self) -&gt; np.ndarray:
+    def first_projection_year_yxr(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the base year = t:
+        If the first projection year = t:
         Returns the value of yxr from the database as the value of x1 in period t
         &#34;&#34;&#34;
-        return self._base_year_yxr
+        return self._first_projection_year_yxr
 
     @property
-    def base_year_yjr(self) -&gt; np.ndarray:
+    def first_projection_year_yjr(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the base year = t:
+        If the first projection year = t:
         Returns the value of yjr from the database as the value of j1 in period t
         &#34;&#34;&#34;
-        return self._base_year_yjr
+        return self._first_projection_year_yjr
 
     @property
-    def base_year_exz(self) -&gt; np.ndarray:
+    def first_projection_year_exz(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the base year = t:
+        If the first projection year = t:
         Returns the value of exz from the database as the value of ze in period t+1
         &#34;&#34;&#34;
-        return self._base_year_exz
+        return self._first_projection_year_exz
 
     @property
-    def base_year_exo(self) -&gt; np.ndarray:
+    def first_projection_year_exo(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the base year = t:
+        If the first projection year = t:
         Returns the value of exo from the database as the value of exogenous variables (exo)
         in period t
         &#34;&#34;&#34;
-        return self._base_year_exo
+        return self._first_projection_year_exo
 
     @property
     def x1r_difference_from_ssf(self):
@@ -555,15 +537,14 @@ class BaselineProjections(Projections):
         # and then we are done.
         if self.using_rolled_projections:
             matching_indices: pd.Index = self.sym_data.combined_variable_summary.loc[self.sym_data.combined_variable_summary.vector == &#39;exo&#39;, :].index
-            self._exo_projections: pd.DataFrame = self.database.data.loc[matching_indices, self.configuration.base_and_projection_years_column_labels]
+            self._exo_projections: pd.DataFrame = self.database.data.loc[matching_indices, self.projection_years_column_labels]
             return
 
         # We got here so we must be setting up the exogenous variable projections for the first time ...
 
         # Replicate projection base year values across all projection periods for all exogenous variables.
-        base_year_values: np.ndarray = self.base_year_exo
-        projections: pd.DataFrame = pd.DataFrame(np.tile(base_year_values, (1, self.configuration.base_and_projection_year_count)))
-        projections.columns = self.configuration.base_and_projection_years_column_labels
+        projections: pd.DataFrame = pd.DataFrame(np.tile(self.first_projection_year_exo, (1, self.configuration.projection_years_count)))
+        projections.columns = self.projection_years_column_labels
         projections.reset_index()
 
         # Add effective labour productivity and energy usage efficiency.
@@ -581,7 +562,7 @@ class BaselineProjections(Projections):
             if self.sym_data.has_variables(variable_name_prefix=rogy_name):
                 rogy_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=rogy_name)
                 rogy_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_ROGY)
-                rogy_data: pd.DataFrame = rogy.loc[[region], self.configuration.base_and_projection_years_column_labels]
+                rogy_data: pd.DataFrame = rogy.loc[[region], self.projection_years_column_labels]
                 if &#39;gdp&#39; in rogy_units:
                     raise Exception(f&#34;{rogy_name} has gdp units so shocks to that variable are not supported.&#34;)
 
@@ -594,7 +575,7 @@ class BaselineProjections(Projections):
             if self.sym_data.has_variables(variable_name_prefix=shefc_name_prefix):
                 shefc_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=shefc_name)
                 shefc_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=shefc_name_prefix)
-                shefc_data: pd.DataFrame = consumption_energy_usage_efficiency.loc[[region], self.configuration.base_and_projection_years_column_labels]
+                shefc_data: pd.DataFrame = consumption_energy_usage_efficiency.loc[[region], self.projection_years_column_labels]
                 if &#39;gdp&#39; in shefc_units:
                     raise Exception(f&#34;{shefc_name} has gdp units so shocks to that variable are not supported.&#34;)
                 projections.loc[[shefc_index], :] = projections.loc[[shefc_index], :] + (shefc_data.to_numpy().flatten() / 100)
@@ -609,7 +590,7 @@ class BaselineProjections(Projections):
                 if self.sym_data.has_variables(variable_name_prefix=shl_name):
                     shl_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=shl_name)
                     shl_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_SHL)
-                    shl_data: pd.DataFrame = regional_effective_labour_productivity.loc[[sector], self.configuration.base_and_projection_years_column_labels]
+                    shl_data: pd.DataFrame = regional_effective_labour_productivity.loc[[sector], self.projection_years_column_labels]
                     if &#39;gdp&#39; in shl_units:
                         raise Exception(f&#34;{shl_name} has gdp units so shocks to that variable are not supported.&#34;)
                     projections.loc[[shl_index], :] = projections.loc[[
@@ -621,27 +602,12 @@ class BaselineProjections(Projections):
                 if self.sym_data.has_variables(variable_name_prefix=shef_name):
                     shef_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=shef_name)
                     shef_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_SHEF)
-                    shef_data: pd.DataFrame = regional_energy_usage_efficiency.loc[[sector], self.configuration.base_and_projection_years_column_labels]
+                    shef_data: pd.DataFrame = regional_energy_usage_efficiency.loc[[sector], self.projection_years_column_labels]
                     if &#39;gdp&#39; in shef_units:
                         raise Exception(f&#34;{shef_name} has gdp units so shocks to that variable are not supported.&#34;)
                     projections.loc[[shef_index], :] = projections.loc[[shef_index], :] + (shef_data.to_numpy().flatten() / 100)
                 # else:
                 #     logging.warning(f&#34;{shef_shock_name} is not in the SYM model.&#34;)
-
-            # THIS IS OBSOLETE.
-            # See https://bitbucket.org/msgpl/gcubedcode/issues/140/prodmat-file-for-20r-is-missing-some
-            # for sector in self.sym_data.capital_sectors_members:
-            #     variable_prefix_SHL_capital = f&#34;SHL{sector}&#34;
-            #     shl_name: str = f&#34;{variable_prefix_SHL_capital}({region})&#34;
-            #     if self.sym_data.has_variables(variable_name_prefix=variable_prefix_SHL_capital):
-            #         shl_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=shl_name)
-            #         shl_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_SHL_capital)
-            #         shl_data: pd.DataFrame = regional_effective_labour_productivity.loc[[sector], self.configuration.base_and_projection_years_column_labels]
-            #         if &#39;gdp&#39; in shl_units:
-            #             raise Exception(f&#34;{shl_name} has gdp units so shocks to that variable are not supported.&#34;)
-            #         projections.loc[[shl_index], :] = projections.loc[[shl_index], :] + (shl_data.to_numpy().flatten() / 100)
-            #     # else:
-            #     #     logging.warning(f&#34;{shl_name} is not in the SYM model.&#34;)
 
         # Index with variable names.
         projections.index = self.sym_data.vector_variable_names(vector_name=&#39;exo&#39;)
@@ -649,127 +615,120 @@ class BaselineProjections(Projections):
         # Store the exogenous projections that will be augmented for other projections.
         self._exo_projections: pd.DataFrame = projections
 
-    def __evaluate_base_year_vector_projections(self):
+    def __evaluate_first_projection_year_vector_projections(self):
         &#34;&#34;&#34;
-        Computes the values of the model equation vectors in the first period of the projection, 
-        using the functions of future exogenous variables, the stable manifold, and ...
+        Computes the values of the model equation vectors in the first projection year, 
+        using the functions of future exogenous variables, the stable manifold, etc
         &#34;&#34;&#34;
 
-        self._exo_base_year_projections = self.exo_projections[:, [0]]
+        self._exo_first_year_projections = self.exo_projections[:, [0]]
 
-        self._yxr_base_year_projections = self.yxr_initial_values.to_numpy().copy()
+        self._yxr_first_year_projections = self.yxr_initial_values.to_numpy().copy()
 
         # er = h1t*x[][1] + h2t*exog[][1] + h3t[][1];
-        self._yjr_base_year_projections = \
-            self.stable_manifold.H1 @ self.yxr_base_year_projections + \
-            self.stable_manifold.H2 @ self.exo_base_year_projections + \
+        self._yjr_first_year_projections = \
+            self.stable_manifold.H1 @ self.yxr_first_year_projections + \
+            self.stable_manifold.H2 @ self.exo_first_year_projections + \
             self._h3t[:, [0]]
 
         # tzl = mu1t*x[][1] + mu4t*exog[][1] + c4t[][1];
-        self._exz_base_year_projections = \
-            self.stable_manifold.mu1 @ self.yxr_base_year_projections + \
-            self.stable_manifold.mu2 @ self.exo_base_year_projections + \
+        self._exz_first_year_projections = \
+            self.stable_manifold.mu1 @ self.yxr_first_year_projections + \
+            self.stable_manifold.mu2 @ self.exo_first_year_projections + \
             self._c4t[:, [0]]
 
         # z1l projections = d5n*x[][1]+d7n*exog[][1]+d6n*er+d4n*tzl+cz6[][1]
-        self._z1l_base_year_projections = \
-            self.state_space_form.delta(&#39;z1l&#39;, &#39;yxr&#39;) @ self.yxr_base_year_projections + \
-            self.state_space_form.delta(&#39;z1l&#39;, &#39;exo&#39;) @ self.exo_base_year_projections + \
-            self.state_space_form.delta(&#39;z1l&#39;, &#39;yjr&#39;) @ self.yjr_base_year_projections + \
-            self.state_space_form.delta(&#39;z1l&#39;, &#39;exz&#39;) @ self.exz_base_year_projections + \
+        self._z1l_first_year_projections = \
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;yxr&#39;) @ self.yxr_first_year_projections + \
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;exo&#39;) @ self.exo_first_year_projections + \
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;yjr&#39;) @ self.yjr_first_year_projections + \
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;exz&#39;) @ self.exz_first_year_projections + \
             self.z1r_difference_from_ssf
 
     @property
-    def yxr_base_year_projections(self) -&gt; np.ndarray:
+    def yxr_first_year_projections(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Projections of X1_t (yxr) in the base year
+        Projections of X1_t (yxr) in the first projection year
         &#34;&#34;&#34;
-        return self._yxr_base_year_projections
+        return self._yxr_first_year_projections
 
     @property
-    def yjr_base_year_projections(self) -&gt; np.ndarray:
+    def yjr_first_year_projections(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Projections of J1_t (yjr) in the base year
+        Projections of J1_t (yjr) in the first projection year
         &#34;&#34;&#34;
-        return self._yjr_base_year_projections
+        return self._yjr_first_year_projections
 
     @property
-    def exz_base_year_projections(self) -&gt; np.ndarray:
+    def exz_first_year_projections(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Projections of ZE_t (exz) in the base year
+        Projections of ZE_t (exz) in the first projection year
         &#34;&#34;&#34;
-        return self._exz_base_year_projections
+        return self._exz_first_year_projections
 
     @property
-    def z1l_base_year_projections(self) -&gt; np.ndarray:
+    def z1l_first_year_projections(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Projections of Z1_t (z1l=z1r) in the base year
+        Projections of Z1_t (z1l=z1r) in the first projection year
         &#34;&#34;&#34;
-        return self._z1l_base_year_projections
+        return self._z1l_first_year_projections
 
     @property
-    def exo_base_year_projections(self) -&gt; np.ndarray:
+    def exo_first_year_projections(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Projections of EXO_t in the base year
+        Projections of EXO_t in the first projection year
         &#34;&#34;&#34;
-        return self._exo_base_year_projections
+        return self._exo_first_year_projections
 
     @property
-    def base_year_original_projections_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
+    def first_year_original_projections_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        The base year projected values for the variables that are being
+        The first year projected values for the variables that are being
         adjusted by the intertemporal constants.
 
         The values are those for the projection that is not adjusted by intertemporal constants.
         &#34;&#34;&#34;
-        return self._base_year_original_projections_of_variables_adjusted_by_intertemporal_constants
+        return self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants
 
     @property
-    def base_year_original_projections_of_yxr(self) -&gt; np.ndarray:
+    def first_year_original_projections_of_yxr(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        The base year projected values for the state variables.
+        The first year projected values for the state variables.
         Required for benchmarking against Ox.
         &#34;&#34;&#34;
-        return self._base_year_original_projections_of_yxr
+        return self._first_year_original_projections_of_yxr
 
     @property
-    def base_year_original_projections_of_yjr(self) -&gt; np.ndarray:
+    def first_year_original_projections_of_yjr(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        The base year projected values for the costate variables.
+        The first year projected values for the costate variables.
         Required for benchmarking against Ox.
         &#34;&#34;&#34;
-        return self._base_year_original_projections_of_yjr
+        return self._first_year_original_projections_of_yjr
 
     @property
-    def base_year_original_projections_of_exz(self) -&gt; np.ndarray:
+    def first_year_original_projections_of_exz(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        The base year projected values for the expected endogenous variables exz.
+        The first year projected values for the expected endogenous variables exz.
         Required for benchmarking against Ox.
         &#34;&#34;&#34;
-        return self._base_year_original_projections_of_exz
+        return self._first_year_original_projections_of_exz
 
     @property
-    def base_year_original_projections_of_z1l(self) -&gt; np.ndarray:
+    def first_year_original_projections_of_z1l(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        The base year projected values for the endogenous variables.
+        The first year projected values for the endogenous variables.
         Required for benchmarking against Ox.
         &#34;&#34;&#34;
-        return self._base_year_original_projections_of_z1l
+        return self._first_year_original_projections_of_z1l
 
     @property
-    def base_year_observed_values_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
+    def first_year_observed_values_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Returns the observed values in the base projection year of the 
+        Returns the observed values, in the first projection year, of the 
         variables that are adjusted by intertemporal constants.
         &#34;&#34;&#34;
-        return self._base_year_observed_values_of_variables_adjusted_by_intertemporal_constants
-
-    @property
-    def base_year_lhs_values(self) -&gt; np.ndarray:
-        &#34;&#34;&#34;
-        Values selected from base year SSF-generated LHS vectors using RHS vector values as inputs.
-        &#34;&#34;&#34;
-        return self._base_year_lhs_values
+        return self._first_year_observed_values_of_variables_adjusted_by_intertemporal_constants
 
     @property
     def intertemporal_constants(self) -&gt; pd.DataFrame:
@@ -804,18 +763,18 @@ class BaselineProjections(Projections):
         &#34;&#34;&#34;
 
         # Step 1.
-        self.compute_functions_of_future_exogenous_variables()
+        self._compute_functions_of_future_exogenous_variables()
         self._reference_c4t_used_to_compute_intertemporal_constants = self.c4t.copy()
         self._reference_h3t_used_to_compute_intertemporal_constants = self.h3t.copy()
 
         # Step 2.
-        self.__evaluate_base_year_vector_projections()
-        self._base_year_original_projections_of_yxr = self.yxr_base_year_projections.copy()
-        self._base_year_original_projections_of_yjr = self.yjr_base_year_projections.copy()
-        self._base_year_original_projections_of_exz = self.exz_base_year_projections.copy()
-        self._base_year_original_projections_of_z1l = self.z1l_base_year_projections.copy()
-        self._base_year_original_projections_of_variables_adjusted_by_intertemporal_constants = \
-            self.base_year_projections_of_variables_adjusted_by_intertemporal_constants.copy()
+        self.__evaluate_first_projection_year_vector_projections()
+        self._first_year_original_projections_of_yxr = self.yxr_first_year_projections.copy()
+        self._first_year_original_projections_of_yjr = self.yjr_first_year_projections.copy()
+        self._first_year_original_projections_of_exz = self.exz_first_year_projections.copy()
+        self._first_year_original_projections_of_z1l = self.z1l_first_year_projections.copy()
+        self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants = \
+            self.first_year_projections_of_variables_adjusted_by_intertemporal_constants.copy()
 
         # Step 3.
         self._partial_derivatives = np.zeros(shape=(len(self.sym_data.intertemporal_constant_variables), len(
@@ -823,15 +782,15 @@ class BaselineProjections(Projections):
         i = 0
         for index, variable_details in self.sym_data.intertemporal_constant_variables.iterrows():
             self.__update_perturbed_variable(variable_details=variable_details)
-            self.compute_functions_of_future_exogenous_variables()
-            self.__evaluate_base_year_vector_projections()
+            self._compute_functions_of_future_exogenous_variables()
+            self.__evaluate_first_projection_year_vector_projections()
             self._partial_derivatives[:, [i]] = (
-                self.base_year_projections_of_variables_adjusted_by_intertemporal_constants -
-                self._base_year_original_projections_of_variables_adjusted_by_intertemporal_constants) \
+                self.first_year_projections_of_variables_adjusted_by_intertemporal_constants -
+                self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants) \
                 / __class__.PERTURBATION
             i += 1
 
-        # Get the unperturbed values of the start year variables
+        # Get the unperturbed values of the variables in first projection year
 
         # Generate the baseline projection to use in computing partial derivatives
         # and to generate matrix values that are used later in projection processes.
@@ -840,8 +799,8 @@ class BaselineProjections(Projections):
         # Use newtons method adjustment to compute intertemporal constant values
         self._intertemporal_constants = self.sym_data.intertemporal_constant_variables
         values: np.ndarray = np.linalg.inv(self._partial_derivatives) @ \
-            (self.base_year_observed_values_of_variables_adjusted_by_intertemporal_constants -
-             self.base_year_original_projections_of_variables_adjusted_by_intertemporal_constants)
+            (self.first_year_observed_values_of_variables_adjusted_by_intertemporal_constants -
+             self.first_year_original_projections_of_variables_adjusted_by_intertemporal_constants)
         values = values.reshape((len(self.intertemporal_constants.index), 1))
         self._intertemporal_constants[&#39;constant_value&#39;] = values
         logging.info(&#34;The intertemporal constants have been calibrated.&#34;)</code></pre>
@@ -858,23 +817,27 @@ class BaselineProjections(Projections):
 <dl>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections"><code class="flex name class">
 <span>class <span class="ident">BaselineProjections</span></span>
-<span>(</span><span>stable_manifold: <a title="gcubed.stable_manifold.StableManifold" href="../stable_manifold.html#gcubed.stable_manifold.StableManifold">StableManifold</a>)</span>
+<span>(</span><span>stable_manifold: <a title="gcubed.linearisation.stable_manifold.StableManifold" href="../linearisation/stable_manifold.html#gcubed.linearisation.stable_manifold.StableManifold">StableManifold</a>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Compute the baseline model projections over the projection horizon
-from the base projection year (the last year with available data)
-through to the last projection year.</p>
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Compute the baseline model projections over the projection horizon
+from the first projection year (a year with available data to be
+matched by the projections) through to the last projection year.</p>
 <h3 id="arguments">Arguments</h3>
-<p>stable_manifold: The stable manifold that provides access to all of the model information required to produce projections.</p></div>
+<p>stable_manifold: The stable manifold that provides access to all
+of the model information required to produce projections.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class BaselineProjections(Projections):
     &#34;&#34;&#34;
+    ### Overview
+
     Compute the baseline model projections over the projection horizon 
-    from the base projection year (the last year with available data)
-    through to the last projection year.
+    from the first projection year (a year with available data to be 
+    matched by the projections) through to the last projection year.
     &#34;&#34;&#34;
 
     # The perturbation to use when computing partial derivatives for intertemporal constant determination.
@@ -884,40 +847,40 @@ through to the last projection year.</p>
         &#34;&#34;&#34;
        ### Arguments
 
-        stable_manifold: The stable manifold that provides access to all of the model information required to produce projections.
+        stable_manifold: The stable manifold that provides access to all 
+        of the model information required to produce projections.
         &#34;&#34;&#34;
+        logging.info(&#34;Setting up the baseline projections.&#34;)
+
         super().__init__(stable_manifold=stable_manifold)
+        self._is_baseline_projections = True
+        
+        self._database = GDPScaledDatabase(database=self.model.database, base_year=self.configuration.base_year)
 
-        self._database = GDPScaledDatabase(database=self.model.database, base_year=self.configuration.projection_base_year)
+        self.__set_first_projection_year_observed_values()
 
-        self._event_year = self.base_year
-
-        self.__set_base_year_observed_values()
-
-        self.__store_observed_x1_values()
+        self.__store_observed_yxr_values_in_first_projection_year()
 
         # Set up the exogenous variable projections
         self.__create_exogenous_variable_projections()
 
-
-        self.__store_observed_values_of_variables_adjusted_by_intertemporal_constants()
-        self.__compute_base_year_ssf_deviations_from_observed_values()
+        self.__store_observed_values_of_variables_adjusted_by_intertemporal_constants_in_first_projection_year()
+        self.__compute_first_projection_year_ssf_deviations_from_observed_values()
 
         if not self.using_rolled_projections:
             self.__calculate_intertemporal_constants()
 
         # Generate the baseline projections
-        self.generate_projections()
+        self._generate_projections()
 
         # Generate the database projections
-        self.generate_database_projections()
+        self._generate_database_projections()
 
         # Generate publishable version of the projections
-        self.generate_publishable_projections()
+        self._generate_publishable_projections()
 
         self.__validate()
 
-        logging.info(&#34;The baseline projections have been generated.&#34;)
 
     def __validate(self):
         &#34;&#34;&#34;
@@ -925,54 +888,34 @@ through to the last projection year.</p>
         1. check that they are available for the expected projection years.
         2. Check that the base year projections are equal to the base year data values.
         &#34;&#34;&#34;
-        pass
-
-    @property
-    def stable_manifold(self) -&gt; StableManifold:
-        return self._stable_manifold
-
-    @property
-    def state_space_form(self) -&gt; StateSpaceForm:
-        return self.stable_manifold.ssf
-
-    @property
-    def model(self) -&gt; Model:
-        return self.state_space_form.model
-
-    @property
-    def sym_data(self) -&gt; SymData:
-        return self.model.sym_data
-
-    @property
-    def parameters(self) -&gt; Parameters:
-        return self.model.parameters
-
-    @property
-    def configuration(self) -&gt; ModelConfiguration:
-        return self.sym_data.configuration
+        logging.info(&#34;The baseline projections have been generated.&#34;)
 
     @property
     def database(self) -&gt; GDPScaledDatabase:
+        &#34;&#34;&#34;
+        The database used as the starting point for the projections.
+        &#34;&#34;&#34;
         return self._database
-
-    @property
-    def base_year(self) -&gt; int:
-        return self.configuration.projection_base_year
 
     @property
     def using_rolled_projections(self) -&gt; bool:
         &#34;&#34;&#34;
-        Returns true if these projections are building on
+        True if these projections are building on
         previous projections rather than just observed data.
+
         This affects how the baseline projections are set up in terms
-        of the constants used 
+        of the constants used.
         &#34;&#34;&#34;
         return self.database.has_data_for_all_projection_years
 
     def __update_perturbed_variable(self, variable_details: pd.Series):
         &#34;&#34;&#34;
-        Change the perturbed variable, preparing for the next evaluation of the values needed to compute
-        partial derivatives relevant to the determination of the intertemporal constants.
+        ### Overview
+
+        Changes the perturbed variable, preparing for the
+        next evaluation of the values needed to compute
+        partial derivatives relevant to the determination 
+        of the intertemporal constants.
         &#34;&#34;&#34;
 
         if hasattr(self, &#39;_perturbed_variable_details&#39;):
@@ -1010,7 +953,7 @@ through to the last projection year.</p>
     @property
     def perturbed_variable_details(self) -&gt; pd.Series:
         &#34;&#34;&#34;
-        Returns the var_map details of the variable being perturbed to as part of computing
+        The var_map details of the variable being perturbed to as part of computing
         derivatives needed to set intertemporal constants or none if just doing projections.
         &#34;&#34;&#34;
         if hasattr(self, &#39;_perturbed_variable_details&#39;):
@@ -1018,12 +961,12 @@ through to the last projection year.</p>
         return None
 
     @property
-    def base_year_projections_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
+    def first_year_projections_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Extract the values of the variables that have been changed by the perturbation to 
+        The values of the variables that have been changed by the perturbation to 
         an intertemporal constant as part of computing partial derivatives for setting the
         intertemporal constants appropriately. These values are a column vector
-        for the base project year only.
+        for the first projection year only.
         &#34;&#34;&#34;
         result = np.zeros(shape=(len(self.sym_data.variables_adjusted_by_intertemporal_constants), 1))
         i = 0
@@ -1031,67 +974,69 @@ through to the last projection year.</p>
             sequence = adjusted_variable_details[&#39;sequence&#39;]
             match adjusted_variable_details[&#39;var_type&#39;]:
                 case &#39;x1l&#39;:
-                    result[i, 0] = self.yxr_base_year_projections[[sequence]]
+                    result[i, 0] = self.yxr_first_year_projections[[sequence]]
                 case &#39;j1l&#39;:
-                    result[i, 0] = self.yjr_base_year_projections[[sequence]]
+                    result[i, 0] = self.yjr_first_year_projections[[sequence]]
                 case &#39;zel&#39;:
-                    result[i, 0] = self.exz_base_year_projections[[sequence]]
+                    result[i, 0] = self.exz_first_year_projections[[sequence]]
                 case &#39;z1l&#39;:
-                    result[i, 0] = self.z1l_base_year_projections[[sequence]]
+                    result[i, 0] = self.z1l_first_year_projections[[sequence]]
             i += 1
         return result
 
-    def __set_base_year_observed_values(self):
+    def __set_first_projection_year_observed_values(self):
         &#34;&#34;&#34;
-        Get the database values for the various vectors in the model in the projection base year.
+        ### Overview
+
+        Sets the database values for the vectors in 
+        the model in the first projection year.
         &#34;&#34;&#34;
         # RHS (identical to LHS) vector values to be compared to SSF calculated values
-        self._base_year_x1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;x1r&#39;, year=self.base_year, use_neutral_real_interest_rate=True)  # t+1
-        self._base_year_j1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;j1r&#39;, year=self.base_year, use_neutral_real_interest_rate=True)  # t+1
-        self._base_year_zer: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;zer&#39;, year=self.base_year, use_neutral_real_interest_rate=True)  # t
-        self._base_year_z1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;z1r&#39;, year=self.base_year, use_neutral_real_interest_rate=True)  # t
+        self._first_projection_year_x1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;x1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t+1
+        self._first_projection_year_j1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;j1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t+1
+        self._first_projection_year_zer: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;zer&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
+        self._first_projection_year_z1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;z1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
 
         # SSF RHS vector values
-        self._base_year_yxr: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;yxr&#39;, year=self.base_year, use_neutral_real_interest_rate=True)  # t
-        self._base_year_yjr: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;yjr&#39;, year=self.base_year, use_neutral_real_interest_rate=True)  # t
-        self._base_year_exz: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;exz&#39;, year=self.base_year, use_neutral_real_interest_rate=True)  # t+1
-        self._base_year_exo: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;exo&#39;, year=self.base_year, use_neutral_real_interest_rate=True)  # t
+        self._first_projection_year_yxr: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;yxr&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
+        self._first_projection_year_yjr: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;yjr&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
+        self._first_projection_year_exz: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;exz&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t+1
+        self._first_projection_year_exo: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;exo&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
 
-    def __store_observed_x1_values(self):
+    def __store_observed_yxr_values_in_first_projection_year(self):
         &#34;&#34;&#34;
         Save the values of the state vector in the base projection year to use in
         initiating the projection process.
         &#34;&#34;&#34;
-        yxr_initial_values = pd.DataFrame(self.base_year_yxr.copy())
+        yxr_initial_values = pd.DataFrame(self.first_projection_year_yxr.copy())
         yxr_initial_values.index = self.sym_data.vector_variable_names(vector_name=&#39;yxr&#39;)
-        yxr_initial_values.columns = [str(self.base_year)]
+        yxr_initial_values.columns = [str(self.first_projection_year)]
         self._yxr_initial_values: pd.DataFrame = yxr_initial_values
 
-    def __store_observed_values_of_variables_adjusted_by_intertemporal_constants(self):
+    def __store_observed_values_of_variables_adjusted_by_intertemporal_constants_in_first_projection_year(self):
         &#34;&#34;&#34;
         Save the database values of the variables
         that are adjusted by intertemporal constants so that we can use
         those as the values we adjust the variables to using the intertemporal
         constants.
         &#34;&#34;&#34;
-        self._base_year_observed_values_of_variables_adjusted_by_intertemporal_constants: np.ndarray = \
+        self._first_year_observed_values_of_variables_adjusted_by_intertemporal_constants: np.ndarray = \
             np.zeros(shape=(len(self.sym_data.variables_adjusted_by_intertemporal_constants), 1))
         i = 0
         for index, adjusted_variable_details in self.sym_data.variables_adjusted_by_intertemporal_constants.iterrows():
             sequence = adjusted_variable_details[&#39;sequence&#39;]
             match adjusted_variable_details[&#39;var_type&#39;]:
                 case &#39;x1l&#39;:
-                    self._base_year_observed_values_of_variables_adjusted_by_intertemporal_constants[i, 0] = self.base_year_yxr[[sequence]]  # t = base year
+                    self._first_year_observed_values_of_variables_adjusted_by_intertemporal_constants[i, 0] = self.first_projection_year_yxr[[sequence]]  # t = base year
                 case &#39;j1l&#39;:
-                    self._base_year_observed_values_of_variables_adjusted_by_intertemporal_constants[i, 0] = self.base_year_yjr[[sequence]]  # t = base year
+                    self._first_year_observed_values_of_variables_adjusted_by_intertemporal_constants[i, 0] = self.first_projection_year_yjr[[sequence]]  # t = base year
                 case &#39;zel&#39;:
-                    self._base_year_observed_values_of_variables_adjusted_by_intertemporal_constants[i, 0] = self.base_year_exz[[
-                        sequence]]  # t+1 = year after base year
+                    self._first_year_observed_values_of_variables_adjusted_by_intertemporal_constants[i, 0] = self.first_projection_year_exz[[sequence]]  # t+1 = year after base year
                 case &#39;z1l&#39;:
-                    self._base_year_observed_values_of_variables_adjusted_by_intertemporal_constants[i, 0] = self.base_year_z1r[[sequence]]  # t = base year
+                    self._first_year_observed_values_of_variables_adjusted_by_intertemporal_constants[i, 0] = self.first_projection_year_z1r[[sequence]]  # t = base year
             i += 1
 
-    def __compute_base_year_ssf_deviations_from_observed_values(self):
+    def __compute_first_projection_year_ssf_deviations_from_observed_values(self):
         &#34;&#34;&#34;
         Compute the SSF values for the base projection year and calculate the differences from
         observed variable values for all system-determined variables (not the exogenous ones).
@@ -1115,95 +1060,95 @@ through to the last projection year.</p>
         # We got here so we must be done the initial baseline projections that require a constant adjustment
         # for the SSF differences from observed data values in the base projection year.
 
-        self.x1l_ssf_calculations_using_base_year_data = self.state_space_form.delta(&#39;x1l&#39;, &#39;yxr&#39;) @ self.base_year_yxr + \
-            self.state_space_form.delta(&#39;x1l&#39;, &#39;yjr&#39;) @ self.base_year_yjr + \
-            self.state_space_form.delta(&#39;x1l&#39;, &#39;exz&#39;) @ self.base_year_exz + \
-            self.state_space_form.delta(&#39;x1l&#39;, &#39;exo&#39;) @ self.base_year_exo
+        self.x1l_ssf_calculations_using_first_projection_year_data = self.state_space_form.delta(&#39;x1l&#39;, &#39;yxr&#39;) @ self.first_projection_year_yxr + \
+            self.state_space_form.delta(&#39;x1l&#39;, &#39;yjr&#39;) @ self.first_projection_year_yjr + \
+            self.state_space_form.delta(&#39;x1l&#39;, &#39;exz&#39;) @ self.first_projection_year_exz + \
+            self.state_space_form.delta(&#39;x1l&#39;, &#39;exo&#39;) @ self.first_projection_year_exo
 
-        self.j1l_ssf_calculations_using_base_year_data = self.state_space_form.delta(&#39;j1l&#39;, &#39;yxr&#39;) @ self.base_year_yxr + \
-            self.state_space_form.delta(&#39;j1l&#39;, &#39;yjr&#39;) @ self.base_year_yjr + \
-            self.state_space_form.delta(&#39;j1l&#39;, &#39;exz&#39;) @ self.base_year_exz + \
-            self.state_space_form.delta(&#39;j1l&#39;, &#39;exo&#39;) @ self.base_year_exo
+        self.j1l_ssf_calculations_using_first_projection_year_data = self.state_space_form.delta(&#39;j1l&#39;, &#39;yxr&#39;) @ self.first_projection_year_yxr + \
+            self.state_space_form.delta(&#39;j1l&#39;, &#39;yjr&#39;) @ self.first_projection_year_yjr + \
+            self.state_space_form.delta(&#39;j1l&#39;, &#39;exz&#39;) @ self.first_projection_year_exz + \
+            self.state_space_form.delta(&#39;j1l&#39;, &#39;exo&#39;) @ self.first_projection_year_exo
 
-        self.zel_ssf_calculations_using_base_year_data = self.state_space_form.delta(&#39;zel&#39;, &#39;yxr&#39;) @ self.base_year_yxr + \
-            self.state_space_form.delta(&#39;zel&#39;, &#39;yjr&#39;) @ self.base_year_yjr + \
-            self.state_space_form.delta(&#39;zel&#39;, &#39;exz&#39;) @ self.base_year_exz + \
-            self.state_space_form.delta(&#39;zel&#39;, &#39;exo&#39;) @ self.base_year_exo
+        self.zel_ssf_calculations_using_first_projection_year_data = self.state_space_form.delta(&#39;zel&#39;, &#39;yxr&#39;) @ self.first_projection_year_yxr + \
+            self.state_space_form.delta(&#39;zel&#39;, &#39;yjr&#39;) @ self.first_projection_year_yjr + \
+            self.state_space_form.delta(&#39;zel&#39;, &#39;exz&#39;) @ self.first_projection_year_exz + \
+            self.state_space_form.delta(&#39;zel&#39;, &#39;exo&#39;) @ self.first_projection_year_exo
 
-        self.z1l_ssf_calculations_using_base_year_data = self.state_space_form.delta(&#39;z1l&#39;, &#39;yxr&#39;) @ self.base_year_yxr + \
-            self.state_space_form.delta(&#39;z1l&#39;, &#39;yjr&#39;) @ self.base_year_yjr + \
-            self.state_space_form.delta(&#39;z1l&#39;, &#39;exz&#39;) @ self.base_year_exz + \
-            self.state_space_form.delta(&#39;z1l&#39;, &#39;exo&#39;) @ self.base_year_exo
+        self.z1l_ssf_calculations_using_first_projection_year_data = self.state_space_form.delta(&#39;z1l&#39;, &#39;yxr&#39;) @ self.first_projection_year_yxr + \
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;yjr&#39;) @ self.first_projection_year_yjr + \
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;exz&#39;) @ self.first_projection_year_exz + \
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;exo&#39;) @ self.first_projection_year_exo
 
-        self._x1r_difference_from_ssf = self.base_year_x1r - self.x1l_ssf_calculations_using_base_year_data  # t+1 = year after base year
-        self._j1r_difference_from_ssf = self.base_year_j1r - self.j1l_ssf_calculations_using_base_year_data  # t+1 = year after base year
-        self._zer_difference_from_ssf = self.base_year_zer - self.zel_ssf_calculations_using_base_year_data  # t = base year
-        self._z1r_difference_from_ssf = self.base_year_z1r - self.z1l_ssf_calculations_using_base_year_data  # t = base year
+        self._x1r_difference_from_ssf = self.first_projection_year_x1r - self.x1l_ssf_calculations_using_first_projection_year_data  # t+1 = year after base year
+        self._j1r_difference_from_ssf = self.first_projection_year_j1r - self.j1l_ssf_calculations_using_first_projection_year_data  # t+1 = year after base year
+        self._zer_difference_from_ssf = self.first_projection_year_zer - self.zel_ssf_calculations_using_first_projection_year_data  # t = base year
+        self._z1r_difference_from_ssf = self.first_projection_year_z1r - self.z1l_ssf_calculations_using_first_projection_year_data  # t = base year
 
     @property
-    def base_year_x1r(self) -&gt; np.ndarray:
+    def first_projection_year_x1r(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the base year = t:
+        If the first projection year = t:
         Returns the value of x1r from the database as the value of x1 in period t+1
         &#34;&#34;&#34;
-        return self._base_year_x1r
+        return self._first_projection_year_x1r
 
     @property
-    def base_year_j1r(self) -&gt; np.ndarray:
+    def first_projection_year_j1r(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the base year = t:
+        If the first projection year = t:
         Returns the value of j1r from the database as the value of j1 in period t+1
         &#34;&#34;&#34;
-        return self._base_year_j1r
+        return self._first_projection_year_j1r
 
     @property
-    def base_year_zer(self) -&gt; np.ndarray:
+    def first_projection_year_zer(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the base year = t:
+        If the first projection year = t:
         Returns the value of zer from the database as the value of x1 in period t
         &#34;&#34;&#34;
-        return self._base_year_zer
+        return self._first_projection_year_zer
 
     @property
-    def base_year_z1r(self) -&gt; np.ndarray:
+    def first_projection_year_z1r(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the base year = t:
+        If the first projection year = t:
         Returns the value of z1r from the database as the value of z1 in period t
         &#34;&#34;&#34;
-        return self._base_year_z1r
+        return self._first_projection_year_z1r
 
     @property
-    def base_year_yxr(self) -&gt; np.ndarray:
+    def first_projection_year_yxr(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the base year = t:
+        If the first projection year = t:
         Returns the value of yxr from the database as the value of x1 in period t
         &#34;&#34;&#34;
-        return self._base_year_yxr
+        return self._first_projection_year_yxr
 
     @property
-    def base_year_yjr(self) -&gt; np.ndarray:
+    def first_projection_year_yjr(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the base year = t:
+        If the first projection year = t:
         Returns the value of yjr from the database as the value of j1 in period t
         &#34;&#34;&#34;
-        return self._base_year_yjr
+        return self._first_projection_year_yjr
 
     @property
-    def base_year_exz(self) -&gt; np.ndarray:
+    def first_projection_year_exz(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the base year = t:
+        If the first projection year = t:
         Returns the value of exz from the database as the value of ze in period t+1
         &#34;&#34;&#34;
-        return self._base_year_exz
+        return self._first_projection_year_exz
 
     @property
-    def base_year_exo(self) -&gt; np.ndarray:
+    def first_projection_year_exo(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the base year = t:
+        If the first projection year = t:
         Returns the value of exo from the database as the value of exogenous variables (exo)
         in period t
         &#34;&#34;&#34;
-        return self._base_year_exo
+        return self._first_projection_year_exo
 
     @property
     def x1r_difference_from_ssf(self):
@@ -1374,15 +1319,14 @@ through to the last projection year.</p>
         # and then we are done.
         if self.using_rolled_projections:
             matching_indices: pd.Index = self.sym_data.combined_variable_summary.loc[self.sym_data.combined_variable_summary.vector == &#39;exo&#39;, :].index
-            self._exo_projections: pd.DataFrame = self.database.data.loc[matching_indices, self.configuration.base_and_projection_years_column_labels]
+            self._exo_projections: pd.DataFrame = self.database.data.loc[matching_indices, self.projection_years_column_labels]
             return
 
         # We got here so we must be setting up the exogenous variable projections for the first time ...
 
         # Replicate projection base year values across all projection periods for all exogenous variables.
-        base_year_values: np.ndarray = self.base_year_exo
-        projections: pd.DataFrame = pd.DataFrame(np.tile(base_year_values, (1, self.configuration.base_and_projection_year_count)))
-        projections.columns = self.configuration.base_and_projection_years_column_labels
+        projections: pd.DataFrame = pd.DataFrame(np.tile(self.first_projection_year_exo, (1, self.configuration.projection_years_count)))
+        projections.columns = self.projection_years_column_labels
         projections.reset_index()
 
         # Add effective labour productivity and energy usage efficiency.
@@ -1400,7 +1344,7 @@ through to the last projection year.</p>
             if self.sym_data.has_variables(variable_name_prefix=rogy_name):
                 rogy_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=rogy_name)
                 rogy_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_ROGY)
-                rogy_data: pd.DataFrame = rogy.loc[[region], self.configuration.base_and_projection_years_column_labels]
+                rogy_data: pd.DataFrame = rogy.loc[[region], self.projection_years_column_labels]
                 if &#39;gdp&#39; in rogy_units:
                     raise Exception(f&#34;{rogy_name} has gdp units so shocks to that variable are not supported.&#34;)
 
@@ -1413,7 +1357,7 @@ through to the last projection year.</p>
             if self.sym_data.has_variables(variable_name_prefix=shefc_name_prefix):
                 shefc_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=shefc_name)
                 shefc_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=shefc_name_prefix)
-                shefc_data: pd.DataFrame = consumption_energy_usage_efficiency.loc[[region], self.configuration.base_and_projection_years_column_labels]
+                shefc_data: pd.DataFrame = consumption_energy_usage_efficiency.loc[[region], self.projection_years_column_labels]
                 if &#39;gdp&#39; in shefc_units:
                     raise Exception(f&#34;{shefc_name} has gdp units so shocks to that variable are not supported.&#34;)
                 projections.loc[[shefc_index], :] = projections.loc[[shefc_index], :] + (shefc_data.to_numpy().flatten() / 100)
@@ -1428,7 +1372,7 @@ through to the last projection year.</p>
                 if self.sym_data.has_variables(variable_name_prefix=shl_name):
                     shl_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=shl_name)
                     shl_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_SHL)
-                    shl_data: pd.DataFrame = regional_effective_labour_productivity.loc[[sector], self.configuration.base_and_projection_years_column_labels]
+                    shl_data: pd.DataFrame = regional_effective_labour_productivity.loc[[sector], self.projection_years_column_labels]
                     if &#39;gdp&#39; in shl_units:
                         raise Exception(f&#34;{shl_name} has gdp units so shocks to that variable are not supported.&#34;)
                     projections.loc[[shl_index], :] = projections.loc[[
@@ -1440,27 +1384,12 @@ through to the last projection year.</p>
                 if self.sym_data.has_variables(variable_name_prefix=shef_name):
                     shef_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=shef_name)
                     shef_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_SHEF)
-                    shef_data: pd.DataFrame = regional_energy_usage_efficiency.loc[[sector], self.configuration.base_and_projection_years_column_labels]
+                    shef_data: pd.DataFrame = regional_energy_usage_efficiency.loc[[sector], self.projection_years_column_labels]
                     if &#39;gdp&#39; in shef_units:
                         raise Exception(f&#34;{shef_name} has gdp units so shocks to that variable are not supported.&#34;)
                     projections.loc[[shef_index], :] = projections.loc[[shef_index], :] + (shef_data.to_numpy().flatten() / 100)
                 # else:
                 #     logging.warning(f&#34;{shef_shock_name} is not in the SYM model.&#34;)
-
-            # THIS IS OBSOLETE.
-            # See https://bitbucket.org/msgpl/gcubedcode/issues/140/prodmat-file-for-20r-is-missing-some
-            # for sector in self.sym_data.capital_sectors_members:
-            #     variable_prefix_SHL_capital = f&#34;SHL{sector}&#34;
-            #     shl_name: str = f&#34;{variable_prefix_SHL_capital}({region})&#34;
-            #     if self.sym_data.has_variables(variable_name_prefix=variable_prefix_SHL_capital):
-            #         shl_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=shl_name)
-            #         shl_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_SHL_capital)
-            #         shl_data: pd.DataFrame = regional_effective_labour_productivity.loc[[sector], self.configuration.base_and_projection_years_column_labels]
-            #         if &#39;gdp&#39; in shl_units:
-            #             raise Exception(f&#34;{shl_name} has gdp units so shocks to that variable are not supported.&#34;)
-            #         projections.loc[[shl_index], :] = projections.loc[[shl_index], :] + (shl_data.to_numpy().flatten() / 100)
-            #     # else:
-            #     #     logging.warning(f&#34;{shl_name} is not in the SYM model.&#34;)
 
         # Index with variable names.
         projections.index = self.sym_data.vector_variable_names(vector_name=&#39;exo&#39;)
@@ -1468,127 +1397,120 @@ through to the last projection year.</p>
         # Store the exogenous projections that will be augmented for other projections.
         self._exo_projections: pd.DataFrame = projections
 
-    def __evaluate_base_year_vector_projections(self):
+    def __evaluate_first_projection_year_vector_projections(self):
         &#34;&#34;&#34;
-        Computes the values of the model equation vectors in the first period of the projection, 
-        using the functions of future exogenous variables, the stable manifold, and ...
+        Computes the values of the model equation vectors in the first projection year, 
+        using the functions of future exogenous variables, the stable manifold, etc
         &#34;&#34;&#34;
 
-        self._exo_base_year_projections = self.exo_projections[:, [0]]
+        self._exo_first_year_projections = self.exo_projections[:, [0]]
 
-        self._yxr_base_year_projections = self.yxr_initial_values.to_numpy().copy()
+        self._yxr_first_year_projections = self.yxr_initial_values.to_numpy().copy()
 
         # er = h1t*x[][1] + h2t*exog[][1] + h3t[][1];
-        self._yjr_base_year_projections = \
-            self.stable_manifold.H1 @ self.yxr_base_year_projections + \
-            self.stable_manifold.H2 @ self.exo_base_year_projections + \
+        self._yjr_first_year_projections = \
+            self.stable_manifold.H1 @ self.yxr_first_year_projections + \
+            self.stable_manifold.H2 @ self.exo_first_year_projections + \
             self._h3t[:, [0]]
 
         # tzl = mu1t*x[][1] + mu4t*exog[][1] + c4t[][1];
-        self._exz_base_year_projections = \
-            self.stable_manifold.mu1 @ self.yxr_base_year_projections + \
-            self.stable_manifold.mu2 @ self.exo_base_year_projections + \
+        self._exz_first_year_projections = \
+            self.stable_manifold.mu1 @ self.yxr_first_year_projections + \
+            self.stable_manifold.mu2 @ self.exo_first_year_projections + \
             self._c4t[:, [0]]
 
         # z1l projections = d5n*x[][1]+d7n*exog[][1]+d6n*er+d4n*tzl+cz6[][1]
-        self._z1l_base_year_projections = \
-            self.state_space_form.delta(&#39;z1l&#39;, &#39;yxr&#39;) @ self.yxr_base_year_projections + \
-            self.state_space_form.delta(&#39;z1l&#39;, &#39;exo&#39;) @ self.exo_base_year_projections + \
-            self.state_space_form.delta(&#39;z1l&#39;, &#39;yjr&#39;) @ self.yjr_base_year_projections + \
-            self.state_space_form.delta(&#39;z1l&#39;, &#39;exz&#39;) @ self.exz_base_year_projections + \
+        self._z1l_first_year_projections = \
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;yxr&#39;) @ self.yxr_first_year_projections + \
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;exo&#39;) @ self.exo_first_year_projections + \
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;yjr&#39;) @ self.yjr_first_year_projections + \
+            self.state_space_form.delta(&#39;z1l&#39;, &#39;exz&#39;) @ self.exz_first_year_projections + \
             self.z1r_difference_from_ssf
 
     @property
-    def yxr_base_year_projections(self) -&gt; np.ndarray:
+    def yxr_first_year_projections(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Projections of X1_t (yxr) in the base year
+        Projections of X1_t (yxr) in the first projection year
         &#34;&#34;&#34;
-        return self._yxr_base_year_projections
+        return self._yxr_first_year_projections
 
     @property
-    def yjr_base_year_projections(self) -&gt; np.ndarray:
+    def yjr_first_year_projections(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Projections of J1_t (yjr) in the base year
+        Projections of J1_t (yjr) in the first projection year
         &#34;&#34;&#34;
-        return self._yjr_base_year_projections
+        return self._yjr_first_year_projections
 
     @property
-    def exz_base_year_projections(self) -&gt; np.ndarray:
+    def exz_first_year_projections(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Projections of ZE_t (exz) in the base year
+        Projections of ZE_t (exz) in the first projection year
         &#34;&#34;&#34;
-        return self._exz_base_year_projections
+        return self._exz_first_year_projections
 
     @property
-    def z1l_base_year_projections(self) -&gt; np.ndarray:
+    def z1l_first_year_projections(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Projections of Z1_t (z1l=z1r) in the base year
+        Projections of Z1_t (z1l=z1r) in the first projection year
         &#34;&#34;&#34;
-        return self._z1l_base_year_projections
+        return self._z1l_first_year_projections
 
     @property
-    def exo_base_year_projections(self) -&gt; np.ndarray:
+    def exo_first_year_projections(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Projections of EXO_t in the base year
+        Projections of EXO_t in the first projection year
         &#34;&#34;&#34;
-        return self._exo_base_year_projections
+        return self._exo_first_year_projections
 
     @property
-    def base_year_original_projections_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
+    def first_year_original_projections_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        The base year projected values for the variables that are being
+        The first year projected values for the variables that are being
         adjusted by the intertemporal constants.
 
         The values are those for the projection that is not adjusted by intertemporal constants.
         &#34;&#34;&#34;
-        return self._base_year_original_projections_of_variables_adjusted_by_intertemporal_constants
+        return self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants
 
     @property
-    def base_year_original_projections_of_yxr(self) -&gt; np.ndarray:
+    def first_year_original_projections_of_yxr(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        The base year projected values for the state variables.
+        The first year projected values for the state variables.
         Required for benchmarking against Ox.
         &#34;&#34;&#34;
-        return self._base_year_original_projections_of_yxr
+        return self._first_year_original_projections_of_yxr
 
     @property
-    def base_year_original_projections_of_yjr(self) -&gt; np.ndarray:
+    def first_year_original_projections_of_yjr(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        The base year projected values for the costate variables.
+        The first year projected values for the costate variables.
         Required for benchmarking against Ox.
         &#34;&#34;&#34;
-        return self._base_year_original_projections_of_yjr
+        return self._first_year_original_projections_of_yjr
 
     @property
-    def base_year_original_projections_of_exz(self) -&gt; np.ndarray:
+    def first_year_original_projections_of_exz(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        The base year projected values for the expected endogenous variables exz.
+        The first year projected values for the expected endogenous variables exz.
         Required for benchmarking against Ox.
         &#34;&#34;&#34;
-        return self._base_year_original_projections_of_exz
+        return self._first_year_original_projections_of_exz
 
     @property
-    def base_year_original_projections_of_z1l(self) -&gt; np.ndarray:
+    def first_year_original_projections_of_z1l(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        The base year projected values for the endogenous variables.
+        The first year projected values for the endogenous variables.
         Required for benchmarking against Ox.
         &#34;&#34;&#34;
-        return self._base_year_original_projections_of_z1l
+        return self._first_year_original_projections_of_z1l
 
     @property
-    def base_year_observed_values_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
+    def first_year_observed_values_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Returns the observed values in the base projection year of the 
+        Returns the observed values, in the first projection year, of the 
         variables that are adjusted by intertemporal constants.
         &#34;&#34;&#34;
-        return self._base_year_observed_values_of_variables_adjusted_by_intertemporal_constants
-
-    @property
-    def base_year_lhs_values(self) -&gt; np.ndarray:
-        &#34;&#34;&#34;
-        Values selected from base year SSF-generated LHS vectors using RHS vector values as inputs.
-        &#34;&#34;&#34;
-        return self._base_year_lhs_values
+        return self._first_year_observed_values_of_variables_adjusted_by_intertemporal_constants
 
     @property
     def intertemporal_constants(self) -&gt; pd.DataFrame:
@@ -1623,18 +1545,18 @@ through to the last projection year.</p>
         &#34;&#34;&#34;
 
         # Step 1.
-        self.compute_functions_of_future_exogenous_variables()
+        self._compute_functions_of_future_exogenous_variables()
         self._reference_c4t_used_to_compute_intertemporal_constants = self.c4t.copy()
         self._reference_h3t_used_to_compute_intertemporal_constants = self.h3t.copy()
 
         # Step 2.
-        self.__evaluate_base_year_vector_projections()
-        self._base_year_original_projections_of_yxr = self.yxr_base_year_projections.copy()
-        self._base_year_original_projections_of_yjr = self.yjr_base_year_projections.copy()
-        self._base_year_original_projections_of_exz = self.exz_base_year_projections.copy()
-        self._base_year_original_projections_of_z1l = self.z1l_base_year_projections.copy()
-        self._base_year_original_projections_of_variables_adjusted_by_intertemporal_constants = \
-            self.base_year_projections_of_variables_adjusted_by_intertemporal_constants.copy()
+        self.__evaluate_first_projection_year_vector_projections()
+        self._first_year_original_projections_of_yxr = self.yxr_first_year_projections.copy()
+        self._first_year_original_projections_of_yjr = self.yjr_first_year_projections.copy()
+        self._first_year_original_projections_of_exz = self.exz_first_year_projections.copy()
+        self._first_year_original_projections_of_z1l = self.z1l_first_year_projections.copy()
+        self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants = \
+            self.first_year_projections_of_variables_adjusted_by_intertemporal_constants.copy()
 
         # Step 3.
         self._partial_derivatives = np.zeros(shape=(len(self.sym_data.intertemporal_constant_variables), len(
@@ -1642,15 +1564,15 @@ through to the last projection year.</p>
         i = 0
         for index, variable_details in self.sym_data.intertemporal_constant_variables.iterrows():
             self.__update_perturbed_variable(variable_details=variable_details)
-            self.compute_functions_of_future_exogenous_variables()
-            self.__evaluate_base_year_vector_projections()
+            self._compute_functions_of_future_exogenous_variables()
+            self.__evaluate_first_projection_year_vector_projections()
             self._partial_derivatives[:, [i]] = (
-                self.base_year_projections_of_variables_adjusted_by_intertemporal_constants -
-                self._base_year_original_projections_of_variables_adjusted_by_intertemporal_constants) \
+                self.first_year_projections_of_variables_adjusted_by_intertemporal_constants -
+                self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants) \
                 / __class__.PERTURBATION
             i += 1
 
-        # Get the unperturbed values of the start year variables
+        # Get the unperturbed values of the variables in first projection year
 
         # Generate the baseline projection to use in computing partial derivatives
         # and to generate matrix values that are used later in projection processes.
@@ -1659,8 +1581,8 @@ through to the last projection year.</p>
         # Use newtons method adjustment to compute intertemporal constant values
         self._intertemporal_constants = self.sym_data.intertemporal_constant_variables
         values: np.ndarray = np.linalg.inv(self._partial_derivatives) @ \
-            (self.base_year_observed_values_of_variables_adjusted_by_intertemporal_constants -
-             self.base_year_original_projections_of_variables_adjusted_by_intertemporal_constants)
+            (self.first_year_observed_values_of_variables_adjusted_by_intertemporal_constants -
+             self.first_year_original_projections_of_variables_adjusted_by_intertemporal_constants)
         values = values.reshape((len(self.intertemporal_constants.index), 1))
         self._intertemporal_constants[&#39;constant_value&#39;] = values
         logging.info(&#34;The intertemporal constants have been calibrated.&#34;)</code></pre>
@@ -1679,9 +1601,54 @@ through to the last projection year.</p>
 </dl>
 <h3>Instance variables</h3>
 <dl>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.base_year_exo"><code class="name">var <span class="ident">base_year_exo</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.database"><code class="name">var <span class="ident">database</span> : <a title="gcubed.data.gdp_scaled_database.GDPScaledDatabase" href="../data/gdp_scaled_database.html#gcubed.data.gdp_scaled_database.GDPScaledDatabase">GDPScaledDatabase</a></code></dt>
 <dd>
-<div class="desc"><p>If the base year = t:
+<div class="desc"><p>The database used as the starting point for the projections.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def database(self) -&gt; GDPScaledDatabase:
+    &#34;&#34;&#34;
+    The database used as the starting point for the projections.
+    &#34;&#34;&#34;
+    return self._database</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.exo_first_year_projections"><code class="name">var <span class="ident">exo_first_year_projections</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>Projections of EXO_t in the first projection year</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def exo_first_year_projections(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Projections of EXO_t in the first projection year
+    &#34;&#34;&#34;
+    return self._exo_first_year_projections</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.exz_first_year_projections"><code class="name">var <span class="ident">exz_first_year_projections</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>Projections of ZE_t (exz) in the first projection year</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def exz_first_year_projections(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Projections of ZE_t (exz) in the first projection year
+    &#34;&#34;&#34;
+    return self._exz_first_year_projections</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_exo"><code class="name">var <span class="ident">first_projection_year_exo</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>If the first projection year = t:
 Returns the value of exo from the database as the value of exogenous variables (exo)
 in period t</p></div>
 <details class="source">
@@ -1689,101 +1656,171 @@ in period t</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def base_year_exo(self) -&gt; np.ndarray:
+def first_projection_year_exo(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    If the base year = t:
+    If the first projection year = t:
     Returns the value of exo from the database as the value of exogenous variables (exo)
     in period t
     &#34;&#34;&#34;
-    return self._base_year_exo</code></pre>
+    return self._first_projection_year_exo</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.base_year_exz"><code class="name">var <span class="ident">base_year_exz</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_exz"><code class="name">var <span class="ident">first_projection_year_exz</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>If the base year = t:
+<div class="desc"><p>If the first projection year = t:
 Returns the value of exz from the database as the value of ze in period t+1</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def base_year_exz(self) -&gt; np.ndarray:
+def first_projection_year_exz(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    If the base year = t:
+    If the first projection year = t:
     Returns the value of exz from the database as the value of ze in period t+1
     &#34;&#34;&#34;
-    return self._base_year_exz</code></pre>
+    return self._first_projection_year_exz</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.base_year_j1r"><code class="name">var <span class="ident">base_year_j1r</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_j1r"><code class="name">var <span class="ident">first_projection_year_j1r</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>If the base year = t:
+<div class="desc"><p>If the first projection year = t:
 Returns the value of j1r from the database as the value of j1 in period t+1</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def base_year_j1r(self) -&gt; np.ndarray:
+def first_projection_year_j1r(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    If the base year = t:
+    If the first projection year = t:
     Returns the value of j1r from the database as the value of j1 in period t+1
     &#34;&#34;&#34;
-    return self._base_year_j1r</code></pre>
+    return self._first_projection_year_j1r</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.base_year_lhs_values"><code class="name">var <span class="ident">base_year_lhs_values</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_x1r"><code class="name">var <span class="ident">first_projection_year_x1r</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>Values selected from base year SSF-generated LHS vectors using RHS vector values as inputs.</p></div>
+<div class="desc"><p>If the first projection year = t:
+Returns the value of x1r from the database as the value of x1 in period t+1</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def base_year_lhs_values(self) -&gt; np.ndarray:
+def first_projection_year_x1r(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    Values selected from base year SSF-generated LHS vectors using RHS vector values as inputs.
+    If the first projection year = t:
+    Returns the value of x1r from the database as the value of x1 in period t+1
     &#34;&#34;&#34;
-    return self._base_year_lhs_values</code></pre>
+    return self._first_projection_year_x1r</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.base_year_observed_values_of_variables_adjusted_by_intertemporal_constants"><code class="name">var <span class="ident">base_year_observed_values_of_variables_adjusted_by_intertemporal_constants</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_yjr"><code class="name">var <span class="ident">first_projection_year_yjr</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>Returns the observed values in the base projection year of the
+<div class="desc"><p>If the first projection year = t:
+Returns the value of yjr from the database as the value of j1 in period t</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def first_projection_year_yjr(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    If the first projection year = t:
+    Returns the value of yjr from the database as the value of j1 in period t
+    &#34;&#34;&#34;
+    return self._first_projection_year_yjr</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_yxr"><code class="name">var <span class="ident">first_projection_year_yxr</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>If the first projection year = t:
+Returns the value of yxr from the database as the value of x1 in period t</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def first_projection_year_yxr(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    If the first projection year = t:
+    Returns the value of yxr from the database as the value of x1 in period t
+    &#34;&#34;&#34;
+    return self._first_projection_year_yxr</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_z1r"><code class="name">var <span class="ident">first_projection_year_z1r</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>If the first projection year = t:
+Returns the value of z1r from the database as the value of z1 in period t</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def first_projection_year_z1r(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    If the first projection year = t:
+    Returns the value of z1r from the database as the value of z1 in period t
+    &#34;&#34;&#34;
+    return self._first_projection_year_z1r</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_zer"><code class="name">var <span class="ident">first_projection_year_zer</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>If the first projection year = t:
+Returns the value of zer from the database as the value of x1 in period t</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def first_projection_year_zer(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    If the first projection year = t:
+    Returns the value of zer from the database as the value of x1 in period t
+    &#34;&#34;&#34;
+    return self._first_projection_year_zer</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.first_year_observed_values_of_variables_adjusted_by_intertemporal_constants"><code class="name">var <span class="ident">first_year_observed_values_of_variables_adjusted_by_intertemporal_constants</span> : numpy.ndarray</code></dt>
+<dd>
+<div class="desc"><p>Returns the observed values, in the first projection year, of the
 variables that are adjusted by intertemporal constants.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def base_year_observed_values_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
+def first_year_observed_values_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    Returns the observed values in the base projection year of the 
+    Returns the observed values, in the first projection year, of the 
     variables that are adjusted by intertemporal constants.
     &#34;&#34;&#34;
-    return self._base_year_observed_values_of_variables_adjusted_by_intertemporal_constants</code></pre>
+    return self._first_year_observed_values_of_variables_adjusted_by_intertemporal_constants</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.base_year_original_projections_of_exz"><code class="name">var <span class="ident">base_year_original_projections_of_exz</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_exz"><code class="name">var <span class="ident">first_year_original_projections_of_exz</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>The base year projected values for the expected endogenous variables exz.
+<div class="desc"><p>The first year projected values for the expected endogenous variables exz.
 Required for benchmarking against Ox.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def base_year_original_projections_of_exz(self) -&gt; np.ndarray:
+def first_year_original_projections_of_exz(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    The base year projected values for the expected endogenous variables exz.
+    The first year projected values for the expected endogenous variables exz.
     Required for benchmarking against Ox.
     &#34;&#34;&#34;
-    return self._base_year_original_projections_of_exz</code></pre>
+    return self._first_year_original_projections_of_exz</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.base_year_original_projections_of_variables_adjusted_by_intertemporal_constants"><code class="name">var <span class="ident">base_year_original_projections_of_variables_adjusted_by_intertemporal_constants</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_variables_adjusted_by_intertemporal_constants"><code class="name">var <span class="ident">first_year_original_projections_of_variables_adjusted_by_intertemporal_constants</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>The base year projected values for the variables that are being
+<div class="desc"><p>The first year projected values for the variables that are being
 adjusted by the intertemporal constants.</p>
 <p>The values are those for the projection that is not adjusted by intertemporal constants.</p></div>
 <details class="source">
@@ -1791,84 +1828,84 @@ adjusted by the intertemporal constants.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def base_year_original_projections_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
+def first_year_original_projections_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    The base year projected values for the variables that are being
+    The first year projected values for the variables that are being
     adjusted by the intertemporal constants.
 
     The values are those for the projection that is not adjusted by intertemporal constants.
     &#34;&#34;&#34;
-    return self._base_year_original_projections_of_variables_adjusted_by_intertemporal_constants</code></pre>
+    return self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.base_year_original_projections_of_yjr"><code class="name">var <span class="ident">base_year_original_projections_of_yjr</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_yjr"><code class="name">var <span class="ident">first_year_original_projections_of_yjr</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>The base year projected values for the costate variables.
+<div class="desc"><p>The first year projected values for the costate variables.
 Required for benchmarking against Ox.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def base_year_original_projections_of_yjr(self) -&gt; np.ndarray:
+def first_year_original_projections_of_yjr(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    The base year projected values for the costate variables.
+    The first year projected values for the costate variables.
     Required for benchmarking against Ox.
     &#34;&#34;&#34;
-    return self._base_year_original_projections_of_yjr</code></pre>
+    return self._first_year_original_projections_of_yjr</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.base_year_original_projections_of_yxr"><code class="name">var <span class="ident">base_year_original_projections_of_yxr</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_yxr"><code class="name">var <span class="ident">first_year_original_projections_of_yxr</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>The base year projected values for the state variables.
+<div class="desc"><p>The first year projected values for the state variables.
 Required for benchmarking against Ox.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def base_year_original_projections_of_yxr(self) -&gt; np.ndarray:
+def first_year_original_projections_of_yxr(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    The base year projected values for the state variables.
+    The first year projected values for the state variables.
     Required for benchmarking against Ox.
     &#34;&#34;&#34;
-    return self._base_year_original_projections_of_yxr</code></pre>
+    return self._first_year_original_projections_of_yxr</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.base_year_original_projections_of_z1l"><code class="name">var <span class="ident">base_year_original_projections_of_z1l</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_z1l"><code class="name">var <span class="ident">first_year_original_projections_of_z1l</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>The base year projected values for the endogenous variables.
+<div class="desc"><p>The first year projected values for the endogenous variables.
 Required for benchmarking against Ox.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def base_year_original_projections_of_z1l(self) -&gt; np.ndarray:
+def first_year_original_projections_of_z1l(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    The base year projected values for the endogenous variables.
+    The first year projected values for the endogenous variables.
     Required for benchmarking against Ox.
     &#34;&#34;&#34;
-    return self._base_year_original_projections_of_z1l</code></pre>
+    return self._first_year_original_projections_of_z1l</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.base_year_projections_of_variables_adjusted_by_intertemporal_constants"><code class="name">var <span class="ident">base_year_projections_of_variables_adjusted_by_intertemporal_constants</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.first_year_projections_of_variables_adjusted_by_intertemporal_constants"><code class="name">var <span class="ident">first_year_projections_of_variables_adjusted_by_intertemporal_constants</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>Extract the values of the variables that have been changed by the perturbation to
+<div class="desc"><p>The values of the variables that have been changed by the perturbation to
 an intertemporal constant as part of computing partial derivatives for setting the
 intertemporal constants appropriately. These values are a column vector
-for the base project year only.</p></div>
+for the first projection year only.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def base_year_projections_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
+def first_year_projections_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    Extract the values of the variables that have been changed by the perturbation to 
+    The values of the variables that have been changed by the perturbation to 
     an intertemporal constant as part of computing partial derivatives for setting the
     intertemporal constants appropriately. These values are a column vector
-    for the base project year only.
+    for the first projection year only.
     &#34;&#34;&#34;
     result = np.zeros(shape=(len(self.sym_data.variables_adjusted_by_intertemporal_constants), 1))
     i = 0
@@ -1876,154 +1913,15 @@ def base_year_projections_of_variables_adjusted_by_intertemporal_constants(self)
         sequence = adjusted_variable_details[&#39;sequence&#39;]
         match adjusted_variable_details[&#39;var_type&#39;]:
             case &#39;x1l&#39;:
-                result[i, 0] = self.yxr_base_year_projections[[sequence]]
+                result[i, 0] = self.yxr_first_year_projections[[sequence]]
             case &#39;j1l&#39;:
-                result[i, 0] = self.yjr_base_year_projections[[sequence]]
+                result[i, 0] = self.yjr_first_year_projections[[sequence]]
             case &#39;zel&#39;:
-                result[i, 0] = self.exz_base_year_projections[[sequence]]
+                result[i, 0] = self.exz_first_year_projections[[sequence]]
             case &#39;z1l&#39;:
-                result[i, 0] = self.z1l_base_year_projections[[sequence]]
+                result[i, 0] = self.z1l_first_year_projections[[sequence]]
         i += 1
     return result</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.base_year_x1r"><code class="name">var <span class="ident">base_year_x1r</span> : numpy.ndarray</code></dt>
-<dd>
-<div class="desc"><p>If the base year = t:
-Returns the value of x1r from the database as the value of x1 in period t+1</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def base_year_x1r(self) -&gt; np.ndarray:
-    &#34;&#34;&#34;
-    If the base year = t:
-    Returns the value of x1r from the database as the value of x1 in period t+1
-    &#34;&#34;&#34;
-    return self._base_year_x1r</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.base_year_yjr"><code class="name">var <span class="ident">base_year_yjr</span> : numpy.ndarray</code></dt>
-<dd>
-<div class="desc"><p>If the base year = t:
-Returns the value of yjr from the database as the value of j1 in period t</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def base_year_yjr(self) -&gt; np.ndarray:
-    &#34;&#34;&#34;
-    If the base year = t:
-    Returns the value of yjr from the database as the value of j1 in period t
-    &#34;&#34;&#34;
-    return self._base_year_yjr</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.base_year_yxr"><code class="name">var <span class="ident">base_year_yxr</span> : numpy.ndarray</code></dt>
-<dd>
-<div class="desc"><p>If the base year = t:
-Returns the value of yxr from the database as the value of x1 in period t</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def base_year_yxr(self) -&gt; np.ndarray:
-    &#34;&#34;&#34;
-    If the base year = t:
-    Returns the value of yxr from the database as the value of x1 in period t
-    &#34;&#34;&#34;
-    return self._base_year_yxr</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.base_year_z1r"><code class="name">var <span class="ident">base_year_z1r</span> : numpy.ndarray</code></dt>
-<dd>
-<div class="desc"><p>If the base year = t:
-Returns the value of z1r from the database as the value of z1 in period t</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def base_year_z1r(self) -&gt; np.ndarray:
-    &#34;&#34;&#34;
-    If the base year = t:
-    Returns the value of z1r from the database as the value of z1 in period t
-    &#34;&#34;&#34;
-    return self._base_year_z1r</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.base_year_zer"><code class="name">var <span class="ident">base_year_zer</span> : numpy.ndarray</code></dt>
-<dd>
-<div class="desc"><p>If the base year = t:
-Returns the value of zer from the database as the value of x1 in period t</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def base_year_zer(self) -&gt; np.ndarray:
-    &#34;&#34;&#34;
-    If the base year = t:
-    Returns the value of zer from the database as the value of x1 in period t
-    &#34;&#34;&#34;
-    return self._base_year_zer</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.configuration"><code class="name">var <span class="ident">configuration</span> : <a title="gcubed.model_configuration.ModelConfiguration" href="../model_configuration.html#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a></code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def configuration(self) -&gt; ModelConfiguration:
-    return self.sym_data.configuration</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.database"><code class="name">var <span class="ident">database</span> : <a title="gcubed.data.gdp_scaled_database.GDPScaledDatabase" href="../data/gdp_scaled_database.html#gcubed.data.gdp_scaled_database.GDPScaledDatabase">GDPScaledDatabase</a></code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def database(self) -&gt; GDPScaledDatabase:
-    return self._database</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.exo_base_year_projections"><code class="name">var <span class="ident">exo_base_year_projections</span> : numpy.ndarray</code></dt>
-<dd>
-<div class="desc"><p>Projections of EXO_t in the base year</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def exo_base_year_projections(self) -&gt; np.ndarray:
-    &#34;&#34;&#34;
-    Projections of EXO_t in the base year
-    &#34;&#34;&#34;
-    return self._exo_base_year_projections</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.exz_base_year_projections"><code class="name">var <span class="ident">exz_base_year_projections</span> : numpy.ndarray</code></dt>
-<dd>
-<div class="desc"><p>Projections of ZE_t (exz) in the base year</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def exz_base_year_projections(self) -&gt; np.ndarray:
-    &#34;&#34;&#34;
-    Projections of ZE_t (exz) in the base year
-    &#34;&#34;&#34;
-    return self._exz_base_year_projections</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.intertemporal_constants"><code class="name">var <span class="ident">intertemporal_constants</span> : pandas.core.frame.DataFrame</code></dt>
@@ -2086,30 +1984,6 @@ def j1r_difference_from_ssf(self):
     return self._j1r_difference_from_ssf</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.model"><code class="name">var <span class="ident">model</span> : <a title="gcubed.model.Model" href="../model.html#gcubed.model.Model">Model</a></code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def model(self) -&gt; Model:
-    return self.state_space_form.model</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.parameters"><code class="name">var <span class="ident">parameters</span> : <a title="gcubed.model_parameters.parameters.Parameters" href="../model_parameters/parameters.html#gcubed.model_parameters.parameters.Parameters">Parameters</a></code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def parameters(self) -&gt; Parameters:
-    return self.model.parameters</code></pre>
-</details>
-</dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.partial_derivatives_wrt_intertemporal_constants"><code class="name">var <span class="ident">partial_derivatives_wrt_intertemporal_constants</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"></div>
@@ -2124,7 +1998,7 @@ def partial_derivatives_wrt_intertemporal_constants(self) -&gt; np.ndarray:
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.perturbed_variable_details"><code class="name">var <span class="ident">perturbed_variable_details</span> : pandas.core.series.Series</code></dt>
 <dd>
-<div class="desc"><p>Returns the var_map details of the variable being perturbed to as part of computing
+<div class="desc"><p>The var_map details of the variable being perturbed to as part of computing
 derivatives needed to set intertemporal constants or none if just doing projections.</p></div>
 <details class="source">
 <summary>
@@ -2133,7 +2007,7 @@ derivatives needed to set intertemporal constants or none if just doing projecti
 <pre><code class="python">@property
 def perturbed_variable_details(self) -&gt; pd.Series:
     &#34;&#34;&#34;
-    Returns the var_map details of the variable being perturbed to as part of computing
+    The var_map details of the variable being perturbed to as part of computing
     derivatives needed to set intertemporal constants or none if just doing projections.
     &#34;&#34;&#34;
     if hasattr(self, &#39;_perturbed_variable_details&#39;):
@@ -2193,48 +2067,12 @@ def reference_h3t_used_to_compute_intertemporal_constants(self) -&gt; np.ndarray
     return self._reference_h3t_used_to_compute_intertemporal_constants</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.stable_manifold"><code class="name">var <span class="ident">stable_manifold</span> : <a title="gcubed.stable_manifold.StableManifold" href="../stable_manifold.html#gcubed.stable_manifold.StableManifold">StableManifold</a></code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def stable_manifold(self) -&gt; StableManifold:
-    return self._stable_manifold</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.state_space_form"><code class="name">var <span class="ident">state_space_form</span> : <a title="gcubed.state_space_form.StateSpaceForm" href="../state_space_form.html#gcubed.state_space_form.StateSpaceForm">StateSpaceForm</a></code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def state_space_form(self) -&gt; StateSpaceForm:
-    return self.stable_manifold.ssf</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.sym_data"><code class="name">var <span class="ident">sym_data</span> : <a title="gcubed.sym_data.SymData" href="../sym_data.html#gcubed.sym_data.SymData">SymData</a></code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def sym_data(self) -&gt; SymData:
-    return self.model.sym_data</code></pre>
-</details>
-</dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.using_rolled_projections"><code class="name">var <span class="ident">using_rolled_projections</span> : bool</code></dt>
 <dd>
-<div class="desc"><p>Returns true if these projections are building on
-previous projections rather than just observed data.
-This affects how the baseline projections are set up in terms
-of the constants used</p></div>
+<div class="desc"><p>True if these projections are building on
+previous projections rather than just observed data.</p>
+<p>This affects how the baseline projections are set up in terms
+of the constants used.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2242,10 +2080,11 @@ of the constants used</p></div>
 <pre><code class="python">@property
 def using_rolled_projections(self) -&gt; bool:
     &#34;&#34;&#34;
-    Returns true if these projections are building on
+    True if these projections are building on
     previous projections rather than just observed data.
+
     This affects how the baseline projections are set up in terms
-    of the constants used 
+    of the constants used.
     &#34;&#34;&#34;
     return self.database.has_data_for_all_projection_years</code></pre>
 </details>
@@ -2299,34 +2138,34 @@ def x1r_difference_from_ssf(self):
     return self._x1r_difference_from_ssf</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.yjr_base_year_projections"><code class="name">var <span class="ident">yjr_base_year_projections</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.yjr_first_year_projections"><code class="name">var <span class="ident">yjr_first_year_projections</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>Projections of J1_t (yjr) in the base year</p></div>
+<div class="desc"><p>Projections of J1_t (yjr) in the first projection year</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def yjr_base_year_projections(self) -&gt; np.ndarray:
+def yjr_first_year_projections(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    Projections of J1_t (yjr) in the base year
+    Projections of J1_t (yjr) in the first projection year
     &#34;&#34;&#34;
-    return self._yjr_base_year_projections</code></pre>
+    return self._yjr_first_year_projections</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.yxr_base_year_projections"><code class="name">var <span class="ident">yxr_base_year_projections</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.yxr_first_year_projections"><code class="name">var <span class="ident">yxr_first_year_projections</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>Projections of X1_t (yxr) in the base year</p></div>
+<div class="desc"><p>Projections of X1_t (yxr) in the first projection year</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def yxr_base_year_projections(self) -&gt; np.ndarray:
+def yxr_first_year_projections(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    Projections of X1_t (yxr) in the base year
+    Projections of X1_t (yxr) in the first projection year
     &#34;&#34;&#34;
-    return self._yxr_base_year_projections</code></pre>
+    return self._yxr_first_year_projections</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.z1_constants"><code class="name">var <span class="ident">z1_constants</span> : numpy.ndarray</code></dt>
@@ -2362,19 +2201,19 @@ def z1_constants(self) -&gt; np.ndarray:
     return self._z1_constants</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.z1l_base_year_projections"><code class="name">var <span class="ident">z1l_base_year_projections</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.z1l_first_year_projections"><code class="name">var <span class="ident">z1l_first_year_projections</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>Projections of Z1_t (z1l=z1r) in the base year</p></div>
+<div class="desc"><p>Projections of Z1_t (z1l=z1r) in the first projection year</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def z1l_base_year_projections(self) -&gt; np.ndarray:
+def z1l_first_year_projections(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    Projections of Z1_t (z1l=z1r) in the base year
+    Projections of Z1_t (z1l=z1r) in the first projection year
     &#34;&#34;&#34;
-    return self._z1l_base_year_projections</code></pre>
+    return self._z1l_first_year_projections</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.z1r_difference_from_ssf"><code class="name">var <span class="ident">z1r_difference_from_ssf</span></code></dt>
@@ -2448,32 +2287,31 @@ def zer_difference_from_ssf(self):
 <ul class="hlist">
 <li><code><b><a title="gcubed.projections.projections.Projections" href="projections.html#gcubed.projections.projections.Projections">Projections</a></b></code>:
 <ul class="hlist">
-<li><code><a title="gcubed.projections.projections.Projections.base_year" href="projections.html#gcubed.projections.projections.Projections.base_year">base_year</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.c4t" href="projections.html#gcubed.projections.projections.Projections.c4t">c4t</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.compute_functions_of_future_exogenous_variables" href="projections.html#gcubed.projections.projections.Projections.compute_functions_of_future_exogenous_variables">compute_functions_of_future_exogenous_variables</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.configuration" href="projections.html#gcubed.projections.projections.Projections.configuration">configuration</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.database_projections" href="projections.html#gcubed.projections.projections.Projections.database_projections">database_projections</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.event_year" href="projections.html#gcubed.projections.projections.Projections.event_year">event_year</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exo_projections" href="projections.html#gcubed.projections.projections.Projections.exo_projections">exo_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exo_projections_as_dataframe" href="projections.html#gcubed.projections.projections.Projections.exo_projections_as_dataframe">exo_projections_as_dataframe</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exz_projections" href="projections.html#gcubed.projections.projections.Projections.exz_projections">exz_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exz_projections_as_dataframe" href="projections.html#gcubed.projections.projections.Projections.exz_projections_as_dataframe">exz_projections_as_dataframe</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.generate_database_projections" href="projections.html#gcubed.projections.projections.Projections.generate_database_projections">generate_database_projections</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.generate_projections" href="projections.html#gcubed.projections.projections.Projections.generate_projections">generate_projections</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.generate_publishable_projections" href="projections.html#gcubed.projections.projections.Projections.generate_publishable_projections">generate_publishable_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.first_projection_year" href="projections.html#gcubed.projections.projections.Projections.first_projection_year">first_projection_year</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.get_differences_between_projections" href="projections.html#gcubed.projections.projections.Projections.get_differences_between_projections">get_differences_between_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.graphable_projections" href="projections.html#gcubed.projections.projections.Projections.graphable_projections">graphable_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.h3t" href="projections.html#gcubed.projections.projections.Projections.h3t">h3t</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.is_baseline_projections" href="projections.html#gcubed.projections.projections.Projections.is_baseline_projections">is_baseline_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.last_projection_year" href="projections.html#gcubed.projections.projections.Projections.last_projection_year">last_projection_year</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.long_rate_constants" href="projections.html#gcubed.projections.projections.Projections.long_rate_constants">long_rate_constants</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.longrate_calculation" href="projections.html#gcubed.projections.projections.Projections.longrate_calculation">longrate_calculation</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.preceding_projection_years" href="projections.html#gcubed.projections.projections.Projections.preceding_projection_years">preceding_projection_years</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.preceding_projection_years_count" href="projections.html#gcubed.projections.projections.Projections.preceding_projection_years_count">preceding_projection_years_count</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.model" href="projections.html#gcubed.projections.projections.Projections.model">model</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.parameters" href="projections.html#gcubed.projections.projections.Projections.parameters">parameters</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.projection_years" href="projections.html#gcubed.projections.projections.Projections.projection_years">projection_years</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.projection_years_column_labels" href="projections.html#gcubed.projections.projections.Projections.projection_years_column_labels">projection_years_column_labels</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.projections" href="projections.html#gcubed.projections.projections.Projections.projections">projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.publishable_projections" href="projections.html#gcubed.projections.projections.Projections.publishable_projections">publishable_projections</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.simulation_data_columns" href="projections.html#gcubed.projections.projections.Projections.simulation_data_columns">simulation_data_columns</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.stable_manifold" href="projections.html#gcubed.projections.projections.Projections.stable_manifold">stable_manifold</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.state_space_form" href="projections.html#gcubed.projections.projections.Projections.state_space_form">state_space_form</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.sym_data" href="projections.html#gcubed.projections.projections.Projections.sym_data">sym_data</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.yjr_projections" href="projections.html#gcubed.projections.projections.Projections.yjr_projections">yjr_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.yjr_projections_as_dataframe" href="projections.html#gcubed.projections.projections.Projections.yjr_projections_as_dataframe">yjr_projections_as_dataframe</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.yxr_initial_values" href="projections.html#gcubed.projections.projections.Projections.yxr_initial_values">yxr_initial_values</a></code></li>
@@ -2508,45 +2346,38 @@ def zer_difference_from_ssf(self):
 <h4><code><a title="gcubed.projections.baseline_projections.BaselineProjections" href="#gcubed.projections.baseline_projections.BaselineProjections">BaselineProjections</a></code></h4>
 <ul class="">
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.PERTURBATION" href="#gcubed.projections.baseline_projections.BaselineProjections.PERTURBATION">PERTURBATION</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.base_year_exo" href="#gcubed.projections.baseline_projections.BaselineProjections.base_year_exo">base_year_exo</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.base_year_exz" href="#gcubed.projections.baseline_projections.BaselineProjections.base_year_exz">base_year_exz</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.base_year_j1r" href="#gcubed.projections.baseline_projections.BaselineProjections.base_year_j1r">base_year_j1r</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.base_year_lhs_values" href="#gcubed.projections.baseline_projections.BaselineProjections.base_year_lhs_values">base_year_lhs_values</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.base_year_observed_values_of_variables_adjusted_by_intertemporal_constants" href="#gcubed.projections.baseline_projections.BaselineProjections.base_year_observed_values_of_variables_adjusted_by_intertemporal_constants">base_year_observed_values_of_variables_adjusted_by_intertemporal_constants</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.base_year_original_projections_of_exz" href="#gcubed.projections.baseline_projections.BaselineProjections.base_year_original_projections_of_exz">base_year_original_projections_of_exz</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.base_year_original_projections_of_variables_adjusted_by_intertemporal_constants" href="#gcubed.projections.baseline_projections.BaselineProjections.base_year_original_projections_of_variables_adjusted_by_intertemporal_constants">base_year_original_projections_of_variables_adjusted_by_intertemporal_constants</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.base_year_original_projections_of_yjr" href="#gcubed.projections.baseline_projections.BaselineProjections.base_year_original_projections_of_yjr">base_year_original_projections_of_yjr</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.base_year_original_projections_of_yxr" href="#gcubed.projections.baseline_projections.BaselineProjections.base_year_original_projections_of_yxr">base_year_original_projections_of_yxr</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.base_year_original_projections_of_z1l" href="#gcubed.projections.baseline_projections.BaselineProjections.base_year_original_projections_of_z1l">base_year_original_projections_of_z1l</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.base_year_projections_of_variables_adjusted_by_intertemporal_constants" href="#gcubed.projections.baseline_projections.BaselineProjections.base_year_projections_of_variables_adjusted_by_intertemporal_constants">base_year_projections_of_variables_adjusted_by_intertemporal_constants</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.base_year_x1r" href="#gcubed.projections.baseline_projections.BaselineProjections.base_year_x1r">base_year_x1r</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.base_year_yjr" href="#gcubed.projections.baseline_projections.BaselineProjections.base_year_yjr">base_year_yjr</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.base_year_yxr" href="#gcubed.projections.baseline_projections.BaselineProjections.base_year_yxr">base_year_yxr</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.base_year_z1r" href="#gcubed.projections.baseline_projections.BaselineProjections.base_year_z1r">base_year_z1r</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.base_year_zer" href="#gcubed.projections.baseline_projections.BaselineProjections.base_year_zer">base_year_zer</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.configuration" href="#gcubed.projections.baseline_projections.BaselineProjections.configuration">configuration</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.database" href="#gcubed.projections.baseline_projections.BaselineProjections.database">database</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.exo_base_year_projections" href="#gcubed.projections.baseline_projections.BaselineProjections.exo_base_year_projections">exo_base_year_projections</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.exz_base_year_projections" href="#gcubed.projections.baseline_projections.BaselineProjections.exz_base_year_projections">exz_base_year_projections</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.exo_first_year_projections" href="#gcubed.projections.baseline_projections.BaselineProjections.exo_first_year_projections">exo_first_year_projections</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.exz_first_year_projections" href="#gcubed.projections.baseline_projections.BaselineProjections.exz_first_year_projections">exz_first_year_projections</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_exo" href="#gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_exo">first_projection_year_exo</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_exz" href="#gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_exz">first_projection_year_exz</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_j1r" href="#gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_j1r">first_projection_year_j1r</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_x1r" href="#gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_x1r">first_projection_year_x1r</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_yjr" href="#gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_yjr">first_projection_year_yjr</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_yxr" href="#gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_yxr">first_projection_year_yxr</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_z1r" href="#gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_z1r">first_projection_year_z1r</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_zer" href="#gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_zer">first_projection_year_zer</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.first_year_observed_values_of_variables_adjusted_by_intertemporal_constants" href="#gcubed.projections.baseline_projections.BaselineProjections.first_year_observed_values_of_variables_adjusted_by_intertemporal_constants">first_year_observed_values_of_variables_adjusted_by_intertemporal_constants</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_exz" href="#gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_exz">first_year_original_projections_of_exz</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_variables_adjusted_by_intertemporal_constants" href="#gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_variables_adjusted_by_intertemporal_constants">first_year_original_projections_of_variables_adjusted_by_intertemporal_constants</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_yjr" href="#gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_yjr">first_year_original_projections_of_yjr</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_yxr" href="#gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_yxr">first_year_original_projections_of_yxr</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_z1l" href="#gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_z1l">first_year_original_projections_of_z1l</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.first_year_projections_of_variables_adjusted_by_intertemporal_constants" href="#gcubed.projections.baseline_projections.BaselineProjections.first_year_projections_of_variables_adjusted_by_intertemporal_constants">first_year_projections_of_variables_adjusted_by_intertemporal_constants</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.intertemporal_constants" href="#gcubed.projections.baseline_projections.BaselineProjections.intertemporal_constants">intertemporal_constants</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.j1_constants" href="#gcubed.projections.baseline_projections.BaselineProjections.j1_constants">j1_constants</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.j1r_difference_from_ssf" href="#gcubed.projections.baseline_projections.BaselineProjections.j1r_difference_from_ssf">j1r_difference_from_ssf</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.model" href="#gcubed.projections.baseline_projections.BaselineProjections.model">model</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.parameters" href="#gcubed.projections.baseline_projections.BaselineProjections.parameters">parameters</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.partial_derivatives_wrt_intertemporal_constants" href="#gcubed.projections.baseline_projections.BaselineProjections.partial_derivatives_wrt_intertemporal_constants">partial_derivatives_wrt_intertemporal_constants</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.perturbed_variable_details" href="#gcubed.projections.baseline_projections.BaselineProjections.perturbed_variable_details">perturbed_variable_details</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.reference_c4t_used_to_compute_intertemporal_constants" href="#gcubed.projections.baseline_projections.BaselineProjections.reference_c4t_used_to_compute_intertemporal_constants">reference_c4t_used_to_compute_intertemporal_constants</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.reference_h3t_used_to_compute_intertemporal_constants" href="#gcubed.projections.baseline_projections.BaselineProjections.reference_h3t_used_to_compute_intertemporal_constants">reference_h3t_used_to_compute_intertemporal_constants</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.stable_manifold" href="#gcubed.projections.baseline_projections.BaselineProjections.stable_manifold">stable_manifold</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.state_space_form" href="#gcubed.projections.baseline_projections.BaselineProjections.state_space_form">state_space_form</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.sym_data" href="#gcubed.projections.baseline_projections.BaselineProjections.sym_data">sym_data</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.using_rolled_projections" href="#gcubed.projections.baseline_projections.BaselineProjections.using_rolled_projections">using_rolled_projections</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.x1_constants" href="#gcubed.projections.baseline_projections.BaselineProjections.x1_constants">x1_constants</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.x1r_difference_from_ssf" href="#gcubed.projections.baseline_projections.BaselineProjections.x1r_difference_from_ssf">x1r_difference_from_ssf</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.yjr_base_year_projections" href="#gcubed.projections.baseline_projections.BaselineProjections.yjr_base_year_projections">yjr_base_year_projections</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.yxr_base_year_projections" href="#gcubed.projections.baseline_projections.BaselineProjections.yxr_base_year_projections">yxr_base_year_projections</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.yjr_first_year_projections" href="#gcubed.projections.baseline_projections.BaselineProjections.yjr_first_year_projections">yjr_first_year_projections</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.yxr_first_year_projections" href="#gcubed.projections.baseline_projections.BaselineProjections.yxr_first_year_projections">yxr_first_year_projections</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.z1_constants" href="#gcubed.projections.baseline_projections.BaselineProjections.z1_constants">z1_constants</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.z1l_base_year_projections" href="#gcubed.projections.baseline_projections.BaselineProjections.z1l_base_year_projections">z1l_base_year_projections</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.z1l_first_year_projections" href="#gcubed.projections.baseline_projections.BaselineProjections.z1l_first_year_projections">z1l_first_year_projections</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.z1r_difference_from_ssf" href="#gcubed.projections.baseline_projections.BaselineProjections.z1r_difference_from_ssf">z1r_difference_from_ssf</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.ze_constants" href="#gcubed.projections.baseline_projections.BaselineProjections.ze_constants">ze_constants</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.zer_difference_from_ssf" href="#gcubed.projections.baseline_projections.BaselineProjections.zer_difference_from_ssf">zer_difference_from_ssf</a></code></li>
