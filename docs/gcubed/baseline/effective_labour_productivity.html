@@ -39,6 +39,11 @@ from gcubed.baseline.productivity import Productivity
 from gcubed.baseline.population import Population
 import decimal
 
+# Ensure pdoc generated API documentation includes the following methods.
+__pdoc__ = {}
+__pdoc__[&#39;EffectiveLabourProductivity._configure_ROGY&#39;] = True
+
+
 class EffectiveLabourProductivity(Base):
     &#34;&#34;&#34;
     Sets up effective labour productivity projections 
@@ -58,7 +63,7 @@ class EffectiveLabourProductivity(Base):
 
         self.__configure_effective_labour_productivity()
 
-        self.__configure_ROGY()
+        self._configure_ROGY()
 
         self.__validate()
 
@@ -96,16 +101,15 @@ class EffectiveLabourProductivity(Base):
     def rogy(self) -&gt; pd.DataFrame:
         return self._rogy
 
-
     @property
     def us_longrun_effective_labour_index(self) -&gt; pd.DataFrame:
         return self._us_longrun_effective_labour_index
 
     @property
-    def effective_productivity_growth_rates(self, region:str) -&gt; pd.DataFrame:
+    def effective_productivity_growth_rates(self, region: str) -&gt; pd.DataFrame:
         return self._effective_productivity_growth_rates
 
-    def effective_productivity_deviations(self, region:str) -&gt; pd.DataFrame:
+    def effective_productivity_deviations(self, region: str) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
         The data in these data frames should match the Ox-generated product.csv data 
         for SHL, SHLY and SHLZ for each region.
@@ -154,12 +158,15 @@ class EffectiveLabourProductivity(Base):
         create an index that has a simple growth rate that is equal to the value 
         of the labgrow parameter for the US.
         &#34;&#34;&#34;
-        us_long_run_growth_rate: float = float(self.parameters.parameter(parameter_name=&#34;labgrow&#34;).loc[:, self.sym_data.us_region].values[0])
-        us_long_run_effective_labour_index: pd.DataFrame = self.productivity._us_productivity_growth_rates.iloc[[0], :].copy()
+        us_long_run_growth_rate: float = float(
+            self.parameters.parameter(parameter_name=&#34;labgrow&#34;).loc[:, self.sym_data.us_region].values[0])
+        us_long_run_effective_labour_index: pd.DataFrame = self.productivity._us_productivity_growth_rates.iloc[[0],
+                                                           :].copy()
 
         us_long_run_effective_labour_index.iloc[:, 0] = 1.0
         for year_index in range(1, len(us_long_run_effective_labour_index.columns)):
-            us_long_run_effective_labour_index.iloc[:, year_index] = float(us_long_run_effective_labour_index.iloc[:, (year_index-1)].values[0]) * (1+us_long_run_growth_rate)
+            us_long_run_effective_labour_index.iloc[:, year_index] = float(
+                us_long_run_effective_labour_index.iloc[:, (year_index - 1)].values[0]) * (1 + us_long_run_growth_rate)
         self._us_longrun_effective_labour_index = us_long_run_effective_labour_index
 
     def __configure_effective_labour_productivity(self):
@@ -175,8 +182,8 @@ class EffectiveLabourProductivity(Base):
             # logging.debug(f&#34;{region} pop growth\n{self.population.population_growth_rates.loc[region,:]}&#34;)
             effective_productivity_growth_rates: pd.DataFrame = \
                 self.productivity.productivity_growth_rates(region).copy() + \
-                self.population.population_growth_rates.loc[region,:].copy()
-            
+                self.population.population_growth_rates.loc[region, :].copy()
+
             effective_productivity_indices: pd.DataFrame = effective_productivity_growth_rates.copy()
             effective_productivity_deviations: pd.DataFrame = effective_productivity_growth_rates.copy()
 
@@ -184,24 +191,30 @@ class EffectiveLabourProductivity(Base):
             effective_productivity_indices.iloc[:, 0] = 1
             effective_productivity_deviations.iloc[:, 0] = 0
             for year_index in range(1, len(effective_productivity_indices.columns)):
-                
                 effective_productivity_indices.iloc[:, year_index] = \
-                    effective_productivity_indices.iloc[:, (year_index-1)] * \
-                    (1+effective_productivity_growth_rates.iloc[:, year_index])
-                
+                    effective_productivity_indices.iloc[:, (year_index - 1)] * \
+                    (1 + effective_productivity_growth_rates.iloc[:, year_index])
+
                 effective_productivity_deviations.iloc[:, year_index] = 100 * \
-                    (effective_productivity_indices.iloc[:, year_index] / \
-                        float(self.us_longrun_effective_labour_index.iloc[:,year_index].values[0]) - 1)
+                                                                        (effective_productivity_indices.iloc[:,
+                                                                         year_index] / \
+                                                                         float(
+                                                                             self.us_longrun_effective_labour_index.iloc[
+                                                                             :, year_index].values[0]) - 1)
 
             # logging.debug(f&#34;{region} deviations\n{effective_productivity_deviations}&#34;)
 
-            effective_productivity_deviations_in_first_projection_year: np.ndarray = effective_productivity_deviations.loc[:, [str(self.configuration.first_projection_year)]].copy().to_numpy()
-            effective_productivity_deviations.iloc[:,:] = effective_productivity_deviations.to_numpy() - effective_productivity_deviations_in_first_projection_year
+            effective_productivity_deviations_in_first_projection_year: np.ndarray = effective_productivity_deviations.loc[
+                                                                                     :, [
+                                                                                            str(self.configuration.first_projection_year)]].copy().to_numpy()
+            effective_productivity_deviations.iloc[:,
+            :] = effective_productivity_deviations.to_numpy() - effective_productivity_deviations_in_first_projection_year
             self._effective_productivity_deviations[region] = effective_productivity_deviations
 
-
-    def __configure_ROGY(self):
+    def _configure_ROGY(self):
         &#34;&#34;&#34;
+        **This function is intended for gcubed module internal use. It is exposed only for documentation purposes.**
+
         Get OUP by region/sector for 2003 for model J and model R and 2017 for model G.).
         Get total OUP for each sector (row) and region (column).
         Convert to national weights by dividing each OUP value by the total of OUP for the corresponding region.
@@ -225,16 +238,19 @@ class EffectiveLabourProductivity(Base):
         Then take the t minus t-1 difference of that dataframe, using zeros for t-1 for the start year.
         weight the change in the values for each year, from the previous year, using the weights computed from OUP for the region we are calculating data for.
         &#34;&#34;&#34;
-        self._rogy: pd.DataFrame = pd.DataFrame(0, index=self.sym_data.regions_members, columns=self.configuration.projection_years_column_labels)
+        self._rogy: pd.DataFrame = pd.DataFrame(0, index=self.sym_data.regions_members,
+                                                columns=self.configuration.projection_years_column_labels)
 
         # Get the OUP data for each region/sector combination to create the weights dataframe
-        weights: pd.DataFrame = pd.DataFrame(0, index=self.sym_data.sectors_members, columns=self.sym_data.regions_members)
+        weights: pd.DataFrame = pd.DataFrame(0, index=self.sym_data.sectors_members,
+                                             columns=self.sym_data.regions_members)
 
         decimal.getcontext().prec = 10
         for region in self.sym_data.regions_members:
-            oup: pd.DataFrame = self.calibration_database.get_data(name_regular_expression=f&#34;^OUP\(.*{region}.*$&#34;, years=self.configuration.first_projection_year)
+            oup: pd.DataFrame = self.calibration_database.get_data(name_regular_expression=f&#34;^OUP\(.*{region}.*$&#34;,
+                                                                   years=self.configuration.first_projection_year)
             region_weights = oup / oup.sum(axis=0)
-            w = region_weights.to_numpy().reshape(1,self.sym_data.sectors_count)
+            w = region_weights.to_numpy().reshape(1, self.sym_data.sectors_count)
             weights.loc[:, [region]] = np.transpose(w)
 
             # Get the US SHL data - rows are sectors and columns are years from start year to end year.
@@ -246,11 +262,11 @@ class EffectiveLabourProductivity(Base):
 
             # Calculate the first difference in the US SHL data.
             lagged_region_SHL = region_SHL.copy().drop(str(self.configuration.last_projection_year), axis=1)
-            lagged_region_SHL.insert(loc=0, column=str(self.configuration.first_projection_year-1), value = 0)
+            lagged_region_SHL.insert(loc=0, column=str(self.configuration.first_projection_year - 1), value=0)
             lagged_region_SHL.columns = region_SHL.columns
             region_SHL_first_difference = (region_SHL - lagged_region_SHL).to_numpy()
             self._rogy.loc[[region], :] = w @ region_SHL_first_difference
-            
+
         self._weights = weights</code></pre>
 </details>
 </section>
@@ -297,7 +313,7 @@ for all regions and all sectors within each region including sector Y and sector
 
         self.__configure_effective_labour_productivity()
 
-        self.__configure_ROGY()
+        self._configure_ROGY()
 
         self.__validate()
 
@@ -335,16 +351,15 @@ for all regions and all sectors within each region including sector Y and sector
     def rogy(self) -&gt; pd.DataFrame:
         return self._rogy
 
-
     @property
     def us_longrun_effective_labour_index(self) -&gt; pd.DataFrame:
         return self._us_longrun_effective_labour_index
 
     @property
-    def effective_productivity_growth_rates(self, region:str) -&gt; pd.DataFrame:
+    def effective_productivity_growth_rates(self, region: str) -&gt; pd.DataFrame:
         return self._effective_productivity_growth_rates
 
-    def effective_productivity_deviations(self, region:str) -&gt; pd.DataFrame:
+    def effective_productivity_deviations(self, region: str) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
         The data in these data frames should match the Ox-generated product.csv data 
         for SHL, SHLY and SHLZ for each region.
@@ -393,12 +408,15 @@ for all regions and all sectors within each region including sector Y and sector
         create an index that has a simple growth rate that is equal to the value 
         of the labgrow parameter for the US.
         &#34;&#34;&#34;
-        us_long_run_growth_rate: float = float(self.parameters.parameter(parameter_name=&#34;labgrow&#34;).loc[:, self.sym_data.us_region].values[0])
-        us_long_run_effective_labour_index: pd.DataFrame = self.productivity._us_productivity_growth_rates.iloc[[0], :].copy()
+        us_long_run_growth_rate: float = float(
+            self.parameters.parameter(parameter_name=&#34;labgrow&#34;).loc[:, self.sym_data.us_region].values[0])
+        us_long_run_effective_labour_index: pd.DataFrame = self.productivity._us_productivity_growth_rates.iloc[[0],
+                                                           :].copy()
 
         us_long_run_effective_labour_index.iloc[:, 0] = 1.0
         for year_index in range(1, len(us_long_run_effective_labour_index.columns)):
-            us_long_run_effective_labour_index.iloc[:, year_index] = float(us_long_run_effective_labour_index.iloc[:, (year_index-1)].values[0]) * (1+us_long_run_growth_rate)
+            us_long_run_effective_labour_index.iloc[:, year_index] = float(
+                us_long_run_effective_labour_index.iloc[:, (year_index - 1)].values[0]) * (1 + us_long_run_growth_rate)
         self._us_longrun_effective_labour_index = us_long_run_effective_labour_index
 
     def __configure_effective_labour_productivity(self):
@@ -414,8 +432,8 @@ for all regions and all sectors within each region including sector Y and sector
             # logging.debug(f&#34;{region} pop growth\n{self.population.population_growth_rates.loc[region,:]}&#34;)
             effective_productivity_growth_rates: pd.DataFrame = \
                 self.productivity.productivity_growth_rates(region).copy() + \
-                self.population.population_growth_rates.loc[region,:].copy()
-            
+                self.population.population_growth_rates.loc[region, :].copy()
+
             effective_productivity_indices: pd.DataFrame = effective_productivity_growth_rates.copy()
             effective_productivity_deviations: pd.DataFrame = effective_productivity_growth_rates.copy()
 
@@ -423,24 +441,30 @@ for all regions and all sectors within each region including sector Y and sector
             effective_productivity_indices.iloc[:, 0] = 1
             effective_productivity_deviations.iloc[:, 0] = 0
             for year_index in range(1, len(effective_productivity_indices.columns)):
-                
                 effective_productivity_indices.iloc[:, year_index] = \
-                    effective_productivity_indices.iloc[:, (year_index-1)] * \
-                    (1+effective_productivity_growth_rates.iloc[:, year_index])
-                
+                    effective_productivity_indices.iloc[:, (year_index - 1)] * \
+                    (1 + effective_productivity_growth_rates.iloc[:, year_index])
+
                 effective_productivity_deviations.iloc[:, year_index] = 100 * \
-                    (effective_productivity_indices.iloc[:, year_index] / \
-                        float(self.us_longrun_effective_labour_index.iloc[:,year_index].values[0]) - 1)
+                                                                        (effective_productivity_indices.iloc[:,
+                                                                         year_index] / \
+                                                                         float(
+                                                                             self.us_longrun_effective_labour_index.iloc[
+                                                                             :, year_index].values[0]) - 1)
 
             # logging.debug(f&#34;{region} deviations\n{effective_productivity_deviations}&#34;)
 
-            effective_productivity_deviations_in_first_projection_year: np.ndarray = effective_productivity_deviations.loc[:, [str(self.configuration.first_projection_year)]].copy().to_numpy()
-            effective_productivity_deviations.iloc[:,:] = effective_productivity_deviations.to_numpy() - effective_productivity_deviations_in_first_projection_year
+            effective_productivity_deviations_in_first_projection_year: np.ndarray = effective_productivity_deviations.loc[
+                                                                                     :, [
+                                                                                            str(self.configuration.first_projection_year)]].copy().to_numpy()
+            effective_productivity_deviations.iloc[:,
+            :] = effective_productivity_deviations.to_numpy() - effective_productivity_deviations_in_first_projection_year
             self._effective_productivity_deviations[region] = effective_productivity_deviations
 
-
-    def __configure_ROGY(self):
+    def _configure_ROGY(self):
         &#34;&#34;&#34;
+        **This function is intended for gcubed module internal use. It is exposed only for documentation purposes.**
+
         Get OUP by region/sector for 2003 for model J and model R and 2017 for model G.).
         Get total OUP for each sector (row) and region (column).
         Convert to national weights by dividing each OUP value by the total of OUP for the corresponding region.
@@ -464,16 +488,19 @@ for all regions and all sectors within each region including sector Y and sector
         Then take the t minus t-1 difference of that dataframe, using zeros for t-1 for the start year.
         weight the change in the values for each year, from the previous year, using the weights computed from OUP for the region we are calculating data for.
         &#34;&#34;&#34;
-        self._rogy: pd.DataFrame = pd.DataFrame(0, index=self.sym_data.regions_members, columns=self.configuration.projection_years_column_labels)
+        self._rogy: pd.DataFrame = pd.DataFrame(0, index=self.sym_data.regions_members,
+                                                columns=self.configuration.projection_years_column_labels)
 
         # Get the OUP data for each region/sector combination to create the weights dataframe
-        weights: pd.DataFrame = pd.DataFrame(0, index=self.sym_data.sectors_members, columns=self.sym_data.regions_members)
+        weights: pd.DataFrame = pd.DataFrame(0, index=self.sym_data.sectors_members,
+                                             columns=self.sym_data.regions_members)
 
         decimal.getcontext().prec = 10
         for region in self.sym_data.regions_members:
-            oup: pd.DataFrame = self.calibration_database.get_data(name_regular_expression=f&#34;^OUP\(.*{region}.*$&#34;, years=self.configuration.first_projection_year)
+            oup: pd.DataFrame = self.calibration_database.get_data(name_regular_expression=f&#34;^OUP\(.*{region}.*$&#34;,
+                                                                   years=self.configuration.first_projection_year)
             region_weights = oup / oup.sum(axis=0)
-            w = region_weights.to_numpy().reshape(1,self.sym_data.sectors_count)
+            w = region_weights.to_numpy().reshape(1, self.sym_data.sectors_count)
             weights.loc[:, [region]] = np.transpose(w)
 
             # Get the US SHL data - rows are sectors and columns are years from start year to end year.
@@ -485,11 +512,11 @@ for all regions and all sectors within each region including sector Y and sector
 
             # Calculate the first difference in the US SHL data.
             lagged_region_SHL = region_SHL.copy().drop(str(self.configuration.last_projection_year), axis=1)
-            lagged_region_SHL.insert(loc=0, column=str(self.configuration.first_projection_year-1), value = 0)
+            lagged_region_SHL.insert(loc=0, column=str(self.configuration.first_projection_year - 1), value=0)
             lagged_region_SHL.columns = region_SHL.columns
             region_SHL_first_difference = (region_SHL - lagged_region_SHL).to_numpy()
             self._rogy.loc[[region], :] = w @ region_SHL_first_difference
-            
+
         self._weights = weights</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -530,7 +557,7 @@ def configuration(self):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def effective_productivity_growth_rates(self, region:str) -&gt; pd.DataFrame:
+def effective_productivity_growth_rates(self, region: str) -&gt; pd.DataFrame:
     return self._effective_productivity_growth_rates</code></pre>
 </details>
 </dd>
@@ -624,6 +651,94 @@ def weights(self) -&gt; pd.DataFrame:
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="gcubed.baseline.effective_labour_productivity.EffectiveLabourProductivity._configure_ROGY"><code class="name flex">
+<span>def <span class="ident">_configure_ROGY</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p><strong>This function is intended for gcubed module internal use. It is exposed only for documentation purposes.</strong></p>
+<p>Get OUP by region/sector for 2003 for model J and model R and 2017 for model G.).
+Get total OUP for each sector (row) and region (column).
+Convert to national weights by dividing each OUP value by the total of OUP for the corresponding region.
+Expose this dataframe as "weights" for comparison to the weights.csv file from Ox.</p>
+<p>Create the ROGY data by implementing following OX code:
+decl prodg = zeros(countopt,columns(product));
+k=2;
+for(i=1;i&lt;=countopt;++i)
+{
+// prodg for region i over the projection years from start to end is equal to &hellip;
+prodg[i][8:columns(product)] = </p>
+<pre><code>// the weighted average (using weights from OUP) of the data in product
+(weights[][i]')*(product[k:k+numsect-2-1][8:columns(product)]- product[k:k+numsect-2-1][7:columns(product)-1]);
+        k=k+numsect;
+}
+</code></pre>
+<p>In lay-terms, get the start year to end year data for the US sectors (excluding Y and Z) for SHL which
+is available from the productivity_shocks.effective_productivity_deviations["UU"] throwing away the last 2 rows of that dataframe.
+Then take the t minus t-1 difference of that dataframe, using zeros for t-1 for the start year.
+weight the change in the values for each year, from the previous year, using the weights computed from OUP for the region we are calculating data for.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def _configure_ROGY(self):
+    &#34;&#34;&#34;
+    **This function is intended for gcubed module internal use. It is exposed only for documentation purposes.**
+
+    Get OUP by region/sector for 2003 for model J and model R and 2017 for model G.).
+    Get total OUP for each sector (row) and region (column).
+    Convert to national weights by dividing each OUP value by the total of OUP for the corresponding region.
+    Expose this dataframe as &#34;weights&#34; for comparison to the weights.csv file from Ox.
+    
+    Create the ROGY data by implementing following OX code:
+    decl prodg = zeros(countopt,columns(product));
+    k=2;
+        for(i=1;i&lt;=countopt;++i)
+        {
+        // prodg for region i over the projection years from start to end is equal to ...
+        prodg[i][8:columns(product)] = 
+        
+        // the weighted average (using weights from OUP) of the data in product
+        (weights[][i]&#39;)*(product[k:k+numsect-2-1][8:columns(product)]- product[k:k+numsect-2-1][7:columns(product)-1]);
+                k=k+numsect;
+        }
+
+    In lay-terms, get the start year to end year data for the US sectors (excluding Y and Z) for SHL which
+    is available from the productivity_shocks.effective_productivity_deviations[&#34;UU&#34;] throwing away the last 2 rows of that dataframe.
+    Then take the t minus t-1 difference of that dataframe, using zeros for t-1 for the start year.
+    weight the change in the values for each year, from the previous year, using the weights computed from OUP for the region we are calculating data for.
+    &#34;&#34;&#34;
+    self._rogy: pd.DataFrame = pd.DataFrame(0, index=self.sym_data.regions_members,
+                                            columns=self.configuration.projection_years_column_labels)
+
+    # Get the OUP data for each region/sector combination to create the weights dataframe
+    weights: pd.DataFrame = pd.DataFrame(0, index=self.sym_data.sectors_members,
+                                         columns=self.sym_data.regions_members)
+
+    decimal.getcontext().prec = 10
+    for region in self.sym_data.regions_members:
+        oup: pd.DataFrame = self.calibration_database.get_data(name_regular_expression=f&#34;^OUP\(.*{region}.*$&#34;,
+                                                               years=self.configuration.first_projection_year)
+        region_weights = oup / oup.sum(axis=0)
+        w = region_weights.to_numpy().reshape(1, self.sym_data.sectors_count)
+        weights.loc[:, [region]] = np.transpose(w)
+
+        # Get the US SHL data - rows are sectors and columns are years from start year to end year.
+        region_SHL = self.effective_productivity_deviations(region=region).copy()
+
+        # Obsolete code: see https://bitbucket.org/msgpl/gcubedcode/issues/140/prodmat-file-for-20r-is-missing-some
+        # # Remove the two capital sectors Y and Z.
+        # region_SHL = region_SHL.drop(self.sym_data.capital_sectors_members, axis=0)
+
+        # Calculate the first difference in the US SHL data.
+        lagged_region_SHL = region_SHL.copy().drop(str(self.configuration.last_projection_year), axis=1)
+        lagged_region_SHL.insert(loc=0, column=str(self.configuration.first_projection_year - 1), value=0)
+        lagged_region_SHL.columns = region_SHL.columns
+        region_SHL_first_difference = (region_SHL - lagged_region_SHL).to_numpy()
+        self._rogy.loc[[region], :] = w @ region_SHL_first_difference
+
+    self._weights = weights</code></pre>
+</details>
+</dd>
 <dt id="gcubed.baseline.effective_labour_productivity.EffectiveLabourProductivity.effective_productivity_deviations"><code class="name flex">
 <span>def <span class="ident">effective_productivity_deviations</span></span>(<span>self, region: str) ‑> pandas.core.frame.DataFrame</span>
 </code></dt>
@@ -658,7 +773,7 @@ SHLZ(PP)</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def effective_productivity_deviations(self, region:str) -&gt; pd.DataFrame:
+<pre><code class="python">def effective_productivity_deviations(self, region: str) -&gt; pd.DataFrame:
     &#34;&#34;&#34;
     The data in these data frames should match the Ox-generated product.csv data 
     for SHL, SHLY and SHLZ for each region.
@@ -725,6 +840,7 @@ SHLZ(PP)</p></div>
 <li>
 <h4><code><a title="gcubed.baseline.effective_labour_productivity.EffectiveLabourProductivity" href="#gcubed.baseline.effective_labour_productivity.EffectiveLabourProductivity">EffectiveLabourProductivity</a></code></h4>
 <ul class="">
+<li><code><a title="gcubed.baseline.effective_labour_productivity.EffectiveLabourProductivity._configure_ROGY" href="#gcubed.baseline.effective_labour_productivity.EffectiveLabourProductivity._configure_ROGY">_configure_ROGY</a></code></li>
 <li><code><a title="gcubed.baseline.effective_labour_productivity.EffectiveLabourProductivity.calibration_database" href="#gcubed.baseline.effective_labour_productivity.EffectiveLabourProductivity.calibration_database">calibration_database</a></code></li>
 <li><code><a title="gcubed.baseline.effective_labour_productivity.EffectiveLabourProductivity.configuration" href="#gcubed.baseline.effective_labour_productivity.EffectiveLabourProductivity.configuration">configuration</a></code></li>
 <li><code><a title="gcubed.baseline.effective_labour_productivity.EffectiveLabourProductivity.effective_productivity_deviations" href="#gcubed.baseline.effective_labour_productivity.EffectiveLabourProductivity.effective_productivity_deviations">effective_productivity_deviations</a></code></li>
