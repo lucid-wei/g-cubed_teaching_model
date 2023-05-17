@@ -99,7 +99,7 @@ class SimulationLayerDefinition(Base):
         if self.configuration.last_projection_year &gt; data_last_year:
             raise Exception(f&#34;The data for simulation {self.name} does not extend to the end projection year, {self.configuration.last_projection_year}. It ends at {data_last_year}&#34;)
         if not self.configuration.last_projection_year == data_last_year:
-            logging.warning(f&#34;The data for simulation {self.name} does not end at the end projection year, {self.configuration.last_projection_year}. It ends at {data_last_year}&#34;)
+            logging.warning(f&#34;The data for &#39;{self.name}&#39; does not end at the end projection year, {self.configuration.last_projection_year}. It ends at {data_last_year}.&#34;)
 
         for variable_name in variables.name:
             if not self.sym_data.has_variable(variable_name=variable_name):
@@ -218,7 +218,7 @@ known to the agents in the model.</p>
         if self.configuration.last_projection_year &gt; data_last_year:
             raise Exception(f&#34;The data for simulation {self.name} does not extend to the end projection year, {self.configuration.last_projection_year}. It ends at {data_last_year}&#34;)
         if not self.configuration.last_projection_year == data_last_year:
-            logging.warning(f&#34;The data for simulation {self.name} does not end at the end projection year, {self.configuration.last_projection_year}. It ends at {data_last_year}&#34;)
+            logging.warning(f&#34;The data for &#39;{self.name}&#39; does not end at the end projection year, {self.configuration.last_projection_year}. It ends at {data_last_year}.&#34;)
 
         for variable_name in variables.name:
             if not self.sym_data.has_variable(variable_name=variable_name):

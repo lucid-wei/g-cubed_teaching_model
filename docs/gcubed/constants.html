@@ -48,126 +48,127 @@ class Constants:
             cls._instance = super().__new__(cls, *args, **kwargs)
         return cls._instance
 
-    DELTA = 0.00000001
+    _DELTA = 0.00000001
     @property
     def DELTA(self) -&gt; float:
         &#34;&#34;&#34;
         The delta used to compute numeric derivatives.
         &#34;&#34;&#34;
-        return __class__.DELTA
+        return __class__._DELTA
     
-    USA_REGION_CODE: str = &#34;UU&#34;
+    _USA_REGION_CODE: str = &#34;UU&#34;
     @property
     def USA_REGION_CODE(self) -&gt; str:
         &#34;&#34;&#34;
         The region code for the USA.
         &#34;&#34;&#34;
-        return __class__.USA_REGION_CODE
+        return __class__._USA_REGION_CODE
 
     # 
-    PRID_PREFIX: str = &#34;PRID&#34;
+    _PRID_PREFIX: str = &#34;PRID&#34;
     @property
     def PRID_PREFIX(self) -&gt; str:
         &#34;&#34;&#34;
         The PRID (weighted price of domestic output) variable prefix.
         &#34;&#34;&#34;
-        return __class__.PRID_PREFIX
+        return __class__._PRID_PREFIX
         
-    WAGE_PREFIX: str = &#34;WAGE&#34;
+    _WAGE_PREFIX: str = &#34;WAGE&#34;
     @property
     def WAGE_PREFIX(self) -&gt; str:
         &#34;&#34;&#34;
         The wage variable prefix.
         &#34;&#34;&#34;
-        return __class__.WAGE_PREFIX
+        return __class__._WAGE_PREFIX
     
 
 
-    NOMINAL_GDP_PREFIX = &#34;LGDPN&#34;
+    _NOMINAL_GDP_PREFIX = &#34;LGDPN&#34;
     @property
     def NOMINAL_GDP_PREFIX(self) -&gt; str:
         &#34;&#34;&#34;
         The nominal GDP variable prefix.
         &#34;&#34;&#34;
-        return __class__.NOMINAL_GDP_PREFIX
+        return __class__._NOMINAL_GDP_PREFIX
 
 
-    REAL_GDP_PREFIX = &#34;LGDPR&#34;
+    _REAL_GDP_PREFIX = &#34;LGDPR&#34;
     @property
     def REAL_GDP_PREFIX(self) -&gt; str:
         &#34;&#34;&#34;
         The real GDP variable prefix.
         &#34;&#34;&#34;
-        return __class__.REAL_GDP_PREFIX
+        return __class__._REAL_GDP_PREFIX
 
-    US_REAL_GDP_RATIO_PREFIX = &#34;YRATR&#34;
+    _US_REAL_GDP_RATIO_PREFIX = &#34;YRATR&#34;
     @property
     def US_REAL_GDP_RATIO_PREFIX(self) -&gt; str:
         &#34;&#34;&#34;
         The ratio of regional real GDP to USA real GDP variable prefix.
         &#34;&#34;&#34;
-        return __class__.US_REAL_GDP_RATIO_PREFIX
+        return __class__._US_REAL_GDP_RATIO_PREFIX
 
-    REAL_INTEREST_RATE_PREFIX = &#34;INTR&#34;
+    _REAL_INTEREST_RATE_PREFIX = &#34;INTR&#34;
     @property
     def REAL_INTEREST_RATE_PREFIX(self) -&gt; str:
         &#34;&#34;&#34;
         The real interest rate variable prefix.
         &#34;&#34;&#34;
-        return __class__.REAL_INTEREST_RATE_PREFIX
+        return __class__._REAL_INTEREST_RATE_PREFIX
 
-    NOMINAL_INTEREST_RATE_PREFIX = &#34;INTN&#34;
+    _NOMINAL_INTEREST_RATE_PREFIX = &#34;INTN&#34;
     @property
     def NOMINAL_INTEREST_RATE_PREFIX(self) -&gt; str:
         &#34;&#34;&#34;
         The nominal interest rate variable prefix.
         &#34;&#34;&#34;
-        return __class__.NOMINAL_INTEREST_RATE_PREFIX
+        return __class__._NOMINAL_INTEREST_RATE_PREFIX
 
-    INTEREST_RATE_PREFIXES: list[str] = [&#34;INPL&#34;, &#34;INPN&#34;, &#34;INTF&#34;, &#34;INTL&#34;, &#34;INTN&#34;, &#34;INTR&#34;]
+    _INTEREST_RATE_PREFIXES: list[str] = [&#34;INPL&#34;, &#34;INPN&#34;, &#34;INTF&#34;, &#34;INTL&#34;, &#34;INTN&#34;, &#34;INTR&#34;]
     @property
     def INTEREST_RATE_PREFIXES(self) -&gt; list[str]:
         &#34;&#34;&#34;
         The interest rate variable prefixes.
         &#34;&#34;&#34;
-        return __class__.INTEREST_RATE_PREFIXES
+        return __class__._INTEREST_RATE_PREFIXES
 
 
-    BOND_RATE_PREFIXES: list[str] = [&#34;NB02&#34;, &#34;NB05&#34;, &#34;NB10&#34;, &#34;RB10&#34;]
+    _BOND_RATE_PREFIXES: list[str] = [&#34;NB02&#34;, &#34;NB05&#34;, &#34;NB10&#34;, &#34;RB10&#34;]
     @property
     def BOND_RATE_PREFIXES(self) -&gt; list[str]:
         &#34;&#34;&#34;
         The long bond rate (real and nominal) variable prefixes.
         &#34;&#34;&#34;
-        return __class__.BOND_RATE_PREFIXES
+        return __class__._BOND_RATE_PREFIXES
 
-    STATE_LEAD_VARIABLES: list[str] = [&#34;INTN&#34;, &#34;EXCH&#34;, &#34;INPN&#34;, &#34;REXB&#34;]
+    _STATE_LEAD_VARIABLES: list[str] = [&#34;INTN&#34;, &#34;EXCH&#34;, &#34;INPN&#34;, &#34;REXB&#34;]
     @property
     def STATE_LEAD_VARIABLES(self) -&gt; list[str]:
         &#34;&#34;&#34;
         The state vector lead (stl variable types in SYM) variable prefixes.
         &#34;&#34;&#34;
-        return __class__.STATE_LEAD_VARIABLES
+        return __class__._STATE_LEAD_VARIABLES
     
-    # These are used along with wage and prid prefixes to do projections
-    JUMPING_VARIABLE_PREFIXES_FOR_REGIONS = [&#34;REXC&#34;, &#34;WELH&#34;, &#34;LAMY&#34;, &#34;LAMZ&#34;, &#34;EYGR&#34;, &#34;EPRC&#34;]
+    _JUMPING_VARIABLE_PREFIXES_FOR_REGIONS = [&#34;REXC&#34;, &#34;WELH&#34;, &#34;LAMY&#34;, &#34;LAMZ&#34;, &#34;EYGR&#34;, &#34;EPRC&#34;]
     @property
     def JUMPING_VARIABLE_PREFIXES_FOR_REGIONS(self) -&gt; list[str]:
         &#34;&#34;&#34;
         The costate/jumping variable prefixes that have variables for each region.
-        &#34;&#34;&#34;
-        return __class__.JUMPING_VARIABLE_PREFIXES_FOR_REGIONS
 
-    JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS = [&#34;LAM&#34;]
+        These are used along with wage and prid prefixes to do projections
+        &#34;&#34;&#34;
+        return __class__._JUMPING_VARIABLE_PREFIXES_FOR_REGIONS
+
+    _JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS = [&#34;LAM&#34;]
     @property
     def JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS(self) -&gt; list[str]:
         &#34;&#34;&#34;
         The costate/jumping variable prefixes that have variables for each region and sector.
         &#34;&#34;&#34;
-        return __class__.JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS
+        return __class__._JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS
 
     # Constants relevant to database rebasing operations.
-    LOG_INDEX_PREFIXES = [&#34;PRCT&#34;, &#34;PRID&#34;, &#34;PRIM&#34;, &#34;PRIX&#34;, &#34;PRIE&#34;, &#34;PRII&#34;, &#34;PRKY&#34;, &#34;PRKZ&#34;,
+    _LOG_INDEX_PREFIXES = [&#34;PRCT&#34;, &#34;PRID&#34;, &#34;PRIM&#34;, &#34;PRIX&#34;, &#34;PRIE&#34;, &#34;PRII&#34;, &#34;PRKY&#34;, &#34;PRKZ&#34;,
                         &#34;WAGE&#34;, &#34;PGDP&#34;, &#34;EXCH&#34;, &#34;REXC&#34;, &#34;NEER&#34;, &#34;PRCE&#34;, &#34;PRCO&#34;, &#34;REER&#34;, 
                         &#34;MONE&#34;, &#34;PRGT&#34;, &#34;PROI&#34;, &#34;PRDX&#34;, &#34;PRY&#34;, &#34;PRD&#34;, 
                         &#34;PIM&#34;, &#34;PRE&#34;, &#34;POI&#34;, &#34;PRK&#34;, &#34;PRP&#34;, &#34;WAG&#34;, &#34;PMR&#34;, &#34;PMQ&#34;, &#34;PRX&#34;]
@@ -178,9 +179,9 @@ class Constants:
 
         These are used for database rebasing operations.
         &#34;&#34;&#34;
-        return __class__.LOG_INDEX_PREFIXES
+        return __class__._LOG_INDEX_PREFIXES
 
-    LEAD_LOG_INDEX_PREFIXES = [&#34;EXCL&#34;]
+    _LEAD_LOG_INDEX_PREFIXES = [&#34;EXCL&#34;]
     @property
     def LEAD_LOG_INDEX_PREFIXES(self) -&gt; list[str]:
         &#34;&#34;&#34;
@@ -188,9 +189,9 @@ class Constants:
 
         These are used for database rebasing operations.
         &#34;&#34;&#34;
-        return __class__.LEAD_LOG_INDEX_PREFIXES
+        return __class__._LEAD_LOG_INDEX_PREFIXES
 
-    LAG_LOG_INDEX_PREFIXES = [&#34;PRCL&#34;, &#34;PRDL&#34;]
+    _LAG_LOG_INDEX_PREFIXES = [&#34;PRCL&#34;, &#34;PRDL&#34;]
     @property
     def LAG_LOG_INDEX_PREFIXES(self) -&gt; list[str]:
         &#34;&#34;&#34;
@@ -198,9 +199,9 @@ class Constants:
 
         These are used for database rebasing operations.
         &#34;&#34;&#34;
-        return __class__.LAG_LOG_INDEX_PREFIXES
+        return __class__._LAG_LOG_INDEX_PREFIXES
     
-    INDEX_PREFIXES = [&#34;GDPN&#34;]
+    _INDEX_PREFIXES = [&#34;GDPN&#34;]
     @property
     def INDEX_PREFIXES(self) -&gt; list[str]:
         &#34;&#34;&#34;
@@ -208,10 +209,10 @@ class Constants:
 
         These are used for database rebasing operations.
         &#34;&#34;&#34;
-        return __class__.INDEX_PREFIXES
+        return __class__._INDEX_PREFIXES
 
     # Constants used as part of finding intertemporal constant values.
-    NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES = [
+    _NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES:list[tuple[str,str]] = [
         (&#39;EPRC&#39;, &#39;z1l&#39;),
         (&#39;EYGR&#39;, &#39;z1l&#39;),
         (&#39;WAGE&#39;, &#39;x1l&#39;)]
@@ -221,9 +222,9 @@ class Constants:
         The identifications of non-standard variables with intertemporal constants.
         The prefixes include the variable name prefix and the vector name.
         &#34;&#34;&#34;
-        return __class__.NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES
+        return __class__._NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES
 
-    NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES = [
+    _NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES = [
         (&#39;EPRC&#39;, &#39;z1l&#39;),
         (&#39;EYGR&#39;, &#39;z1l&#39;),
         (&#39;PRID&#39;, &#39;zel&#39;)]
@@ -233,33 +234,33 @@ class Constants:
         The identifications of non-standard variables that are adjusted by intertemporal constants.
         The prefixes include the variable name prefix and the vector name.
         &#34;&#34;&#34;
-        return __class__.NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES
+        return __class__._NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES
 
-    REXC_FOR_USA = &#39;REXC(UU)&#39;
+    _REXC_FOR_USA = &#39;REXC(UU)&#39;
     @property
     def REXC_FOR_USA(self) -&gt; str:
         &#34;&#34;&#34;
         The full REXC variable name for the USA.
         &#34;&#34;&#34;
-        return __class__.REXC_FOR_USA
+        return __class__._REXC_FOR_USA
     
     # Pick out the variables of interest to report.
-    REPORTING_VARIABLES:list[str] = [&#39;INFX(UU)&#39;, &#39;INFL(UU)&#39;, &#39;INTN(UU)&#39;, &#39;NB10(UU)&#39;, &#39;INTR(UU)&#39;, &#39;RB10(UU)&#39;, &#39;GDPN(UU)&#39;, &#39;GDPR(UU)&#39;, &#39;INVT(UU)&#39;]
+    _REPORTING_VARIABLES:list[str] = [&#39;INFX(UU)&#39;, &#39;INFL(UU)&#39;, &#39;INTN(UU)&#39;, &#39;NB10(UU)&#39;, &#39;INTR(UU)&#39;, &#39;RB10(UU)&#39;, &#39;GDPN(UU)&#39;, &#39;GDPR(UU)&#39;, &#39;INVT(UU)&#39;]
     @property
     def REPORTING_VARIABLES(self) -&gt; list[str]:
         &#34;&#34;&#34;
         The full names of the variables to be reported, typically for debugging purposes.
         &#34;&#34;&#34;
-        return __class__.REPORTING_VARIABLES
+        return __class__._REPORTING_VARIABLES
 
     # Pick out the years of interest to report
-    REPORTING_YEARS: list[str] = [str(x) for x in range(2018, 2026)]
+    _REPORTING_YEARS: list[str] = [str(x) for x in range(2018, 2026)]
     @property
     def REPORTING_YEARS(self) -&gt; list[str]:
         &#34;&#34;&#34;
         The years to report from projections, typically for debugging purposes.
         &#34;&#34;&#34;
-        return __class__.REPORTING_YEARS</code></pre>
+        return __class__._REPORTING_YEARS</code></pre>
 </details>
 </section>
 <section>
@@ -290,126 +291,127 @@ class Constants:
             cls._instance = super().__new__(cls, *args, **kwargs)
         return cls._instance
 
-    DELTA = 0.00000001
+    _DELTA = 0.00000001
     @property
     def DELTA(self) -&gt; float:
         &#34;&#34;&#34;
         The delta used to compute numeric derivatives.
         &#34;&#34;&#34;
-        return __class__.DELTA
+        return __class__._DELTA
     
-    USA_REGION_CODE: str = &#34;UU&#34;
+    _USA_REGION_CODE: str = &#34;UU&#34;
     @property
     def USA_REGION_CODE(self) -&gt; str:
         &#34;&#34;&#34;
         The region code for the USA.
         &#34;&#34;&#34;
-        return __class__.USA_REGION_CODE
+        return __class__._USA_REGION_CODE
 
     # 
-    PRID_PREFIX: str = &#34;PRID&#34;
+    _PRID_PREFIX: str = &#34;PRID&#34;
     @property
     def PRID_PREFIX(self) -&gt; str:
         &#34;&#34;&#34;
         The PRID (weighted price of domestic output) variable prefix.
         &#34;&#34;&#34;
-        return __class__.PRID_PREFIX
+        return __class__._PRID_PREFIX
         
-    WAGE_PREFIX: str = &#34;WAGE&#34;
+    _WAGE_PREFIX: str = &#34;WAGE&#34;
     @property
     def WAGE_PREFIX(self) -&gt; str:
         &#34;&#34;&#34;
         The wage variable prefix.
         &#34;&#34;&#34;
-        return __class__.WAGE_PREFIX
+        return __class__._WAGE_PREFIX
     
 
 
-    NOMINAL_GDP_PREFIX = &#34;LGDPN&#34;
+    _NOMINAL_GDP_PREFIX = &#34;LGDPN&#34;
     @property
     def NOMINAL_GDP_PREFIX(self) -&gt; str:
         &#34;&#34;&#34;
         The nominal GDP variable prefix.
         &#34;&#34;&#34;
-        return __class__.NOMINAL_GDP_PREFIX
+        return __class__._NOMINAL_GDP_PREFIX
 
 
-    REAL_GDP_PREFIX = &#34;LGDPR&#34;
+    _REAL_GDP_PREFIX = &#34;LGDPR&#34;
     @property
     def REAL_GDP_PREFIX(self) -&gt; str:
         &#34;&#34;&#34;
         The real GDP variable prefix.
         &#34;&#34;&#34;
-        return __class__.REAL_GDP_PREFIX
+        return __class__._REAL_GDP_PREFIX
 
-    US_REAL_GDP_RATIO_PREFIX = &#34;YRATR&#34;
+    _US_REAL_GDP_RATIO_PREFIX = &#34;YRATR&#34;
     @property
     def US_REAL_GDP_RATIO_PREFIX(self) -&gt; str:
         &#34;&#34;&#34;
         The ratio of regional real GDP to USA real GDP variable prefix.
         &#34;&#34;&#34;
-        return __class__.US_REAL_GDP_RATIO_PREFIX
+        return __class__._US_REAL_GDP_RATIO_PREFIX
 
-    REAL_INTEREST_RATE_PREFIX = &#34;INTR&#34;
+    _REAL_INTEREST_RATE_PREFIX = &#34;INTR&#34;
     @property
     def REAL_INTEREST_RATE_PREFIX(self) -&gt; str:
         &#34;&#34;&#34;
         The real interest rate variable prefix.
         &#34;&#34;&#34;
-        return __class__.REAL_INTEREST_RATE_PREFIX
+        return __class__._REAL_INTEREST_RATE_PREFIX
 
-    NOMINAL_INTEREST_RATE_PREFIX = &#34;INTN&#34;
+    _NOMINAL_INTEREST_RATE_PREFIX = &#34;INTN&#34;
     @property
     def NOMINAL_INTEREST_RATE_PREFIX(self) -&gt; str:
         &#34;&#34;&#34;
         The nominal interest rate variable prefix.
         &#34;&#34;&#34;
-        return __class__.NOMINAL_INTEREST_RATE_PREFIX
+        return __class__._NOMINAL_INTEREST_RATE_PREFIX
 
-    INTEREST_RATE_PREFIXES: list[str] = [&#34;INPL&#34;, &#34;INPN&#34;, &#34;INTF&#34;, &#34;INTL&#34;, &#34;INTN&#34;, &#34;INTR&#34;]
+    _INTEREST_RATE_PREFIXES: list[str] = [&#34;INPL&#34;, &#34;INPN&#34;, &#34;INTF&#34;, &#34;INTL&#34;, &#34;INTN&#34;, &#34;INTR&#34;]
     @property
     def INTEREST_RATE_PREFIXES(self) -&gt; list[str]:
         &#34;&#34;&#34;
         The interest rate variable prefixes.
         &#34;&#34;&#34;
-        return __class__.INTEREST_RATE_PREFIXES
+        return __class__._INTEREST_RATE_PREFIXES
 
 
-    BOND_RATE_PREFIXES: list[str] = [&#34;NB02&#34;, &#34;NB05&#34;, &#34;NB10&#34;, &#34;RB10&#34;]
+    _BOND_RATE_PREFIXES: list[str] = [&#34;NB02&#34;, &#34;NB05&#34;, &#34;NB10&#34;, &#34;RB10&#34;]
     @property
     def BOND_RATE_PREFIXES(self) -&gt; list[str]:
         &#34;&#34;&#34;
         The long bond rate (real and nominal) variable prefixes.
         &#34;&#34;&#34;
-        return __class__.BOND_RATE_PREFIXES
+        return __class__._BOND_RATE_PREFIXES
 
-    STATE_LEAD_VARIABLES: list[str] = [&#34;INTN&#34;, &#34;EXCH&#34;, &#34;INPN&#34;, &#34;REXB&#34;]
+    _STATE_LEAD_VARIABLES: list[str] = [&#34;INTN&#34;, &#34;EXCH&#34;, &#34;INPN&#34;, &#34;REXB&#34;]
     @property
     def STATE_LEAD_VARIABLES(self) -&gt; list[str]:
         &#34;&#34;&#34;
         The state vector lead (stl variable types in SYM) variable prefixes.
         &#34;&#34;&#34;
-        return __class__.STATE_LEAD_VARIABLES
+        return __class__._STATE_LEAD_VARIABLES
     
-    # These are used along with wage and prid prefixes to do projections
-    JUMPING_VARIABLE_PREFIXES_FOR_REGIONS = [&#34;REXC&#34;, &#34;WELH&#34;, &#34;LAMY&#34;, &#34;LAMZ&#34;, &#34;EYGR&#34;, &#34;EPRC&#34;]
+    _JUMPING_VARIABLE_PREFIXES_FOR_REGIONS = [&#34;REXC&#34;, &#34;WELH&#34;, &#34;LAMY&#34;, &#34;LAMZ&#34;, &#34;EYGR&#34;, &#34;EPRC&#34;]
     @property
     def JUMPING_VARIABLE_PREFIXES_FOR_REGIONS(self) -&gt; list[str]:
         &#34;&#34;&#34;
         The costate/jumping variable prefixes that have variables for each region.
-        &#34;&#34;&#34;
-        return __class__.JUMPING_VARIABLE_PREFIXES_FOR_REGIONS
 
-    JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS = [&#34;LAM&#34;]
+        These are used along with wage and prid prefixes to do projections
+        &#34;&#34;&#34;
+        return __class__._JUMPING_VARIABLE_PREFIXES_FOR_REGIONS
+
+    _JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS = [&#34;LAM&#34;]
     @property
     def JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS(self) -&gt; list[str]:
         &#34;&#34;&#34;
         The costate/jumping variable prefixes that have variables for each region and sector.
         &#34;&#34;&#34;
-        return __class__.JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS
+        return __class__._JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS
 
     # Constants relevant to database rebasing operations.
-    LOG_INDEX_PREFIXES = [&#34;PRCT&#34;, &#34;PRID&#34;, &#34;PRIM&#34;, &#34;PRIX&#34;, &#34;PRIE&#34;, &#34;PRII&#34;, &#34;PRKY&#34;, &#34;PRKZ&#34;,
+    _LOG_INDEX_PREFIXES = [&#34;PRCT&#34;, &#34;PRID&#34;, &#34;PRIM&#34;, &#34;PRIX&#34;, &#34;PRIE&#34;, &#34;PRII&#34;, &#34;PRKY&#34;, &#34;PRKZ&#34;,
                         &#34;WAGE&#34;, &#34;PGDP&#34;, &#34;EXCH&#34;, &#34;REXC&#34;, &#34;NEER&#34;, &#34;PRCE&#34;, &#34;PRCO&#34;, &#34;REER&#34;, 
                         &#34;MONE&#34;, &#34;PRGT&#34;, &#34;PROI&#34;, &#34;PRDX&#34;, &#34;PRY&#34;, &#34;PRD&#34;, 
                         &#34;PIM&#34;, &#34;PRE&#34;, &#34;POI&#34;, &#34;PRK&#34;, &#34;PRP&#34;, &#34;WAG&#34;, &#34;PMR&#34;, &#34;PMQ&#34;, &#34;PRX&#34;]
@@ -420,9 +422,9 @@ class Constants:
 
         These are used for database rebasing operations.
         &#34;&#34;&#34;
-        return __class__.LOG_INDEX_PREFIXES
+        return __class__._LOG_INDEX_PREFIXES
 
-    LEAD_LOG_INDEX_PREFIXES = [&#34;EXCL&#34;]
+    _LEAD_LOG_INDEX_PREFIXES = [&#34;EXCL&#34;]
     @property
     def LEAD_LOG_INDEX_PREFIXES(self) -&gt; list[str]:
         &#34;&#34;&#34;
@@ -430,9 +432,9 @@ class Constants:
 
         These are used for database rebasing operations.
         &#34;&#34;&#34;
-        return __class__.LEAD_LOG_INDEX_PREFIXES
+        return __class__._LEAD_LOG_INDEX_PREFIXES
 
-    LAG_LOG_INDEX_PREFIXES = [&#34;PRCL&#34;, &#34;PRDL&#34;]
+    _LAG_LOG_INDEX_PREFIXES = [&#34;PRCL&#34;, &#34;PRDL&#34;]
     @property
     def LAG_LOG_INDEX_PREFIXES(self) -&gt; list[str]:
         &#34;&#34;&#34;
@@ -440,9 +442,9 @@ class Constants:
 
         These are used for database rebasing operations.
         &#34;&#34;&#34;
-        return __class__.LAG_LOG_INDEX_PREFIXES
+        return __class__._LAG_LOG_INDEX_PREFIXES
     
-    INDEX_PREFIXES = [&#34;GDPN&#34;]
+    _INDEX_PREFIXES = [&#34;GDPN&#34;]
     @property
     def INDEX_PREFIXES(self) -&gt; list[str]:
         &#34;&#34;&#34;
@@ -450,10 +452,10 @@ class Constants:
 
         These are used for database rebasing operations.
         &#34;&#34;&#34;
-        return __class__.INDEX_PREFIXES
+        return __class__._INDEX_PREFIXES
 
     # Constants used as part of finding intertemporal constant values.
-    NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES = [
+    _NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES:list[tuple[str,str]] = [
         (&#39;EPRC&#39;, &#39;z1l&#39;),
         (&#39;EYGR&#39;, &#39;z1l&#39;),
         (&#39;WAGE&#39;, &#39;x1l&#39;)]
@@ -463,9 +465,9 @@ class Constants:
         The identifications of non-standard variables with intertemporal constants.
         The prefixes include the variable name prefix and the vector name.
         &#34;&#34;&#34;
-        return __class__.NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES
+        return __class__._NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES
 
-    NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES = [
+    _NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES = [
         (&#39;EPRC&#39;, &#39;z1l&#39;),
         (&#39;EYGR&#39;, &#39;z1l&#39;),
         (&#39;PRID&#39;, &#39;zel&#39;)]
@@ -475,33 +477,33 @@ class Constants:
         The identifications of non-standard variables that are adjusted by intertemporal constants.
         The prefixes include the variable name prefix and the vector name.
         &#34;&#34;&#34;
-        return __class__.NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES
+        return __class__._NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES
 
-    REXC_FOR_USA = &#39;REXC(UU)&#39;
+    _REXC_FOR_USA = &#39;REXC(UU)&#39;
     @property
     def REXC_FOR_USA(self) -&gt; str:
         &#34;&#34;&#34;
         The full REXC variable name for the USA.
         &#34;&#34;&#34;
-        return __class__.REXC_FOR_USA
+        return __class__._REXC_FOR_USA
     
     # Pick out the variables of interest to report.
-    REPORTING_VARIABLES:list[str] = [&#39;INFX(UU)&#39;, &#39;INFL(UU)&#39;, &#39;INTN(UU)&#39;, &#39;NB10(UU)&#39;, &#39;INTR(UU)&#39;, &#39;RB10(UU)&#39;, &#39;GDPN(UU)&#39;, &#39;GDPR(UU)&#39;, &#39;INVT(UU)&#39;]
+    _REPORTING_VARIABLES:list[str] = [&#39;INFX(UU)&#39;, &#39;INFL(UU)&#39;, &#39;INTN(UU)&#39;, &#39;NB10(UU)&#39;, &#39;INTR(UU)&#39;, &#39;RB10(UU)&#39;, &#39;GDPN(UU)&#39;, &#39;GDPR(UU)&#39;, &#39;INVT(UU)&#39;]
     @property
     def REPORTING_VARIABLES(self) -&gt; list[str]:
         &#34;&#34;&#34;
         The full names of the variables to be reported, typically for debugging purposes.
         &#34;&#34;&#34;
-        return __class__.REPORTING_VARIABLES
+        return __class__._REPORTING_VARIABLES
 
     # Pick out the years of interest to report
-    REPORTING_YEARS: list[str] = [str(x) for x in range(2018, 2026)]
+    _REPORTING_YEARS: list[str] = [str(x) for x in range(2018, 2026)]
     @property
     def REPORTING_YEARS(self) -&gt; list[str]:
         &#34;&#34;&#34;
         The years to report from projections, typically for debugging purposes.
         &#34;&#34;&#34;
-        return __class__.REPORTING_YEARS</code></pre>
+        return __class__._REPORTING_YEARS</code></pre>
 </details>
 <h3>Instance variables</h3>
 <dl>
@@ -517,7 +519,7 @@ def BOND_RATE_PREFIXES(self) -&gt; list[str]:
     &#34;&#34;&#34;
     The long bond rate (real and nominal) variable prefixes.
     &#34;&#34;&#34;
-    return __class__.BOND_RATE_PREFIXES</code></pre>
+    return __class__._BOND_RATE_PREFIXES</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.DELTA"><code class="name">var <span class="ident">DELTA</span> : float</code></dt>
@@ -532,7 +534,7 @@ def DELTA(self) -&gt; float:
     &#34;&#34;&#34;
     The delta used to compute numeric derivatives.
     &#34;&#34;&#34;
-    return __class__.DELTA</code></pre>
+    return __class__._DELTA</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.INDEX_PREFIXES"><code class="name">var <span class="ident">INDEX_PREFIXES</span> : list[str]</code></dt>
@@ -550,7 +552,7 @@ def INDEX_PREFIXES(self) -&gt; list[str]:
 
     These are used for database rebasing operations.
     &#34;&#34;&#34;
-    return __class__.INDEX_PREFIXES</code></pre>
+    return __class__._INDEX_PREFIXES</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.INTEREST_RATE_PREFIXES"><code class="name">var <span class="ident">INTEREST_RATE_PREFIXES</span> : list[str]</code></dt>
@@ -565,12 +567,13 @@ def INTEREST_RATE_PREFIXES(self) -&gt; list[str]:
     &#34;&#34;&#34;
     The interest rate variable prefixes.
     &#34;&#34;&#34;
-    return __class__.INTEREST_RATE_PREFIXES</code></pre>
+    return __class__._INTEREST_RATE_PREFIXES</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.JUMPING_VARIABLE_PREFIXES_FOR_REGIONS"><code class="name">var <span class="ident">JUMPING_VARIABLE_PREFIXES_FOR_REGIONS</span> : list[str]</code></dt>
 <dd>
-<div class="desc"><p>The costate/jumping variable prefixes that have variables for each region.</p></div>
+<div class="desc"><p>The costate/jumping variable prefixes that have variables for each region.</p>
+<p>These are used along with wage and prid prefixes to do projections</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -579,8 +582,10 @@ def INTEREST_RATE_PREFIXES(self) -&gt; list[str]:
 def JUMPING_VARIABLE_PREFIXES_FOR_REGIONS(self) -&gt; list[str]:
     &#34;&#34;&#34;
     The costate/jumping variable prefixes that have variables for each region.
+
+    These are used along with wage and prid prefixes to do projections
     &#34;&#34;&#34;
-    return __class__.JUMPING_VARIABLE_PREFIXES_FOR_REGIONS</code></pre>
+    return __class__._JUMPING_VARIABLE_PREFIXES_FOR_REGIONS</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS"><code class="name">var <span class="ident">JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS</span> : list[str]</code></dt>
@@ -595,7 +600,7 @@ def JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS(self) -&gt; list[str]:
     &#34;&#34;&#34;
     The costate/jumping variable prefixes that have variables for each region and sector.
     &#34;&#34;&#34;
-    return __class__.JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS</code></pre>
+    return __class__._JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.LAG_LOG_INDEX_PREFIXES"><code class="name">var <span class="ident">LAG_LOG_INDEX_PREFIXES</span> : list[str]</code></dt>
@@ -613,7 +618,7 @@ def LAG_LOG_INDEX_PREFIXES(self) -&gt; list[str]:
 
     These are used for database rebasing operations.
     &#34;&#34;&#34;
-    return __class__.LAG_LOG_INDEX_PREFIXES</code></pre>
+    return __class__._LAG_LOG_INDEX_PREFIXES</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.LEAD_LOG_INDEX_PREFIXES"><code class="name">var <span class="ident">LEAD_LOG_INDEX_PREFIXES</span> : list[str]</code></dt>
@@ -631,7 +636,7 @@ def LEAD_LOG_INDEX_PREFIXES(self) -&gt; list[str]:
 
     These are used for database rebasing operations.
     &#34;&#34;&#34;
-    return __class__.LEAD_LOG_INDEX_PREFIXES</code></pre>
+    return __class__._LEAD_LOG_INDEX_PREFIXES</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.LOG_INDEX_PREFIXES"><code class="name">var <span class="ident">LOG_INDEX_PREFIXES</span> : list[str]</code></dt>
@@ -649,7 +654,7 @@ def LOG_INDEX_PREFIXES(self) -&gt; list[str]:
 
     These are used for database rebasing operations.
     &#34;&#34;&#34;
-    return __class__.LOG_INDEX_PREFIXES</code></pre>
+    return __class__._LOG_INDEX_PREFIXES</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.NOMINAL_GDP_PREFIX"><code class="name">var <span class="ident">NOMINAL_GDP_PREFIX</span> : str</code></dt>
@@ -664,7 +669,7 @@ def NOMINAL_GDP_PREFIX(self) -&gt; str:
     &#34;&#34;&#34;
     The nominal GDP variable prefix.
     &#34;&#34;&#34;
-    return __class__.NOMINAL_GDP_PREFIX</code></pre>
+    return __class__._NOMINAL_GDP_PREFIX</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.NOMINAL_INTEREST_RATE_PREFIX"><code class="name">var <span class="ident">NOMINAL_INTEREST_RATE_PREFIX</span> : str</code></dt>
@@ -679,7 +684,7 @@ def NOMINAL_INTEREST_RATE_PREFIX(self) -&gt; str:
     &#34;&#34;&#34;
     The nominal interest rate variable prefix.
     &#34;&#34;&#34;
-    return __class__.NOMINAL_INTEREST_RATE_PREFIX</code></pre>
+    return __class__._NOMINAL_INTEREST_RATE_PREFIX</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES"><code class="name">var <span class="ident">NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES</span> : list[tuple[str, str]]</code></dt>
@@ -696,7 +701,7 @@ def NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES(self) -&gt; list[tuple
     The identifications of non-standard variables with intertemporal constants.
     The prefixes include the variable name prefix and the vector name.
     &#34;&#34;&#34;
-    return __class__.NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES</code></pre>
+    return __class__._NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES"><code class="name">var <span class="ident">NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES</span> : list[tuple[str, str]]</code></dt>
@@ -713,7 +718,7 @@ def NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES(self) -&
     The identifications of non-standard variables that are adjusted by intertemporal constants.
     The prefixes include the variable name prefix and the vector name.
     &#34;&#34;&#34;
-    return __class__.NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES</code></pre>
+    return __class__._NON_STANDARD_VARIABLES_ADJUSTED_BY_INTERTEMPORAL_CONSTANTS_PREFIXES</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.PRID_PREFIX"><code class="name">var <span class="ident">PRID_PREFIX</span> : str</code></dt>
@@ -728,7 +733,7 @@ def PRID_PREFIX(self) -&gt; str:
     &#34;&#34;&#34;
     The PRID (weighted price of domestic output) variable prefix.
     &#34;&#34;&#34;
-    return __class__.PRID_PREFIX</code></pre>
+    return __class__._PRID_PREFIX</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.REAL_GDP_PREFIX"><code class="name">var <span class="ident">REAL_GDP_PREFIX</span> : str</code></dt>
@@ -743,7 +748,7 @@ def REAL_GDP_PREFIX(self) -&gt; str:
     &#34;&#34;&#34;
     The real GDP variable prefix.
     &#34;&#34;&#34;
-    return __class__.REAL_GDP_PREFIX</code></pre>
+    return __class__._REAL_GDP_PREFIX</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.REAL_INTEREST_RATE_PREFIX"><code class="name">var <span class="ident">REAL_INTEREST_RATE_PREFIX</span> : str</code></dt>
@@ -758,7 +763,7 @@ def REAL_INTEREST_RATE_PREFIX(self) -&gt; str:
     &#34;&#34;&#34;
     The real interest rate variable prefix.
     &#34;&#34;&#34;
-    return __class__.REAL_INTEREST_RATE_PREFIX</code></pre>
+    return __class__._REAL_INTEREST_RATE_PREFIX</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.REPORTING_VARIABLES"><code class="name">var <span class="ident">REPORTING_VARIABLES</span> : list[str]</code></dt>
@@ -773,7 +778,7 @@ def REPORTING_VARIABLES(self) -&gt; list[str]:
     &#34;&#34;&#34;
     The full names of the variables to be reported, typically for debugging purposes.
     &#34;&#34;&#34;
-    return __class__.REPORTING_VARIABLES</code></pre>
+    return __class__._REPORTING_VARIABLES</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.REPORTING_YEARS"><code class="name">var <span class="ident">REPORTING_YEARS</span> : list[str]</code></dt>
@@ -788,7 +793,7 @@ def REPORTING_YEARS(self) -&gt; list[str]:
     &#34;&#34;&#34;
     The years to report from projections, typically for debugging purposes.
     &#34;&#34;&#34;
-    return __class__.REPORTING_YEARS</code></pre>
+    return __class__._REPORTING_YEARS</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.REXC_FOR_USA"><code class="name">var <span class="ident">REXC_FOR_USA</span> : str</code></dt>
@@ -803,7 +808,7 @@ def REXC_FOR_USA(self) -&gt; str:
     &#34;&#34;&#34;
     The full REXC variable name for the USA.
     &#34;&#34;&#34;
-    return __class__.REXC_FOR_USA</code></pre>
+    return __class__._REXC_FOR_USA</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.STATE_LEAD_VARIABLES"><code class="name">var <span class="ident">STATE_LEAD_VARIABLES</span> : list[str]</code></dt>
@@ -818,7 +823,7 @@ def STATE_LEAD_VARIABLES(self) -&gt; list[str]:
     &#34;&#34;&#34;
     The state vector lead (stl variable types in SYM) variable prefixes.
     &#34;&#34;&#34;
-    return __class__.STATE_LEAD_VARIABLES</code></pre>
+    return __class__._STATE_LEAD_VARIABLES</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.USA_REGION_CODE"><code class="name">var <span class="ident">USA_REGION_CODE</span> : str</code></dt>
@@ -833,7 +838,7 @@ def USA_REGION_CODE(self) -&gt; str:
     &#34;&#34;&#34;
     The region code for the USA.
     &#34;&#34;&#34;
-    return __class__.USA_REGION_CODE</code></pre>
+    return __class__._USA_REGION_CODE</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.US_REAL_GDP_RATIO_PREFIX"><code class="name">var <span class="ident">US_REAL_GDP_RATIO_PREFIX</span> : str</code></dt>
@@ -848,7 +853,7 @@ def US_REAL_GDP_RATIO_PREFIX(self) -&gt; str:
     &#34;&#34;&#34;
     The ratio of regional real GDP to USA real GDP variable prefix.
     &#34;&#34;&#34;
-    return __class__.US_REAL_GDP_RATIO_PREFIX</code></pre>
+    return __class__._US_REAL_GDP_RATIO_PREFIX</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.WAGE_PREFIX"><code class="name">var <span class="ident">WAGE_PREFIX</span> : str</code></dt>
@@ -863,7 +868,7 @@ def WAGE_PREFIX(self) -&gt; str:
     &#34;&#34;&#34;
     The wage variable prefix.
     &#34;&#34;&#34;
-    return __class__.WAGE_PREFIX</code></pre>
+    return __class__._WAGE_PREFIX</code></pre>
 </details>
 </dd>
 </dl>

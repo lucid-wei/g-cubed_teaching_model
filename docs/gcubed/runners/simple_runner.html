@@ -134,6 +134,16 @@ class SimpleRunner(Base):
         return self._baseline_projections
     
     @property
+    def final_projections(self) -&gt; Projections: 
+        &#34;&#34;&#34;
+        The final projections or `None` if there was no simulation experiment to do.
+        &#34;&#34;&#34;
+        if not hasattr(self, &#34;_experiment&#34;):
+            logging.warning(&#34;The final projections are not yet available. Make sure you run the model to completion before accessing them.&#34;)
+            return None
+        return self.experiment.final_projections
+
+    @property
     def experiment(self) -&gt; SimulationExperiment:
         &#34;&#34;&#34;
         The simulation experiment.
@@ -215,22 +225,12 @@ class SimpleRunner(Base):
 
             # Run the simulation experiment
             self._experiment = SimulationExperiment(baseline_projections=self.baseline_projections, design_file=self.experiment_design_file)
-            simulation_layers: list[SimulationLayer] = []
-            previous_projections: SimulationLayer = self.baseline_projections
-            for simulation_layer_definition in self.experiment.simulation_layer_definitions:
-                simulation_layers.append(
-                    SimulationLayer(
-                        simulation_layer_definition=simulation_layer_definition,
-                        previous_projections=previous_projections
-                    )
-                )
-                last_simulation_layer: SimulationLayer = simulation_layers[-1]
 
             if self.save_results:
                 # Generate the CSV file containing simulation projections
-                last_simulation_layer.publishable_projections.to_csv(f&#34;{self.results_directory}/simulation_projections.csv&#34;)
+                self.final_projections.publishable_projections.to_csv(f&#34;{self.results_directory}/simulation_projections.csv&#34;)
                 # Generate the CSV file containing the simulation deviation from baseline projections
-                Projections.get_differences_between_projections(new_projections=last_simulation_layer.publishable_projections, original_projections=self.baseline_projections.publishable_projections).to_csv(f&#34;{self.results_directory}/deviation_projections.csv&#34;)
+                Projections.get_differences_between_projections(new_projections=self.final_projections.publishable_projections, original_projections=self.baseline_projections.publishable_projections).to_csv(f&#34;{self.results_directory}/deviation_projections.csv&#34;)
                 logging.info(f&#34;The simulation experiment results have been saved as CSV files in {self.results_directory}&#34;)
             else:
                 logging.info(f&#34;The simulation experiment has run.&#34;)</code></pre>
@@ -366,6 +366,16 @@ projections.</p></div>
         return self._baseline_projections
     
     @property
+    def final_projections(self) -&gt; Projections: 
+        &#34;&#34;&#34;
+        The final projections or `None` if there was no simulation experiment to do.
+        &#34;&#34;&#34;
+        if not hasattr(self, &#34;_experiment&#34;):
+            logging.warning(&#34;The final projections are not yet available. Make sure you run the model to completion before accessing them.&#34;)
+            return None
+        return self.experiment.final_projections
+
+    @property
     def experiment(self) -&gt; SimulationExperiment:
         &#34;&#34;&#34;
         The simulation experiment.
@@ -447,22 +457,12 @@ projections.</p></div>
 
             # Run the simulation experiment
             self._experiment = SimulationExperiment(baseline_projections=self.baseline_projections, design_file=self.experiment_design_file)
-            simulation_layers: list[SimulationLayer] = []
-            previous_projections: SimulationLayer = self.baseline_projections
-            for simulation_layer_definition in self.experiment.simulation_layer_definitions:
-                simulation_layers.append(
-                    SimulationLayer(
-                        simulation_layer_definition=simulation_layer_definition,
-                        previous_projections=previous_projections
-                    )
-                )
-                last_simulation_layer: SimulationLayer = simulation_layers[-1]
 
             if self.save_results:
                 # Generate the CSV file containing simulation projections
-                last_simulation_layer.publishable_projections.to_csv(f&#34;{self.results_directory}/simulation_projections.csv&#34;)
+                self.final_projections.publishable_projections.to_csv(f&#34;{self.results_directory}/simulation_projections.csv&#34;)
                 # Generate the CSV file containing the simulation deviation from baseline projections
-                Projections.get_differences_between_projections(new_projections=last_simulation_layer.publishable_projections, original_projections=self.baseline_projections.publishable_projections).to_csv(f&#34;{self.results_directory}/deviation_projections.csv&#34;)
+                Projections.get_differences_between_projections(new_projections=self.final_projections.publishable_projections, original_projections=self.baseline_projections.publishable_projections).to_csv(f&#34;{self.results_directory}/deviation_projections.csv&#34;)
                 logging.info(f&#34;The simulation experiment results have been saved as CSV files in {self.results_directory}&#34;)
             else:
                 logging.info(f&#34;The simulation experiment has run.&#34;)</code></pre>
@@ -505,6 +505,24 @@ def experiment(self) -&gt; SimulationExperiment:
     if not hasattr(self, &#34;_experiment&#34;):
         raise Exception(&#34;The simulation experiment results are not yet available. Make sure you run the model before accessing them.&#34;)
     return self._experiment</code></pre>
+</details>
+</dd>
+<dt id="gcubed.runners.simple_runner.SimpleRunner.final_projections"><code class="name">var <span class="ident">final_projections</span> : <a title="gcubed.projections.projections.Projections" href="../projections/projections.html#gcubed.projections.projections.Projections">Projections</a></code></dt>
+<dd>
+<div class="desc"><p>The final projections or <code>None</code> if there was no simulation experiment to do.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def final_projections(self) -&gt; Projections: 
+    &#34;&#34;&#34;
+    The final projections or `None` if there was no simulation experiment to do.
+    &#34;&#34;&#34;
+    if not hasattr(self, &#34;_experiment&#34;):
+        logging.warning(&#34;The final projections are not yet available. Make sure you run the model to completion before accessing them.&#34;)
+        return None
+    return self.experiment.final_projections</code></pre>
 </details>
 </dd>
 <dt id="gcubed.runners.simple_runner.SimpleRunner.model"><code class="name">var <span class="ident">model</span> : <a title="gcubed.model_configuration.ModelConfiguration" href="../model_configuration.html#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a></code></dt>
@@ -613,22 +631,12 @@ analysis purposes.</p></div>
 
         # Run the simulation experiment
         self._experiment = SimulationExperiment(baseline_projections=self.baseline_projections, design_file=self.experiment_design_file)
-        simulation_layers: list[SimulationLayer] = []
-        previous_projections: SimulationLayer = self.baseline_projections
-        for simulation_layer_definition in self.experiment.simulation_layer_definitions:
-            simulation_layers.append(
-                SimulationLayer(
-                    simulation_layer_definition=simulation_layer_definition,
-                    previous_projections=previous_projections
-                )
-            )
-            last_simulation_layer: SimulationLayer = simulation_layers[-1]
 
         if self.save_results:
             # Generate the CSV file containing simulation projections
-            last_simulation_layer.publishable_projections.to_csv(f&#34;{self.results_directory}/simulation_projections.csv&#34;)
+            self.final_projections.publishable_projections.to_csv(f&#34;{self.results_directory}/simulation_projections.csv&#34;)
             # Generate the CSV file containing the simulation deviation from baseline projections
-            Projections.get_differences_between_projections(new_projections=last_simulation_layer.publishable_projections, original_projections=self.baseline_projections.publishable_projections).to_csv(f&#34;{self.results_directory}/deviation_projections.csv&#34;)
+            Projections.get_differences_between_projections(new_projections=self.final_projections.publishable_projections, original_projections=self.baseline_projections.publishable_projections).to_csv(f&#34;{self.results_directory}/deviation_projections.csv&#34;)
             logging.info(f&#34;The simulation experiment results have been saved as CSV files in {self.results_directory}&#34;)
         else:
             logging.info(f&#34;The simulation experiment has run.&#34;)</code></pre>
@@ -667,6 +675,7 @@ analysis purposes.</p></div>
 <ul class="">
 <li><code><a title="gcubed.runners.simple_runner.SimpleRunner.baseline_projections" href="#gcubed.runners.simple_runner.SimpleRunner.baseline_projections">baseline_projections</a></code></li>
 <li><code><a title="gcubed.runners.simple_runner.SimpleRunner.experiment" href="#gcubed.runners.simple_runner.SimpleRunner.experiment">experiment</a></code></li>
+<li><code><a title="gcubed.runners.simple_runner.SimpleRunner.final_projections" href="#gcubed.runners.simple_runner.SimpleRunner.final_projections">final_projections</a></code></li>
 <li><code><a title="gcubed.runners.simple_runner.SimpleRunner.model" href="#gcubed.runners.simple_runner.SimpleRunner.model">model</a></code></li>
 <li><code><a title="gcubed.runners.simple_runner.SimpleRunner.run" href="#gcubed.runners.simple_runner.SimpleRunner.run">run</a></code></li>
 <li><code><a title="gcubed.runners.simple_runner.SimpleRunner.save_results" href="#gcubed.runners.simple_runner.SimpleRunner.save_results">save_results</a></code></li>

@@ -70,14 +70,11 @@ class SimulationLayer(Projections):
 
         &#34;&#34;&#34;
         assert previous_projections is not None
-        self._previous_projections = previous_projections
-        if isinstance(previous_projections, BaselineProjections):
-            self._baseline_projections = previous_projections
-        else:
-            self._baseline_projections = self.previous_projections.baseline_projections
+        self._baseline_projections = previous_projections if isinstance(previous_projections, BaselineProjections) else previous_projections.baseline_projections
 
         super().__init__(stable_manifold=self.baseline_projections.stable_manifold)
         self._is_baseline_projections = False
+        self._previous_projections = previous_projections
 
         assert simulation_layer_definition is not None
         self._simulation_layer_definition = simulation_layer_definition
@@ -121,13 +118,6 @@ class SimulationLayer(Projections):
         about the simulation being done in this layer.
         &#34;&#34;&#34;
         return self._simulation_layer_definition
-
-    @property
-    def previous_projections(self) -&gt; Projections:
-        &#34;&#34;&#34;
-        The previous projections (baseline or simulation layer or other).
-        &#34;&#34;&#34;
-        return self._previous_projections
 
     @property
     def baseline_projections(self) -&gt; BaselineProjections:
@@ -324,14 +314,11 @@ Compute model simulations over the projection horizon.</p>
 
         &#34;&#34;&#34;
         assert previous_projections is not None
-        self._previous_projections = previous_projections
-        if isinstance(previous_projections, BaselineProjections):
-            self._baseline_projections = previous_projections
-        else:
-            self._baseline_projections = self.previous_projections.baseline_projections
+        self._baseline_projections = previous_projections if isinstance(previous_projections, BaselineProjections) else previous_projections.baseline_projections
 
         super().__init__(stable_manifold=self.baseline_projections.stable_manifold)
         self._is_baseline_projections = False
+        self._previous_projections = previous_projections
 
         assert simulation_layer_definition is not None
         self._simulation_layer_definition = simulation_layer_definition
@@ -375,13 +362,6 @@ Compute model simulations over the projection horizon.</p>
         about the simulation being done in this layer.
         &#34;&#34;&#34;
         return self._simulation_layer_definition
-
-    @property
-    def previous_projections(self) -&gt; Projections:
-        &#34;&#34;&#34;
-        The previous projections (baseline or simulation layer or other).
-        &#34;&#34;&#34;
-        return self._previous_projections
 
     @property
     def baseline_projections(self) -&gt; BaselineProjections:
@@ -636,21 +616,6 @@ def j1_constants(self) -&gt; np.ndarray:
     return self.baseline_projections.j1_constants</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.simulation_layer.SimulationLayer.previous_projections"><code class="name">var <span class="ident">previous_projections</span> : <a title="gcubed.projections.projections.Projections" href="projections.html#gcubed.projections.projections.Projections">Projections</a></code></dt>
-<dd>
-<div class="desc"><p>The previous projections (baseline or simulation layer or other).</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def previous_projections(self) -&gt; Projections:
-    &#34;&#34;&#34;
-    The previous projections (baseline or simulation layer or other).
-    &#34;&#34;&#34;
-    return self._previous_projections</code></pre>
-</details>
-</dd>
 <dt id="gcubed.projections.simulation_layer.SimulationLayer.simulation_data"><code class="name">var <span class="ident">simulation_data</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
 <div class="desc"><p>Returns the simulation data.</p></div>
@@ -753,6 +718,7 @@ def ze_constants(self) -&gt; np.ndarray:
 <li><code><a title="gcubed.projections.projections.Projections.long_rate_constants" href="projections.html#gcubed.projections.projections.Projections.long_rate_constants">long_rate_constants</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.model" href="projections.html#gcubed.projections.projections.Projections.model">model</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.parameters" href="projections.html#gcubed.projections.projections.Projections.parameters">parameters</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.previous_projections" href="projections.html#gcubed.projections.projections.Projections.previous_projections">previous_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.projection_years" href="projections.html#gcubed.projections.projections.Projections.projection_years">projection_years</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.projection_years_column_labels" href="projections.html#gcubed.projections.projections.Projections.projection_years_column_labels">projection_years_column_labels</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.projections" href="projections.html#gcubed.projections.projections.Projections.projections">projections</a></code></li>
@@ -799,7 +765,6 @@ def ze_constants(self) -&gt; np.ndarray:
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.definition" href="#gcubed.projections.simulation_layer.SimulationLayer.definition">definition</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.h3t" href="#gcubed.projections.simulation_layer.SimulationLayer.h3t">h3t</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.j1_constants" href="#gcubed.projections.simulation_layer.SimulationLayer.j1_constants">j1_constants</a></code></li>
-<li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.previous_projections" href="#gcubed.projections.simulation_layer.SimulationLayer.previous_projections">previous_projections</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.simulation_data" href="#gcubed.projections.simulation_layer.SimulationLayer.simulation_data">simulation_data</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.simulation_variables" href="#gcubed.projections.simulation_layer.SimulationLayer.simulation_variables">simulation_variables</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.x1_constants" href="#gcubed.projections.simulation_layer.SimulationLayer.x1_constants">x1_constants</a></code></li>
