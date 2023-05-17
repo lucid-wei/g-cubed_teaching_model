@@ -4,6 +4,17 @@ nav_order: 2
 ---
 
 # Environment setup 
+{: .no_toc }
+
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+- TOC
+{:toc}
+</details>
+
 ## Setup Python:
 One needs to install python in his/her local machine. It is recommended to use python 3.10+, since older version was not tested during development.
 
