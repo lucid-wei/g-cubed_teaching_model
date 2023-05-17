@@ -134,6 +134,17 @@ Note: You may find more documentations if you jump into the links like '[Locatio
 
 <style>
 /* Reset CSS */
+table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+th:nth-child(n+1),
+td:nth-child(n+1) {
+    width: auto;
+    word-wrap: break-word;
+}
+
 </style>
 
 
