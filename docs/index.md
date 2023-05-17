@@ -4,13 +4,45 @@ nav_order: 1
 ---
 
 # Introduction
-This is a documentation for users of the python-implemented G-Cubed model.  
 
-Two components are needed to run the model, simply put, input data (of various kinds) and the algorithm.   
-Input and output data vary depending on the model version, this repository stores those for the teaching version of the model, model 2R164. The algorithm or computing logic is packaged into a python package which can be installed into one's local machine.
+This is documentation for users of the teaching 
+version of the G-Cubed model implemented in Python.
 
-If you are first time user of the gcubed (python), please follow the steps below:  
-- Set up the python environment
-- Know a bit about the model definitions and conventions, so you are not confused about gcubed's notations,  
-- Know how the model IO folder is structured, i.e. what uses are those files,  
-- Design and run your own experiments.
+The documentation covers:
+
+1. [How to set up your computer to run the Python implementation of G-Cubed](2env_setup.md),
+including how to install the G-Cubed Python package.
+
+2. [Details of the version of the G-Cubed model used
+for teaching](3model_definitions.md).
+
+3. [The variables and equations in the teaching model](../model_2R_164/sym/model_2R_164.html)
+
+4. [How to set up simulation experiments](6simulations.md).
+
+5. [The Python API](gcubed/index.html).
+
+6. [The SYM model definition language](https://pjwilcoxen.github.io/sym/).
+
+## A roadmap for learning
+
+If you are first time user of the the G-Cubed python implementation, 
+start by ensuring you have [correctly set up the Python environment](2env_setup.md).
+
+Next, learn about the teaching model itself and how it is defined using [the SYM model
+definition language](https://pjwilcoxen.github.io/sym/).
+
+With your understanding of SYM the model definition language, [the documentation
+for the teaching model](3model_definitions.md) including 
+[the variable and equation details](../model_2R_164/sym/model_2R_164.html) will
+be straightforward to understand.
+
+The documentation of the teaching model will also explain how to configure the model,
+how to set up the information needed to calibrate the model parameters, and how to
+use a database of past data on the model variables to do projections.
+
+Finally, you will be ready to review the documentation explaining [how to run
+your own simulation experiments](6simulations.md).
+
+If you want to learn more about G-Cubed can be customised, 
+[the API documentation](gcubed/index.html) will be relevant.

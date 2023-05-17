@@ -2,7 +2,7 @@
 layout: default
 nav_order: 4
 ---
-# The G-Cubed model IO folder
+# The files associated with the G-Cubed teaching model
 {: .no_toc }
 
 <details open markdown="block">
@@ -58,7 +58,7 @@ The model version and the model number need to match their values in the CONFIGU
 │   ├── ...
 ├── python
 │   ├── run.py
-│   ├── RESULTS_GENERTION-TIME
+│   ├── RESULTS_<GENERATION-TIMESTAMP>
 │   │   ├── baseline_projections.csv
 │   │   ├── deviation_projections.csv
 │   │   ├── simulation_projections.csv
@@ -235,7 +235,7 @@ To generate the HTML documentation of the model, run:
 
 Both of these commands should be run from within the sym subfolder documented above. In other words, you will need to run command like this to change your location before you run your .exe:
 ```
-cd path/where/you/extract/this/repo/model_IO_folder/sym
+cd path/where/you/extract/this/repo/model_model_files/sym
 ```
 where cd is a common command in both Windows and MacOS, standing for 'change directory'.
   

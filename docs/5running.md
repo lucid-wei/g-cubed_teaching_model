@@ -21,12 +21,12 @@ runner: Runner = Runner(
 runner.run()
 ```
 
-To execute this script, run the following command under the *IO_folder/python/* subfolder:
+To execute this script, run the following command under the *model_files/python/* subfolder:
   ```
 python run.py
   ```
 If you encounter some error saying python is nowhere to be found, (assuming you already install python) this means you have not configured system PATH environment variables thus your terminal does not know where to find your installed python executable. Here is [a guide for this issue](https://stackoverflow.com/questions/6318156/adding-python-to-path-on-windows).
 
-After a successful run, you will see the results generated in a folder (also under the *IO_folder/python/* subfolder), with baseline_projections.csv, deviation_projections.csv, simulation_projections.csv and a log file recording the process or problems during the computation process.
+After a successful run, you will see the results generated in a folder (also under the *model_files/python/* subfolder), with baseline_projections.csv, deviation_projections.csv, simulation_projections.csv and a log file recording the process or problems during the computation process.
 
 More specific use case examples please see another documentation .md file.
