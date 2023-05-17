@@ -67,7 +67,7 @@ The model version and the model number need to match their values in the CONFIGU
 
 ## The configuration file
 
-The configuration2R164.csv defines which files gcubed python module needs to read from, which years gcubed uses for its algorithms, 
+The configuration2R164.csv defines which files gcubed Python module needs to read from, which years gcubed uses for its algorithms, 
 and a few other configurable options during its calculation.
 
 This file is loaded by [gcubed.model_configuration.ModelConfiguration.load_configuration_details](./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.load_configuration_details) during running. 
@@ -106,7 +106,7 @@ The details of each field is shown below.
 [location_ModelConfiguration]: ./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration
 Note: You may find more documentations if you jump into the links like '[Location in source code]' below.
 
-| Field                                 | Current Value      | Other Valid Values | Brief                                                                                                                                                                                                                              | Roles in the gcubed python module                                                                                                                                                                                                                                                                                        |
+| Field                                 | Current Value      | Other Valid Values | Brief                                                                                                                                                                                                                              | Roles in the gcubed Python module                                                                                                                                                                                                                                                                                        |
 |---------------------------------------|--------------------|--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Version                               | 2R                 | 6G, 20C, 20J, 20R  | The model version (number of regions followed by a letter indicating model type e.g. 2R)                                                                                                                                           | Determine sectors in the model, locate SYM generated Python equations file.                                                                                                                                                                                                                                              |
 | Build                                 | 164                | 170, 170logv3      | The model build - must start with a positive integer but can include other letters and digits (no spaces or punctuation though).                                                                                                   | Same as above. Different builds of the same version impact calculation procedure, often a new build has new features or bug fixes.                                                                                                                                                                                       |
@@ -217,7 +217,7 @@ the layers of adjustments to variables that are to be applied in specific years 
 
 ## The sym folder and its contents
 
-The sym folder stores machine generated contents that are used by the gcubed python module (.py, .lis and .csv files) and 
+The sym folder stores machine generated contents that are used by the gcubed Python module (.py, .lis and .csv files) and 
 the [model definitions information page](../model_2R_164/sym/model_2R_164.html).
 
 Currently in this folder, all files needed are already generated, so you do not need to run any of the commands below. 

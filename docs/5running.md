@@ -6,7 +6,7 @@ nav_order: 5
 
 Make sure [your Python environment is properly set up](2env_setup.md) and make sure that the `gcubed` Python package has been installed.
 
-Modify the following python script to run the model. An example of this script is contained in the python directory of the model (`python/run.py`).
+Modify the following Python script to run the model. An example of this script is contained in the Python directory of the model (`python/run.py`).
 
 ```
 from gcubed.runners.simple_runner import SimpleRunner
