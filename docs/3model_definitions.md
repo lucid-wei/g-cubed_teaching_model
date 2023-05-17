@@ -63,7 +63,7 @@ stl = state with lags
 sta = state (value is predetermined in period t)  
 exo = exogenous (value is fixed)  
 
-## Variable units:
+## Variable units
 
 pct = log or index  
 del = percentage point  
