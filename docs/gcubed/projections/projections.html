@@ -36,6 +36,7 @@
 Contains the base Projections class
 &#34;&#34;&#34;
 import logging
+from typing import Optional
 import pandas as pd
 import numpy as np
 from gcubed.constants import Constants
@@ -81,6 +82,9 @@ class Projections(Base):
         # Update this to False for non-baseline projections subclasses.
         self._is_baseline_projections = True
 
+        # Update this for projections that build on the baseline projections.
+        self._previous_projections = None
+
         assert stable_manifold is not None
         assert stable_manifold.converged
         self._stable_manifold = stable_manifold
@@ -106,6 +110,14 @@ class Projections(Base):
         data for that year.
         &#34;&#34;&#34;
         return self._is_baseline_projections
+    
+    @property
+    def previous_projections(self) -&gt; Optional[&#39;Projections&#39;]:
+        &#34;&#34;&#34;
+        The previous projections (baseline or simulation layer or other) or
+        `None` if these projections are baseline projections.
+        &#34;&#34;&#34;
+        return self._previous_projections
 
     @property
     def stable_manifold(self) -&gt; StableManifold:
@@ -397,7 +409,7 @@ class Projections(Base):
         return longrates.astype(float)
 
     @property
-    def long_rate_constants(self):
+    def long_rate_constants(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
         The constant adjustments to long bond rates 
         (real and nominal) in the base projection year 
@@ -758,10 +770,11 @@ class Projections(Base):
         database_projections *= 100.0
 
         # Splice on the actual data from the model database
-        for column in self.model.database.data.columns[::-1]:
+        data: pd.DataFrame = self.model.database.data if self.previous_projections is None else self.previous_projections.database_projections
+        for column in data.columns[::-1]:
             if not (column in database_projections.columns):
                 if int(column) &lt; int(database_projections.columns[0]):
-                    database_projections.insert(0, column, self.model.database.data.loc[:,column], True)
+                    database_projections.insert(0, column, data.loc[:,column], True)
                 else:
                     break
 
@@ -881,6 +894,9 @@ class Projections(Base):
         # Update this to False for non-baseline projections subclasses.
         self._is_baseline_projections = True
 
+        # Update this for projections that build on the baseline projections.
+        self._previous_projections = None
+
         assert stable_manifold is not None
         assert stable_manifold.converged
         self._stable_manifold = stable_manifold
@@ -906,6 +922,14 @@ class Projections(Base):
         data for that year.
         &#34;&#34;&#34;
         return self._is_baseline_projections
+    
+    @property
+    def previous_projections(self) -&gt; Optional[&#39;Projections&#39;]:
+        &#34;&#34;&#34;
+        The previous projections (baseline or simulation layer or other) or
+        `None` if these projections are baseline projections.
+        &#34;&#34;&#34;
+        return self._previous_projections
 
     @property
     def stable_manifold(self) -&gt; StableManifold:
@@ -1197,7 +1221,7 @@ class Projections(Base):
         return longrates.astype(float)
 
     @property
-    def long_rate_constants(self):
+    def long_rate_constants(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
         The constant adjustments to long bond rates 
         (real and nominal) in the base projection year 
@@ -1558,10 +1582,11 @@ class Projections(Base):
         database_projections *= 100.0
 
         # Splice on the actual data from the model database
-        for column in self.model.database.data.columns[::-1]:
+        data: pd.DataFrame = self.model.database.data if self.previous_projections is None else self.previous_projections.database_projections
+        for column in data.columns[::-1]:
             if not (column in database_projections.columns):
                 if int(column) &lt; int(database_projections.columns[0]):
-                    database_projections.insert(0, column, self.model.database.data.loc[:,column], True)
+                    database_projections.insert(0, column, data.loc[:,column], True)
                 else:
                     break
 
@@ -1914,7 +1939,7 @@ def last_projection_year(self) -&gt; int:
     return self.configuration.last_projection_year</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.projections.Projections.long_rate_constants"><code class="name">var <span class="ident">long_rate_constants</span></code></dt>
+<dt id="gcubed.projections.projections.Projections.long_rate_constants"><code class="name">var <span class="ident">long_rate_constants</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
 <div class="desc"><p>The constant adjustments to long bond rates
 (real and nominal) in the base projection year
@@ -1924,7 +1949,7 @@ to ensure projections equal observed values.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def long_rate_constants(self):
+def long_rate_constants(self) -&gt; pd.DataFrame:
     &#34;&#34;&#34;
     The constant adjustments to long bond rates 
     (real and nominal) in the base projection year 
@@ -1961,6 +1986,23 @@ def parameters(self) -&gt; Parameters:
     The calibrated parameters of the model.
     &#34;&#34;&#34;
     return self.model.parameters</code></pre>
+</details>
+</dd>
+<dt id="gcubed.projections.projections.Projections.previous_projections"><code class="name">var <span class="ident">previous_projections</span> : Optional[<a title="gcubed.projections.projections.Projections" href="#gcubed.projections.projections.Projections">Projections</a>]</code></dt>
+<dd>
+<div class="desc"><p>The previous projections (baseline or simulation layer or other) or
+<code>None</code> if these projections are baseline projections.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def previous_projections(self) -&gt; Optional[&#39;Projections&#39;]:
+    &#34;&#34;&#34;
+    The previous projections (baseline or simulation layer or other) or
+    `None` if these projections are baseline projections.
+    &#34;&#34;&#34;
+    return self._previous_projections</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.projections.Projections.projection_years"><code class="name">var <span class="ident">projection_years</span> : list[int]</code></dt>
@@ -2309,6 +2351,7 @@ def zel_projections_as_dataframe(self) -&gt; pd.DataFrame:
 <li><code><a title="gcubed.projections.projections.Projections.long_rate_constants" href="#gcubed.projections.projections.Projections.long_rate_constants">long_rate_constants</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.model" href="#gcubed.projections.projections.Projections.model">model</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.parameters" href="#gcubed.projections.projections.Projections.parameters">parameters</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.previous_projections" href="#gcubed.projections.projections.Projections.previous_projections">previous_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.projection_years" href="#gcubed.projections.projections.Projections.projection_years">projection_years</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.projection_years_column_labels" href="#gcubed.projections.projections.Projections.projection_years_column_labels">projection_years_column_labels</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.projection_years_count" href="#gcubed.projections.projections.Projections.projection_years_count">projection_years_count</a></code></li>

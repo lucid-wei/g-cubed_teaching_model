@@ -183,7 +183,7 @@ class AdvancedRunner(Base):
     @property
     def final_projections(self) -&gt; BaselineProjections:
         &#34;&#34;&#34;
-        The final projections.
+        The final projections or `None` if there was no simulation experiment to do.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_final_projections&#34;):
             logging.warning(&#34;The final projections are not yet available. Make sure you run the model to completion before accessing them.&#34;)
@@ -312,6 +312,8 @@ class AdvancedRunner(Base):
         # a simulation or relinearisation.
         for year in range(self.baseline_projections.first_projection_year, self.model.configuration.last_projection_year):
 
+            new_projections: Projections = None
+
             if year in self.relinearisation_years:
                 # Do a relinearisation and add any relevant simulation layers while we are at it.
                 # logging.debug(f&#34;{old_projections.first_projection_year} database projections\n{old_projections.database_projections.loc[Constants().REPORTING_VARIABLES, Constants().REPORTING_YEARS]}&#34;)
@@ -337,9 +339,7 @@ class AdvancedRunner(Base):
                     logging.info(f&#34;Generated projections for the {simulation_layer_definition.name} simulation layer without relinearisation.&#34;)
                 continue
 
-            continue
-
-        self._final_projections: Projections = new_projections
+            self._final_projections: Projections = new_projections
 
         if self.save_results:
             # Generate the CSV file containing simulation projections
@@ -532,7 +532,7 @@ the configuration file).</p></div>
     @property
     def final_projections(self) -&gt; BaselineProjections:
         &#34;&#34;&#34;
-        The final projections.
+        The final projections or `None` if there was no simulation experiment to do.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_final_projections&#34;):
             logging.warning(&#34;The final projections are not yet available. Make sure you run the model to completion before accessing them.&#34;)
@@ -661,6 +661,8 @@ the configuration file).</p></div>
         # a simulation or relinearisation.
         for year in range(self.baseline_projections.first_projection_year, self.model.configuration.last_projection_year):
 
+            new_projections: Projections = None
+
             if year in self.relinearisation_years:
                 # Do a relinearisation and add any relevant simulation layers while we are at it.
                 # logging.debug(f&#34;{old_projections.first_projection_year} database projections\n{old_projections.database_projections.loc[Constants().REPORTING_VARIABLES, Constants().REPORTING_YEARS]}&#34;)
@@ -686,9 +688,7 @@ the configuration file).</p></div>
                     logging.info(f&#34;Generated projections for the {simulation_layer_definition.name} simulation layer without relinearisation.&#34;)
                 continue
 
-            continue
-
-        self._final_projections: Projections = new_projections
+            self._final_projections: Projections = new_projections
 
         if self.save_results:
             # Generate the CSV file containing simulation projections
@@ -739,7 +739,7 @@ def event_years(self) -&gt; list[int]:
 </dd>
 <dt id="gcubed.runners.advanced_runner.AdvancedRunner.final_projections"><code class="name">var <span class="ident">final_projections</span> : <a title="gcubed.projections.baseline_projections.BaselineProjections" href="../projections/baseline_projections.html#gcubed.projections.baseline_projections.BaselineProjections">BaselineProjections</a></code></dt>
 <dd>
-<div class="desc"><p>The final projections.</p></div>
+<div class="desc"><p>The final projections or <code>None</code> if there was no simulation experiment to do.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -747,7 +747,7 @@ def event_years(self) -&gt; list[int]:
 <pre><code class="python">@property
 def final_projections(self) -&gt; BaselineProjections:
     &#34;&#34;&#34;
-    The final projections.
+    The final projections or `None` if there was no simulation experiment to do.
     &#34;&#34;&#34;
     if not hasattr(self, &#34;_final_projections&#34;):
         logging.warning(&#34;The final projections are not yet available. Make sure you run the model to completion before accessing them.&#34;)
@@ -933,6 +933,8 @@ analysis purposes.</p></div>
     # a simulation or relinearisation.
     for year in range(self.baseline_projections.first_projection_year, self.model.configuration.last_projection_year):
 
+        new_projections: Projections = None
+
         if year in self.relinearisation_years:
             # Do a relinearisation and add any relevant simulation layers while we are at it.
             # logging.debug(f&#34;{old_projections.first_projection_year} database projections\n{old_projections.database_projections.loc[Constants().REPORTING_VARIABLES, Constants().REPORTING_YEARS]}&#34;)
@@ -958,9 +960,7 @@ analysis purposes.</p></div>
                 logging.info(f&#34;Generated projections for the {simulation_layer_definition.name} simulation layer without relinearisation.&#34;)
             continue
 
-        continue
-
-    self._final_projections: Projections = new_projections
+        self._final_projections: Projections = new_projections
 
     if self.save_results:
         # Generate the CSV file containing simulation projections

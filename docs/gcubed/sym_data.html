@@ -1090,6 +1090,7 @@ class SymData:
 
         # Check for the existence of any variables with the given name prefixes and add them 
         # to the results if they are defined in the SYM model.
+
         for (prefix, vector_name) in Constants().NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES:
             matches: pd.Series = self.var_map.name.str.startswith(f&#34;{prefix}(&#34;) &amp; (self.var_map.var_type == vector_name)
             result: pd.DataFrame = pd.concat([result, self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]])            
@@ -2357,6 +2358,7 @@ in the SYM model definition.</p>
 
         # Check for the existence of any variables with the given name prefixes and add them 
         # to the results if they are defined in the SYM model.
+
         for (prefix, vector_name) in Constants().NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES:
             matches: pd.Series = self.var_map.name.str.startswith(f&#34;{prefix}(&#34;) &amp; (self.var_map.var_type == vector_name)
             result: pd.DataFrame = pd.concat([result, self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]])            
@@ -3078,6 +3080,7 @@ def intertemporal_constant_variables(self) -&gt; pd.DataFrame:
 
     # Check for the existence of any variables with the given name prefixes and add them 
     # to the results if they are defined in the SYM model.
+
     for (prefix, vector_name) in Constants().NON_STANDARD_INTERTEMPORAL_CONSTANT_VARIABLE_PREFIXES:
         matches: pd.Series = self.var_map.name.str.startswith(f&#34;{prefix}(&#34;) &amp; (self.var_map.var_type == vector_name)
         result: pd.DataFrame = pd.concat([result, self.var_map.loc[matches, [&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]]])            
