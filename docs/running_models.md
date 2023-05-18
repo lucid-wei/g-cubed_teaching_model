@@ -1,6 +1,6 @@
 ---
 layout: default
-nav_order: 5
+nav_order: 6
 ---
 # Running a simulation experiment using G-Cubed.
 
