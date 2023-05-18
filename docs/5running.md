@@ -30,14 +30,6 @@ at the command prompt, run either:
 python run.py
 ```
 
-or 
-
-```
-python3 run.py
-```
-
-Note that some Python installs use `python` as the name of the Python executable and others use `python3`.
-
 If you encounter some error saying Python is nowhere to be found, (assuming you already installed Python), you may not have configured your PATH environment variables so your computer does not know where to find your installed Python executable. Here is [a guide for fixing this problem](https://stackoverflow.com/questions/6318156/adding-python-to-path-on-windows).
 
 After a successful run, you will see the results generated in a folder (also under the *model_files/python/* subfolder), with ``baseline_projections.csv`, `deviation_projections.csv`, `simulation_projections.csv` and a log file with messages about the progress of the model run and any problems that arose.

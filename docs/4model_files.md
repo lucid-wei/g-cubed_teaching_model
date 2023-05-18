@@ -2,7 +2,50 @@
 layout: default
 nav_order: 4
 ---
-# The files associated with the G-Cubed teaching model
+
+# Model versions
+
+G-Cubed supports simulation experiments using a variety of model versions. These versions differ
+in terms of the regions included in the model, the sectors in each region, and the economic
+relationships embodied in the equations describing the model version.
+
+Model versions also differ in terms of how the model parameters are calibrated using the available
+data about each region in the model. The calibration rules are built into G-Cubed and cannot be modified.
+
+However, you can modify the data used to do parameter calibration, you can modify the data used to set up 
+a model simulation, and you can modify the shocks that impact the simulated economy, through the course
+of the model projections.
+
+All of files that specify the details (including the data) for a model version need to be in
+a set of files with a specific organisation within directories. 
+
+This document sets out how the files must be stored, and how the data files must be formatted.
+
+## Model identification
+
+A specific model is identified by the combination of its version and its build. A particular model version 
+can have many different builds.
+
+### Model versions
+
+Version codes have two parts, a number and a letter. The number indicates the number of regions
+in the version of the model. The letter is used to differentiate versions of the model that have
+different regions, even if the number of regions is the same. The letter is capitalised.
+
+Thus, model `2R` has 2 regions. Model `20J` has 20 regions. Model `20C` also has 20 regions but the regions
+are different from those in model version `20J`.
+
+### Model builds
+
+Model versions are improved over time. Each improvement is released as a new build of the model version.
+
+Model builds are also identified by a number and an optional string of other letters amd digits. Examples include
+`164`, `170`, and `170log`.
+
+The prefix number in the model build increases over time. The suffix in the model build differentiates models
+of the same generation if they differ in material ways.
+
+# The files associated with a G-Cubed model
 {: .no_toc }
 
 <details open markdown="block">
@@ -14,15 +57,13 @@ nav_order: 4
 {:toc}
 </details>
 
+A specific version of a G-Cubed model requires a number of files to run. These files are organised into a root directory with a set of subdirectories. The gcubed package will load these files and produce certain outputs into this root directory.
 
-
-The G-Cubed model requires a number of files to run. These files are organised into a folder with a set of subfolders. The gcubed package will load these files and produce certain outputs into this folder.  
-
-The lower-case names of the subfolders are built-in for this particular model, and should not be changed during typical usage. The capitalised names of folder and files can be altered at your discretion, depending on your use case. 
+All directories have lower-case names. This must not be changed because G-Cubed is case sensitive.
 
 The names that include parts like <PART> are to be substituted as follows:
-* <VERSION> replace with the version of the model, e.g. '2R', '20C', etc.
-* <NUMBER> replace with the number of the model, e.g. '169', '170'.
+* <VERSION> replace with the version of the model, e.g. `2R`, `20C`, etc.
+* <BUILD> replace with the <BUILD> of the model, e.g. `169`, `170`, `17log` etc.
 
 The model version and the model number need to match their values in the CONFIGURATION.CSV file that is in the ROOT_DIRECTORY.
 
