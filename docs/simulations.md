@@ -55,13 +55,17 @@ only takes effect in a year after 2025.
 
 The event year for each simulation layer must be contained in the event_year column of the
 experiment design file.
+
+The event year must be after the first projection year, specified in 
+[the model configuration](model_configuration.md).
+
 #### The simulation layer data
 
 Each simulation layer involves applying changes to the circumstances of the agents in the model.
 These take the form of increments that are applied to:
 
 * exogenous variables in the event year or in any year thereafter; and
-* state variables in the event year itself.
+* state variables in the event year itself
 
 The increments to exogenous variables set out in a single CSV file. The name of
 that CSV file is the value in the `data` column for the simulation layer in the 
@@ -72,3 +76,51 @@ design file.
 The increments to exogenous variables are in the same units as the data in 
 [the model database](model_data_files.md#the-database).
 
+### The simulation layer data file
+
+There must be exactly one data file for each simulation layer.
+
+The data file is a comma-delimited CSV file. The first column contains 
+the full variable names for the exogenous or state variables that change.
+
+The following columns are for the changes to the variables in each year
+from the event year of the simulation layer through to the last projection year.
+
+The rows for the variables can be in any order.
+
+The data file for a simulation has column headings in the first row:
+
+1. `name` for the full name of the variable
+2. `2025` if the event year is `2025`
+3. `2026`
+4. ...
+5. `2100` if the last projection year is `2100`.
+
+[The simulation layer data file for the teaching model](../model/simulations/experiment1/adjustments.csv)
+provides a useful example.
+
+The simulation layer data file can, pathologically contain just the column headings, 
+in which case, the simulation layer should not alter projections at all because it
+implies no changes to the circumstances of the agents in the model.
+
+More typical data files involve changes to several exogenous or state variables.
+
+Because the simulation layer applies changes for:
+
+* exogenous variables in the event year or in any year thereafter; and
+* state variables in the event year itself
+
+any changes to state variables after the event year are ignored.
+
+Also, the simulation layer data file must not include changes to variables 
+that are not exogenous variables or state variables.
+
+## Experiment design
+
+Experiments can involve applying more than one simulation layer. More than one 
+simulation layer can be applied with the same event year.
+
+The simulation layers are ordered by their event years when they are applied.
+
+The application of multiple simulation layers with the same event year is 
+done in the row order of the simulation layers in the experiment design file.
