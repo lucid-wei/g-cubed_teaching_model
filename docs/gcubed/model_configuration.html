@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>gcubed.model_configuration API documentation</title>
-<meta name="description" content="Contains the ModelConfiguration class" />
+<meta name="description" content="Contains the ModelConfiguration class." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -23,7 +23,7 @@
 <h1 class="title">Module <code>gcubed.model_configuration</code></h1>
 </header>
 <section id="section-intro">
-<p>Contains the ModelConfiguration class</p>
+<p>Contains the ModelConfiguration class.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -33,7 +33,8 @@
 # Author: Geoff Shuetrim
 # ------------------------------------------------------------------
 &#34;&#34;&#34;
-Contains the ModelConfiguration class
+Contains the ModelConfiguration class.
+
 &#34;&#34;&#34;
 import logging
 import pandas as pd
@@ -55,6 +56,30 @@ class ModelConfiguration(Base):
 
     Provides access to model configuration details that have been
     read in from the model configuration CSV file.
+
+    #### The configuration CSV file format
+
+    The configuration CSV file must have at least 2 columns.
+    Only the first 2 columns are processed when loading model
+    configuration details. 
+    
+    The fields in each row must be comma separated. No commas are 
+    allowed as part of the CSV file content in the first two columns.
+
+    The following configuration settings must be included the model configuration
+    file, noting that their names are case sensitive:
+
+    * `Version`: the model version - `ModelConfiguration.version`.
+    * `Build`: the model build - `ModelConfiguration.build`.
+    * ???? Lucid to migrate documentation from teaching site to here.
+
+    The following configuration settings are optional inclusions in the model configuration
+    file:
+
+    * `LineariseAroundStrictModelSolution` governing how model linearisation is done. See 
+    `ModelConfiguration.linearise_around_strict_model_solution` for details and its
+    default value.
+
     &#34;&#34;&#34;
 
     def __init__(self, configuration_file: str) -&gt; None:
@@ -139,7 +164,7 @@ class ModelConfiguration(Base):
         &#34;&#34;&#34;
         This directory is where all simulation experiment definitions
         are stored. Each experiment has its own root directory that
-        is a subfolder of the simulations directory.
+        is a subdirectory of the simulations directory.
         &#34;&#34;&#34;        
         return f&#34;{self.model_directory}simulations/&#34;
 
@@ -202,7 +227,9 @@ class ModelConfiguration(Base):
         The integer indicating which build of the model is being used.
         A given model version can have many different builds.
 
-        This configuration property must be implicit in the configuration &#34;Build&#34; property.
+        This configuration property is inferred from the `Build` value in
+        the model configuration file. See `ModelConfiguration.build` for details
+        of the `Build` configuration setting.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_build_number&#34;):
             raise Exception(&#34;The model build in the model specification must start with a positive integer.&#34;)
@@ -730,6 +757,26 @@ class ModelConfiguration(Base):
 <div class="desc"><h3 id="overview">Overview</h3>
 <p>Provides access to model configuration details that have been
 read in from the model configuration CSV file.</p>
+<h4 id="the-configuration-csv-file-format">The configuration CSV file format</h4>
+<p>The configuration CSV file must have at least 2 columns.
+Only the first 2 columns are processed when loading model
+configuration details. </p>
+<p>The fields in each row must be comma separated. No commas are
+allowed as part of the CSV file content in the first two columns.</p>
+<p>The following configuration settings must be included the model configuration
+file, noting that their names are case sensitive:</p>
+<ul>
+<li><code>Version</code>: the model version - <code><a title="gcubed.model_configuration.ModelConfiguration.version" href="#gcubed.model_configuration.ModelConfiguration.version">ModelConfiguration.version</a></code>.</li>
+<li><code>Build</code>: the model build - <code><a title="gcubed.model_configuration.ModelConfiguration.build" href="#gcubed.model_configuration.ModelConfiguration.build">ModelConfiguration.build</a></code>.</li>
+<li>???? Lucid to migrate documentation from teaching site to here.</li>
+</ul>
+<p>The following configuration settings are optional inclusions in the model configuration
+file:</p>
+<ul>
+<li><code>LineariseAroundStrictModelSolution</code> governing how model linearisation is done. See
+<code><a title="gcubed.model_configuration.ModelConfiguration.linearise_around_strict_model_solution" href="#gcubed.model_configuration.ModelConfiguration.linearise_around_strict_model_solution">ModelConfiguration.linearise_around_strict_model_solution</a></code> for details and its
+default value.</li>
+</ul>
 <h3 id="constructor">Constructor</h3>
 <p>Initialises the model details from a modified version of the CSV files
 used by G-cubed. The information in the file is a subset of the information
@@ -749,6 +796,30 @@ current working directory, to the model configuration file.
 
     Provides access to model configuration details that have been
     read in from the model configuration CSV file.
+
+    #### The configuration CSV file format
+
+    The configuration CSV file must have at least 2 columns.
+    Only the first 2 columns are processed when loading model
+    configuration details. 
+    
+    The fields in each row must be comma separated. No commas are 
+    allowed as part of the CSV file content in the first two columns.
+
+    The following configuration settings must be included the model configuration
+    file, noting that their names are case sensitive:
+
+    * `Version`: the model version - `ModelConfiguration.version`.
+    * `Build`: the model build - `ModelConfiguration.build`.
+    * ???? Lucid to migrate documentation from teaching site to here.
+
+    The following configuration settings are optional inclusions in the model configuration
+    file:
+
+    * `LineariseAroundStrictModelSolution` governing how model linearisation is done. See 
+    `ModelConfiguration.linearise_around_strict_model_solution` for details and its
+    default value.
+
     &#34;&#34;&#34;
 
     def __init__(self, configuration_file: str) -&gt; None:
@@ -833,7 +904,7 @@ current working directory, to the model configuration file.
         &#34;&#34;&#34;
         This directory is where all simulation experiment definitions
         are stored. Each experiment has its own root directory that
-        is a subfolder of the simulations directory.
+        is a subdirectory of the simulations directory.
         &#34;&#34;&#34;        
         return f&#34;{self.model_directory}simulations/&#34;
 
@@ -896,7 +967,9 @@ current working directory, to the model configuration file.
         The integer indicating which build of the model is being used.
         A given model version can have many different builds.
 
-        This configuration property must be implicit in the configuration &#34;Build&#34; property.
+        This configuration property is inferred from the `Build` value in
+        the model configuration file. See `ModelConfiguration.build` for details
+        of the `Build` configuration setting.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_build_number&#34;):
             raise Exception(&#34;The model build in the model specification must start with a positive integer.&#34;)
@@ -1524,7 +1597,9 @@ def build(self) -&gt; str:
 <dd>
 <div class="desc"><p>The integer indicating which build of the model is being used.
 A given model version can have many different builds.</p>
-<p>This configuration property must be implicit in the configuration "Build" property.</p></div>
+<p>This configuration property is inferred from the <code>Build</code> value in
+the model configuration file. See <code><a title="gcubed.model_configuration.ModelConfiguration.build" href="#gcubed.model_configuration.ModelConfiguration.build">ModelConfiguration.build</a></code> for details
+of the <code>Build</code> configuration setting.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1535,7 +1610,9 @@ def build_number(self) -&gt; int:
     The integer indicating which build of the model is being used.
     A given model version can have many different builds.
 
-    This configuration property must be implicit in the configuration &#34;Build&#34; property.
+    This configuration property is inferred from the `Build` value in
+    the model configuration file. See `ModelConfiguration.build` for details
+    of the `Build` configuration setting.
     &#34;&#34;&#34;
     if not hasattr(self, &#34;_build_number&#34;):
         raise Exception(&#34;The model build in the model specification must start with a positive integer.&#34;)
@@ -2101,7 +2178,7 @@ def projection_years_count(self) -&gt; int:
 <dd>
 <div class="desc"><p>This directory is where all simulation experiment definitions
 are stored. Each experiment has its own root directory that
-is a subfolder of the simulations directory.</p></div>
+is a subdirectory of the simulations directory.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2111,7 +2188,7 @@ def simulations_directory(self) -&gt; str:
     &#34;&#34;&#34;
     This directory is where all simulation experiment definitions
     are stored. Each experiment has its own root directory that
-    is a subfolder of the simulations directory.
+    is a subdirectory of the simulations directory.
     &#34;&#34;&#34;        
     return f&#34;{self.model_directory}simulations/&#34;</code></pre>
 </details>
