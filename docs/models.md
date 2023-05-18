@@ -1,9 +1,21 @@
 ---
 layout: default
-nav_order: 4
+nav_order: 3
 ---
 
-# Model versions
+# Running a model
+
+Running a model entails generation of a set of baseline projections. Projections
+are values for each variable in the model, for each of the years from the start
+of the projections to the end of the projections, potentially spanning many decades.
+
+A simulation experiment also generates simulation projections that can be compared 
+to the baseline projections.
+
+The baseline projections and the simulation projections will naturally depend in which 
+model is being run.
+
+# Different models
 
 G-Cubed supports simulation experiments using a variety of model versions. These versions differ
 in terms of the regions included in the model, the sectors in each region, and the economic
@@ -45,7 +57,7 @@ Model builds are also identified by a number and an optional string of other let
 The prefix number in the model build increases over time. The suffix in the model build differentiates models
 of the same generation if they differ in material ways.
 
-# The files associated with a G-Cubed model
+# The files required to run a G-Cubed model
 {: .no_toc }
 
 <details open markdown="block">
@@ -61,23 +73,30 @@ A specific version of a G-Cubed model requires a number of files to run. These f
 
 All directories have lower-case names. This must not be changed because G-Cubed is case sensitive.
 
-The names that include parts like <PART> are to be substituted as follows:
+The file names that include parts like <PART> are to be substituted as follows:
 * <VERSION> replace with the version of the model, e.g. `2R`, `20C`, etc.
-* <BUILD> replace with the <BUILD> of the model, e.g. `169`, `170`, `17log` etc.
+* <BUILD> replace with the build of the model, e.g. `169`, `170`, `170log` etc.
+* <NUMBER> replace with the build number of the model: e.g. `170` if the build is `17log`.
+* <?> For anything else in <> use whatever text you want, 
+but make sure that it matches the file name details given in the model configuration file,
+the `<CONFIGURATION>.csv` file that must be in the root directory of the 
+model's directory structure.
 
-The model version and the model number need to match their values in the CONFIGURATION.CSV file that is in the ROOT_DIRECTORY.
+The model version and the model build values used in file naming must match their 
+values in the model configuration file.
 
 ```
-├── ROOT_DIRECTORY
-├── CONFIGURATION.CSV
+├── <ROOT_DIRECTORY>
+├── <CONFIGURATION>.csv
 ├── data
-│   │   ├── DATABASE.csv
-│   │   ├── IOTABLES.csv
-│   │   ├── SETPARAMETERS.csv
-│   │   ├── POPULATION.csv
-│   │   ├── PRODUCTIVITY.csv
-│   │   ├── AEEINEW.csv
+│   │   ├── <DATABASE>.csv
+│   │   ├── <IOTABLES>.csv
+│   │   ├── <SETPARAMETERS>.csv
+│   │   ├── <POPULATION>.csv
+│   │   ├── <PRODUCTIVITY>.csv
+│   │   ├── <AEEINEW>.csv
 ├── sym
+│   │   ├── <ROOTSYMFILE>.sym
 │   │   ├── *.sym
 │   │   ├── model_<VERSION>_<NUMBER>_eqnmap.sym
 │   │   ├── model_<VERSION>_<NUMBER>_optmap.sym
@@ -87,19 +106,19 @@ The model version and the model number need to match their values in the CONFIGU
 │   │   ├── model_<VERSION>_<NUMBER>.lis
 │   │   ├── model_<VERSION>_<NUMBER>.py
 ├── simulations
-│   ├── EXPERIMENT1
-│   │   ├── EXPERIMENT1_DESIGN.csv
-│   │   ├── LAYER1_DATA.csv
+│   ├── <EXPERIMENT1>
+│   │   ├── <EXPERIMENT1_DESIGN>.csv
+│   │   ├── <LAYER1_DATA>.csv
 │   │   ├── ...
-│   ├── EXPERIMENT2
-│   │   ├── EXPERIMENT2_DESIGN.csv
-│   │   ├── LAYER1_DATA.csv
-│   │   ├── LAYER2_DATA.csv
+│   ├── <EXPERIMENT2>
+│   │   ├── <EXPERIMENT2_DESIGN>.csv
+│   │   ├── <LAYER1_DATA>.csv
+│   │   ├── <LAYER2_DATA>.csv
 │   │   ├── ...
 │   ├── ...
 ├── python
 │   ├── run.py
-│   ├── RESULTS_<GENERATION-TIMESTAMP>
+│   ├── results_<GENERATION-TIMESTAMP>
 │   │   ├── baseline_projections.csv
 │   │   ├── deviation_projections.csv
 │   │   ├── simulation_projections.csv
@@ -108,8 +127,19 @@ The model version and the model number need to match their values in the CONFIGU
 
 ## The configuration file
 
-The configuration2R164.csv defines which files gcubed Python module needs to read from, which years gcubed uses for its algorithms, 
-and a few other configurable options during its calculation.
+The model configuration file contains all of the information needed to load a specific model.
+
+You can model your own configuration file on the [configuration file for the teaching model](../model/configuration2R164.csv)
+
+The configuration file sets up all of the details of the model that is to be used. This includes:
+
+* the files where parameter calibration and initial variable state data are stored
+* settings affecting parameter calibration
+* settings affecting model linearisation
+* settings for how the model is 'solved'
+* settings affecting the baseline projections
+
+All of these settings are detailed in [the documentation of the Model Configuration API](gcubed/model_configuration.html).
 
 This file is loaded by [gcubed.model_configuration.ModelConfiguration.load_configuration_details](./gcubed/model_configuration.html#gcubed.model_configuration.ModelConfiguration.load_configuration_details) during running. 
 The details of each field is shown below.
@@ -174,13 +204,20 @@ Note: You may find more documentations if you jump into the links like '[Locatio
 
 Usually information in this file does not need to be changed.
 
-## The data folder and its contents
+## The data folder
 
-The data folder contains the CSV data files defining the model, including:
+The data folder contains the CSV data files for the model.
 
-### DATABASE.csv
+### The model database
 
-Is DATAvR2018.csv for model 2R164. 
+The <DATABASE>.csv contains the model database. It must be populated with data 
+for all variables in the model for one or more years leading up to and including 
+the first projection year. Data can also be included for years after the first
+projection year. Data after the first projection year will be ignored when 
+running the model.
+
+See
+DATAvR2018.csv for model 2R164. 
 
 Data in this file is considered to be the real data of the world economy. Following the variables names, are 
 descriptions, units of measurement, and country/region code.
@@ -222,7 +259,7 @@ They carry many of the parameter names used in other sectors but they are not tr
 ### SETPARAMETERS.csv <a id="setparameters"></a>
 
 This file contains user-defined parameters.  
-More information on parameters please check [related model definitions section](3model_definitions.md#parameters).
+More information on parameters please check [related model definitions section](sym_model_definitions.md#parameters).
 
 ### POPULATION.csv
 
@@ -259,7 +296,7 @@ the layers of adjustments to variables that are to be applied in specific years 
 ## The sym folder and its contents
 
 The sym folder stores machine generated contents that are used by the gcubed Python module (.py, .lis and .csv files) and 
-the [model definitions information page](../model_2R_164/sym/model_2R_164.html).
+the [model definitions information page](../model/sym/model_2R_164.html).
 
 Currently in this folder, all files needed are already generated, so you do not need to run any of the commands below. 
 But FYI, the *.sym files are used to generate the other files in that folder, by running the SYM processor <SYM>, sym4mac.exe on MacOS or sym4win.exe on Windows.

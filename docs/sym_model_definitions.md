@@ -1,16 +1,22 @@
 ---
 layout: default
-nav_order: 3
+nav_order: 4
 ---
-# [Model definitions](../model_2R_164/sym/model_2R_164.html)
+# SYM model definitions
 
-Two components are needed to run the model, simply put, input data (of various kinds) and the algorithm.   
+Two components are needed to run the model:
+
+* the model definition, expressed as a set of equations in the SYM language; and 
+
+* the data used to calibrate the model parameters and to provide starting values
+when generating baseline projections.
+
 Input and output data vary depending on the model version, this repository stores those for the teaching version of the model, model 2R164. The algorithm or computing logic is packaged into a Python package which can be installed into one's local machine.
 
-The model definitions for this particular model version can be found in 
-[this link or the one above](../model_2R_164/sym/model_2R_164.html), which includes definitions of sets, variables, parameters and equations.
-
-This file will be referenced a lot when you design your own simulations. But before reading the model definitions, a few conventions should be kept in mind to understand that file:
+Documentation of the SYM definition of the teaching model can be found [here](../model/sym/model_2R_164.html). It includes definitions of sets, variables, parameters and equations. This documnentation is key
+to understanding the model and to designing your own simulations. But before using the model documentation, 
+it is helpful to understand a bit more about the SYM model definition language and what to expect in a model
+definition.
 
 # Country and sector codes
 

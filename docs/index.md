@@ -14,9 +14,9 @@ The documentation covers:
 including how to install the G-Cubed Python package.
 
 2. [Details of the version of the G-Cubed model used
-for teaching](3model_definitions.md).
+for teaching](sym_model_definitions.md).
 
-3. [The variables and equations in the teaching model](../model_2R_164/sym/model_2R_164.html)
+3. [The variables and equations in the teaching model](../model/sym/model_2R_164.html)
 
 4. [How to set up simulation experiments](6simulations.md).
 
@@ -33,8 +33,8 @@ Next, learn about the teaching model itself and how it is defined using [the SYM
 definition language](https://pjwilcoxen.github.io/sym/).
 
 With your understanding of SYM the model definition language, [the documentation
-for the teaching model](3model_definitions.md) including 
-[the variable and equation details](../model_2R_164/sym/model_2R_164.html) will
+for the teaching model](sym_model_definitions.md) including 
+[the variable and equation details](../model/sym/model_2R_164.html) will
 be straightforward to understand.
 
 The documentation of the teaching model will also explain how to configure the model,
