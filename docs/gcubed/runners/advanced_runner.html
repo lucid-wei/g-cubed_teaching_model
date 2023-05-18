@@ -92,7 +92,7 @@ class AdvancedRunner(Base):
         in which case the model is not relinearised.
 
         experiment_design_file: The optional location of the experiment design CSV file, as a relative path directory
-        to the experiment design file from the simulations folder within the model folder (the model folder contains
+        to the experiment design file from the simulations directory within the model directory (the model directory contains
         the configuration file).
         &#34;&#34;&#34;
 
@@ -201,7 +201,7 @@ class AdvancedRunner(Base):
     @property
     def save_results(self) -&gt; bool:
         &#34;&#34;&#34;
-        True if the results are to be saved to a results folder automatically at the end of the
+        True if the results are to be saved to a results directory automatically at the end of the
         run and false otherwise. 
         
         Defaults to False.
@@ -217,7 +217,7 @@ class AdvancedRunner(Base):
         ### Overview
         
         Set the value to True if the results are to be saved to a 
-        results folder automatically at the end of the run and false otherwise.
+        results directory automatically at the end of the run and false otherwise.
         &#34;&#34;&#34;
         assert value is not None
         assert isinstance(value, bool)
@@ -310,15 +310,15 @@ class AdvancedRunner(Base):
 
         # Step forward through the projection years and for each step check if we need to do 
         # a simulation or relinearisation.
+        new_projections: Projections = None
         for year in range(self.baseline_projections.first_projection_year, self.model.configuration.last_projection_year):
 
-            new_projections: Projections = None
 
             if year in self.relinearisation_years:
                 # Do a relinearisation and add any relevant simulation layers while we are at it.
                 # logging.debug(f&#34;{old_projections.first_projection_year} database projections\n{old_projections.database_projections.loc[Constants().REPORTING_VARIABLES, Constants().REPORTING_YEARS]}&#34;)
 
-                new_projections: Projections = RelinearisationProjections(
+                new_projections = RelinearisationProjections(
                     baseline_projections=self.baseline_projections, 
                     previous_projections=old_projections, 
                     relinearisation_year=year, 
@@ -331,7 +331,7 @@ class AdvancedRunner(Base):
             if year in self.event_years:
                 # Apply each simulation layer with this event year, one after the other.
                 for simulation_layer_definition in self.simulation_layer_definitions.get_simulation_layer_definitions(event_year=year):
-                    new_projections: Projections = SimulationLayer(
+                    new_projections = SimulationLayer(
                         simulation_layer_definition=simulation_layer_definition,
                         previous_projections=old_projections
                     )
@@ -339,7 +339,7 @@ class AdvancedRunner(Base):
                     logging.info(f&#34;Generated projections for the {simulation_layer_definition.name} simulation layer without relinearisation.&#34;)
                 continue
 
-            self._final_projections: Projections = new_projections
+        self._final_projections: Projections = new_projections
 
         if self.save_results:
             # Generate the CSV file containing simulation projections
@@ -392,7 +392,7 @@ specified working directory.</p>
 <p>relinearisation_years: The list of years where a relinearisation is required. This list can be empty
 in which case the model is not relinearised.</p>
 <p>experiment_design_file: The optional location of the experiment design CSV file, as a relative path directory
-to the experiment design file from the simulations folder within the model folder (the model folder contains
+to the experiment design file from the simulations directory within the model directory (the model directory contains
 the configuration file).</p></div>
 <details class="source">
 <summary>
@@ -441,7 +441,7 @@ the configuration file).</p></div>
         in which case the model is not relinearised.
 
         experiment_design_file: The optional location of the experiment design CSV file, as a relative path directory
-        to the experiment design file from the simulations folder within the model folder (the model folder contains
+        to the experiment design file from the simulations directory within the model directory (the model directory contains
         the configuration file).
         &#34;&#34;&#34;
 
@@ -550,7 +550,7 @@ the configuration file).</p></div>
     @property
     def save_results(self) -&gt; bool:
         &#34;&#34;&#34;
-        True if the results are to be saved to a results folder automatically at the end of the
+        True if the results are to be saved to a results directory automatically at the end of the
         run and false otherwise. 
         
         Defaults to False.
@@ -566,7 +566,7 @@ the configuration file).</p></div>
         ### Overview
         
         Set the value to True if the results are to be saved to a 
-        results folder automatically at the end of the run and false otherwise.
+        results directory automatically at the end of the run and false otherwise.
         &#34;&#34;&#34;
         assert value is not None
         assert isinstance(value, bool)
@@ -659,15 +659,15 @@ the configuration file).</p></div>
 
         # Step forward through the projection years and for each step check if we need to do 
         # a simulation or relinearisation.
+        new_projections: Projections = None
         for year in range(self.baseline_projections.first_projection_year, self.model.configuration.last_projection_year):
 
-            new_projections: Projections = None
 
             if year in self.relinearisation_years:
                 # Do a relinearisation and add any relevant simulation layers while we are at it.
                 # logging.debug(f&#34;{old_projections.first_projection_year} database projections\n{old_projections.database_projections.loc[Constants().REPORTING_VARIABLES, Constants().REPORTING_YEARS]}&#34;)
 
-                new_projections: Projections = RelinearisationProjections(
+                new_projections = RelinearisationProjections(
                     baseline_projections=self.baseline_projections, 
                     previous_projections=old_projections, 
                     relinearisation_year=year, 
@@ -680,7 +680,7 @@ the configuration file).</p></div>
             if year in self.event_years:
                 # Apply each simulation layer with this event year, one after the other.
                 for simulation_layer_definition in self.simulation_layer_definitions.get_simulation_layer_definitions(event_year=year):
-                    new_projections: Projections = SimulationLayer(
+                    new_projections = SimulationLayer(
                         simulation_layer_definition=simulation_layer_definition,
                         previous_projections=old_projections
                     )
@@ -688,7 +688,7 @@ the configuration file).</p></div>
                     logging.info(f&#34;Generated projections for the {simulation_layer_definition.name} simulation layer without relinearisation.&#34;)
                 continue
 
-            self._final_projections: Projections = new_projections
+        self._final_projections: Projections = new_projections
 
         if self.save_results:
             # Generate the CSV file containing simulation projections
@@ -813,7 +813,7 @@ def relinearise_in_event_years(self) -&gt; bool:
 </dd>
 <dt id="gcubed.runners.advanced_runner.AdvancedRunner.save_results"><code class="name">var <span class="ident">save_results</span> : bool</code></dt>
 <dd>
-<div class="desc"><p>True if the results are to be saved to a results folder automatically at the end of the
+<div class="desc"><p>True if the results are to be saved to a results directory automatically at the end of the
 run and false otherwise. </p>
 <p>Defaults to False.</p>
 <p>If necessary, modify this setting once the running is instantiated but
@@ -825,7 +825,7 @@ before the experiment is run.</p></div>
 <pre><code class="python">@property
 def save_results(self) -&gt; bool:
     &#34;&#34;&#34;
-    True if the results are to be saved to a results folder automatically at the end of the
+    True if the results are to be saved to a results directory automatically at the end of the
     run and false otherwise. 
     
     Defaults to False.
@@ -931,15 +931,15 @@ analysis purposes.</p></div>
 
     # Step forward through the projection years and for each step check if we need to do 
     # a simulation or relinearisation.
+    new_projections: Projections = None
     for year in range(self.baseline_projections.first_projection_year, self.model.configuration.last_projection_year):
 
-        new_projections: Projections = None
 
         if year in self.relinearisation_years:
             # Do a relinearisation and add any relevant simulation layers while we are at it.
             # logging.debug(f&#34;{old_projections.first_projection_year} database projections\n{old_projections.database_projections.loc[Constants().REPORTING_VARIABLES, Constants().REPORTING_YEARS]}&#34;)
 
-            new_projections: Projections = RelinearisationProjections(
+            new_projections = RelinearisationProjections(
                 baseline_projections=self.baseline_projections, 
                 previous_projections=old_projections, 
                 relinearisation_year=year, 
@@ -952,7 +952,7 @@ analysis purposes.</p></div>
         if year in self.event_years:
             # Apply each simulation layer with this event year, one after the other.
             for simulation_layer_definition in self.simulation_layer_definitions.get_simulation_layer_definitions(event_year=year):
-                new_projections: Projections = SimulationLayer(
+                new_projections = SimulationLayer(
                     simulation_layer_definition=simulation_layer_definition,
                     previous_projections=old_projections
                 )
@@ -960,7 +960,7 @@ analysis purposes.</p></div>
                 logging.info(f&#34;Generated projections for the {simulation_layer_definition.name} simulation layer without relinearisation.&#34;)
             continue
 
-        self._final_projections: Projections = new_projections
+    self._final_projections: Projections = new_projections
 
     if self.save_results:
         # Generate the CSV file containing simulation projections

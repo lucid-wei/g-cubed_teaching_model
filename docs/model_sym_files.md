@@ -92,13 +92,13 @@ you need to run different simulations separately and check their difference in s
 
 Like variables, equations are also defined over sets.
 
-## The sym folder and its contents
+## The sym directory and its contents
 
-The sym folder stores machine generated contents that are used by the gcubed Python module (.py, .lis and .csv files) and 
+The sym directory stores machine generated contents that are used by the gcubed Python module (.py, .lis and .csv files) and 
 the [model definitions information page](../model/sym/model_2R_164.html).
 
-Currently in this folder, all files needed are already generated, so you do not need to run any of the commands below. 
-But FYI, the *.sym files are used to generate the other files in that folder, by running the SYM processor <SYM>, sym4mac.exe on MacOS or sym4win.exe on Windows.
+Currently in this directory, all files needed are already generated, so you do not need to run any of the commands below. 
+But FYI, the *.sym files are used to generate the other files in that directory, by running the SYM processor <SYM>, sym4mac.exe on MacOS or sym4win.exe on Windows.
 
 If the root file of the SYM model definition (the *.sym files) is called ggg2r170.sym, then the command to generate these files is:
 ```
@@ -110,7 +110,7 @@ To generate the HTML documentation of the model, run:
 <SYM> -html ggg2r170.sym model_<VERSION>_<NUMBER>.html
 ```
 
-Both of these commands should be run from within the sym subfolder documented above. In other words, you will need to run command like this to change your location before you run your .exe:
+Both of these commands should be run from within the sym subdirectory documented above. In other words, you will need to run command like this to change your location before you run your .exe:
 ```
 cd path/where/you/extract/this/repo/model_model_files/sym
 ```

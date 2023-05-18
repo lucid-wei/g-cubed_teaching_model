@@ -78,7 +78,7 @@ class SimpleRunner(Base):
         specified working directory.
 
         experiment_design_file: The optional location of the experiment design CSV file, as a relative path directory
-        to the experiment design file from the simulations folder within the model folder (the model folder contains
+        to the experiment design file from the simulations directory within the model directory (the model directory contains
         the configuration file). If the experiment design file is not specified then the run just produces baseline 
         projections.
         &#34;&#34;&#34;
@@ -155,7 +155,7 @@ class SimpleRunner(Base):
     @property
     def save_results(self) -&gt; bool:
         &#34;&#34;&#34;
-        True if the results are to be saved to a results folder automatically at the end of the
+        True if the results are to be saved to a results directory automatically at the end of the
         run and false otherwise. 
         
         Defaults to False.
@@ -171,7 +171,7 @@ class SimpleRunner(Base):
         ### Overview
         
         Set the value to True if the results are to be saved to a 
-        results folder automatically at the end of the run and false otherwise.
+        results directory automatically at the end of the run and false otherwise.
         &#34;&#34;&#34;
         assert value is not None
         assert isinstance(value, bool)
@@ -270,7 +270,7 @@ when you are ready to start model linearisation etc.</p>
 <p>configuration_file: The location of the configuration file, as an absolute path or relative to the
 specified working directory.</p>
 <p>experiment_design_file: The optional location of the experiment design CSV file, as a relative path directory
-to the experiment design file from the simulations folder within the model folder (the model folder contains
+to the experiment design file from the simulations directory within the model directory (the model directory contains
 the configuration file). If the experiment design file is not specified then the run just produces baseline
 projections.</p></div>
 <details class="source">
@@ -310,7 +310,7 @@ projections.</p></div>
         specified working directory.
 
         experiment_design_file: The optional location of the experiment design CSV file, as a relative path directory
-        to the experiment design file from the simulations folder within the model folder (the model folder contains
+        to the experiment design file from the simulations directory within the model directory (the model directory contains
         the configuration file). If the experiment design file is not specified then the run just produces baseline 
         projections.
         &#34;&#34;&#34;
@@ -387,7 +387,7 @@ projections.</p></div>
     @property
     def save_results(self) -&gt; bool:
         &#34;&#34;&#34;
-        True if the results are to be saved to a results folder automatically at the end of the
+        True if the results are to be saved to a results directory automatically at the end of the
         run and false otherwise. 
         
         Defaults to False.
@@ -403,7 +403,7 @@ projections.</p></div>
         ### Overview
         
         Set the value to True if the results are to be saved to a 
-        results folder automatically at the end of the run and false otherwise.
+        results directory automatically at the end of the run and false otherwise.
         &#34;&#34;&#34;
         assert value is not None
         assert isinstance(value, bool)
@@ -542,7 +542,7 @@ def model(self) -&gt; ModelConfiguration:
 </dd>
 <dt id="gcubed.runners.simple_runner.SimpleRunner.save_results"><code class="name">var <span class="ident">save_results</span> : bool</code></dt>
 <dd>
-<div class="desc"><p>True if the results are to be saved to a results folder automatically at the end of the
+<div class="desc"><p>True if the results are to be saved to a results directory automatically at the end of the
 run and false otherwise. </p>
 <p>Defaults to False.</p>
 <p>If necessary, modify this setting once the running is instantiated but
@@ -554,7 +554,7 @@ before the experiment is run.</p></div>
 <pre><code class="python">@property
 def save_results(self) -&gt; bool:
     &#34;&#34;&#34;
-    True if the results are to be saved to a results folder automatically at the end of the
+    True if the results are to be saved to a results directory automatically at the end of the
     run and false otherwise. 
     
     Defaults to False.
