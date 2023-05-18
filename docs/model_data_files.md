@@ -217,8 +217,34 @@ For each sector's row, the first column is blank and the second column is the se
 The row then contains a decimal catchup rate for the sector in the column corresponding to each year column
 in the file. Thus a value of 0.02 in a particular year means that 2% of the remaining gap in productivity 
 is closed in that year.
-### AEEINEW.csv
+### Autonomous energy efficiency improvements file
 
-The aeeinew.csv file records data on Autonomous energy efficiency improvement.  
+Review [the teaching version of the productivity file](../model/data/aeeinew.csv) 
+to get insight into how the data is organised.
+
+The aeeinew.csv file records data on Autonomous Energy Efficiency Improvement (AEEI): 
+exogenous improvements in the way energy contributes to production in each sector 
+and to consumption.
+
 See McKibbin and Wilcoxen (2013) [A global approach to energy and environment: the G-Cubed model](https://www.researchgate.net/publication/285239562_A_global_approach_to_energy_and_environment_the_G-Cubed_model) for details of AEEI.
 
+The first row of the file contains column labels. The first column label is blank.
+The remaining column labels are the years from a year
+at or before the first projection year through to the last projection year.
+
+The first column contains row labels. All row labels are prefixed by `aeei`.
+They are then an integer indicating the sector and then the region identifier.
+
+For example, the row labelled `aeei12UU` is the AEEI projections for sector 12 
+for the United States.
+
+The rows must order the sectors in the same way that they are ordered when declared
+in the SYM model definition. They must also order the regions in the same way that 
+they are ordered when declared in the SYM model definition.
+
+The values in the remaining cells for each region are the percentage exogenous improvement in energy
+efficiency for that sector in that region for that year.
+
+The file also contains a set of rows for consumption energy efficiency. These are the last
+rows in the file. There is one such row for each region. The row identifiers for these rows also 
+start with `aeei`, followed by lowercase `c` for consumption, and then the region identifier, e.g. `UU`.
