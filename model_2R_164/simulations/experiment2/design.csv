@@ -1,3 +1,0 @@
-name,data,event_year,description
-layer 1,layer_a.csv,2019,"1 percentage point increase in the inflation target for 2019, 2020 and 2021."
-layer 2,layer_b.csv,2021,"1 percentage point increase in the inflation target for 2021, reverting it back to its original value before layer 1."

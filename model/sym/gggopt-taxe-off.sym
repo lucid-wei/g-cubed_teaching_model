@@ -1,0 +1,18 @@
+//  gggopt-taxe-off.sym
+//  October 2010
+//
+//  Standard version of TAXE with endogenous calculation 
+//  in the code itself (not using the external nonlinear
+//  option).
+//
+
+variable TAXE(regions)  'revenue from externality taxes'  end,gdp ;
+
+//
+//  Standard calculation
+//
+
+dest: TAXE = ( sum( goods,   (carcoef*TCAR + btucoef*TBFD)*OUG ) +
+               sum( goods_o, (carcoef(goods_o)*TCEX + btucoef(goods_o)*TBFX)*EXQ +
+                             (carcoef(goods_o)*TCAI + btucoef(goods_o)*TBFI)*IMQ ) )
+           / exp(PRID) ; 

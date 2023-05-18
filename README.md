@@ -1,7 +1,13 @@
+# G-Cubed teaching model documentation
 
-# Introduction for this repo
-This is a repository for storing the G-Cubed teaching version model implemented using python and documentation files for students.
+This git repository contains the documentation for the G-Cubed teaching model.
 
-Most of the documentations are also relevant for users of commercial versions of the model, but this site is not optimized for that and should be referenced with caution.
+The documentation will be useful to anyone using the G-Cubed model.
 
-To read the documentation, please [go to this link](https://lucid-wei.github.io/g-cubed_teaching_model).
+If you are in a hurry, jump straight to [the teaching model documentation](https://lucid-wei.github.io/g-cubed_teaching_model).
+
+Most of the documentation is also relevant for users of 
+other model versions, but this site is not 
+optimized for those model versions and so and should be 
+referenced with caution especially in relation to the 
+details of regions and sectors in the model.

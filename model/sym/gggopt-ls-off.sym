@@ -1,0 +1,20 @@
+//  gggopt-ls-off.sym
+//  October 2010
+//
+//  Turn off the lump sum closure option and use the standard 
+//  closure with endogenous goverment spending.
+//
+
+variable GOVS(regions)        'total gov spending'                     end,gdp ;
+
+//
+//  Endogenous lump sum tax
+//
+
+TAXL = INTR*BOND + TAXS;
+
+//
+//  Endogenous government spending
+//
+
+GOVS = DEFI - GOVL*exp(WAGE-PRID) - TRAN + TAXT - INTR*BOND ;

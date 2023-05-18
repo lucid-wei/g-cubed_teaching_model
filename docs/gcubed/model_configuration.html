@@ -5,13 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>gcubed.model_configuration API documentation</title>
-<meta name="description" content="Contains the ModelConfiguration class" />
+<meta name="description" content="Contains the ModelConfiguration class." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
 <style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML" integrity="sha256-kZafAc6mZvK3W3v1pHOcUix30OHQN6pU/NO2oFkqZVw=" crossorigin></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
 </head>
@@ -22,7 +23,7 @@
 <h1 class="title">Module <code>gcubed.model_configuration</code></h1>
 </header>
 <section id="section-intro">
-<p>Contains the ModelConfiguration class</p>
+<p>Contains the ModelConfiguration class.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -32,7 +33,8 @@
 # Author: Geoff Shuetrim
 # ------------------------------------------------------------------
 &#34;&#34;&#34;
-Contains the ModelConfiguration class
+Contains the ModelConfiguration class.
+
 &#34;&#34;&#34;
 import logging
 import pandas as pd
@@ -54,6 +56,30 @@ class ModelConfiguration(Base):
 
     Provides access to model configuration details that have been
     read in from the model configuration CSV file.
+
+    #### The configuration CSV file format
+
+    The configuration CSV file must have at least 2 columns.
+    Only the first 2 columns are processed when loading model
+    configuration details. 
+    
+    The fields in each row must be comma separated. No commas are 
+    allowed as part of the CSV file content in the first two columns.
+
+    The following configuration settings must be included the model configuration
+    file, noting that their names are case sensitive:
+
+    * `Version`: the model version - `ModelConfiguration.version`.
+    * `Build`: the model build - `ModelConfiguration.build`.
+    * ???? Lucid to migrate documentation from teaching site to here.
+
+    The following configuration settings are optional inclusions in the model configuration
+    file:
+
+    * `LineariseAroundStrictModelSolution` governing how model linearisation is done. See 
+    `ModelConfiguration.linearise_around_strict_model_solution` for details and its
+    default value.
+
     &#34;&#34;&#34;
 
     def __init__(self, configuration_file: str) -&gt; None:
@@ -138,10 +164,22 @@ class ModelConfiguration(Base):
         &#34;&#34;&#34;
         This directory is where all simulation experiment definitions
         are stored. Each experiment has its own root directory that
-        is a subfolder of the simulations directory.
+        is a subdirectory of the simulations directory.
         &#34;&#34;&#34;        
         return f&#34;{self.model_directory}simulations/&#34;
 
+    @property
+    def debugging(self) -&gt; bool:
+        &#34;&#34;&#34;
+        True if logs are to be verbose (for debugging purposes) and False otherwise.
+
+        The configuration file value
+        should be set to 1 if logs are to be verbose and to 0 otherwise.
+
+        The name for this property in the configuration file is `Debugging`. 
+        &#34;&#34;&#34;
+        return bool(self.__class__.DOING_DETAILED_DEBUG)
+    
     @property
     def version(self):
         &#34;&#34;&#34;
@@ -149,8 +187,6 @@ class ModelConfiguration(Base):
         This influences the way that the model parameters are calibrated.
         
         This configuration property must be specified.
-
-        The name for this property in the configuration file is &#34;Version&#34;.
 
         Conventionally the model version is a number plus single letter string, 
         where number represents the number of sectors, and the letter relates to 
@@ -161,6 +197,8 @@ class ModelConfiguration(Base):
         20R is the 2 region/20 sector model
         
         20C is the 10 region/20 sector model used for carbon emissions modelling.
+
+        The name for this property in the configuration file is `Version`.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_version&#34;):
             raise Exception(&#34;You must specify the model version in the model configuration.&#34;)    
@@ -174,10 +212,10 @@ class ModelConfiguration(Base):
         
         This configuration property must be specified.
 
-        The name for this property in the configuration file is &#34;Build&#34;.
-
         The model build must start with an integer number but it can also
         include a suffix that consists of digits and letters (e.g. 170logv3).
+
+        The name for this property in the configuration file is `Build`.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_build&#34;):
             raise Exception(&#34;You must specify the model build in the model configuration.&#34;)    
@@ -189,7 +227,9 @@ class ModelConfiguration(Base):
         The integer indicating which build of the model is being used.
         A given model version can have many different builds.
 
-        This configuration property must be implicit in the configuration &#34;Build&#34; property.
+        This configuration property is inferred from the `Build` value in
+        the model configuration file. See `ModelConfiguration.build` for details
+        of the `Build` configuration setting.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_build_number&#34;):
             raise Exception(&#34;The model build in the model specification must start with a positive integer.&#34;)
@@ -300,6 +340,11 @@ class ModelConfiguration(Base):
     def io_table_file(self):
         &#34;&#34;&#34;
         The absolute path to the model&#39;s input-output tables CSV file.
+
+        An example value is `IOTABLESvR2011.csv`.
+
+        The name for this property in the configuration file 
+        is `IOTables`.
         &#34;&#34;&#34;
         return f&#34;{self.data_directory}{self._io_table_file}&#34;
 
@@ -309,6 +354,9 @@ class ModelConfiguration(Base):
         The absolute path to the CSV file containing the values
         of the parameters that are set by the user rather than
         by calibration using database and IO table information.
+
+        The name for this property in the configuration file 
+        is `UsersParameters`.
         &#34;&#34;&#34;
         return f&#34;{self.data_directory}{self._parameters_file}&#34;
 
@@ -317,6 +365,9 @@ class ModelConfiguration(Base):
         &#34;&#34;&#34;
         The absolute path to the CSV file containing the information
         needed to do region/sector productivity growth projections.
+
+        The name for this property in the configuration file 
+        is `Productivity`.
         &#34;&#34;&#34;
         return f&#34;{self.data_directory}{self._productivity_file}&#34;
 
@@ -325,6 +376,9 @@ class ModelConfiguration(Base):
         &#34;&#34;&#34;
         The absolute path to the CSV file containing the information
         needed to do region population growth projections.
+
+        The name for this property in the configuration file 
+        is `Population`.
         &#34;&#34;&#34;
         return f&#34;{self.data_directory}{self._population_file}&#34;
 
@@ -333,6 +387,9 @@ class ModelConfiguration(Base):
         &#34;&#34;&#34;
         The absolute path to the CSV file containing the information
         needed to do projections of region/sector energy efficiency improvements.
+
+        The name for this property in the configuration file 
+        is `AutonomousEnergyEfficiencyImprovement`.
         &#34;&#34;&#34;
         return f&#34;{self.data_directory}{self._aeei_file}&#34;
 
@@ -341,6 +398,11 @@ class ModelConfiguration(Base):
         &#34;&#34;&#34;
         The year to use when selecting the database data for model linearisation 
         purposes.
+
+        e.g. `2011`.
+
+        The name for this property in the configuration file is
+        `LinearisationYear`. 
         &#34;&#34;&#34;
         return self._linearisation_year
 
@@ -349,14 +411,26 @@ class ModelConfiguration(Base):
         &#34;&#34;&#34;
         The year to use when selecting the database data for model parameter calibration 
         purposes.
+
+        e.g. `2011`.
+
+        The name for this property in the configuration file is
+        `CalibrationYear`. 
         &#34;&#34;&#34;
         return self._calibration_year
 
     @property
     def calibration_of_carbon_coefficients_year(self):
         &#34;&#34;&#34;
-        The year to use when selecting the database data for model parameter calibration 
-        purposes for the carbon emissions related parameters.
+        The year to use when selecting the database data 
+        for model parameter calibration purposes for the 
+        carbon emissions related parameters.
+
+        e.g. `2018`.
+
+        The name for this property in the configuration file is
+        `CalibrationOfCarbonCoefficientsYear`. 
+        
         &#34;&#34;&#34;
         return self._calibration_of_carbon_coefficients_year
 
@@ -367,6 +441,17 @@ class ModelConfiguration(Base):
         Typically, this is chosen to be the first projection year, noting that
         the first year of projections are matched up to observed data in that first
         year.
+
+        If the database file has indexes with a base year of 2018, then the configuration
+        file would set this property value to `2018`. Note that this property needs to describe
+        the actual database file. It should not be a specification of the base year that you
+        want to use. Other properties manage how the base year is altered after the data is
+        loaded.
+
+        e.g. 2018 if the provided database file has its base year in 2018.
+        
+        The name for this property in the configuration file 
+        is `BaseYear`.
         &#34;&#34;&#34;
         return self._base_year
 
@@ -376,6 +461,13 @@ class ModelConfiguration(Base):
         The original first projection year. This is tracked 
         because, for projections that iterate forward through the projection years, 
         the first projection year will be updated with each iteration.
+        
+        This property is set equal to the value of the
+        `FirstProjectionYear` property in the configuration file. 
+        
+        It must not be specified
+        independently of the `FirstProjectionYear`.
+        .
         &#34;&#34;&#34;
         return self._original_first_projection_year
 
@@ -386,14 +478,20 @@ class ModelConfiguration(Base):
         Note that for baseline projections, the projections start
         in a year where the model&#39;s database has data, so the projections
         can be lined up with the observed data in the database.
+
+        The name for this property in the configuration file is
+        `FirstProjectionYear`. 
         &#34;&#34;&#34;
         return self._first_projection_year
     
     @first_projection_year.setter
     def first_projection_year(self, value: int):
         &#34;&#34;&#34;
-        Set the new first projection year, updating the linearisation year also.
-        The first projection year should only ever be incremented.
+        Updates the configuration to have a new first projection year, 
+        updating the linearisation year also but not changing the 
+        original first projection year.
+
+        The first projection year must only ever be incremented.
         &#34;&#34;&#34;
         assert value is not None
         assert isinstance(value, int)
@@ -405,22 +503,32 @@ class ModelConfiguration(Base):
     def last_projection_year(self):
         &#34;&#34;&#34;
         The last year for which data will be projected.
+
+        The name for this property in the configuration file is
+        `LastProjectionYear`. 
         &#34;&#34;&#34;
         return self._last_projection_year
 
     @property
     def projection_years(self) -&gt; list[int]:
+        &#34;&#34;&#34;
+        The list of integer years from the first projection
+        year to the last projection year.
+        &#34;&#34;&#34;
         return range(self.first_projection_year, self.last_projection_year+1)
 
     @property
     def projection_years_column_labels(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        A list of string representations of the years from the
+        first projection year to the last projection year.
+        &#34;&#34;&#34;
         return [str(x) for x in self.projection_years]
 
     @property
     def projection_years_count(self) -&gt; int:
         &#34;&#34;&#34;
-        Returns the number of years that projections are done for plus one for the base projection
-        year that is the year before the start of the projection years.
+        The number of projection years, from the first to the last.
         &#34;&#34;&#34;
         return (self.last_projection_year - self.first_projection_year + 1)
 
@@ -437,7 +545,8 @@ class ModelConfiguration(Base):
         If not specified in the configuration file, then this model configuration
         property defaults to 0.00001.
 
-        The name for this property in the configuration file is StableManifoldTolerance
+        The name for this property in the configuration file 
+        is `StableManifoldTolerance`.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_stable_manifold_tolerance&#34;):
             self.self._stable_manifold_tolerance = 0.00001
@@ -457,7 +566,8 @@ class ModelConfiguration(Base):
         If not specified in the configuration file, then this model configuration
         property defaults to 1000.
 
-        The name for this property in the configuration file is StableManifoldMaximumIterations.
+        The name for this property in the configuration file 
+        is `StableManifoldMaximumIterations`.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_stable_manifold_maximum_iterations&#34;):
             self.self._stable_manifold_maximum_iterations = 1000
@@ -469,7 +579,8 @@ class ModelConfiguration(Base):
         The global neutral real interest rate as a decimal, so a value of 3.6% would
         be specified inn the model configuration as 0.036.
 
-        The name for this property in the configuration file is NeutralRealInterestRate.
+        The name for this property in the configuration file 
+        is `NeutralRealInterestRate`.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_neutral_real_interest_rate&#34;):
             raise Exception(&#34;You must include a global neutral real interest rate.&#34;)      
@@ -487,13 +598,13 @@ class ModelConfiguration(Base):
         solve all of the equations in the model before then linearising around
         those similar values.
 
+        This property defaults to False unless overridden in the model configuration.
+
         This property can be modified after the model has been loaded if a different
         behaviour is required.
 
-        If not specified in the configuration file, then this model configuration
-        property defaults to False.
-
-        The name for this property in the configuration file is LineariseAroundStrictModelSolution.
+        The name for this property in the configuration file 
+        is `LineariseAroundStrictModelSolution`.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_linearise_around_strict_model_solution&#34;):
             self._linearise_around_strict_model_solution = False
@@ -646,6 +757,26 @@ class ModelConfiguration(Base):
 <div class="desc"><h3 id="overview">Overview</h3>
 <p>Provides access to model configuration details that have been
 read in from the model configuration CSV file.</p>
+<h4 id="the-configuration-csv-file-format">The configuration CSV file format</h4>
+<p>The configuration CSV file must have at least 2 columns.
+Only the first 2 columns are processed when loading model
+configuration details. </p>
+<p>The fields in each row must be comma separated. No commas are
+allowed as part of the CSV file content in the first two columns.</p>
+<p>The following configuration settings must be included the model configuration
+file, noting that their names are case sensitive:</p>
+<ul>
+<li><code>Version</code>: the model version - <code><a title="gcubed.model_configuration.ModelConfiguration.version" href="#gcubed.model_configuration.ModelConfiguration.version">ModelConfiguration.version</a></code>.</li>
+<li><code>Build</code>: the model build - <code><a title="gcubed.model_configuration.ModelConfiguration.build" href="#gcubed.model_configuration.ModelConfiguration.build">ModelConfiguration.build</a></code>.</li>
+<li>???? Lucid to migrate documentation from teaching site to here.</li>
+</ul>
+<p>The following configuration settings are optional inclusions in the model configuration
+file:</p>
+<ul>
+<li><code>LineariseAroundStrictModelSolution</code> governing how model linearisation is done. See
+<code><a title="gcubed.model_configuration.ModelConfiguration.linearise_around_strict_model_solution" href="#gcubed.model_configuration.ModelConfiguration.linearise_around_strict_model_solution">ModelConfiguration.linearise_around_strict_model_solution</a></code> for details and its
+default value.</li>
+</ul>
 <h3 id="constructor">Constructor</h3>
 <p>Initialises the model details from a modified version of the CSV files
 used by G-cubed. The information in the file is a subset of the information
@@ -665,6 +796,30 @@ current working directory, to the model configuration file.
 
     Provides access to model configuration details that have been
     read in from the model configuration CSV file.
+
+    #### The configuration CSV file format
+
+    The configuration CSV file must have at least 2 columns.
+    Only the first 2 columns are processed when loading model
+    configuration details. 
+    
+    The fields in each row must be comma separated. No commas are 
+    allowed as part of the CSV file content in the first two columns.
+
+    The following configuration settings must be included the model configuration
+    file, noting that their names are case sensitive:
+
+    * `Version`: the model version - `ModelConfiguration.version`.
+    * `Build`: the model build - `ModelConfiguration.build`.
+    * ???? Lucid to migrate documentation from teaching site to here.
+
+    The following configuration settings are optional inclusions in the model configuration
+    file:
+
+    * `LineariseAroundStrictModelSolution` governing how model linearisation is done. See 
+    `ModelConfiguration.linearise_around_strict_model_solution` for details and its
+    default value.
+
     &#34;&#34;&#34;
 
     def __init__(self, configuration_file: str) -&gt; None:
@@ -749,10 +904,22 @@ current working directory, to the model configuration file.
         &#34;&#34;&#34;
         This directory is where all simulation experiment definitions
         are stored. Each experiment has its own root directory that
-        is a subfolder of the simulations directory.
+        is a subdirectory of the simulations directory.
         &#34;&#34;&#34;        
         return f&#34;{self.model_directory}simulations/&#34;
 
+    @property
+    def debugging(self) -&gt; bool:
+        &#34;&#34;&#34;
+        True if logs are to be verbose (for debugging purposes) and False otherwise.
+
+        The configuration file value
+        should be set to 1 if logs are to be verbose and to 0 otherwise.
+
+        The name for this property in the configuration file is `Debugging`. 
+        &#34;&#34;&#34;
+        return bool(self.__class__.DOING_DETAILED_DEBUG)
+    
     @property
     def version(self):
         &#34;&#34;&#34;
@@ -760,8 +927,6 @@ current working directory, to the model configuration file.
         This influences the way that the model parameters are calibrated.
         
         This configuration property must be specified.
-
-        The name for this property in the configuration file is &#34;Version&#34;.
 
         Conventionally the model version is a number plus single letter string, 
         where number represents the number of sectors, and the letter relates to 
@@ -772,6 +937,8 @@ current working directory, to the model configuration file.
         20R is the 2 region/20 sector model
         
         20C is the 10 region/20 sector model used for carbon emissions modelling.
+
+        The name for this property in the configuration file is `Version`.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_version&#34;):
             raise Exception(&#34;You must specify the model version in the model configuration.&#34;)    
@@ -785,10 +952,10 @@ current working directory, to the model configuration file.
         
         This configuration property must be specified.
 
-        The name for this property in the configuration file is &#34;Build&#34;.
-
         The model build must start with an integer number but it can also
         include a suffix that consists of digits and letters (e.g. 170logv3).
+
+        The name for this property in the configuration file is `Build`.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_build&#34;):
             raise Exception(&#34;You must specify the model build in the model configuration.&#34;)    
@@ -800,7 +967,9 @@ current working directory, to the model configuration file.
         The integer indicating which build of the model is being used.
         A given model version can have many different builds.
 
-        This configuration property must be implicit in the configuration &#34;Build&#34; property.
+        This configuration property is inferred from the `Build` value in
+        the model configuration file. See `ModelConfiguration.build` for details
+        of the `Build` configuration setting.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_build_number&#34;):
             raise Exception(&#34;The model build in the model specification must start with a positive integer.&#34;)
@@ -911,6 +1080,11 @@ current working directory, to the model configuration file.
     def io_table_file(self):
         &#34;&#34;&#34;
         The absolute path to the model&#39;s input-output tables CSV file.
+
+        An example value is `IOTABLESvR2011.csv`.
+
+        The name for this property in the configuration file 
+        is `IOTables`.
         &#34;&#34;&#34;
         return f&#34;{self.data_directory}{self._io_table_file}&#34;
 
@@ -920,6 +1094,9 @@ current working directory, to the model configuration file.
         The absolute path to the CSV file containing the values
         of the parameters that are set by the user rather than
         by calibration using database and IO table information.
+
+        The name for this property in the configuration file 
+        is `UsersParameters`.
         &#34;&#34;&#34;
         return f&#34;{self.data_directory}{self._parameters_file}&#34;
 
@@ -928,6 +1105,9 @@ current working directory, to the model configuration file.
         &#34;&#34;&#34;
         The absolute path to the CSV file containing the information
         needed to do region/sector productivity growth projections.
+
+        The name for this property in the configuration file 
+        is `Productivity`.
         &#34;&#34;&#34;
         return f&#34;{self.data_directory}{self._productivity_file}&#34;
 
@@ -936,6 +1116,9 @@ current working directory, to the model configuration file.
         &#34;&#34;&#34;
         The absolute path to the CSV file containing the information
         needed to do region population growth projections.
+
+        The name for this property in the configuration file 
+        is `Population`.
         &#34;&#34;&#34;
         return f&#34;{self.data_directory}{self._population_file}&#34;
 
@@ -944,6 +1127,9 @@ current working directory, to the model configuration file.
         &#34;&#34;&#34;
         The absolute path to the CSV file containing the information
         needed to do projections of region/sector energy efficiency improvements.
+
+        The name for this property in the configuration file 
+        is `AutonomousEnergyEfficiencyImprovement`.
         &#34;&#34;&#34;
         return f&#34;{self.data_directory}{self._aeei_file}&#34;
 
@@ -952,6 +1138,11 @@ current working directory, to the model configuration file.
         &#34;&#34;&#34;
         The year to use when selecting the database data for model linearisation 
         purposes.
+
+        e.g. `2011`.
+
+        The name for this property in the configuration file is
+        `LinearisationYear`. 
         &#34;&#34;&#34;
         return self._linearisation_year
 
@@ -960,14 +1151,26 @@ current working directory, to the model configuration file.
         &#34;&#34;&#34;
         The year to use when selecting the database data for model parameter calibration 
         purposes.
+
+        e.g. `2011`.
+
+        The name for this property in the configuration file is
+        `CalibrationYear`. 
         &#34;&#34;&#34;
         return self._calibration_year
 
     @property
     def calibration_of_carbon_coefficients_year(self):
         &#34;&#34;&#34;
-        The year to use when selecting the database data for model parameter calibration 
-        purposes for the carbon emissions related parameters.
+        The year to use when selecting the database data 
+        for model parameter calibration purposes for the 
+        carbon emissions related parameters.
+
+        e.g. `2018`.
+
+        The name for this property in the configuration file is
+        `CalibrationOfCarbonCoefficientsYear`. 
+        
         &#34;&#34;&#34;
         return self._calibration_of_carbon_coefficients_year
 
@@ -978,6 +1181,17 @@ current working directory, to the model configuration file.
         Typically, this is chosen to be the first projection year, noting that
         the first year of projections are matched up to observed data in that first
         year.
+
+        If the database file has indexes with a base year of 2018, then the configuration
+        file would set this property value to `2018`. Note that this property needs to describe
+        the actual database file. It should not be a specification of the base year that you
+        want to use. Other properties manage how the base year is altered after the data is
+        loaded.
+
+        e.g. 2018 if the provided database file has its base year in 2018.
+        
+        The name for this property in the configuration file 
+        is `BaseYear`.
         &#34;&#34;&#34;
         return self._base_year
 
@@ -987,6 +1201,13 @@ current working directory, to the model configuration file.
         The original first projection year. This is tracked 
         because, for projections that iterate forward through the projection years, 
         the first projection year will be updated with each iteration.
+        
+        This property is set equal to the value of the
+        `FirstProjectionYear` property in the configuration file. 
+        
+        It must not be specified
+        independently of the `FirstProjectionYear`.
+        .
         &#34;&#34;&#34;
         return self._original_first_projection_year
 
@@ -997,14 +1218,20 @@ current working directory, to the model configuration file.
         Note that for baseline projections, the projections start
         in a year where the model&#39;s database has data, so the projections
         can be lined up with the observed data in the database.
+
+        The name for this property in the configuration file is
+        `FirstProjectionYear`. 
         &#34;&#34;&#34;
         return self._first_projection_year
     
     @first_projection_year.setter
     def first_projection_year(self, value: int):
         &#34;&#34;&#34;
-        Set the new first projection year, updating the linearisation year also.
-        The first projection year should only ever be incremented.
+        Updates the configuration to have a new first projection year, 
+        updating the linearisation year also but not changing the 
+        original first projection year.
+
+        The first projection year must only ever be incremented.
         &#34;&#34;&#34;
         assert value is not None
         assert isinstance(value, int)
@@ -1016,22 +1243,32 @@ current working directory, to the model configuration file.
     def last_projection_year(self):
         &#34;&#34;&#34;
         The last year for which data will be projected.
+
+        The name for this property in the configuration file is
+        `LastProjectionYear`. 
         &#34;&#34;&#34;
         return self._last_projection_year
 
     @property
     def projection_years(self) -&gt; list[int]:
+        &#34;&#34;&#34;
+        The list of integer years from the first projection
+        year to the last projection year.
+        &#34;&#34;&#34;
         return range(self.first_projection_year, self.last_projection_year+1)
 
     @property
     def projection_years_column_labels(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        A list of string representations of the years from the
+        first projection year to the last projection year.
+        &#34;&#34;&#34;
         return [str(x) for x in self.projection_years]
 
     @property
     def projection_years_count(self) -&gt; int:
         &#34;&#34;&#34;
-        Returns the number of years that projections are done for plus one for the base projection
-        year that is the year before the start of the projection years.
+        The number of projection years, from the first to the last.
         &#34;&#34;&#34;
         return (self.last_projection_year - self.first_projection_year + 1)
 
@@ -1048,7 +1285,8 @@ current working directory, to the model configuration file.
         If not specified in the configuration file, then this model configuration
         property defaults to 0.00001.
 
-        The name for this property in the configuration file is StableManifoldTolerance
+        The name for this property in the configuration file 
+        is `StableManifoldTolerance`.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_stable_manifold_tolerance&#34;):
             self.self._stable_manifold_tolerance = 0.00001
@@ -1068,7 +1306,8 @@ current working directory, to the model configuration file.
         If not specified in the configuration file, then this model configuration
         property defaults to 1000.
 
-        The name for this property in the configuration file is StableManifoldMaximumIterations.
+        The name for this property in the configuration file 
+        is `StableManifoldMaximumIterations`.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_stable_manifold_maximum_iterations&#34;):
             self.self._stable_manifold_maximum_iterations = 1000
@@ -1080,7 +1319,8 @@ current working directory, to the model configuration file.
         The global neutral real interest rate as a decimal, so a value of 3.6% would
         be specified inn the model configuration as 0.036.
 
-        The name for this property in the configuration file is NeutralRealInterestRate.
+        The name for this property in the configuration file 
+        is `NeutralRealInterestRate`.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_neutral_real_interest_rate&#34;):
             raise Exception(&#34;You must include a global neutral real interest rate.&#34;)      
@@ -1098,13 +1338,13 @@ current working directory, to the model configuration file.
         solve all of the equations in the model before then linearising around
         those similar values.
 
+        This property defaults to False unless overridden in the model configuration.
+
         This property can be modified after the model has been loaded if a different
         behaviour is required.
 
-        If not specified in the configuration file, then this model configuration
-        property defaults to False.
-
-        The name for this property in the configuration file is LineariseAroundStrictModelSolution.
+        The name for this property in the configuration file 
+        is `LineariseAroundStrictModelSolution`.
         &#34;&#34;&#34;
         if not hasattr(self, &#34;_linearise_around_strict_model_solution&#34;):
             self._linearise_around_strict_model_solution = False
@@ -1247,7 +1487,9 @@ current working directory, to the model configuration file.
 <dt id="gcubed.model_configuration.ModelConfiguration.aeei_file"><code class="name">var <span class="ident">aeei_file</span></code></dt>
 <dd>
 <div class="desc"><p>The absolute path to the CSV file containing the information
-needed to do projections of region/sector energy efficiency improvements.</p></div>
+needed to do projections of region/sector energy efficiency improvements.</p>
+<p>The name for this property in the configuration file
+is <code>AutonomousEnergyEfficiencyImprovement</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1257,6 +1499,9 @@ def aeei_file(self):
     &#34;&#34;&#34;
     The absolute path to the CSV file containing the information
     needed to do projections of region/sector energy efficiency improvements.
+
+    The name for this property in the configuration file 
+    is `AutonomousEnergyEfficiencyImprovement`.
     &#34;&#34;&#34;
     return f&#34;{self.data_directory}{self._aeei_file}&#34;</code></pre>
 </details>
@@ -1266,7 +1511,15 @@ def aeei_file(self):
 <div class="desc"><p>The year in which all indices are based at 1 (so their log values are 0).
 Typically, this is chosen to be the first projection year, noting that
 the first year of projections are matched up to observed data in that first
-year.</p></div>
+year.</p>
+<p>If the database file has indexes with a base year of 2018, then the configuration
+file would set this property value to <code>2018</code>. Note that this property needs to describe
+the actual database file. It should not be a specification of the base year that you
+want to use. Other properties manage how the base year is altered after the data is
+loaded.</p>
+<p>e.g. 2018 if the provided database file has its base year in 2018.</p>
+<p>The name for this property in the configuration file
+is <code>BaseYear</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1278,6 +1531,17 @@ def base_year(self):
     Typically, this is chosen to be the first projection year, noting that
     the first year of projections are matched up to observed data in that first
     year.
+
+    If the database file has indexes with a base year of 2018, then the configuration
+    file would set this property value to `2018`. Note that this property needs to describe
+    the actual database file. It should not be a specification of the base year that you
+    want to use. Other properties manage how the base year is altered after the data is
+    loaded.
+
+    e.g. 2018 if the provided database file has its base year in 2018.
+    
+    The name for this property in the configuration file 
+    is `BaseYear`.
     &#34;&#34;&#34;
     return self._base_year</code></pre>
 </details>
@@ -1304,9 +1568,9 @@ def benchmarking_reports_directory(self):
 <div class="desc"><p>The string identifying the build of the model.
 This influences the way that the model parameters are calibrated.</p>
 <p>This configuration property must be specified.</p>
-<p>The name for this property in the configuration file is "Build".</p>
 <p>The model build must start with an integer number but it can also
-include a suffix that consists of digits and letters (e.g. 170logv3).</p></div>
+include a suffix that consists of digits and letters (e.g. 170logv3).</p>
+<p>The name for this property in the configuration file is <code>Build</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1319,10 +1583,10 @@ def build(self) -&gt; str:
     
     This configuration property must be specified.
 
-    The name for this property in the configuration file is &#34;Build&#34;.
-
     The model build must start with an integer number but it can also
     include a suffix that consists of digits and letters (e.g. 170logv3).
+
+    The name for this property in the configuration file is `Build`.
     &#34;&#34;&#34;
     if not hasattr(self, &#34;_build&#34;):
         raise Exception(&#34;You must specify the model build in the model configuration.&#34;)    
@@ -1333,7 +1597,9 @@ def build(self) -&gt; str:
 <dd>
 <div class="desc"><p>The integer indicating which build of the model is being used.
 A given model version can have many different builds.</p>
-<p>This configuration property must be implicit in the configuration "Build" property.</p></div>
+<p>This configuration property is inferred from the <code>Build</code> value in
+the model configuration file. See <code><a title="gcubed.model_configuration.ModelConfiguration.build" href="#gcubed.model_configuration.ModelConfiguration.build">ModelConfiguration.build</a></code> for details
+of the <code>Build</code> configuration setting.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1344,7 +1610,9 @@ def build_number(self) -&gt; int:
     The integer indicating which build of the model is being used.
     A given model version can have many different builds.
 
-    This configuration property must be implicit in the configuration &#34;Build&#34; property.
+    This configuration property is inferred from the `Build` value in
+    the model configuration file. See `ModelConfiguration.build` for details
+    of the `Build` configuration setting.
     &#34;&#34;&#34;
     if not hasattr(self, &#34;_build_number&#34;):
         raise Exception(&#34;The model build in the model specification must start with a positive integer.&#34;)
@@ -1353,8 +1621,12 @@ def build_number(self) -&gt; int:
 </dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.calibration_of_carbon_coefficients_year"><code class="name">var <span class="ident">calibration_of_carbon_coefficients_year</span></code></dt>
 <dd>
-<div class="desc"><p>The year to use when selecting the database data for model parameter calibration
-purposes for the carbon emissions related parameters.</p></div>
+<div class="desc"><p>The year to use when selecting the database data
+for model parameter calibration purposes for the
+carbon emissions related parameters.</p>
+<p>e.g. <code>2018</code>.</p>
+<p>The name for this property in the configuration file is
+<code>CalibrationOfCarbonCoefficientsYear</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1362,8 +1634,15 @@ purposes for the carbon emissions related parameters.</p></div>
 <pre><code class="python">@property
 def calibration_of_carbon_coefficients_year(self):
     &#34;&#34;&#34;
-    The year to use when selecting the database data for model parameter calibration 
-    purposes for the carbon emissions related parameters.
+    The year to use when selecting the database data 
+    for model parameter calibration purposes for the 
+    carbon emissions related parameters.
+
+    e.g. `2018`.
+
+    The name for this property in the configuration file is
+    `CalibrationOfCarbonCoefficientsYear`. 
+    
     &#34;&#34;&#34;
     return self._calibration_of_carbon_coefficients_year</code></pre>
 </details>
@@ -1371,7 +1650,10 @@ def calibration_of_carbon_coefficients_year(self):
 <dt id="gcubed.model_configuration.ModelConfiguration.calibration_year"><code class="name">var <span class="ident">calibration_year</span></code></dt>
 <dd>
 <div class="desc"><p>The year to use when selecting the database data for model parameter calibration
-purposes.</p></div>
+purposes.</p>
+<p>e.g. <code>2011</code>.</p>
+<p>The name for this property in the configuration file is
+<code>CalibrationYear</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1381,6 +1663,11 @@ def calibration_year(self):
     &#34;&#34;&#34;
     The year to use when selecting the database data for model parameter calibration 
     purposes.
+
+    e.g. `2011`.
+
+    The name for this property in the configuration file is
+    `CalibrationYear`. 
     &#34;&#34;&#34;
     return self._calibration_year</code></pre>
 </details>
@@ -1413,6 +1700,29 @@ def database_file(self):
     The absolute path to the model&#39;s database CSV file.
     &#34;&#34;&#34;
     return f&#34;{self.data_directory}{self._database_file}&#34;</code></pre>
+</details>
+</dd>
+<dt id="gcubed.model_configuration.ModelConfiguration.debugging"><code class="name">var <span class="ident">debugging</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>True if logs are to be verbose (for debugging purposes) and False otherwise.</p>
+<p>The configuration file value
+should be set to 1 if logs are to be verbose and to 0 otherwise.</p>
+<p>The name for this property in the configuration file is <code>Debugging</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def debugging(self) -&gt; bool:
+    &#34;&#34;&#34;
+    True if logs are to be verbose (for debugging purposes) and False otherwise.
+
+    The configuration file value
+    should be set to 1 if logs are to be verbose and to 0 otherwise.
+
+    The name for this property in the configuration file is `Debugging`. 
+    &#34;&#34;&#34;
+    return bool(self.__class__.DOING_DETAILED_DEBUG)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.eqnmap_file"><code class="name">var <span class="ident">eqnmap_file</span></code></dt>
@@ -1474,7 +1784,9 @@ def equations_python_module_file(self):
 <div class="desc"><p>The first year that projections are to be generated for.
 Note that for baseline projections, the projections start
 in a year where the model's database has data, so the projections
-can be lined up with the observed data in the database.</p></div>
+can be lined up with the observed data in the database.</p>
+<p>The name for this property in the configuration file is
+<code>FirstProjectionYear</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1486,6 +1798,9 @@ def first_projection_year(self):
     Note that for baseline projections, the projections start
     in a year where the model&#39;s database has data, so the projections
     can be lined up with the observed data in the database.
+
+    The name for this property in the configuration file is
+    `FirstProjectionYear`. 
     &#34;&#34;&#34;
     return self._first_projection_year</code></pre>
 </details>
@@ -1509,7 +1824,10 @@ def fully_qualified_equations_module_name(self):
 </dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.io_table_file"><code class="name">var <span class="ident">io_table_file</span></code></dt>
 <dd>
-<div class="desc"><p>The absolute path to the model's input-output tables CSV file.</p></div>
+<div class="desc"><p>The absolute path to the model's input-output tables CSV file.</p>
+<p>An example value is <code>IOTABLESvR2011.csv</code>.</p>
+<p>The name for this property in the configuration file
+is <code>IOTables</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1518,13 +1836,20 @@ def fully_qualified_equations_module_name(self):
 def io_table_file(self):
     &#34;&#34;&#34;
     The absolute path to the model&#39;s input-output tables CSV file.
+
+    An example value is `IOTABLESvR2011.csv`.
+
+    The name for this property in the configuration file 
+    is `IOTables`.
     &#34;&#34;&#34;
     return f&#34;{self.data_directory}{self._io_table_file}&#34;</code></pre>
 </details>
 </dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.last_projection_year"><code class="name">var <span class="ident">last_projection_year</span></code></dt>
 <dd>
-<div class="desc"><p>The last year for which data will be projected.</p></div>
+<div class="desc"><p>The last year for which data will be projected.</p>
+<p>The name for this property in the configuration file is
+<code>LastProjectionYear</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1533,6 +1858,9 @@ def io_table_file(self):
 def last_projection_year(self):
     &#34;&#34;&#34;
     The last year for which data will be projected.
+
+    The name for this property in the configuration file is
+    `LastProjectionYear`. 
     &#34;&#34;&#34;
     return self._last_projection_year</code></pre>
 </details>
@@ -1540,7 +1868,10 @@ def last_projection_year(self):
 <dt id="gcubed.model_configuration.ModelConfiguration.linearisation_year"><code class="name">var <span class="ident">linearisation_year</span></code></dt>
 <dd>
 <div class="desc"><p>The year to use when selecting the database data for model linearisation
-purposes.</p></div>
+purposes.</p>
+<p>e.g. <code>2011</code>.</p>
+<p>The name for this property in the configuration file is
+<code>LinearisationYear</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1550,6 +1881,11 @@ def linearisation_year(self):
     &#34;&#34;&#34;
     The year to use when selecting the database data for model linearisation 
     purposes.
+
+    e.g. `2011`.
+
+    The name for this property in the configuration file is
+    `LinearisationYear`. 
     &#34;&#34;&#34;
     return self._linearisation_year</code></pre>
 </details>
@@ -1564,11 +1900,11 @@ as has been done for G-Cubed for decades. Set this to True if the
 actual data values are to be adjusted to find similar values that exactly
 solve all of the equations in the model before then linearising around
 those similar values.</p>
+<p>This property defaults to False unless overridden in the model configuration.</p>
 <p>This property can be modified after the model has been loaded if a different
 behaviour is required.</p>
-<p>If not specified in the configuration file, then this model configuration
-property defaults to False.</p>
-<p>The name for this property in the configuration file is LineariseAroundStrictModelSolution.</p></div>
+<p>The name for this property in the configuration file
+is <code>LineariseAroundStrictModelSolution</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1585,13 +1921,13 @@ def linearise_around_strict_model_solution(self) -&gt; bool:
     solve all of the equations in the model before then linearising around
     those similar values.
 
+    This property defaults to False unless overridden in the model configuration.
+
     This property can be modified after the model has been loaded if a different
     behaviour is required.
 
-    If not specified in the configuration file, then this model configuration
-    property defaults to False.
-
-    The name for this property in the configuration file is LineariseAroundStrictModelSolution.
+    The name for this property in the configuration file 
+    is `LineariseAroundStrictModelSolution`.
     &#34;&#34;&#34;
     if not hasattr(self, &#34;_linearise_around_strict_model_solution&#34;):
         self._linearise_around_strict_model_solution = False
@@ -1635,7 +1971,8 @@ def model_summary_file(self):
 <dd>
 <div class="desc"><p>The global neutral real interest rate as a decimal, so a value of 3.6% would
 be specified inn the model configuration as 0.036.</p>
-<p>The name for this property in the configuration file is NeutralRealInterestRate.</p></div>
+<p>The name for this property in the configuration file
+is <code>NeutralRealInterestRate</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1646,7 +1983,8 @@ def neutral_real_interest_rate(self):
     The global neutral real interest rate as a decimal, so a value of 3.6% would
     be specified inn the model configuration as 0.036.
 
-    The name for this property in the configuration file is NeutralRealInterestRate.
+    The name for this property in the configuration file 
+    is `NeutralRealInterestRate`.
     &#34;&#34;&#34;
     if not hasattr(self, &#34;_neutral_real_interest_rate&#34;):
         raise Exception(&#34;You must include a global neutral real interest rate.&#34;)      
@@ -1675,7 +2013,12 @@ def opt_map_file(self):
 <dd>
 <div class="desc"><p>The original first projection year. This is tracked
 because, for projections that iterate forward through the projection years,
-the first projection year will be updated with each iteration.</p></div>
+the first projection year will be updated with each iteration.</p>
+<p>This property is set equal to the value of the
+<code>FirstProjectionYear</code> property in the configuration file. </p>
+<p>It must not be specified
+independently of the <code>FirstProjectionYear</code>.
+.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1686,6 +2029,13 @@ def original_first_projection_year(self):
     The original first projection year. This is tracked 
     because, for projections that iterate forward through the projection years, 
     the first projection year will be updated with each iteration.
+    
+    This property is set equal to the value of the
+    `FirstProjectionYear` property in the configuration file. 
+    
+    It must not be specified
+    independently of the `FirstProjectionYear`.
+    .
     &#34;&#34;&#34;
     return self._original_first_projection_year</code></pre>
 </details>
@@ -1711,7 +2061,9 @@ def ox_directory(self):
 <dd>
 <div class="desc"><p>The absolute path to the CSV file containing the values
 of the parameters that are set by the user rather than
-by calibration using database and IO table information.</p></div>
+by calibration using database and IO table information.</p>
+<p>The name for this property in the configuration file
+is <code>UsersParameters</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1722,6 +2074,9 @@ def parameters_file(self):
     The absolute path to the CSV file containing the values
     of the parameters that are set by the user rather than
     by calibration using database and IO table information.
+
+    The name for this property in the configuration file 
+    is `UsersParameters`.
     &#34;&#34;&#34;
     return f&#34;{self.data_directory}{self._parameters_file}&#34;</code></pre>
 </details>
@@ -1729,7 +2084,9 @@ def parameters_file(self):
 <dt id="gcubed.model_configuration.ModelConfiguration.population_file"><code class="name">var <span class="ident">population_file</span></code></dt>
 <dd>
 <div class="desc"><p>The absolute path to the CSV file containing the information
-needed to do region population growth projections.</p></div>
+needed to do region population growth projections.</p>
+<p>The name for this property in the configuration file
+is <code>Population</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1739,6 +2096,9 @@ def population_file(self):
     &#34;&#34;&#34;
     The absolute path to the CSV file containing the information
     needed to do region population growth projections.
+
+    The name for this property in the configuration file 
+    is `Population`.
     &#34;&#34;&#34;
     return f&#34;{self.data_directory}{self._population_file}&#34;</code></pre>
 </details>
@@ -1746,7 +2106,9 @@ def population_file(self):
 <dt id="gcubed.model_configuration.ModelConfiguration.productivity_file"><code class="name">var <span class="ident">productivity_file</span></code></dt>
 <dd>
 <div class="desc"><p>The absolute path to the CSV file containing the information
-needed to do region/sector productivity growth projections.</p></div>
+needed to do region/sector productivity growth projections.</p>
+<p>The name for this property in the configuration file
+is <code>Productivity</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1756,38 +2118,50 @@ def productivity_file(self):
     &#34;&#34;&#34;
     The absolute path to the CSV file containing the information
     needed to do region/sector productivity growth projections.
+
+    The name for this property in the configuration file 
+    is `Productivity`.
     &#34;&#34;&#34;
     return f&#34;{self.data_directory}{self._productivity_file}&#34;</code></pre>
 </details>
 </dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.projection_years"><code class="name">var <span class="ident">projection_years</span> : list[int]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The list of integer years from the first projection
+year to the last projection year.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def projection_years(self) -&gt; list[int]:
+    &#34;&#34;&#34;
+    The list of integer years from the first projection
+    year to the last projection year.
+    &#34;&#34;&#34;
     return range(self.first_projection_year, self.last_projection_year+1)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.projection_years_column_labels"><code class="name">var <span class="ident">projection_years_column_labels</span> : list[str]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>A list of string representations of the years from the
+first projection year to the last projection year.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def projection_years_column_labels(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    A list of string representations of the years from the
+    first projection year to the last projection year.
+    &#34;&#34;&#34;
     return [str(x) for x in self.projection_years]</code></pre>
 </details>
 </dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.projection_years_count"><code class="name">var <span class="ident">projection_years_count</span> : int</code></dt>
 <dd>
-<div class="desc"><p>Returns the number of years that projections are done for plus one for the base projection
-year that is the year before the start of the projection years.</p></div>
+<div class="desc"><p>The number of projection years, from the first to the last.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1795,8 +2169,7 @@ year that is the year before the start of the projection years.</p></div>
 <pre><code class="python">@property
 def projection_years_count(self) -&gt; int:
     &#34;&#34;&#34;
-    Returns the number of years that projections are done for plus one for the base projection
-    year that is the year before the start of the projection years.
+    The number of projection years, from the first to the last.
     &#34;&#34;&#34;
     return (self.last_projection_year - self.first_projection_year + 1)</code></pre>
 </details>
@@ -1805,7 +2178,7 @@ def projection_years_count(self) -&gt; int:
 <dd>
 <div class="desc"><p>This directory is where all simulation experiment definitions
 are stored. Each experiment has its own root directory that
-is a subfolder of the simulations directory.</p></div>
+is a subdirectory of the simulations directory.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1815,7 +2188,7 @@ def simulations_directory(self) -&gt; str:
     &#34;&#34;&#34;
     This directory is where all simulation experiment definitions
     are stored. Each experiment has its own root directory that
-    is a subfolder of the simulations directory.
+    is a subdirectory of the simulations directory.
     &#34;&#34;&#34;        
     return f&#34;{self.model_directory}simulations/&#34;</code></pre>
 </details>
@@ -1830,7 +2203,8 @@ be used for projection purposes.</p>
 manifold terminates within a reasonable period of time.</p>
 <p>If not specified in the configuration file, then this model configuration
 property defaults to 1000.</p>
-<p>The name for this property in the configuration file is StableManifoldMaximumIterations.</p></div>
+<p>The name for this property in the configuration file
+is <code>StableManifoldMaximumIterations</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1849,7 +2223,8 @@ def stable_manifold_maximum_iterations(self):
     If not specified in the configuration file, then this model configuration
     property defaults to 1000.
 
-    The name for this property in the configuration file is StableManifoldMaximumIterations.
+    The name for this property in the configuration file 
+    is `StableManifoldMaximumIterations`.
     &#34;&#34;&#34;
     if not hasattr(self, &#34;_stable_manifold_maximum_iterations&#34;):
         self.self._stable_manifold_maximum_iterations = 1000
@@ -1865,7 +2240,8 @@ manifold terminates within a reasonable period of time. Consider
 making this value larger if the search is not converging.</p>
 <p>If not specified in the configuration file, then this model configuration
 property defaults to 0.00001.</p>
-<p>The name for this property in the configuration file is StableManifoldTolerance</p></div>
+<p>The name for this property in the configuration file
+is <code>StableManifoldTolerance</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1883,7 +2259,8 @@ def stable_manifold_tolerance(self):
     If not specified in the configuration file, then this model configuration
     property defaults to 0.00001.
 
-    The name for this property in the configuration file is StableManifoldTolerance
+    The name for this property in the configuration file 
+    is `StableManifoldTolerance`.
     &#34;&#34;&#34;
     if not hasattr(self, &#34;_stable_manifold_tolerance&#34;):
         self.self._stable_manifold_tolerance = 0.00001
@@ -1999,13 +2376,13 @@ def varmap_file(self):
 <div class="desc"><p>The unique string identifying the version of the model.
 This influences the way that the model parameters are calibrated.</p>
 <p>This configuration property must be specified.</p>
-<p>The name for this property in the configuration file is "Version".</p>
 <p>Conventionally the model version is a number plus single letter string,
 where number represents the number of sectors, and the letter relates to
 specific regions in the model. For example:</p>
 <p>2R is the 2 region/2 sector model</p>
 <p>20R is the 2 region/20 sector model</p>
-<p>20C is the 10 region/20 sector model used for carbon emissions modelling.</p></div>
+<p>20C is the 10 region/20 sector model used for carbon emissions modelling.</p>
+<p>The name for this property in the configuration file is <code>Version</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2018,8 +2395,6 @@ def version(self):
     
     This configuration property must be specified.
 
-    The name for this property in the configuration file is &#34;Version&#34;.
-
     Conventionally the model version is a number plus single letter string, 
     where number represents the number of sectors, and the letter relates to 
     specific regions in the model. For example:
@@ -2029,6 +2404,8 @@ def version(self):
     20R is the 2 region/20 sector model
     
     20C is the 10 region/20 sector model used for carbon emissions modelling.
+
+    The name for this property in the configuration file is `Version`.
     &#34;&#34;&#34;
     if not hasattr(self, &#34;_version&#34;):
         raise Exception(&#34;You must specify the model version in the model configuration.&#34;)    
@@ -2168,6 +2545,7 @@ the CSV model configuration file.</p>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.calibration_year" href="#gcubed.model_configuration.ModelConfiguration.calibration_year">calibration_year</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.data_directory" href="#gcubed.model_configuration.ModelConfiguration.data_directory">data_directory</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.database_file" href="#gcubed.model_configuration.ModelConfiguration.database_file">database_file</a></code></li>
+<li><code><a title="gcubed.model_configuration.ModelConfiguration.debugging" href="#gcubed.model_configuration.ModelConfiguration.debugging">debugging</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.eqnmap_file" href="#gcubed.model_configuration.ModelConfiguration.eqnmap_file">eqnmap_file</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.equations_python_module_file" href="#gcubed.model_configuration.ModelConfiguration.equations_python_module_file">equations_python_module_file</a></code></li>
 <li><code><a title="gcubed.model_configuration.ModelConfiguration.first_projection_year" href="#gcubed.model_configuration.ModelConfiguration.first_projection_year">first_projection_year</a></code></li>
