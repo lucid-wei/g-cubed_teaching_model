@@ -10,7 +10,7 @@ version of the G-Cubed model implemented in Python.
 
 The documentation covers:
 
-1. [How to set up your computer to run the Python implementation of G-Cubed](2env_setup.md),
+1. [How to set up your computer to run the Python implementation of G-Cubed](environment_setup.md),
 including how to install the G-Cubed Python package.
 
 2. [Details of the version of the G-Cubed model used
@@ -27,7 +27,7 @@ for teaching](sym_model_definitions.md).
 ## A roadmap for learning
 
 If you are first time user of the the G-Cubed python implementation, 
-start by ensuring you have [correctly set up the Python environment](2env_setup.md).
+start by ensuring you have [correctly set up the Python environment](environment_setup.md).
 
 Next, learn about the teaching model itself and how it is defined using [the SYM model
 definition language](https://pjwilcoxen.github.io/sym/).
