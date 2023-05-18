@@ -78,7 +78,7 @@ Thus, make sure pip is properly setup before you install the `gcubed` package.
 ## `gcubed` package installation
 
 The first thing you need to do is to download 
-[the binary gcubed package](../gcubed-distribution/gcubed-*version*-py3-none-any.whl). 
+[the binary gcubed package](../distributions/gcubed-*version*-py3-none-any.whl). 
 It has a `whl` filename extension.
 
 To install `gcubed`, run the following command in your terminal from within 
