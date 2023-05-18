@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>gcubed.runners.advanced_runner API documentation</title>
-<meta name="description" content="Contains the advanced runner class - used to run advanced model experiments." />
+<meta name="description" content="This runner is still experimental …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -23,12 +23,19 @@
 <h1 class="title">Module <code>gcubed.runners.advanced_runner</code></h1>
 </header>
 <section id="section-intro">
+<h2 id="this-runner-is-still-experimental">This runner is still experimental</h2>
+<p>Do not use it unless you are involved in its development.</p>
 <p>Contains the advanced runner class - used to run advanced model experiments.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
+
+## This runner is still experimental 
+    
+Do not use it unless you are involved in its development.
+
 Contains the advanced runner class - used to run advanced model experiments.
 &#34;&#34;&#34;
 import os
@@ -53,6 +60,7 @@ class AdvancedRunner(Base):
     &#34;&#34;&#34;
 
     ### Overview
+
 
     The AdvancedRunner class runs a simulation experiment 
     with G-Cubed that incorporates relinearisation in chosen years while
@@ -206,7 +214,7 @@ class AdvancedRunner(Base):
         
         Defaults to False.
 
-        If necessary, modify this setting once the running is instantiated but 
+        If necessary, modify this setting once the runner is instantiated but 
         before the experiment is run.
         &#34;&#34;&#34;
         return self._save_results
@@ -403,6 +411,7 @@ the configuration file).</p></div>
 
     ### Overview
 
+
     The AdvancedRunner class runs a simulation experiment 
     with G-Cubed that incorporates relinearisation in chosen years while
     allowing for strict or non-strict choice of points to linearise around
@@ -555,7 +564,7 @@ the configuration file).</p></div>
         
         Defaults to False.
 
-        If necessary, modify this setting once the running is instantiated but 
+        If necessary, modify this setting once the runner is instantiated but 
         before the experiment is run.
         &#34;&#34;&#34;
         return self._save_results
@@ -816,7 +825,7 @@ def relinearise_in_event_years(self) -&gt; bool:
 <div class="desc"><p>True if the results are to be saved to a results directory automatically at the end of the
 run and false otherwise. </p>
 <p>Defaults to False.</p>
-<p>If necessary, modify this setting once the running is instantiated but
+<p>If necessary, modify this setting once the runner is instantiated but
 before the experiment is run.</p></div>
 <details class="source">
 <summary>
@@ -830,7 +839,7 @@ def save_results(self) -&gt; bool:
     
     Defaults to False.
 
-    If necessary, modify this setting once the running is instantiated but 
+    If necessary, modify this setting once the runner is instantiated but 
     before the experiment is run.
     &#34;&#34;&#34;
     return self._save_results</code></pre>
@@ -990,7 +999,9 @@ analysis purposes.</p></div>
 <nav id="sidebar">
 <h1>Index</h1>
 <div class="toc">
-<ul></ul>
+<ul>
+<li><a href="#this-runner-is-still-experimental">This runner is still experimental</a></li>
+</ul>
 </div>
 <ul id="index">
 <li><h3>Super-module</h3>

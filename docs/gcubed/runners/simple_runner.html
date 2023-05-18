@@ -60,6 +60,28 @@ class SimpleRunner(Base):
     
     Projections based on any of the simulation layers can be compared to projections
     from the baseline or from other simulation layers associated with the experiment.
+
+    #### Example code to use the simple runner
+
+    Assuming your current working directory is the model root directory, the simple runner
+    can be used with the following code.
+
+    ```
+    from gcubed.runners.simple_runner import SimpleRunner
+    runner: SimpleRunner = SimpleRunner(
+        working_directory=&#34;.&#34;,
+        configuration_file=&#34;configuration2R164.csv&#34;, 
+        experiment_design_file=&#34;experiment1/design.csv&#34;
+        )
+    runner.run()
+    ```
+
+    This assumes that the model configuration file is
+    called `configuration2R164.csv`. It also assumes that the simulation experiment is 
+    described by the design.csv file that is contained in the `design.csv` file
+    that is located in the `simulations/experiment1` subdirectory of the model&#39;s root
+    directory.
+
     &#34;&#34;&#34;
 
     def __init__(self, working_directory:str, configuration_file: str, experiment_design_file: str = None):
@@ -262,6 +284,22 @@ projection updates. </li>
 </ol>
 <p>Projections based on any of the simulation layers can be compared to projections
 from the baseline or from other simulation layers associated with the experiment.</p>
+<h4 id="example-code-to-use-the-simple-runner">Example code to use the simple runner</h4>
+<p>Assuming your current working directory is the model root directory, the simple runner
+can be used with the following code.</p>
+<pre><code>from gcubed.runners.simple_runner import SimpleRunner
+runner: SimpleRunner = SimpleRunner(
+    working_directory=&quot;.&quot;,
+    configuration_file=&quot;configuration2R164.csv&quot;, 
+    experiment_design_file=&quot;experiment1/design.csv&quot;
+    )
+runner.run()
+</code></pre>
+<p>This assumes that the model configuration file is
+called <code>configuration2R164.csv</code>. It also assumes that the simulation experiment is
+described by the design.csv file that is contained in the <code>design.csv</code> file
+that is located in the <code>simulations/experiment1</code> subdirectory of the model's root
+directory.</p>
 <h3 id="overview_1">Overview</h3>
 <p>Loads the configuration and the model, ready for running. Call the run method
 when you are ready to start model linearisation etc.</p>
@@ -292,6 +330,28 @@ projections.</p></div>
     
     Projections based on any of the simulation layers can be compared to projections
     from the baseline or from other simulation layers associated with the experiment.
+
+    #### Example code to use the simple runner
+
+    Assuming your current working directory is the model root directory, the simple runner
+    can be used with the following code.
+
+    ```
+    from gcubed.runners.simple_runner import SimpleRunner
+    runner: SimpleRunner = SimpleRunner(
+        working_directory=&#34;.&#34;,
+        configuration_file=&#34;configuration2R164.csv&#34;, 
+        experiment_design_file=&#34;experiment1/design.csv&#34;
+        )
+    runner.run()
+    ```
+
+    This assumes that the model configuration file is
+    called `configuration2R164.csv`. It also assumes that the simulation experiment is 
+    described by the design.csv file that is contained in the `design.csv` file
+    that is located in the `simulations/experiment1` subdirectory of the model&#39;s root
+    directory.
+
     &#34;&#34;&#34;
 
     def __init__(self, working_directory:str, configuration_file: str, experiment_design_file: str = None):

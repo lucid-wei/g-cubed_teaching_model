@@ -3,7 +3,7 @@ layout: default
 nav_order: 5
 ---
 
-## The sym directory and its contents
+## Model sym files
 
 The sym directory stores machine generated contents that are used by the gcubed Python module (.py, .lis and .csv files) and 
 the [model definitions information page](../model/sym/model_2R_164.html).

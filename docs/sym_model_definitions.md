@@ -3,7 +3,7 @@ layout: default
 nav_order: 4
 ---
 
-# SYM model definitions
+# SYM - the model definition language
 
 The entities and economic relationships between them are described using a set of equations.
 Those equations define the model and they are expressed using 

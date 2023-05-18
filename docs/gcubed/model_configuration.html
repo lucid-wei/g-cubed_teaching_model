@@ -71,12 +71,29 @@ class ModelConfiguration(Base):
 
     * `Version`: the model version - `ModelConfiguration.version`.
     * `Build`: the model build - `ModelConfiguration.build`.
-    * ???? Lucid to migrate documentation from teaching site to here.
+    * `SymInputFile`: the root file for the SYM model definition - `ModelConfiguration.sym_input_file`
+    * `Database`: The name of the file that contains the model database - `ModelConfiguration.database_file`
+    * `BaseYear`: The base year for indices in the model database - `ModelConfiguration.base_year`
+    * `UserParameters`: The name of the file that contains the values for parameters that are set directly by the user - `ModelConfiguration.parameters_file`
+    * `IOTables`: The name of the file that contains the Input/Output tables for each region - `ModelConfiguration.io_table_file`
+    * `Productivity`: - The name of the file that contains the data about productivity growth in each sector of each region, over the projection years `ModelConfiguration.productivity_file`
+    * `Population`: The name of the file that contains the data about population growth in each region, over the projection years - `ModelConfiguration.population_file`
+    * `AutonomousEnergyEfficiencyImprovement`: The name of the file that contains the data about autonomous energy efficiency improvments over the projection years - `ModelConfiguration.aeei_file`
+    * `CalibrationYear`: The year used to calibrate the model parameters except for the carbon coefficients - `ModelConfiguration.calibration_year`
+    * `CalibrationOfCarbonCoefficientsYear`: The year used to calibrate the carbon coefficients - `ModelConfiguration.calibration_of_carbon_coefficients_year`
+    * `LinearisationYear`: The year used to linearise the model for baseline projections - `ModelConfiguration.linearisation_year`
+    * `FirstProjectionYear`: The first projection year for the baseline projections - `ModelConfiguration.first_projection_year`
+    * `LastProjectionYear`: The last projection year - `ModelConfiguration.last_projection_year`
+    * `StableManifoldTolerance`: The tolerance for small changes in the stable manifold that defines convergence to the stable manifold - `ModelConfiguration.stable_manifold_tolerance`
+    * `StableManifoldMaximumIterations`: The maximum number of iterations to perform before failing to find the stable manifold - `ModelConfiguration.stable_manifold_maximum_iterations`
+    * `NeutralRealInterestRate`: The global neutral real interest rate, as a decimal rather than a percentage - `ModelConfiguration.neutral_real_interest_rate`
 
     The following configuration settings are optional inclusions in the model configuration
     file:
 
-    * `LineariseAroundStrictModelSolution` governing how model linearisation is done. See 
+    * `Debugging`: determining the logging verbosity of the model when it runs. See 
+    `ModelConfiguration.debugging` for details and its default value.
+    * `LineariseAroundStrictModelSolution`: governing how model linearisation is done. See 
     `ModelConfiguration.linearise_around_strict_model_solution` for details and its
     default value.
 
@@ -171,12 +188,17 @@ class ModelConfiguration(Base):
     @property
     def debugging(self) -&gt; bool:
         &#34;&#34;&#34;
-        True if logs are to be verbose (for debugging purposes) and False otherwise.
+        `True` if logs are to be verbose (for debugging purposes) and `False` otherwise.
 
-        The configuration file value
-        should be set to 1 if logs are to be verbose and to 0 otherwise.
+        It defaults to `True` if not specified in the configuration file.
+
+        The configuration file value should be set to 1 if logs are to be verbose 
+        and to 0 otherwise.
 
         The name for this property in the configuration file is `Debugging`. 
+
+        This feature is under development, and will be more influential as this package matures.
+        It currently has minimal impact on logging.
         &#34;&#34;&#34;
         return bool(self.__class__.DOING_DETAILED_DEBUG)
     
@@ -238,9 +260,16 @@ class ModelConfiguration(Base):
     @property
     def sym_input_file(self):
         &#34;&#34;&#34;
-        The absolute path and name of the file to process with the sym processor
-        to produce the sym details for the model and the Python implementation of the
+        The absolute path and name of the root 
+        SYM file to process with the sym processor
+        to produce the sym details (lists of variables and 
+        Python implementation of the model equations etc.) 
+        for the model and the Python implementation of the
         model equations.
+
+        Note that the SYM definition of a model can be split among several files with the 
+        root file including the others to form the complete model definition. Only the 
+        name of the root SYM file is returned.
 
         This configuration property must be specified.
 
@@ -333,6 +362,9 @@ class ModelConfiguration(Base):
     def database_file(self):
         &#34;&#34;&#34;
         The absolute path to the model&#39;s database CSV file.
+
+        The database file contains the historical data for
+        all of the variables in the model.
         &#34;&#34;&#34;
         return f&#34;{self.data_directory}{self._database_file}&#34;
 
@@ -340,6 +372,8 @@ class ModelConfiguration(Base):
     def io_table_file(self):
         &#34;&#34;&#34;
         The absolute path to the model&#39;s input-output tables CSV file.
+
+        This file contains the tables for all regions in the model.
 
         An example value is `IOTABLESvR2011.csv`.
 
@@ -401,6 +435,10 @@ class ModelConfiguration(Base):
 
         e.g. `2011`.
 
+        The model can be relinearised in projection years, depending on how the model is
+        run and how simulation experiments are designed. This is still an experimental feature
+        of the model.
+
         The name for this property in the configuration file is
         `LinearisationYear`. 
         &#34;&#34;&#34;
@@ -413,6 +451,11 @@ class ModelConfiguration(Base):
         purposes.
 
         e.g. `2011`.
+
+        This is used to calibrate the values of all parameters except those set by the
+        user in the `ModelConfiguration.parameters_file` and the carbon emissions coefficients.
+        The carbon coefficients can be linearised in a different year, specified via
+        `ModelConfiguration.calibration_of_carbon_coefficients_year`
 
         The name for this property in the configuration file is
         `CalibrationYear`. 
@@ -450,6 +493,8 @@ class ModelConfiguration(Base):
 
         e.g. 2018 if the provided database file has its base year in 2018.
         
+        Databases can be rebased to different years.
+
         The name for this property in the configuration file 
         is `BaseYear`.
         &#34;&#34;&#34;
@@ -577,7 +622,14 @@ class ModelConfiguration(Base):
     def neutral_real_interest_rate(self):
         &#34;&#34;&#34;
         The global neutral real interest rate as a decimal, so a value of 3.6% would
-        be specified inn the model configuration as 0.036.
+        be specified in the model configuration as 0.036.
+
+        This rate influences model linearisation and projections.
+        Linearisation is done around a set of varible values that
+        that force the interest rates in the model to be equal to this value.
+        Adjustments are then done to the projections to have interest rates
+        in the first projection year restored to their original values 
+        as at the start of the baseline projections.
 
         The name for this property in the configuration file 
         is `NeutralRealInterestRate`.
@@ -768,12 +820,29 @@ file, noting that their names are case sensitive:</p>
 <ul>
 <li><code>Version</code>: the model version - <code><a title="gcubed.model_configuration.ModelConfiguration.version" href="#gcubed.model_configuration.ModelConfiguration.version">ModelConfiguration.version</a></code>.</li>
 <li><code>Build</code>: the model build - <code><a title="gcubed.model_configuration.ModelConfiguration.build" href="#gcubed.model_configuration.ModelConfiguration.build">ModelConfiguration.build</a></code>.</li>
-<li>???? Lucid to migrate documentation from teaching site to here.</li>
+<li><code>SymInputFile</code>: the root file for the SYM model definition - <code><a title="gcubed.model_configuration.ModelConfiguration.sym_input_file" href="#gcubed.model_configuration.ModelConfiguration.sym_input_file">ModelConfiguration.sym_input_file</a></code></li>
+<li><code>Database</code>: The name of the file that contains the model database - <code><a title="gcubed.model_configuration.ModelConfiguration.database_file" href="#gcubed.model_configuration.ModelConfiguration.database_file">ModelConfiguration.database_file</a></code></li>
+<li><code>BaseYear</code>: The base year for indices in the model database - <code><a title="gcubed.model_configuration.ModelConfiguration.base_year" href="#gcubed.model_configuration.ModelConfiguration.base_year">ModelConfiguration.base_year</a></code></li>
+<li><code>UserParameters</code>: The name of the file that contains the values for parameters that are set directly by the user - <code><a title="gcubed.model_configuration.ModelConfiguration.parameters_file" href="#gcubed.model_configuration.ModelConfiguration.parameters_file">ModelConfiguration.parameters_file</a></code></li>
+<li><code>IOTables</code>: The name of the file that contains the Input/Output tables for each region - <code><a title="gcubed.model_configuration.ModelConfiguration.io_table_file" href="#gcubed.model_configuration.ModelConfiguration.io_table_file">ModelConfiguration.io_table_file</a></code></li>
+<li><code>Productivity</code>: - The name of the file that contains the data about productivity growth in each sector of each region, over the projection years <code><a title="gcubed.model_configuration.ModelConfiguration.productivity_file" href="#gcubed.model_configuration.ModelConfiguration.productivity_file">ModelConfiguration.productivity_file</a></code></li>
+<li><code>Population</code>: The name of the file that contains the data about population growth in each region, over the projection years - <code><a title="gcubed.model_configuration.ModelConfiguration.population_file" href="#gcubed.model_configuration.ModelConfiguration.population_file">ModelConfiguration.population_file</a></code></li>
+<li><code>AutonomousEnergyEfficiencyImprovement</code>: The name of the file that contains the data about autonomous energy efficiency improvments over the projection years - <code><a title="gcubed.model_configuration.ModelConfiguration.aeei_file" href="#gcubed.model_configuration.ModelConfiguration.aeei_file">ModelConfiguration.aeei_file</a></code></li>
+<li><code>CalibrationYear</code>: The year used to calibrate the model parameters except for the carbon coefficients - <code><a title="gcubed.model_configuration.ModelConfiguration.calibration_year" href="#gcubed.model_configuration.ModelConfiguration.calibration_year">ModelConfiguration.calibration_year</a></code></li>
+<li><code>CalibrationOfCarbonCoefficientsYear</code>: The year used to calibrate the carbon coefficients - <code><a title="gcubed.model_configuration.ModelConfiguration.calibration_of_carbon_coefficients_year" href="#gcubed.model_configuration.ModelConfiguration.calibration_of_carbon_coefficients_year">ModelConfiguration.calibration_of_carbon_coefficients_year</a></code></li>
+<li><code>LinearisationYear</code>: The year used to linearise the model for baseline projections - <code><a title="gcubed.model_configuration.ModelConfiguration.linearisation_year" href="#gcubed.model_configuration.ModelConfiguration.linearisation_year">ModelConfiguration.linearisation_year</a></code></li>
+<li><code>FirstProjectionYear</code>: The first projection year for the baseline projections - <code><a title="gcubed.model_configuration.ModelConfiguration.first_projection_year" href="#gcubed.model_configuration.ModelConfiguration.first_projection_year">ModelConfiguration.first_projection_year</a></code></li>
+<li><code>LastProjectionYear</code>: The last projection year - <code><a title="gcubed.model_configuration.ModelConfiguration.last_projection_year" href="#gcubed.model_configuration.ModelConfiguration.last_projection_year">ModelConfiguration.last_projection_year</a></code></li>
+<li><code>StableManifoldTolerance</code>: The tolerance for small changes in the stable manifold that defines convergence to the stable manifold - <code><a title="gcubed.model_configuration.ModelConfiguration.stable_manifold_tolerance" href="#gcubed.model_configuration.ModelConfiguration.stable_manifold_tolerance">ModelConfiguration.stable_manifold_tolerance</a></code></li>
+<li><code>StableManifoldMaximumIterations</code>: The maximum number of iterations to perform before failing to find the stable manifold - <code><a title="gcubed.model_configuration.ModelConfiguration.stable_manifold_maximum_iterations" href="#gcubed.model_configuration.ModelConfiguration.stable_manifold_maximum_iterations">ModelConfiguration.stable_manifold_maximum_iterations</a></code></li>
+<li><code>NeutralRealInterestRate</code>: The global neutral real interest rate, as a decimal rather than a percentage - <code><a title="gcubed.model_configuration.ModelConfiguration.neutral_real_interest_rate" href="#gcubed.model_configuration.ModelConfiguration.neutral_real_interest_rate">ModelConfiguration.neutral_real_interest_rate</a></code></li>
 </ul>
 <p>The following configuration settings are optional inclusions in the model configuration
 file:</p>
 <ul>
-<li><code>LineariseAroundStrictModelSolution</code> governing how model linearisation is done. See
+<li><code>Debugging</code>: determining the logging verbosity of the model when it runs. See
+<code><a title="gcubed.model_configuration.ModelConfiguration.debugging" href="#gcubed.model_configuration.ModelConfiguration.debugging">ModelConfiguration.debugging</a></code> for details and its default value.</li>
+<li><code>LineariseAroundStrictModelSolution</code>: governing how model linearisation is done. See
 <code><a title="gcubed.model_configuration.ModelConfiguration.linearise_around_strict_model_solution" href="#gcubed.model_configuration.ModelConfiguration.linearise_around_strict_model_solution">ModelConfiguration.linearise_around_strict_model_solution</a></code> for details and its
 default value.</li>
 </ul>
@@ -811,12 +880,29 @@ current working directory, to the model configuration file.
 
     * `Version`: the model version - `ModelConfiguration.version`.
     * `Build`: the model build - `ModelConfiguration.build`.
-    * ???? Lucid to migrate documentation from teaching site to here.
+    * `SymInputFile`: the root file for the SYM model definition - `ModelConfiguration.sym_input_file`
+    * `Database`: The name of the file that contains the model database - `ModelConfiguration.database_file`
+    * `BaseYear`: The base year for indices in the model database - `ModelConfiguration.base_year`
+    * `UserParameters`: The name of the file that contains the values for parameters that are set directly by the user - `ModelConfiguration.parameters_file`
+    * `IOTables`: The name of the file that contains the Input/Output tables for each region - `ModelConfiguration.io_table_file`
+    * `Productivity`: - The name of the file that contains the data about productivity growth in each sector of each region, over the projection years `ModelConfiguration.productivity_file`
+    * `Population`: The name of the file that contains the data about population growth in each region, over the projection years - `ModelConfiguration.population_file`
+    * `AutonomousEnergyEfficiencyImprovement`: The name of the file that contains the data about autonomous energy efficiency improvments over the projection years - `ModelConfiguration.aeei_file`
+    * `CalibrationYear`: The year used to calibrate the model parameters except for the carbon coefficients - `ModelConfiguration.calibration_year`
+    * `CalibrationOfCarbonCoefficientsYear`: The year used to calibrate the carbon coefficients - `ModelConfiguration.calibration_of_carbon_coefficients_year`
+    * `LinearisationYear`: The year used to linearise the model for baseline projections - `ModelConfiguration.linearisation_year`
+    * `FirstProjectionYear`: The first projection year for the baseline projections - `ModelConfiguration.first_projection_year`
+    * `LastProjectionYear`: The last projection year - `ModelConfiguration.last_projection_year`
+    * `StableManifoldTolerance`: The tolerance for small changes in the stable manifold that defines convergence to the stable manifold - `ModelConfiguration.stable_manifold_tolerance`
+    * `StableManifoldMaximumIterations`: The maximum number of iterations to perform before failing to find the stable manifold - `ModelConfiguration.stable_manifold_maximum_iterations`
+    * `NeutralRealInterestRate`: The global neutral real interest rate, as a decimal rather than a percentage - `ModelConfiguration.neutral_real_interest_rate`
 
     The following configuration settings are optional inclusions in the model configuration
     file:
 
-    * `LineariseAroundStrictModelSolution` governing how model linearisation is done. See 
+    * `Debugging`: determining the logging verbosity of the model when it runs. See 
+    `ModelConfiguration.debugging` for details and its default value.
+    * `LineariseAroundStrictModelSolution`: governing how model linearisation is done. See 
     `ModelConfiguration.linearise_around_strict_model_solution` for details and its
     default value.
 
@@ -911,12 +997,17 @@ current working directory, to the model configuration file.
     @property
     def debugging(self) -&gt; bool:
         &#34;&#34;&#34;
-        True if logs are to be verbose (for debugging purposes) and False otherwise.
+        `True` if logs are to be verbose (for debugging purposes) and `False` otherwise.
 
-        The configuration file value
-        should be set to 1 if logs are to be verbose and to 0 otherwise.
+        It defaults to `True` if not specified in the configuration file.
+
+        The configuration file value should be set to 1 if logs are to be verbose 
+        and to 0 otherwise.
 
         The name for this property in the configuration file is `Debugging`. 
+
+        This feature is under development, and will be more influential as this package matures.
+        It currently has minimal impact on logging.
         &#34;&#34;&#34;
         return bool(self.__class__.DOING_DETAILED_DEBUG)
     
@@ -978,9 +1069,16 @@ current working directory, to the model configuration file.
     @property
     def sym_input_file(self):
         &#34;&#34;&#34;
-        The absolute path and name of the file to process with the sym processor
-        to produce the sym details for the model and the Python implementation of the
+        The absolute path and name of the root 
+        SYM file to process with the sym processor
+        to produce the sym details (lists of variables and 
+        Python implementation of the model equations etc.) 
+        for the model and the Python implementation of the
         model equations.
+
+        Note that the SYM definition of a model can be split among several files with the 
+        root file including the others to form the complete model definition. Only the 
+        name of the root SYM file is returned.
 
         This configuration property must be specified.
 
@@ -1073,6 +1171,9 @@ current working directory, to the model configuration file.
     def database_file(self):
         &#34;&#34;&#34;
         The absolute path to the model&#39;s database CSV file.
+
+        The database file contains the historical data for
+        all of the variables in the model.
         &#34;&#34;&#34;
         return f&#34;{self.data_directory}{self._database_file}&#34;
 
@@ -1080,6 +1181,8 @@ current working directory, to the model configuration file.
     def io_table_file(self):
         &#34;&#34;&#34;
         The absolute path to the model&#39;s input-output tables CSV file.
+
+        This file contains the tables for all regions in the model.
 
         An example value is `IOTABLESvR2011.csv`.
 
@@ -1141,6 +1244,10 @@ current working directory, to the model configuration file.
 
         e.g. `2011`.
 
+        The model can be relinearised in projection years, depending on how the model is
+        run and how simulation experiments are designed. This is still an experimental feature
+        of the model.
+
         The name for this property in the configuration file is
         `LinearisationYear`. 
         &#34;&#34;&#34;
@@ -1153,6 +1260,11 @@ current working directory, to the model configuration file.
         purposes.
 
         e.g. `2011`.
+
+        This is used to calibrate the values of all parameters except those set by the
+        user in the `ModelConfiguration.parameters_file` and the carbon emissions coefficients.
+        The carbon coefficients can be linearised in a different year, specified via
+        `ModelConfiguration.calibration_of_carbon_coefficients_year`
 
         The name for this property in the configuration file is
         `CalibrationYear`. 
@@ -1190,6 +1302,8 @@ current working directory, to the model configuration file.
 
         e.g. 2018 if the provided database file has its base year in 2018.
         
+        Databases can be rebased to different years.
+
         The name for this property in the configuration file 
         is `BaseYear`.
         &#34;&#34;&#34;
@@ -1317,7 +1431,14 @@ current working directory, to the model configuration file.
     def neutral_real_interest_rate(self):
         &#34;&#34;&#34;
         The global neutral real interest rate as a decimal, so a value of 3.6% would
-        be specified inn the model configuration as 0.036.
+        be specified in the model configuration as 0.036.
+
+        This rate influences model linearisation and projections.
+        Linearisation is done around a set of varible values that
+        that force the interest rates in the model to be equal to this value.
+        Adjustments are then done to the projections to have interest rates
+        in the first projection year restored to their original values 
+        as at the start of the baseline projections.
 
         The name for this property in the configuration file 
         is `NeutralRealInterestRate`.
@@ -1518,6 +1639,7 @@ the actual database file. It should not be a specification of the base year that
 want to use. Other properties manage how the base year is altered after the data is
 loaded.</p>
 <p>e.g. 2018 if the provided database file has its base year in 2018.</p>
+<p>Databases can be rebased to different years.</p>
 <p>The name for this property in the configuration file
 is <code>BaseYear</code>.</p></div>
 <details class="source">
@@ -1540,6 +1662,8 @@ def base_year(self):
 
     e.g. 2018 if the provided database file has its base year in 2018.
     
+    Databases can be rebased to different years.
+
     The name for this property in the configuration file 
     is `BaseYear`.
     &#34;&#34;&#34;
@@ -1652,6 +1776,10 @@ def calibration_of_carbon_coefficients_year(self):
 <div class="desc"><p>The year to use when selecting the database data for model parameter calibration
 purposes.</p>
 <p>e.g. <code>2011</code>.</p>
+<p>This is used to calibrate the values of all parameters except those set by the
+user in the <code><a title="gcubed.model_configuration.ModelConfiguration.parameters_file" href="#gcubed.model_configuration.ModelConfiguration.parameters_file">ModelConfiguration.parameters_file</a></code> and the carbon emissions coefficients.
+The carbon coefficients can be linearised in a different year, specified via
+<code><a title="gcubed.model_configuration.ModelConfiguration.calibration_of_carbon_coefficients_year" href="#gcubed.model_configuration.ModelConfiguration.calibration_of_carbon_coefficients_year">ModelConfiguration.calibration_of_carbon_coefficients_year</a></code></p>
 <p>The name for this property in the configuration file is
 <code>CalibrationYear</code>.</p></div>
 <details class="source">
@@ -1665,6 +1793,11 @@ def calibration_year(self):
     purposes.
 
     e.g. `2011`.
+
+    This is used to calibrate the values of all parameters except those set by the
+    user in the `ModelConfiguration.parameters_file` and the carbon emissions coefficients.
+    The carbon coefficients can be linearised in a different year, specified via
+    `ModelConfiguration.calibration_of_carbon_coefficients_year`
 
     The name for this property in the configuration file is
     `CalibrationYear`. 
@@ -1689,7 +1822,9 @@ def data_directory(self):
 </dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.database_file"><code class="name">var <span class="ident">database_file</span></code></dt>
 <dd>
-<div class="desc"><p>The absolute path to the model's database CSV file.</p></div>
+<div class="desc"><p>The absolute path to the model's database CSV file.</p>
+<p>The database file contains the historical data for
+all of the variables in the model.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1698,16 +1833,22 @@ def data_directory(self):
 def database_file(self):
     &#34;&#34;&#34;
     The absolute path to the model&#39;s database CSV file.
+
+    The database file contains the historical data for
+    all of the variables in the model.
     &#34;&#34;&#34;
     return f&#34;{self.data_directory}{self._database_file}&#34;</code></pre>
 </details>
 </dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.debugging"><code class="name">var <span class="ident">debugging</span> : bool</code></dt>
 <dd>
-<div class="desc"><p>True if logs are to be verbose (for debugging purposes) and False otherwise.</p>
-<p>The configuration file value
-should be set to 1 if logs are to be verbose and to 0 otherwise.</p>
-<p>The name for this property in the configuration file is <code>Debugging</code>.</p></div>
+<div class="desc"><p><code>True</code> if logs are to be verbose (for debugging purposes) and <code>False</code> otherwise.</p>
+<p>It defaults to <code>True</code> if not specified in the configuration file.</p>
+<p>The configuration file value should be set to 1 if logs are to be verbose
+and to 0 otherwise.</p>
+<p>The name for this property in the configuration file is <code>Debugging</code>. </p>
+<p>This feature is under development, and will be more influential as this package matures.
+It currently has minimal impact on logging.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1715,12 +1856,17 @@ should be set to 1 if logs are to be verbose and to 0 otherwise.</p>
 <pre><code class="python">@property
 def debugging(self) -&gt; bool:
     &#34;&#34;&#34;
-    True if logs are to be verbose (for debugging purposes) and False otherwise.
+    `True` if logs are to be verbose (for debugging purposes) and `False` otherwise.
 
-    The configuration file value
-    should be set to 1 if logs are to be verbose and to 0 otherwise.
+    It defaults to `True` if not specified in the configuration file.
+
+    The configuration file value should be set to 1 if logs are to be verbose 
+    and to 0 otherwise.
 
     The name for this property in the configuration file is `Debugging`. 
+
+    This feature is under development, and will be more influential as this package matures.
+    It currently has minimal impact on logging.
     &#34;&#34;&#34;
     return bool(self.__class__.DOING_DETAILED_DEBUG)</code></pre>
 </details>
@@ -1825,6 +1971,7 @@ def fully_qualified_equations_module_name(self):
 <dt id="gcubed.model_configuration.ModelConfiguration.io_table_file"><code class="name">var <span class="ident">io_table_file</span></code></dt>
 <dd>
 <div class="desc"><p>The absolute path to the model's input-output tables CSV file.</p>
+<p>This file contains the tables for all regions in the model.</p>
 <p>An example value is <code>IOTABLESvR2011.csv</code>.</p>
 <p>The name for this property in the configuration file
 is <code>IOTables</code>.</p></div>
@@ -1836,6 +1983,8 @@ is <code>IOTables</code>.</p></div>
 def io_table_file(self):
     &#34;&#34;&#34;
     The absolute path to the model&#39;s input-output tables CSV file.
+
+    This file contains the tables for all regions in the model.
 
     An example value is `IOTABLESvR2011.csv`.
 
@@ -1870,6 +2019,9 @@ def last_projection_year(self):
 <div class="desc"><p>The year to use when selecting the database data for model linearisation
 purposes.</p>
 <p>e.g. <code>2011</code>.</p>
+<p>The model can be relinearised in projection years, depending on how the model is
+run and how simulation experiments are designed. This is still an experimental feature
+of the model.</p>
 <p>The name for this property in the configuration file is
 <code>LinearisationYear</code>.</p></div>
 <details class="source">
@@ -1883,6 +2035,10 @@ def linearisation_year(self):
     purposes.
 
     e.g. `2011`.
+
+    The model can be relinearised in projection years, depending on how the model is
+    run and how simulation experiments are designed. This is still an experimental feature
+    of the model.
 
     The name for this property in the configuration file is
     `LinearisationYear`. 
@@ -1970,7 +2126,13 @@ def model_summary_file(self):
 <dt id="gcubed.model_configuration.ModelConfiguration.neutral_real_interest_rate"><code class="name">var <span class="ident">neutral_real_interest_rate</span></code></dt>
 <dd>
 <div class="desc"><p>The global neutral real interest rate as a decimal, so a value of 3.6% would
-be specified inn the model configuration as 0.036.</p>
+be specified in the model configuration as 0.036.</p>
+<p>This rate influences model linearisation and projections.
+Linearisation is done around a set of varible values that
+that force the interest rates in the model to be equal to this value.
+Adjustments are then done to the projections to have interest rates
+in the first projection year restored to their original values
+as at the start of the baseline projections.</p>
 <p>The name for this property in the configuration file
 is <code>NeutralRealInterestRate</code>.</p></div>
 <details class="source">
@@ -1981,7 +2143,14 @@ is <code>NeutralRealInterestRate</code>.</p></div>
 def neutral_real_interest_rate(self):
     &#34;&#34;&#34;
     The global neutral real interest rate as a decimal, so a value of 3.6% would
-    be specified inn the model configuration as 0.036.
+    be specified in the model configuration as 0.036.
+
+    This rate influences model linearisation and projections.
+    Linearisation is done around a set of varible values that
+    that force the interest rates in the model to be equal to this value.
+    Adjustments are then done to the projections to have interest rates
+    in the first projection year restored to their original values 
+    as at the start of the baseline projections.
 
     The name for this property in the configuration file 
     is `NeutralRealInterestRate`.
@@ -2288,9 +2457,15 @@ def sym_directory(self):
 </dd>
 <dt id="gcubed.model_configuration.ModelConfiguration.sym_input_file"><code class="name">var <span class="ident">sym_input_file</span></code></dt>
 <dd>
-<div class="desc"><p>The absolute path and name of the file to process with the sym processor
-to produce the sym details for the model and the Python implementation of the
+<div class="desc"><p>The absolute path and name of the root
+SYM file to process with the sym processor
+to produce the sym details (lists of variables and
+Python implementation of the model equations etc.)
+for the model and the Python implementation of the
 model equations.</p>
+<p>Note that the SYM definition of a model can be split among several files with the
+root file including the others to form the complete model definition. Only the
+name of the root SYM file is returned.</p>
 <p>This configuration property must be specified.</p>
 <p>The name for this property in the configuration file is "SymInputFile".</p></div>
 <details class="source">
@@ -2300,9 +2475,16 @@ model equations.</p>
 <pre><code class="python">@property
 def sym_input_file(self):
     &#34;&#34;&#34;
-    The absolute path and name of the file to process with the sym processor
-    to produce the sym details for the model and the Python implementation of the
+    The absolute path and name of the root 
+    SYM file to process with the sym processor
+    to produce the sym details (lists of variables and 
+    Python implementation of the model equations etc.) 
+    for the model and the Python implementation of the
     model equations.
+
+    Note that the SYM definition of a model can be split among several files with the 
+    root file including the others to form the complete model definition. Only the 
+    name of the root SYM file is returned.
 
     This configuration property must be specified.
 

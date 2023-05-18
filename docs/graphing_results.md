@@ -3,7 +3,7 @@ layout: default
 nav_order: 8
 ---
 
-# Graphing simulation experiment results
+# Graphing results
 
 To be completed.
 

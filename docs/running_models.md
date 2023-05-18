@@ -2,7 +2,7 @@
 layout: default
 nav_order: 7
 ---
-# Running a simulation experiment using G-Cubed.
+# Running a model
 
 Make sure [your Python environment is properly set up](environment_setup.md) and make sure that the `gcubed` Python package has been installed.
 
