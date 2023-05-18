@@ -70,16 +70,6 @@ The prefix number in the model build increases over time. The suffix in the mode
 of the same generation if they differ in material ways.
 
 # The files required to run a G-Cubed model
-{: .no_toc }
-
-<details open markdown="block">
-  <summary>
-    Table of contents
-  </summary>
-  {: .text-delta }
-- TOC
-{:toc}
-</details>
 
 A specific version of a G-Cubed model requires a number of files to run. These files are organised into a root directory with a set of subdirectories. The gcubed package will load these files and produce certain outputs into this root directory.
 
@@ -128,19 +118,19 @@ values in the model configuration file.
 │   │   ├── <LAYER2_DATA>.csv
 │   │   ├── ...
 │   ├── ...
-├── python
-│   ├── run.py
-│   ├── results_<GENERATION-TIMESTAMP>
-│   │   ├── baseline_projections.csv
-│   │   ├── deviation_projections.csv
-│   │   ├── simulation_projections.csv
-│   │   ├── run.log
 ```
 
 
 The simulations subdirectory and the python subdirectory are optional but the data and the sym subdirectories
 must exist and they must contain the necessary files.
 
+## The files in the data directory
+
+For details, review [the data file documentation](model_data_files.md).
+
+## The files in the sym directory
+
+For details, review [the sym file documentation](model_sym_files.md).
 
 ## The configuration file
 
