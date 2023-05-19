@@ -60,18 +60,18 @@ Each region has an Input/Output table.
 The Input/Output tables are stacked vertically in the Input/Output tables file.
 
 The first column of the IO table, with the
-<REGION_CODE> in the first cell, must be in the first column of the CSV file.
+`<REGION_CODE>` in the first cell, must be in the first column of the CSV file.
 
 Each Input/Output table has the following structure:
 
-| <REGION_CODE> | a01 | … | a0N | C | I | G | X | M |
-|---------------|-----|---|-----|---|---|---|---|---|
-| g01           |     |   |     |   |   |   |   |   |
-| :             |     |   |     |   |   |   |   |   |
-| g0N           |     |   |     |   |   |   |   |   |
-| M             |     |   |     |   |   |   |   |   |
-| K             |     |   |     |   |   |   |   |   |
-| L             |     |   |     |   |   |   |   |   |
+| `<REGION_CODE>` | a01 | … | a0N | C | I | G | X | M |
+|-----------------|-----|---|-----|---|---|---|---|---|
+| g01             |     |   |     |   |   |   |   |   |
+| :               |     |   |     |   |   |   |   |   |
+| g0N             |     |   |     |   |   |   |   |   |
+| M               |     |   |     |   |   |   |   |   |
+| K               |     |   |     |   |   |   |   |   |
+| L               |     |   |     |   |   |   |   |   |
 
 The region code <REGION_CODE> in the left corner is mandatory. It must
 be exactly the same as the region code used for the region in the SYM set
