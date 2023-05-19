@@ -5,6 +5,17 @@ nav_order: 4
 
 # Model data files
 
+{: .no_toc }
+
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+- TOC
+{:toc}
+</details>
+
 The data subdirectory contains the data files for the model. All of the data files are in the CSV format.
 
 The files are comma delimited and none of the values in those files are allowed to contain commas.

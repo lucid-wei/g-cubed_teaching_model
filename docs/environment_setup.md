@@ -4,6 +4,18 @@ nav_order: 2
 ---
 
 # Environment setup 
+
+{: .no_toc }
+
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+- TOC
+{:toc}
+</details>
+
 ## Install the Python interpreter:
 
 G-Cubed models require you have a working Python 3.10+ interpreter 

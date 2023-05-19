@@ -4,6 +4,17 @@ nav_order: 6
 ---
 # Simulation experiments
 
+{: .no_toc }
+
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+- TOC
+{:toc}
+</details>
+
 ## The simulations directory and its contents
 
 The simulations directory contains one directory for each simulation 

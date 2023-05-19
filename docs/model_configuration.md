@@ -6,6 +6,17 @@ nav_order: 3
 
 # G-Cubed model overview
 
+{: .no_toc }
+
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+- TOC
+{:toc}
+</details>
+
 Running a model entails generation of a set of baseline projections. Projections
 are values for each variable in the model, for each of the years from the start
 of the projections to the end of the projections, potentially spanning many decades.
