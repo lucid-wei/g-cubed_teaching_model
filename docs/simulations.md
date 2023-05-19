@@ -3,7 +3,6 @@ layout: default
 nav_order: 6
 ---
 # Simulation experiments
-
 {: .no_toc }
 
 <details open markdown="block">

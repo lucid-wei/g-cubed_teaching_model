@@ -3,8 +3,7 @@ layout: default
 nav_order: 2
 ---
 
-# Environment setup 
-
+# Environment setup
 {: .no_toc }
 
 <details open markdown="block">
