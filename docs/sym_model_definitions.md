@@ -150,7 +150,7 @@ is the same as that for variables.
 
 When users adjust parameters, (usually) the entire dynamic of the model will change. 
 Thus, (some) parameters can be altered when users design their own experiments.
-Those user-defined parameters can be altered in [setparameters.csv](4model_files.md#setparameters).
+Those user-defined parameters can be altered in [setparameters.csv](model_data_files.md#user-defined-parameters).
 
 # Equations
 
@@ -166,4 +166,4 @@ Model equations are divided into 4 groups:
 4. Endogenous variables
 
 These groups of equations and the way that they are expressed and manipulated to solve the model
-are explained in [the G-Cubed model solution documentation](../papers/Solving%20G-Cubed.pdf).
+are explained in [the G-Cubed model solution documentation](papers/Solving%20G-Cubed%20without%20policy%20optimisation.pdf).
