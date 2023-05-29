@@ -79,10 +79,8 @@ class SimulationLayer(Projections):
         assert simulation_layer_definition is not None
         self._simulation_layer_definition = simulation_layer_definition
 
-        if self.previous_projections is not None:
-            assert self.first_projection_year &gt;= self.previous_projections.first_projection_year
-        else:
-            assert self.first_projection_year &gt;= self.baseline_projections.first_projection_year
+        if self.definition.event_year &lt; self.previous_projections.first_projection_year:
+            raise Exception(f&#34;The simulation layer event year year, {self.definition.event_year}, must be greater than or equal to the first projection year of the previous projections, {self.previous_projections.first_projection_year}&#34;)
         self._first_projection_year = self.definition.event_year
 
         assert os.path.isfile(self.definition.data_filename)
@@ -100,9 +98,9 @@ class SimulationLayer(Projections):
 
     def __validate(self):
         &#34;&#34;&#34;
-        TODO:  Validate the simulations: 
+        Validate the simulation layer.
         &#34;&#34;&#34;
-        logging.info(f&#34;The {self.definition.name} projections have been generated.&#34;)
+        logging.info(f&#34;The {self.definition.name} simulation layer projections have been generated.&#34;)
 
     @property
     def baseline_projections(self) -&gt; BaselineProjections:
@@ -133,27 +131,14 @@ class SimulationLayer(Projections):
         &#34;&#34;&#34;
         return self.baseline_projections.database
 
-    @property
-    def simulation_variables(self) -&gt; pd.DataFrame:
-        &#34;&#34;&#34;
-        Returns the variable summary information for the simulation data.
-        &#34;&#34;&#34;
-        return self._simulation_variables
-
-    @property
-    def simulation_data(self) -&gt; pd.DataFrame:
-        &#34;&#34;&#34;
-        Returns the simulation data.
-        &#34;&#34;&#34;
-        return self._simulation_data
-
     def __load_simulation_data(self):
-        &#34;&#34;&#34;        
-        Load and apply the simulation data that affect exogenous variables. 
+        &#34;&#34;&#34;
 
-        Load and apply the simulation data that affect state variables initial values.
+        ### Overview
 
-        TODO: Check if there are simulations where shocks to state variable initial values are not allowed.
+        Loads and apply the simulation data that affect exogenous variables. 
+
+        Loads and apply the simulation data that affect state variables initial values.
 
         When a variable has data in the simulation file, load that into the appropriate 
         SYM-specified row of the exogenous variable projections, from the start projection year onwards.
@@ -174,16 +159,16 @@ class SimulationLayer(Projections):
         # Load the simulation data.
         filename: str = self.definition.data_filename
         assert os.path.isfile(filename)
-        (self._simulation_variables, self._simulation_data) = self.load_data(filename)
-        if len(self._simulation_variables.index) == 0:
+        (simulation_variables, simulation_data) = self.load_data(filename)
+        if len(simulation_variables.index) == 0:
             logging.warn(f&#34;The &#39;{self.definition.name}&#39; simulation layer has no data. This will run but is not doing anything useful.&#34;)
-        self._simulation_variables.columns = [&#39;name&#39;]
-        self._simulation_variables.index = self._simulation_variables.name
-        self._simulation_data = self._simulation_data.astype(float)
-        self._simulation_data.index = self._simulation_variables.name
+        simulation_variables.columns = [&#39;name&#39;]
+        simulation_variables.index = simulation_variables.name
+        simulation_data = simulation_data.astype(float)
+        simulation_data.index = simulation_variables.name
 
         try:
-            self._simulation_data = self._simulation_data.loc[:, self.projection_years_column_labels]
+            simulation_data = simulation_data.loc[:, self.projection_years_column_labels]
         except:
             raise Exception(f&#34;The simulation data in {self.definition.data_file} should include data values from {self.first_projection_year} to {self.last_projection_year}&#34;)
 
@@ -191,17 +176,17 @@ class SimulationLayer(Projections):
         yratr: pd.DataFrame = self.database.get_data(name_regular_expression=f&#34;^{Constants().US_REAL_GDP_RATIO_PREFIX}\(&#34;, years=[self.configuration.original_first_projection_year])
         yratr.index = self.sym_data.regions_members
 
-        self._exo_projections = self.previous_projections.exo_projections_as_dataframe.loc[:, self.projection_years_column_labels]
+        self._exo_projections = self.previous_projections.exo_projections.copy()
         
         self._yxr_initial_values: pd.DataFrame = self.previous_projections.yxr_projections_as_dataframe.loc[:, [str(self.first_projection_year)]].copy()
 
-        for variable_name in self._simulation_variables.index:
+        for variable_name in simulation_variables.index:
             variable_region: str = str(self.baseline_projections.database.variables.loc[variable_name, &#39;region&#39;])
-            variable_units: str = str(self.sym_data.combined_variable_summary.loc[variable_name, &#39;units&#39;])
-            data: pd.DataFrame = self._simulation_data.loc[[variable_name], :] / 100
+            units_for_variables_with_given_name_prefix: str = str(self.sym_data.combined_variable_summary.loc[variable_name, &#39;units&#39;])
+            data: pd.DataFrame = simulation_data.loc[[variable_name], :] / 100
             vector_name = self.sym_data.projection_vector_for_variable(variable_name=variable_name)
             yratr_for_region: float = float(yratr.loc[variable_region, :].values[0])
-            match variable_units:
+            match units_for_variables_with_given_name_prefix:
                 case &#39;gdp&#39; | &#39;mmgdp&#39; | &#39;btugdp&#39; | &#39;gwhgdp&#39;:
                     data *= yratr_for_region
                 case _:
@@ -221,16 +206,20 @@ class SimulationLayer(Projections):
     @property
     def h3t(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Equivalent to h3t in the Ox implementation
-        Functions of current and future exogenous variables affecting J1.
+        A matrix with one column per projection year, with each column being
+        the function of current and future exogenous variables affecting J1.
+
+        Note that this matrix is equivalent to h3t in the Ox implementation.
         &#34;&#34;&#34;
         return self._h3t
 
     @property
     def c4t(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Equivalent to c4t in the Ox implementation
-        Functions of current and future exogenous variables affecting ZE.
+        A matrix with one column per projection year, with each column being
+        functions of current and future exogenous variables affecting ZE.
+
+        Note that this matrix is equivalent to c4t in the Ox implementation.
         &#34;&#34;&#34;
         return self._c4t
 
@@ -323,10 +312,8 @@ Compute model simulations over the projection horizon.</p>
         assert simulation_layer_definition is not None
         self._simulation_layer_definition = simulation_layer_definition
 
-        if self.previous_projections is not None:
-            assert self.first_projection_year &gt;= self.previous_projections.first_projection_year
-        else:
-            assert self.first_projection_year &gt;= self.baseline_projections.first_projection_year
+        if self.definition.event_year &lt; self.previous_projections.first_projection_year:
+            raise Exception(f&#34;The simulation layer event year year, {self.definition.event_year}, must be greater than or equal to the first projection year of the previous projections, {self.previous_projections.first_projection_year}&#34;)
         self._first_projection_year = self.definition.event_year
 
         assert os.path.isfile(self.definition.data_filename)
@@ -344,9 +331,9 @@ Compute model simulations over the projection horizon.</p>
 
     def __validate(self):
         &#34;&#34;&#34;
-        TODO:  Validate the simulations: 
+        Validate the simulation layer.
         &#34;&#34;&#34;
-        logging.info(f&#34;The {self.definition.name} projections have been generated.&#34;)
+        logging.info(f&#34;The {self.definition.name} simulation layer projections have been generated.&#34;)
 
     @property
     def baseline_projections(self) -&gt; BaselineProjections:
@@ -377,27 +364,14 @@ Compute model simulations over the projection horizon.</p>
         &#34;&#34;&#34;
         return self.baseline_projections.database
 
-    @property
-    def simulation_variables(self) -&gt; pd.DataFrame:
-        &#34;&#34;&#34;
-        Returns the variable summary information for the simulation data.
-        &#34;&#34;&#34;
-        return self._simulation_variables
-
-    @property
-    def simulation_data(self) -&gt; pd.DataFrame:
-        &#34;&#34;&#34;
-        Returns the simulation data.
-        &#34;&#34;&#34;
-        return self._simulation_data
-
     def __load_simulation_data(self):
-        &#34;&#34;&#34;        
-        Load and apply the simulation data that affect exogenous variables. 
+        &#34;&#34;&#34;
 
-        Load and apply the simulation data that affect state variables initial values.
+        ### Overview
 
-        TODO: Check if there are simulations where shocks to state variable initial values are not allowed.
+        Loads and apply the simulation data that affect exogenous variables. 
+
+        Loads and apply the simulation data that affect state variables initial values.
 
         When a variable has data in the simulation file, load that into the appropriate 
         SYM-specified row of the exogenous variable projections, from the start projection year onwards.
@@ -418,16 +392,16 @@ Compute model simulations over the projection horizon.</p>
         # Load the simulation data.
         filename: str = self.definition.data_filename
         assert os.path.isfile(filename)
-        (self._simulation_variables, self._simulation_data) = self.load_data(filename)
-        if len(self._simulation_variables.index) == 0:
+        (simulation_variables, simulation_data) = self.load_data(filename)
+        if len(simulation_variables.index) == 0:
             logging.warn(f&#34;The &#39;{self.definition.name}&#39; simulation layer has no data. This will run but is not doing anything useful.&#34;)
-        self._simulation_variables.columns = [&#39;name&#39;]
-        self._simulation_variables.index = self._simulation_variables.name
-        self._simulation_data = self._simulation_data.astype(float)
-        self._simulation_data.index = self._simulation_variables.name
+        simulation_variables.columns = [&#39;name&#39;]
+        simulation_variables.index = simulation_variables.name
+        simulation_data = simulation_data.astype(float)
+        simulation_data.index = simulation_variables.name
 
         try:
-            self._simulation_data = self._simulation_data.loc[:, self.projection_years_column_labels]
+            simulation_data = simulation_data.loc[:, self.projection_years_column_labels]
         except:
             raise Exception(f&#34;The simulation data in {self.definition.data_file} should include data values from {self.first_projection_year} to {self.last_projection_year}&#34;)
 
@@ -435,17 +409,17 @@ Compute model simulations over the projection horizon.</p>
         yratr: pd.DataFrame = self.database.get_data(name_regular_expression=f&#34;^{Constants().US_REAL_GDP_RATIO_PREFIX}\(&#34;, years=[self.configuration.original_first_projection_year])
         yratr.index = self.sym_data.regions_members
 
-        self._exo_projections = self.previous_projections.exo_projections_as_dataframe.loc[:, self.projection_years_column_labels]
+        self._exo_projections = self.previous_projections.exo_projections.copy()
         
         self._yxr_initial_values: pd.DataFrame = self.previous_projections.yxr_projections_as_dataframe.loc[:, [str(self.first_projection_year)]].copy()
 
-        for variable_name in self._simulation_variables.index:
+        for variable_name in simulation_variables.index:
             variable_region: str = str(self.baseline_projections.database.variables.loc[variable_name, &#39;region&#39;])
-            variable_units: str = str(self.sym_data.combined_variable_summary.loc[variable_name, &#39;units&#39;])
-            data: pd.DataFrame = self._simulation_data.loc[[variable_name], :] / 100
+            units_for_variables_with_given_name_prefix: str = str(self.sym_data.combined_variable_summary.loc[variable_name, &#39;units&#39;])
+            data: pd.DataFrame = simulation_data.loc[[variable_name], :] / 100
             vector_name = self.sym_data.projection_vector_for_variable(variable_name=variable_name)
             yratr_for_region: float = float(yratr.loc[variable_region, :].values[0])
-            match variable_units:
+            match units_for_variables_with_given_name_prefix:
                 case &#39;gdp&#39; | &#39;mmgdp&#39; | &#39;btugdp&#39; | &#39;gwhgdp&#39;:
                     data *= yratr_for_region
                 case _:
@@ -465,16 +439,20 @@ Compute model simulations over the projection horizon.</p>
     @property
     def h3t(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Equivalent to h3t in the Ox implementation
-        Functions of current and future exogenous variables affecting J1.
+        A matrix with one column per projection year, with each column being
+        the function of current and future exogenous variables affecting J1.
+
+        Note that this matrix is equivalent to h3t in the Ox implementation.
         &#34;&#34;&#34;
         return self._h3t
 
     @property
     def c4t(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        Equivalent to c4t in the Ox implementation
-        Functions of current and future exogenous variables affecting ZE.
+        A matrix with one column per projection year, with each column being
+        functions of current and future exogenous variables affecting ZE.
+
+        Note that this matrix is equivalent to c4t in the Ox implementation.
         &#34;&#34;&#34;
         return self._c4t
 
@@ -535,8 +513,9 @@ def baseline_projections(self) -&gt; BaselineProjections:
 </dd>
 <dt id="gcubed.projections.simulation_layer.SimulationLayer.c4t"><code class="name">var <span class="ident">c4t</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>Equivalent to c4t in the Ox implementation
-Functions of current and future exogenous variables affecting ZE.</p></div>
+<div class="desc"><p>A matrix with one column per projection year, with each column being
+functions of current and future exogenous variables affecting ZE.</p>
+<p>Note that this matrix is equivalent to c4t in the Ox implementation.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -544,8 +523,10 @@ Functions of current and future exogenous variables affecting ZE.</p></div>
 <pre><code class="python">@property
 def c4t(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    Equivalent to c4t in the Ox implementation
-    Functions of current and future exogenous variables affecting ZE.
+    A matrix with one column per projection year, with each column being
+    functions of current and future exogenous variables affecting ZE.
+
+    Note that this matrix is equivalent to c4t in the Ox implementation.
     &#34;&#34;&#34;
     return self._c4t</code></pre>
 </details>
@@ -584,8 +565,9 @@ def definition(self) -&gt; SimulationLayerDefinition:
 </dd>
 <dt id="gcubed.projections.simulation_layer.SimulationLayer.h3t"><code class="name">var <span class="ident">h3t</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>Equivalent to h3t in the Ox implementation
-Functions of current and future exogenous variables affecting J1.</p></div>
+<div class="desc"><p>A matrix with one column per projection year, with each column being
+the function of current and future exogenous variables affecting J1.</p>
+<p>Note that this matrix is equivalent to h3t in the Ox implementation.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -593,8 +575,10 @@ Functions of current and future exogenous variables affecting J1.</p></div>
 <pre><code class="python">@property
 def h3t(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    Equivalent to h3t in the Ox implementation
-    Functions of current and future exogenous variables affecting J1.
+    A matrix with one column per projection year, with each column being
+    the function of current and future exogenous variables affecting J1.
+
+    Note that this matrix is equivalent to h3t in the Ox implementation.
     &#34;&#34;&#34;
     return self._h3t</code></pre>
 </details>
@@ -614,36 +598,6 @@ def j1_constants(self) -&gt; np.ndarray:
     in the original base projection year.
     &#34;&#34;&#34;
     return self.baseline_projections.j1_constants</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.simulation_layer.SimulationLayer.simulation_data"><code class="name">var <span class="ident">simulation_data</span> : pandas.core.frame.DataFrame</code></dt>
-<dd>
-<div class="desc"><p>Returns the simulation data.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def simulation_data(self) -&gt; pd.DataFrame:
-    &#34;&#34;&#34;
-    Returns the simulation data.
-    &#34;&#34;&#34;
-    return self._simulation_data</code></pre>
-</details>
-</dd>
-<dt id="gcubed.projections.simulation_layer.SimulationLayer.simulation_variables"><code class="name">var <span class="ident">simulation_variables</span> : pandas.core.frame.DataFrame</code></dt>
-<dd>
-<div class="desc"><p>Returns the variable summary information for the simulation data.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def simulation_variables(self) -&gt; pd.DataFrame:
-    &#34;&#34;&#34;
-    Returns the variable summary information for the simulation data.
-    &#34;&#34;&#34;
-    return self._simulation_variables</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.simulation_layer.SimulationLayer.x1_constants"><code class="name">var <span class="ident">x1_constants</span> : numpy.ndarray</code></dt>
@@ -702,21 +656,25 @@ def ze_constants(self) -&gt; np.ndarray:
 <ul class="hlist">
 <li><code><b><a title="gcubed.projections.projections.Projections" href="projections.html#gcubed.projections.projections.Projections">Projections</a></b></code>:
 <ul class="hlist">
+<li><code><a title="gcubed.projections.projections.Projections.annotated_database_projections" href="projections.html#gcubed.projections.projections.Projections.annotated_database_projections">annotated_database_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.annotated_projections" href="projections.html#gcubed.projections.projections.Projections.annotated_projections">annotated_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.annotated_publishable_projections" href="projections.html#gcubed.projections.projections.Projections.annotated_publishable_projections">annotated_publishable_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.c4t_as_dataframe" href="projections.html#gcubed.projections.projections.Projections.c4t_as_dataframe">c4t_as_dataframe</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.configuration" href="projections.html#gcubed.projections.projections.Projections.configuration">configuration</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.database_projections" href="projections.html#gcubed.projections.projections.Projections.database_projections">database_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exo_projections" href="projections.html#gcubed.projections.projections.Projections.exo_projections">exo_projections</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.exo_projections_as_dataframe" href="projections.html#gcubed.projections.projections.Projections.exo_projections_as_dataframe">exo_projections_as_dataframe</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exz_projections" href="projections.html#gcubed.projections.projections.Projections.exz_projections">exz_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exz_projections_as_dataframe" href="projections.html#gcubed.projections.projections.Projections.exz_projections_as_dataframe">exz_projections_as_dataframe</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.first_projection_year" href="projections.html#gcubed.projections.projections.Projections.first_projection_year">first_projection_year</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.get_differences_between_projections" href="projections.html#gcubed.projections.projections.Projections.get_differences_between_projections">get_differences_between_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.graphable_projections" href="projections.html#gcubed.projections.projections.Projections.graphable_projections">graphable_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.h3t_as_dataframe" href="projections.html#gcubed.projections.projections.Projections.h3t_as_dataframe">h3t_as_dataframe</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.is_baseline_projections" href="projections.html#gcubed.projections.projections.Projections.is_baseline_projections">is_baseline_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.last_projection_year" href="projections.html#gcubed.projections.projections.Projections.last_projection_year">last_projection_year</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.long_rate_constants" href="projections.html#gcubed.projections.projections.Projections.long_rate_constants">long_rate_constants</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.model" href="projections.html#gcubed.projections.projections.Projections.model">model</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.now" href="../base.html#gcubed.base.Base.now">now</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.parameters" href="projections.html#gcubed.projections.projections.Projections.parameters">parameters</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.previous_projections" href="projections.html#gcubed.projections.projections.Projections.previous_projections">previous_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.projection_years" href="projections.html#gcubed.projections.projections.Projections.projection_years">projection_years</a></code></li>
@@ -765,8 +723,6 @@ def ze_constants(self) -&gt; np.ndarray:
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.definition" href="#gcubed.projections.simulation_layer.SimulationLayer.definition">definition</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.h3t" href="#gcubed.projections.simulation_layer.SimulationLayer.h3t">h3t</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.j1_constants" href="#gcubed.projections.simulation_layer.SimulationLayer.j1_constants">j1_constants</a></code></li>
-<li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.simulation_data" href="#gcubed.projections.simulation_layer.SimulationLayer.simulation_data">simulation_data</a></code></li>
-<li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.simulation_variables" href="#gcubed.projections.simulation_layer.SimulationLayer.simulation_variables">simulation_variables</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.x1_constants" href="#gcubed.projections.simulation_layer.SimulationLayer.x1_constants">x1_constants</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.z1_constants" href="#gcubed.projections.simulation_layer.SimulationLayer.z1_constants">z1_constants</a></code></li>
 <li><code><a title="gcubed.projections.simulation_layer.SimulationLayer.ze_constants" href="#gcubed.projections.simulation_layer.SimulationLayer.ze_constants">ze_constants</a></code></li>

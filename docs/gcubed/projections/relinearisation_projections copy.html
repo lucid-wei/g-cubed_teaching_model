@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>gcubed.projections.relinearisation_projections API documentation</title>
+<title>gcubed.projections.relinearisation_projections copy API documentation</title>
 <meta name="description" content="Contains the RelinearisationProjections class, for doing projections
 after relinearising a model, and making adjustments for any simulation layers
 …" />
@@ -22,7 +22,7 @@ after relinearising a model, and making adjustments for any simulation layers
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>gcubed.projections.relinearisation_projections</code></h1>
+<h1 class="title">Module <code>gcubed.projections.relinearisation_projections copy</code></h1>
 </header>
 <section id="section-intro">
 <p>Contains the RelinearisationProjections class, for doing projections
@@ -761,7 +761,6 @@ class RelinearisationProjections(Projections):
              self.first_year_original_projections_of_variables_adjusted_by_intertemporal_constants)
         values = values.reshape((len(self.intertemporal_constants.index), 1))
         self._intertemporal_constants[&#39;constant_value&#39;] = values
-        self._intertemporal_constants = self.baseline_projections.intertemporal_constants
 
         logging.info(&#34;The intertemporal constants have been calibrated for the relinearised model.&#34;)
 
@@ -873,7 +872,7 @@ class RelinearisationProjections(Projections):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections"><code class="flex name class">
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections"><code class="flex name class">
 <span>class <span class="ident">RelinearisationProjections</span></span>
 <span>(</span><span>baseline_projections: <a title="gcubed.projections.baseline_projections.BaselineProjections" href="baseline_projections.html#gcubed.projections.baseline_projections.BaselineProjections">BaselineProjections</a>, previous_projections: <a title="gcubed.projections.projections.Projections" href="projections.html#gcubed.projections.projections.Projections">Projections</a>, relinearisation_year: int, simulation_layer_definitions: <a title="gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions" href="simulation_layer_definitions.html#gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions">SimulationLayerDefinitions</a> = [], relinearise_around_the_neutral_real_interest_rate: bool = True)</span>
 </code></dt>
@@ -1600,7 +1599,6 @@ This parameter defaults to <code>True</code>.</p></div>
              self.first_year_original_projections_of_variables_adjusted_by_intertemporal_constants)
         values = values.reshape((len(self.intertemporal_constants.index), 1))
         self._intertemporal_constants[&#39;constant_value&#39;] = values
-        self._intertemporal_constants = self.baseline_projections.intertemporal_constants
 
         logging.info(&#34;The intertemporal constants have been calibrated for the relinearised model.&#34;)
 
@@ -1709,7 +1707,7 @@ This parameter defaults to <code>True</code>.</p></div>
 </ul>
 <h3>Instance variables</h3>
 <dl>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.baseline_projections"><code class="name">var <span class="ident">baseline_projections</span> : <a title="gcubed.projections.baseline_projections.BaselineProjections" href="baseline_projections.html#gcubed.projections.baseline_projections.BaselineProjections">BaselineProjections</a></code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.baseline_projections"><code class="name">var <span class="ident">baseline_projections</span> : <a title="gcubed.projections.baseline_projections.BaselineProjections" href="baseline_projections.html#gcubed.projections.baseline_projections.BaselineProjections">BaselineProjections</a></code></dt>
 <dd>
 <div class="desc"><p>The baseline projections that this relinearisation projections builds upon.</p></div>
 <details class="source">
@@ -1724,7 +1722,7 @@ def baseline_projections(self) -&gt; BaselineProjections:
     return self._baseline_projections</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.database"><code class="name">var <span class="ident">database</span> : <a title="gcubed.data.gdp_scaled_database.GDPScaledDatabase" href="../data/gdp_scaled_database.html#gcubed.data.gdp_scaled_database.GDPScaledDatabase">GDPScaledDatabase</a></code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.database"><code class="name">var <span class="ident">database</span> : <a title="gcubed.data.gdp_scaled_database.GDPScaledDatabase" href="../data/gdp_scaled_database.html#gcubed.data.gdp_scaled_database.GDPScaledDatabase">GDPScaledDatabase</a></code></dt>
 <dd>
 <div class="desc"><p>The database used for the relinearisation and projections.</p></div>
 <details class="source">
@@ -1739,7 +1737,7 @@ def database(self) -&gt; GDPScaledDatabase:
     return self._database</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.exo_first_year_projections"><code class="name">var <span class="ident">exo_first_year_projections</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.exo_first_year_projections"><code class="name">var <span class="ident">exo_first_year_projections</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>Projections of EXO_t in the first projection year</p></div>
 <details class="source">
@@ -1754,7 +1752,7 @@ def exo_first_year_projections(self) -&gt; np.ndarray:
     return self._exo_first_year_projections</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.exz_first_year_projections"><code class="name">var <span class="ident">exz_first_year_projections</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.exz_first_year_projections"><code class="name">var <span class="ident">exz_first_year_projections</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>Projections of ZE_t (exz) in the first projection year</p></div>
 <details class="source">
@@ -1769,7 +1767,7 @@ def exz_first_year_projections(self) -&gt; np.ndarray:
     return self._exz_first_year_projections</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.first_year_original_projections_of_variables_adjusted_by_intertemporal_constants"><code class="name">var <span class="ident">first_year_original_projections_of_variables_adjusted_by_intertemporal_constants</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.first_year_original_projections_of_variables_adjusted_by_intertemporal_constants"><code class="name">var <span class="ident">first_year_original_projections_of_variables_adjusted_by_intertemporal_constants</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>The first year projected values for the variables that are being
 adjusted by the intertemporal constants.</p>
@@ -1794,7 +1792,7 @@ def first_year_original_projections_of_variables_adjusted_by_intertemporal_const
     return self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.first_year_projections_of_variables_adjusted_by_intertemporal_constants"><code class="name">var <span class="ident">first_year_projections_of_variables_adjusted_by_intertemporal_constants</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.first_year_projections_of_variables_adjusted_by_intertemporal_constants"><code class="name">var <span class="ident">first_year_projections_of_variables_adjusted_by_intertemporal_constants</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>An column vector of first year projection values for those variables that are adjusted
 by intertemporal constants.</p>
@@ -1831,7 +1829,7 @@ def first_year_projections_of_variables_adjusted_by_intertemporal_constants(self
     return result</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.intertemporal_constants"><code class="name">var <span class="ident">intertemporal_constants</span> : pandas.core.frame.DataFrame</code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.intertemporal_constants"><code class="name">var <span class="ident">intertemporal_constants</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
 <div class="desc"><p>The data frame of intertemporal constants information
 obtained from SYM but augmented with the values of the
@@ -1856,7 +1854,7 @@ def intertemporal_constants(self) -&gt; pd.DataFrame:
     return self._intertemporal_constants</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.j1_constants"><code class="name">var <span class="ident">j1_constants</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.j1_constants"><code class="name">var <span class="ident">j1_constants</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>The constant adjustments to J1 to ensure projections equal observed values.
 Add any intertemporal constant values to the X1R difference to SSF equation
@@ -1889,7 +1887,7 @@ def j1_constants(self) -&gt; np.ndarray:
     return self._j1_constants</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.j1r_difference_from_ssf"><code class="name">var <span class="ident">j1r_difference_from_ssf</span></code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.j1r_difference_from_ssf"><code class="name">var <span class="ident">j1r_difference_from_ssf</span></code></dt>
 <dd>
 <div class="desc"><p>The original first projection year
 difference between the database values of <code>j1r</code>
@@ -1920,7 +1918,7 @@ def j1r_difference_from_ssf(self):
     return self._j1r_difference_from_ssf</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.model"><code class="name">var <span class="ident">model</span> : <a title="gcubed.model.Model" href="../model.html#gcubed.model.Model">Model</a></code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.model"><code class="name">var <span class="ident">model</span> : <a title="gcubed.model.Model" href="../model.html#gcubed.model.Model">Model</a></code></dt>
 <dd>
 <div class="desc"><p>The model to relinearise.</p></div>
 <details class="source">
@@ -1935,7 +1933,7 @@ def model(self) -&gt; Model:
     return self.state_space_form.model</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.parameters"><code class="name">var <span class="ident">parameters</span> : <a title="gcubed.model_parameters.parameters.Parameters" href="../model_parameters/parameters.html#gcubed.model_parameters.parameters.Parameters">Parameters</a></code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.parameters"><code class="name">var <span class="ident">parameters</span> : <a title="gcubed.model_parameters.parameters.Parameters" href="../model_parameters/parameters.html#gcubed.model_parameters.parameters.Parameters">Parameters</a></code></dt>
 <dd>
 <div class="desc"><p>The calibrated model parameters.</p></div>
 <details class="source">
@@ -1950,7 +1948,7 @@ def parameters(self) -&gt; Parameters:
     return self.model.parameters</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.partial_derivatives_wrt_intertemporal_constants"><code class="name">var <span class="ident">partial_derivatives_wrt_intertemporal_constants</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.partial_derivatives_wrt_intertemporal_constants"><code class="name">var <span class="ident">partial_derivatives_wrt_intertemporal_constants</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>The matrix of partial derivatives used in Newton's method to
 compute the intertemporal constants.</p>
@@ -1970,7 +1968,7 @@ def partial_derivatives_wrt_intertemporal_constants(self) -&gt; np.ndarray:
     return self._partial_derivatives</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.perturbed_variable_details"><code class="name">var <span class="ident">perturbed_variable_details</span> : pandas.core.series.Series</code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.perturbed_variable_details"><code class="name">var <span class="ident">perturbed_variable_details</span> : pandas.core.series.Series</code></dt>
 <dd>
 <div class="desc"><p>If computing intertemporal constants,
 the var_map details (the row of the SYM var_map dataframe)
@@ -1995,7 +1993,7 @@ def perturbed_variable_details(self) -&gt; pd.Series:
     return None</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.relinearise_around_the_neutral_real_interest_rate"><code class="name">var <span class="ident">relinearise_around_the_neutral_real_interest_rate</span> : bool</code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.relinearise_around_the_neutral_real_interest_rate"><code class="name">var <span class="ident">relinearise_around_the_neutral_real_interest_rate</span> : bool</code></dt>
 <dd>
 <div class="desc"><p><code>True</code> if
 relinearisations are around the neutral real interest rate
@@ -2015,7 +2013,7 @@ def relinearise_around_the_neutral_real_interest_rate(self) -&gt; bool:
     return self._relinearise_around_the_neutral_real_interest_rate</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.simulation_layer_definitions"><code class="name">var <span class="ident">simulation_layer_definitions</span> : <a title="gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions" href="simulation_layer_definitions.html#gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions">SimulationLayerDefinitions</a></code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.simulation_layer_definitions"><code class="name">var <span class="ident">simulation_layer_definitions</span> : <a title="gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions" href="simulation_layer_definitions.html#gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions">SimulationLayerDefinitions</a></code></dt>
 <dd>
 <div class="desc"><p>The list of simulation layer definitions, in their appropriate order
 from the first to be applied to the last to be applied.</p></div>
@@ -2032,7 +2030,7 @@ def simulation_layer_definitions(self) -&gt; SimulationLayerDefinitions:
     return self._simulation_layer_definitions</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.stable_manifold"><code class="name">var <span class="ident">stable_manifold</span> : <a title="gcubed.linearisation.stable_manifold.StableManifold" href="../linearisation/stable_manifold.html#gcubed.linearisation.stable_manifold.StableManifold">StableManifold</a></code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.stable_manifold"><code class="name">var <span class="ident">stable_manifold</span> : <a title="gcubed.linearisation.stable_manifold.StableManifold" href="../linearisation/stable_manifold.html#gcubed.linearisation.stable_manifold.StableManifold">StableManifold</a></code></dt>
 <dd>
 <div class="desc"><p>The stable manifold after doing the relinearisation.</p></div>
 <details class="source">
@@ -2047,7 +2045,7 @@ def stable_manifold(self) -&gt; StableManifold:
     return self._stable_manifold</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.state_space_form"><code class="name">var <span class="ident">state_space_form</span> : <a title="gcubed.linearisation.state_space_form.StateSpaceForm" href="../linearisation/state_space_form.html#gcubed.linearisation.state_space_form.StateSpaceForm">StateSpaceForm</a></code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.state_space_form"><code class="name">var <span class="ident">state_space_form</span> : <a title="gcubed.linearisation.state_space_form.StateSpaceForm" href="../linearisation/state_space_form.html#gcubed.linearisation.state_space_form.StateSpaceForm">StateSpaceForm</a></code></dt>
 <dd>
 <div class="desc"><p>The state-space form after doing the relinearisation.</p></div>
 <details class="source">
@@ -2062,7 +2060,7 @@ def state_space_form(self) -&gt; StateSpaceForm:
     return self.stable_manifold.ssf</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.sym_data"><code class="name">var <span class="ident">sym_data</span> : <a title="gcubed.sym_data.SymData" href="../sym_data.html#gcubed.sym_data.SymData">SymData</a></code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.sym_data"><code class="name">var <span class="ident">sym_data</span> : <a title="gcubed.sym_data.SymData" href="../sym_data.html#gcubed.sym_data.SymData">SymData</a></code></dt>
 <dd>
 <div class="desc"><p>The SYM generated data about the model.</p></div>
 <details class="source">
@@ -2077,7 +2075,7 @@ def sym_data(self) -&gt; SymData:
     return self.model.sym_data</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.x1_constants"><code class="name">var <span class="ident">x1_constants</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.x1_constants"><code class="name">var <span class="ident">x1_constants</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>The constant adjustments to X1 to ensure projections equal observed values.
 Add any intertemporal constant values to the X1R difference to SSF equation
@@ -2111,7 +2109,7 @@ def x1_constants(self) -&gt; np.ndarray:
     return self._x1_constants</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.x1r_difference_from_ssf"><code class="name">var <span class="ident">x1r_difference_from_ssf</span></code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.x1r_difference_from_ssf"><code class="name">var <span class="ident">x1r_difference_from_ssf</span></code></dt>
 <dd>
 <div class="desc"><p>The original first projection year
 difference between the database values of <code>x1r</code>
@@ -2141,7 +2139,7 @@ def x1r_difference_from_ssf(self):
     return self._x1r_difference_from_ssf</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.yjr_first_year_projections"><code class="name">var <span class="ident">yjr_first_year_projections</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.yjr_first_year_projections"><code class="name">var <span class="ident">yjr_first_year_projections</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>Projections of J1_t (yjr) in the first projection year</p></div>
 <details class="source">
@@ -2156,7 +2154,7 @@ def yjr_first_year_projections(self) -&gt; np.ndarray:
     return self._yjr_first_year_projections</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.yxr_first_year_projections"><code class="name">var <span class="ident">yxr_first_year_projections</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.yxr_first_year_projections"><code class="name">var <span class="ident">yxr_first_year_projections</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>Projections of X1_t (yxr) in the first projection year</p></div>
 <details class="source">
@@ -2171,7 +2169,7 @@ def yxr_first_year_projections(self) -&gt; np.ndarray:
     return self._yxr_first_year_projections</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.z1_constants"><code class="name">var <span class="ident">z1_constants</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.z1_constants"><code class="name">var <span class="ident">z1_constants</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>The constant adjustments to Z1 to ensure projections equal observed values.
 Add any intertemporal constant values to the X1R difference to SSF equation
@@ -2204,7 +2202,7 @@ def z1_constants(self) -&gt; np.ndarray:
     return self._z1_constants</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.z1l_first_year_projections"><code class="name">var <span class="ident">z1l_first_year_projections</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.z1l_first_year_projections"><code class="name">var <span class="ident">z1l_first_year_projections</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>Projections of Z1_t (z1l=z1r) in the first projection year</p></div>
 <details class="source">
@@ -2219,7 +2217,7 @@ def z1l_first_year_projections(self) -&gt; np.ndarray:
     return self._z1l_first_year_projections</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.z1r_difference_from_ssf"><code class="name">var <span class="ident">z1r_difference_from_ssf</span></code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.z1r_difference_from_ssf"><code class="name">var <span class="ident">z1r_difference_from_ssf</span></code></dt>
 <dd>
 <div class="desc"><p>The original first projection year
 difference between the database values of <code>z1r</code>
@@ -2249,7 +2247,7 @@ def z1r_difference_from_ssf(self):
     return self._z1r_difference_from_ssf</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.ze_constants"><code class="name">var <span class="ident">ze_constants</span> : numpy.ndarray</code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.ze_constants"><code class="name">var <span class="ident">ze_constants</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>The constant adjustments to ZE to ensure projections equal observed values.
 Add any intertemporal constant values to the X1R difference to SSF equation
@@ -2285,7 +2283,7 @@ def ze_constants(self) -&gt; np.ndarray:
     return self._ze_constants</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.zer_difference_from_ssf"><code class="name">var <span class="ident">zer_difference_from_ssf</span></code></dt>
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.zer_difference_from_ssf"><code class="name">var <span class="ident">zer_difference_from_ssf</span></code></dt>
 <dd>
 <div class="desc"><p>The original first projection year
 difference between the database values of <code>zer</code>
@@ -2318,7 +2316,7 @@ def zer_difference_from_ssf(self):
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="gcubed.projections.relinearisation_projections.RelinearisationProjections.populate_exogenous_projections_and_initial_state_vector"><code class="name flex">
+<dt id="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.populate_exogenous_projections_and_initial_state_vector"><code class="name flex">
 <span>def <span class="ident">populate_exogenous_projections_and_initial_state_vector</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -2414,36 +2412,36 @@ vector with supplied simulation layer data.</p></div>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections">RelinearisationProjections</a></code></h4>
+<h4><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections">RelinearisationProjections</a></code></h4>
 <ul class="">
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.baseline_projections" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.baseline_projections">baseline_projections</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.database" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.database">database</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.exo_first_year_projections" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.exo_first_year_projections">exo_first_year_projections</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.exz_first_year_projections" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.exz_first_year_projections">exz_first_year_projections</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.first_year_original_projections_of_variables_adjusted_by_intertemporal_constants" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.first_year_original_projections_of_variables_adjusted_by_intertemporal_constants">first_year_original_projections_of_variables_adjusted_by_intertemporal_constants</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.first_year_projections_of_variables_adjusted_by_intertemporal_constants" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.first_year_projections_of_variables_adjusted_by_intertemporal_constants">first_year_projections_of_variables_adjusted_by_intertemporal_constants</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.intertemporal_constants" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.intertemporal_constants">intertemporal_constants</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.j1_constants" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.j1_constants">j1_constants</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.j1r_difference_from_ssf" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.j1r_difference_from_ssf">j1r_difference_from_ssf</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.model" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.model">model</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.parameters" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.parameters">parameters</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.partial_derivatives_wrt_intertemporal_constants" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.partial_derivatives_wrt_intertemporal_constants">partial_derivatives_wrt_intertemporal_constants</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.perturbed_variable_details" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.perturbed_variable_details">perturbed_variable_details</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.populate_exogenous_projections_and_initial_state_vector" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.populate_exogenous_projections_and_initial_state_vector">populate_exogenous_projections_and_initial_state_vector</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.relinearise_around_the_neutral_real_interest_rate" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.relinearise_around_the_neutral_real_interest_rate">relinearise_around_the_neutral_real_interest_rate</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.simulation_layer_definitions" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.simulation_layer_definitions">simulation_layer_definitions</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.stable_manifold" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.stable_manifold">stable_manifold</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.state_space_form" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.state_space_form">state_space_form</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.sym_data" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.sym_data">sym_data</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.x1_constants" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.x1_constants">x1_constants</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.x1r_difference_from_ssf" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.x1r_difference_from_ssf">x1r_difference_from_ssf</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.yjr_first_year_projections" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.yjr_first_year_projections">yjr_first_year_projections</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.yxr_first_year_projections" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.yxr_first_year_projections">yxr_first_year_projections</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.z1_constants" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.z1_constants">z1_constants</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.z1l_first_year_projections" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.z1l_first_year_projections">z1l_first_year_projections</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.z1r_difference_from_ssf" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.z1r_difference_from_ssf">z1r_difference_from_ssf</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.ze_constants" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.ze_constants">ze_constants</a></code></li>
-<li><code><a title="gcubed.projections.relinearisation_projections.RelinearisationProjections.zer_difference_from_ssf" href="#gcubed.projections.relinearisation_projections.RelinearisationProjections.zer_difference_from_ssf">zer_difference_from_ssf</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.baseline_projections" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.baseline_projections">baseline_projections</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.database" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.database">database</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.exo_first_year_projections" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.exo_first_year_projections">exo_first_year_projections</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.exz_first_year_projections" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.exz_first_year_projections">exz_first_year_projections</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.first_year_original_projections_of_variables_adjusted_by_intertemporal_constants" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.first_year_original_projections_of_variables_adjusted_by_intertemporal_constants">first_year_original_projections_of_variables_adjusted_by_intertemporal_constants</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.first_year_projections_of_variables_adjusted_by_intertemporal_constants" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.first_year_projections_of_variables_adjusted_by_intertemporal_constants">first_year_projections_of_variables_adjusted_by_intertemporal_constants</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.intertemporal_constants" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.intertemporal_constants">intertemporal_constants</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.j1_constants" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.j1_constants">j1_constants</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.j1r_difference_from_ssf" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.j1r_difference_from_ssf">j1r_difference_from_ssf</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.model" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.model">model</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.parameters" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.parameters">parameters</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.partial_derivatives_wrt_intertemporal_constants" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.partial_derivatives_wrt_intertemporal_constants">partial_derivatives_wrt_intertemporal_constants</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.perturbed_variable_details" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.perturbed_variable_details">perturbed_variable_details</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.populate_exogenous_projections_and_initial_state_vector" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.populate_exogenous_projections_and_initial_state_vector">populate_exogenous_projections_and_initial_state_vector</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.relinearise_around_the_neutral_real_interest_rate" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.relinearise_around_the_neutral_real_interest_rate">relinearise_around_the_neutral_real_interest_rate</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.simulation_layer_definitions" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.simulation_layer_definitions">simulation_layer_definitions</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.stable_manifold" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.stable_manifold">stable_manifold</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.state_space_form" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.state_space_form">state_space_form</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.sym_data" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.sym_data">sym_data</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.x1_constants" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.x1_constants">x1_constants</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.x1r_difference_from_ssf" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.x1r_difference_from_ssf">x1r_difference_from_ssf</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.yjr_first_year_projections" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.yjr_first_year_projections">yjr_first_year_projections</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.yxr_first_year_projections" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.yxr_first_year_projections">yxr_first_year_projections</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.z1_constants" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.z1_constants">z1_constants</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.z1l_first_year_projections" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.z1l_first_year_projections">z1l_first_year_projections</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.z1r_difference_from_ssf" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.z1r_difference_from_ssf">z1r_difference_from_ssf</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.ze_constants" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.ze_constants">ze_constants</a></code></li>
+<li><code><a title="gcubed.projections.relinearisation_projections copy.RelinearisationProjections.zer_difference_from_ssf" href="#gcubed.projections.relinearisation_projections copy.RelinearisationProjections.zer_difference_from_ssf">zer_difference_from_ssf</a></code></li>
 </ul>
 </li>
 </ul>

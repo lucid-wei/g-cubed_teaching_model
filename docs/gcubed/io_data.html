@@ -41,6 +41,10 @@ import pandas as pd
 from gcubed.base import Base
 from gcubed.sym_data import SymData
 
+# Ensure pdoc generated API documentation includes the following methods.
+__pdoc__ = {}
+__pdoc__[&#39;IOData._load_io_tables&#39;] = True
+
 
 class IOData(Base):
     &#34;&#34;&#34;
@@ -59,7 +63,7 @@ class IOData(Base):
         assert sym_data is not None
         assert isinstance(sym_data, SymData)
         self._sym_data = sym_data
-        self.__load_io_tables()
+        self._load_io_tables()
         self.__validate()
 
     @property
@@ -69,8 +73,10 @@ class IOData(Base):
         &#34;&#34;&#34;
         return self._sym_data
 
-    def __load_io_tables(self):
+    def _load_io_tables(self):
         &#34;&#34;&#34;
+        **This function is intended for gcubed module internal use. It is exposed only for documentation purposes.**
+
         Loads the IO tables into a dictionary of dataframes.
         The keys are the region identifier.
         Each dataframe contains the IO table for the associated region.
@@ -275,7 +281,7 @@ class IOData(Base):
         assert sym_data is not None
         assert isinstance(sym_data, SymData)
         self._sym_data = sym_data
-        self.__load_io_tables()
+        self._load_io_tables()
         self.__validate()
 
     @property
@@ -285,8 +291,10 @@ class IOData(Base):
         &#34;&#34;&#34;
         return self._sym_data
 
-    def __load_io_tables(self):
+    def _load_io_tables(self):
         &#34;&#34;&#34;
+        **This function is intended for gcubed module internal use. It is exposed only for documentation purposes.**
+
         Loads the IO tables into a dictionary of dataframes.
         The keys are the region identifier.
         Each dataframe contains the IO table for the associated region.
@@ -636,6 +644,68 @@ def sym_data(self):
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="gcubed.io_data.IOData._load_io_tables"><code class="name flex">
+<span>def <span class="ident">_load_io_tables</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p><strong>This function is intended for gcubed module internal use. It is exposed only for documentation purposes.</strong></p>
+<p>Loads the IO tables into a dictionary of dataframes.
+The keys are the region identifier.
+Each dataframe contains the IO table for the associated region.
+The dataframes have row and column names that correspond to the
+sectors.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def _load_io_tables(self):
+    &#34;&#34;&#34;
+    **This function is intended for gcubed module internal use. It is exposed only for documentation purposes.**
+
+    Loads the IO tables into a dictionary of dataframes.
+    The keys are the region identifier.
+    Each dataframe contains the IO table for the associated region.
+    The dataframes have row and column names that correspond to the
+    sectors.
+    &#34;&#34;&#34;
+    filename: str = self.sym_data.configuration.io_table_file
+    if not os.path.isfile(filename):
+        raise Exception(&#34;Could not load IO tables from &#34; +
+                        filename + &#34; because the file does not exist.&#34;)
+
+    # Load the raw IO tables data into a single dataframe ready to parse into 
+    # separate tables for the various regions.
+    data: pd.DataFrame = pd.read_csv(filename, header=None)
+
+    # Label the columns of the raw IO table dataframe
+    columns = self.io_table_uses
+    columns.insert(0,&#34;row_labels&#34;)
+    data.columns = columns
+
+    # Get the table names - one for each region
+    regions: list[str] = self.sym_data.regions_members
+    table_rows = len(self.io_table_inputs)
+    table_columns = len(self.io_table_uses)
+
+    # Load the table for each region into the dictionary of IO tables.
+    self._io_tables = dict()
+    for region in regions:
+
+        # Make sure the data source has an IO table for the region
+        if not region in data.row_labels.values:
+            raise Exception(f&#34;Region {region} does not have IO table data in {filename}&#34;)
+
+        # Get the data for the table
+        io_table_heading_row: int = int(data.index[data.row_labels == region].to_list()[0])
+        io_table: pd.DataFrame = data.iloc[(io_table_heading_row + 1):(io_table_heading_row+1+table_rows), 1:(table_columns+1)].copy()
+        io_table = io_table.astype(float)
+        io_table.index = self.io_table_inputs
+        io_table.columns=self.io_table_uses
+
+        # Store the table in the dictionary of IO tables, one for each region
+        self._io_tables[region] = io_table</code></pre>
+</details>
+</dd>
 <dt id="gcubed.io_data.IOData.has_io_table"><code class="name flex">
 <span>def <span class="ident">has_io_table</span></span>(<span>self, region: str) ‑> bool</span>
 </code></dt>
@@ -710,6 +780,7 @@ IO table.</p>
 <ul class="hlist">
 <li><code><a title="gcubed.base.Base.get_year_labels" href="base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.base.Base.load_data" href="base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.now" href="base.html#gcubed.base.Base.now">now</a></code></li>
 <li><code><a title="gcubed.base.Base.zeros" href="base.html#gcubed.base.Base.zeros">zeros</a></code></li>
 </ul>
 </li>
@@ -734,6 +805,7 @@ IO table.</p>
 <li>
 <h4><code><a title="gcubed.io_data.IOData" href="#gcubed.io_data.IOData">IOData</a></code></h4>
 <ul class="">
+<li><code><a title="gcubed.io_data.IOData._load_io_tables" href="#gcubed.io_data.IOData._load_io_tables">_load_io_tables</a></code></li>
 <li><code><a title="gcubed.io_data.IOData.has_io_table" href="#gcubed.io_data.IOData.has_io_table">has_io_table</a></code></li>
 <li><code><a title="gcubed.io_data.IOData.io_table" href="#gcubed.io_data.IOData.io_table">io_table</a></code></li>
 <li><code><a title="gcubed.io_data.IOData.io_table_capital" href="#gcubed.io_data.IOData.io_table_capital">io_table_capital</a></code></li>

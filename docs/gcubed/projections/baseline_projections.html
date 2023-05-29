@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>gcubed.projections.baseline_projections API documentation</title>
-<meta name="description" content="Contains the BaselineProjections class, for doing baseline projections." />
+<meta name="description" content="Contains the `BaselineProjections` class, used for doing baseline projections." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -23,7 +23,7 @@
 <h1 class="title">Module <code>gcubed.projections.baseline_projections</code></h1>
 </header>
 <section id="section-intro">
-<p>Contains the BaselineProjections class, for doing baseline projections.</p>
+<p>Contains the <code><a title="gcubed.projections.baseline_projections.BaselineProjections" href="#gcubed.projections.baseline_projections.BaselineProjections">BaselineProjections</a></code> class, used for doing baseline projections.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -33,17 +33,14 @@
 # Author: Geoff Shuetrim
 # ------------------------------------------------------------------
 &#34;&#34;&#34;
-Contains the BaselineProjections class, for doing baseline projections.
+Contains the `BaselineProjections` class, used for doing baseline projections.
 &#34;&#34;&#34;
 import logging
+from typing import Optional # DO NOT DELETE THIS IMPORT it manages circular references.
 import pandas as pd
 import numpy as np
+from gcubed.constants import Constants
 from gcubed.linearisation.stable_manifold import StableManifold
-from gcubed.model import Model
-from gcubed.linearisation.state_space_form import StateSpaceForm
-from gcubed.sym_data import SymData
-from gcubed.model_parameters.parameters import Parameters
-from gcubed.model_configuration import ModelConfiguration
 from gcubed.data.gdp_scaled_database import GDPScaledDatabase
 from gcubed.baseline.effective_labour_productivity import EffectiveLabourProductivity
 from gcubed.baseline.energy_usage_efficiency import EnergyUsageEfficiency
@@ -57,22 +54,33 @@ class BaselineProjections(Projections):
     Compute the baseline model projections over the projection horizon 
     from the first projection year (a year with available data to be 
     matched by the projections) through to the last projection year.
+
     &#34;&#34;&#34;
 
-    # The perturbation to use when computing partial derivatives for intertemporal constant determination.
-    PERTURBATION = 0.0001
-
-    def __init__(self, stable_manifold: StableManifold) -&gt; None:
+    def __init__(self, stable_manifold: StableManifold, start_from_neutral_real_interest_rate: bool = None) -&gt; None:
         &#34;&#34;&#34;
        ### Arguments
 
-        stable_manifold: The stable manifold that provides access to all 
+        `stable_manifold`: The stable manifold that provides access to all 
         of the model information required to produce projections.
+
+        `start_from_neutral_real_interest_rate`: `True` if the baseline projections start from 
+        the neutral real interest rate and `False` if they start from the observed real interest rates.
+        This parameter defaults to a value of `None` which means that the baseline projections start
+        from the neutral real interest rate if the linear model used for the
+        projections was done at the neutral real interest rate.
         &#34;&#34;&#34;
         logging.info(&#34;Setting up the baseline projections.&#34;)
 
         super().__init__(stable_manifold=stable_manifold)
         self._is_baseline_projections = True
+
+        # Determine whether the baseline projections start the projections from the neutral 
+        # real interest rate or from the observed real interest rates.
+        if start_from_neutral_real_interest_rate is None:
+            self._start_from_neutral_real_interest_rate = self.stable_manifold.ssf.linear_model.use_neutral_real_interest_rate
+        else:
+            self._start_from_neutral_real_interest_rate = start_from_neutral_real_interest_rate
         
         self._database = GDPScaledDatabase(database=self.model.database, base_year=self.configuration.base_year)
 
@@ -86,8 +94,8 @@ class BaselineProjections(Projections):
         self.__store_observed_values_of_variables_adjusted_by_intertemporal_constants_in_first_projection_year()
         self.__compute_first_projection_year_ssf_deviations_from_observed_values()
 
-        if not self.using_rolled_projections:
-            self.__calculate_intertemporal_constants()
+        # Set up the intertemporal constant variables
+        self.__calculate_intertemporal_constants()
 
         # Generate the baseline projections
         self._generate_projections()
@@ -110,6 +118,10 @@ class BaselineProjections(Projections):
         logging.info(&#34;The baseline projections have been generated.&#34;)
 
     @property
+    def baseline_projections(self) -&gt; Optional[&#39;BaselineProjections&#39;]:
+        return self
+
+    @property
     def database(self) -&gt; GDPScaledDatabase:
         &#34;&#34;&#34;
         The database used as the starting point for the projections.
@@ -117,24 +129,40 @@ class BaselineProjections(Projections):
         return self._database
 
     @property
-    def using_rolled_projections(self) -&gt; bool:
+    def start_from_neutral_real_interest_rate(self) -&gt; bool:
         &#34;&#34;&#34;
-        True if these projections are building on
-        previous projections rather than just observed data.
-
-        This affects how the baseline projections are set up in terms
-        of the constants used.
+        `True` if interest rates are set to the neutral real interest
+        rate for the start of the baseline projections and `False` otherwise.
         &#34;&#34;&#34;
-        return self.database.has_data_for_all_projection_years
+        return self._start_from_neutral_real_interest_rate
 
     def __update_perturbed_variable(self, variable_details: pd.Series):
         &#34;&#34;&#34;
         ### Overview
 
-        Changes the perturbed variable, preparing for the
-        next evaluation of the values needed to compute
-        partial derivatives relevant to the determination 
-        of the intertemporal constants.
+        For each variable that has an intertemporal constant, we need to compute
+        numerical approximations to the partial derivatives of the model with respect
+        to that constant. Those  partial derivatives are approximated by evaluating the 
+        relevant equations in the model using the data in the first projection year and then 
+        again evaluating those equations after perturbing the variable of interest by
+        `Constants.DELTA`. The difference between the two evaluations is used
+        to compute the partial derivatives for that constant.
+
+        This function does the work of perturbing the intertemporal constant 
+        associated with the variable, preparing for calculation of the partial 
+        derivatives for that constant.
+
+        The adjustment to the constant (the perturbation) is made by adjusting the
+        constants associated with variables&#39; observed differences from their state 
+        space form equation evaluations in the baseline&#39;s first projection year.
+
+        The original value of that constant is tracked using the private property, 
+        `_original_value`, so that it can be restored after the partial derivatives
+        have been computed.
+
+        This function is called once for each variable in the SYM table of intertemporal 
+        constant variables, as part of computing the intertemporal constants.
+
         &#34;&#34;&#34;
 
         if hasattr(self, &#39;_perturbed_variable_details&#39;):
@@ -157,23 +185,26 @@ class BaselineProjections(Projections):
             match variable_details[&#39;var_type&#39;]:
                 case &#39;x1l&#39;:
                     self._original_value = float(self.x1r_difference_from_ssf[sequence])
-                    self.x1r_difference_from_ssf[sequence] = self._original_value + __class__.PERTURBATION
+                    self.x1r_difference_from_ssf[sequence] = self._original_value + Constants().DELTA
                 case &#39;j1l&#39;:
                     self._original_value = float(self.j1r_difference_from_ssf[sequence])
-                    self.j1r_difference_from_ssf[sequence] = self._original_value + __class__.PERTURBATION
+                    self.j1r_difference_from_ssf[sequence] = self._original_value + Constants().DELTA
                 case &#39;zel&#39;:
                     self._original_value = float(self.zer_difference_from_ssf[sequence])
-                    self.zer_difference_from_ssf[sequence] = self._original_value + __class__.PERTURBATION
+                    self.zer_difference_from_ssf[sequence] = self._original_value + Constants().DELTA
                 case &#39;z1l&#39;:
                     self._original_value = float(self.z1r_difference_from_ssf[sequence])
-                    self.z1r_difference_from_ssf[sequence] = self._original_value + __class__.PERTURBATION
+                    self.z1r_difference_from_ssf[sequence] = self._original_value + Constants().DELTA
             self._perturbed_variable_details = variable_details
 
     @property
     def perturbed_variable_details(self) -&gt; pd.Series:
         &#34;&#34;&#34;
-        The var_map details of the variable being perturbed to as part of computing
-        derivatives needed to set intertemporal constants or none if just doing projections.
+        If computing intertemporal constants, 
+        the var_map details (the row of the SYM var_map dataframe)
+        for the variable being perturbed as part of computing
+        derivatives needed to set intertemporal constants. Otherwise, this returns
+        `None` if just producing the baseline projections.
         &#34;&#34;&#34;
         if hasattr(self, &#39;_perturbed_variable_details&#39;):
             return self._perturbed_variable_details
@@ -182,10 +213,11 @@ class BaselineProjections(Projections):
     @property
     def first_year_projections_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        The values of the variables that have been changed by the perturbation to 
-        an intertemporal constant as part of computing partial derivatives for setting the
-        intertemporal constants appropriately. These values are a column vector
-        for the first projection year only.
+        An column vector of first year projection values for those variables that are adjusted
+        by intertemporal constants.
+
+        The vector is populated from the vectors of first year projections for 
+        each of `x1l`, `j1l`, `zel`,  and `z1l`.
         &#34;&#34;&#34;
         result = np.zeros(shape=(len(self.sym_data.variables_adjusted_by_intertemporal_constants), 1))
         i = 0
@@ -207,24 +239,33 @@ class BaselineProjections(Projections):
         &#34;&#34;&#34;
         ### Overview
 
-        Sets the database values for the vectors in 
-        the model in the first projection year.
+        Populates the model vectors using the database values associated with 
+        the first projection year. 
+        
+        Note that some variables are populated iwth
+        data from adjacent years. Review the `Database.rhs_vector_value` method
+        for details. 
+        
+        Note also that there is the option to override real and 
+        nominal interest rates with values associated with inflation neutrality.
         &#34;&#34;&#34;
         # RHS (identical to LHS) vector values to be compared to SSF calculated values
-        self._first_projection_year_x1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;x1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t+1
-        self._first_projection_year_j1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;j1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t+1
-        self._first_projection_year_zer: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;zer&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
-        self._first_projection_year_z1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;z1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
+        self._first_projection_year_x1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;x1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=self.start_from_neutral_real_interest_rate)  # t+1
+        self._first_projection_year_j1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;j1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=self.start_from_neutral_real_interest_rate)  # t+1
+        self._first_projection_year_zer: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;zer&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=self.start_from_neutral_real_interest_rate)  # t
+        self._first_projection_year_z1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;z1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=self.start_from_neutral_real_interest_rate)  # t
 
         # SSF RHS vector values
-        self._first_projection_year_yxr: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;yxr&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
-        self._first_projection_year_yjr: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;yjr&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
-        self._first_projection_year_exz: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;exz&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t+1
-        self._first_projection_year_exo: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;exo&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
+        self._first_projection_year_yxr: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;yxr&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=self.start_from_neutral_real_interest_rate)  # t
+        self._first_projection_year_yjr: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;yjr&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=self.start_from_neutral_real_interest_rate)  # t
+        self._first_projection_year_exz: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;exz&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=self.start_from_neutral_real_interest_rate)  # t+1
+        self._first_projection_year_exo: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;exo&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=self.start_from_neutral_real_interest_rate)  # t
 
     def __store_observed_yxr_values_in_first_projection_year(self):
         &#34;&#34;&#34;
-        Save the values of the state vector in the base projection year to use in
+        ### Overview
+
+        Save the values of the state vector (X1) in the first projection year to use in
         initiating the projection process.
         &#34;&#34;&#34;
         yxr_initial_values = pd.DataFrame(self.first_projection_year_yxr.copy())
@@ -234,6 +275,8 @@ class BaselineProjections(Projections):
 
     def __store_observed_values_of_variables_adjusted_by_intertemporal_constants_in_first_projection_year(self):
         &#34;&#34;&#34;
+        ### Overview
+
         Save the database values of the variables
         that are adjusted by intertemporal constants so that we can use
         those as the values we adjust the variables to using the intertemporal
@@ -257,28 +300,25 @@ class BaselineProjections(Projections):
 
     def __compute_first_projection_year_ssf_deviations_from_observed_values(self):
         &#34;&#34;&#34;
-        Compute the SSF values for the base projection year and calculate the differences from
-        observed variable values for all system-determined variables (not the exogenous ones).
-        See setconSYMBL.ox for details of the Ox implementation.
+        ### Overview
 
-        Compute values for LHS variables based on RHS variable values in the projection base year 
-        based on the SSF model. Then determine the difference between these LHS variables 
-        (model predictions) and the actual values.
+        Step 1.
+        Compute the state-space-form values for the LHS vectors  in  thefirst projection year 
+        using the values from the database for the RHS vectors in the state space form.
 
-        Results are saved as data minus projections for all vectors.
+        and 
+
+        Step 2.
+        Calculate the differences between the database values for the RHS vectors
+        `x1r`, `j1r`, `zer`, and `z1r` and the values computed in Step 1. Store these
+        as properties of the class instance. They become constant adjustments that are
+        used in the projection process to ensure that the database values in 
+        the first projection year match the baseline projections of those values.
+
+        The differences are preserved as the database values minus projections.
         &#34;&#34;&#34;
 
-        # No constant adjustments for differences from SSF when doing rolling baseline projections
-        if self.using_rolled_projections:
-            self._x1r_difference_from_ssf = np.zeros((self.sym_data.vector_length(vector_name=&#39;x1r&#39;), 1))
-            self._j1r_difference_from_ssf = np.zeros((self.sym_data.vector_length(vector_name=&#39;j1r&#39;), 1))
-            self._zer_difference_from_ssf = np.zeros((self.sym_data.vector_length(vector_name=&#39;zer&#39;), 1))
-            self._z1r_difference_from_ssf = np.zeros((self.sym_data.vector_length(vector_name=&#39;z1r&#39;), 1))
-            return
-
-        # We got here so we must be done the initial baseline projections that require a constant adjustment
-        # for the SSF differences from observed data values in the base projection year.
-
+        # Step 1.
         self.x1l_ssf_calculations_using_first_projection_year_data = self.state_space_form.delta(&#39;x1l&#39;, &#39;yxr&#39;) @ self.first_projection_year_yxr + \
             self.state_space_form.delta(&#39;x1l&#39;, &#39;yjr&#39;) @ self.first_projection_year_yjr + \
             self.state_space_form.delta(&#39;x1l&#39;, &#39;exz&#39;) @ self.first_projection_year_exz + \
@@ -299,6 +339,7 @@ class BaselineProjections(Projections):
             self.state_space_form.delta(&#39;z1l&#39;, &#39;exz&#39;) @ self.first_projection_year_exz + \
             self.state_space_form.delta(&#39;z1l&#39;, &#39;exo&#39;) @ self.first_projection_year_exo
 
+        # Step 2.
         self._x1r_difference_from_ssf = self.first_projection_year_x1r - self.x1l_ssf_calculations_using_first_projection_year_data  # t+1 = year after base year
         self._j1r_difference_from_ssf = self.first_projection_year_j1r - self.j1l_ssf_calculations_using_first_projection_year_data  # t+1 = year after base year
         self._zer_difference_from_ssf = self.first_projection_year_zer - self.zel_ssf_calculations_using_first_projection_year_data  # t = base year
@@ -307,93 +348,145 @@ class BaselineProjections(Projections):
     @property
     def first_projection_year_x1r(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the first projection year = t:
-        Returns the value of x1r from the database as the value of x1 in period t+1
+        The `x1r` vector populated with database values
+        from the year after the first projection year.
+
+        These values are not adjusted by any constants and are never
+        altered after they are set.
         &#34;&#34;&#34;
         return self._first_projection_year_x1r
 
     @property
     def first_projection_year_j1r(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the first projection year = t:
-        Returns the value of j1r from the database as the value of j1 in period t+1
+        The `j1r` vector populated with database values
+        from the year after the first projection year.
+        
+        These values are not adjusted by any constants and are never
+        altered after they are set.
         &#34;&#34;&#34;
         return self._first_projection_year_j1r
 
     @property
     def first_projection_year_zer(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the first projection year = t:
-        Returns the value of zer from the database as the value of x1 in period t
+        The `zer` vector populated with database values
+        from the first projection year.
+        
+        These values are not adjusted by any constants and are never
+        altered after they are set.
         &#34;&#34;&#34;
         return self._first_projection_year_zer
 
     @property
     def first_projection_year_z1r(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the first projection year = t:
-        Returns the value of z1r from the database as the value of z1 in period t
+        The `z1r` vector populated with database values
+        from the first projection year.
+        
+        These values are not adjusted by any constants and are never
+        altered after they are set.
         &#34;&#34;&#34;
         return self._first_projection_year_z1r
 
     @property
     def first_projection_year_yxr(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the first projection year = t:
-        Returns the value of yxr from the database as the value of x1 in period t
+        The `yxr` vector populated with database values
+        from the first projection year.
+        
+        These values are not adjusted by any constants and are never
+        altered after they are set.
         &#34;&#34;&#34;
         return self._first_projection_year_yxr
 
     @property
     def first_projection_year_yjr(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the first projection year = t:
-        Returns the value of yjr from the database as the value of j1 in period t
+        The `yjr` vector populated with database values
+        from the first projection year.
+
+        These values are not adjusted by any constants and are never
+        altered after they are set.
         &#34;&#34;&#34;
         return self._first_projection_year_yjr
 
     @property
     def first_projection_year_exz(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the first projection year = t:
-        Returns the value of exz from the database as the value of ze in period t+1
+        The `exz` vector populated with database values
+        from the year after the first projection year.
+
+        These values are not adjusted by any constants and are never
+        altered after they are set.
         &#34;&#34;&#34;
         return self._first_projection_year_exz
 
     @property
     def first_projection_year_exo(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the first projection year = t:
-        Returns the value of exo from the database as the value of exogenous variables (exo)
-        in period t
+        The `exo` vector populated with database values
+        from the first projection year.
+
+        These values are not adjusted by any constants and are never
+        altered after they are set.
         &#34;&#34;&#34;
         return self._first_projection_year_exo
 
     @property
     def x1r_difference_from_ssf(self):
         &#34;&#34;&#34;
-        In Ox: decl cz2 = x1r - x1l
+        The difference between the database values of `x1r`
+        and the raw baseline projections of those values,
+        without making any constant adjustments at all.
+
+        These differences are added to the constants that
+        are used in the baseline projections to ensure that
+        the projections in the first projection year match
+        the database values in that year.
         &#34;&#34;&#34;
         return self._x1r_difference_from_ssf
 
     @property
     def j1r_difference_from_ssf(self):
         &#34;&#34;&#34;
-        In Ox: decl cz4 = j1r - j1l
+        The difference between the database values of `j1r`
+        and the raw baseline projections of those values,
+        without making any constant adjustments at all.
+
+        These differences are added to the constants that
+        are used in the baseline projections to ensure that
+        the projections in the first projection year match
+        the database values in that year.
+
         &#34;&#34;&#34;
         return self._j1r_difference_from_ssf
 
     @property
     def zer_difference_from_ssf(self):
         &#34;&#34;&#34;
-        In Ox: decl cz5 = zer - zel
+        The difference between the database values of `zer`
+        and the raw baseline projections of those values,
+        without making any constant adjustments at all.
+
+        These differences are added to the constants that
+        are used in the baseline projections to ensure that
+        the projections in the first projection year match
+        the database values in that year.
         &#34;&#34;&#34;
         return self._zer_difference_from_ssf
 
     @property
     def z1r_difference_from_ssf(self):
         &#34;&#34;&#34;
-        In Ox: decl cz6 = z1r - z1l
+        The difference between the database values of `z1r`
+        and the raw baseline projections of those values,
+        without making any constant adjustments at all.
+
+        These differences are added to the constants that
+        are used in the baseline projections to ensure that
+        the projections in the first projection year match
+        the database values in that year.
         &#34;&#34;&#34;
         return self._z1r_difference_from_ssf
 
@@ -522,26 +615,19 @@ class BaselineProjections(Projections):
     def __create_exogenous_variable_projections(self):
         &#34;&#34;&#34;
         Populates the exogenous variable values through the projection years. 
-        These values are determined outside the system.
+        These values are determined outside of the model.
 
-        The rolling baseline projections just copy the exogenous values from the previous projections
-        and use those as the starting point for the next round of projection generation.
+        When setting up baseline projections for exogenous variables, start by
+        using the first projection year values for all of those variables and applying 
+        them in all years through to the last projection year.
+        
+        Then adjust the database exogenous variable projections for:
 
-        Otherwise, when initially setting up baseline projections, incorporate values from:
-        - the database in the base projection year
-        - effective labour productivity projections
-        - energy efficiency improvement projections
+        * effective labour productivity projections (based on population and productivity
+        growth rates in each region)
+        * energy efficiency improvement projections (based on projections of 
+        autonomous energy efficiency improvements)
         &#34;&#34;&#34;
-
-        # If we are doing the baseline projections after rolling forward to a new base projection year,
-        # just copy the database values for the exogenous variables over the projection years
-        # and then we are done.
-        if self.using_rolled_projections:
-            matching_indices: pd.Index = self.sym_data.combined_variable_summary.loc[self.sym_data.combined_variable_summary.vector == &#39;exo&#39;, :].index
-            self._exo_projections: pd.DataFrame = self.database.data.loc[matching_indices, self.projection_years_column_labels]
-            return
-
-        # We got here so we must be setting up the exogenous variable projections for the first time ...
 
         # Replicate projection base year values across all projection periods for all exogenous variables.
         projections: pd.DataFrame = pd.DataFrame(np.tile(self.first_projection_year_exo, (1, self.configuration.projection_years_count)))
@@ -562,7 +648,7 @@ class BaselineProjections(Projections):
             rogy_name: str = f&#34;{variable_prefix_ROGY}({region})&#34;
             if self.sym_data.has_variables(variable_name_prefix=rogy_name):
                 rogy_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=rogy_name)
-                rogy_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_ROGY)
+                rogy_units = self.sym_data.units_for_variables_with_given_name_prefix(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_ROGY)
                 rogy_data: pd.DataFrame = rogy.loc[[region], self.projection_years_column_labels]
                 if &#39;gdp&#39; in rogy_units:
                     raise Exception(f&#34;{rogy_name} has gdp units so shocks to that variable are not supported.&#34;)
@@ -575,7 +661,7 @@ class BaselineProjections(Projections):
             shefc_name: str = f&#34;{shefc_name_prefix}({region})&#34;
             if self.sym_data.has_variables(variable_name_prefix=shefc_name_prefix):
                 shefc_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=shefc_name)
-                shefc_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=shefc_name_prefix)
+                shefc_units = self.sym_data.units_for_variables_with_given_name_prefix(vector_name=&#39;exo&#39;, variable_name_prefix=shefc_name_prefix)
                 shefc_data: pd.DataFrame = consumption_energy_usage_efficiency.loc[[region], self.projection_years_column_labels]
                 if &#39;gdp&#39; in shefc_units:
                     raise Exception(f&#34;{shefc_name} has gdp units so shocks to that variable are not supported.&#34;)
@@ -590,7 +676,7 @@ class BaselineProjections(Projections):
                 shl_name: str = f&#34;{variable_prefix_SHL}({region},{sector})&#34;
                 if self.sym_data.has_variables(variable_name_prefix=shl_name):
                     shl_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=shl_name)
-                    shl_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_SHL)
+                    shl_units = self.sym_data.units_for_variables_with_given_name_prefix(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_SHL)
                     shl_data: pd.DataFrame = regional_effective_labour_productivity.loc[[sector], self.projection_years_column_labels]
                     if &#39;gdp&#39; in shl_units:
                         raise Exception(f&#34;{shl_name} has gdp units so shocks to that variable are not supported.&#34;)
@@ -602,7 +688,7 @@ class BaselineProjections(Projections):
                 shef_name: str = f&#34;{variable_prefix_SHEF}({sector},{region})&#34;
                 if self.sym_data.has_variables(variable_name_prefix=shef_name):
                     shef_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=shef_name)
-                    shef_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_SHEF)
+                    shef_units = self.sym_data.units_for_variables_with_given_name_prefix(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_SHEF)
                     shef_data: pd.DataFrame = regional_energy_usage_efficiency.loc[[sector], self.projection_years_column_labels]
                     if &#39;gdp&#39; in shef_units:
                         raise Exception(f&#34;{shef_name} has gdp units so shocks to that variable are not supported.&#34;)
@@ -622,7 +708,7 @@ class BaselineProjections(Projections):
         using the functions of future exogenous variables, the stable manifold, etc
         &#34;&#34;&#34;
 
-        self._exo_first_year_projections = self.exo_projections[:, [0]]
+        self._exo_first_year_projections = self.exo_projections.loc[:, [str(self.first_projection_year)]].to_numpy()
 
         self._yxr_first_year_projections = self.yxr_initial_values.to_numpy().copy()
 
@@ -688,6 +774,9 @@ class BaselineProjections(Projections):
         adjusted by the intertemporal constants.
 
         The values are those for the projection that is not adjusted by intertemporal constants.
+
+        It is used in the calculation of the intertemporal constants but it is only preserved
+        as a property to facilitate benchmarking against Ox.
         &#34;&#34;&#34;
         return self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants
 
@@ -695,7 +784,8 @@ class BaselineProjections(Projections):
     def first_year_original_projections_of_yxr(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
         The first year projected values for the state variables.
-        Required for benchmarking against Ox.
+        
+        This is only required for benchmarking against Ox.
         &#34;&#34;&#34;
         return self._first_year_original_projections_of_yxr
 
@@ -703,7 +793,8 @@ class BaselineProjections(Projections):
     def first_year_original_projections_of_yjr(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
         The first year projected values for the costate variables.
-        Required for benchmarking against Ox.
+
+        This is only required for benchmarking against Ox.
         &#34;&#34;&#34;
         return self._first_year_original_projections_of_yjr
 
@@ -711,7 +802,8 @@ class BaselineProjections(Projections):
     def first_year_original_projections_of_exz(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
         The first year projected values for the expected endogenous variables exz.
-        Required for benchmarking against Ox.
+
+        This is only required for benchmarking against Ox.
         &#34;&#34;&#34;
         return self._first_year_original_projections_of_exz
 
@@ -719,7 +811,8 @@ class BaselineProjections(Projections):
     def first_year_original_projections_of_z1l(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
         The first year projected values for the endogenous variables.
-        Required for benchmarking against Ox.
+
+        This is only required for benchmarking against Ox.
         &#34;&#34;&#34;
         return self._first_year_original_projections_of_z1l
 
@@ -728,19 +821,40 @@ class BaselineProjections(Projections):
         &#34;&#34;&#34;
         Returns the observed values, in the first projection year, of the 
         variables that are adjusted by intertemporal constants.
+
+        The values are not adjusted after they are initially set so they
+        can be relied up and reused by the constant calculation process in this
+        baseline projections and in any later relinearisation projections.
         &#34;&#34;&#34;
         return self._first_year_observed_values_of_variables_adjusted_by_intertemporal_constants
 
     @property
     def intertemporal_constants(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        The data frame of intertemporal constants information
+        obtained from SYM but augmented with the values of the
+        intertemporal constants.
+
+        The dataframe is indexed by the variable names.
+
+        The constant values are stored in a column called `constant_value`.
+        &#34;&#34;&#34;
         return self._intertemporal_constants
 
     @property
     def partial_derivatives_wrt_intertemporal_constants(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        The matrix of partial derivatives used in Newton&#39;s method to
+        compute the intertemporal constants.
+
+        This is a property of the class just to support benchmarking against Ox.
+        &#34;&#34;&#34;
         return self._partial_derivatives
 
     def __calculate_intertemporal_constants(self):
         &#34;&#34;&#34;
+        ### Overview
+
         Computes the intertemporal constant adjustments to jump and other variables to align starting data
         values with model projections in the first year.
 
@@ -757,53 +871,76 @@ class BaselineProjections(Projections):
         Step 3.
         Initialise the partial derivatives matrix. This is the matrix of derivatives of each of the
         variables that is adjusted by intertemporal constants, with respect to each of the intertemporal
-        constants.
+        constants, in the SSF equations (each of which is linear).
+
         Iterate over the intertemporal constants, perturbing each and recalculating the base year projections
         of the variables that are adjusted by intertemporal constants so that we can 
         estimate the relevant numeric derivatives.
+
+        At the end of this step, update the perturbed variable details to `None` so that
+        all constants associated with the difference between observed values and SSF calculated values
+        are at their unpurturbed values when doing actual baseline projections.
+
+        Step 4.
+        Apply Newton&#39;s method to solve for the intertemporal constants.
+        Multiply the difference between the observed values of the variables that are adjusted by
+        the intertemporal constants and their original projected values, in the first projection year,
+        by the inverse of the partial derivatives matrix.
+
+        This only needs to be done once because the SSF of the model is linear so Newton&#39;s method
+        gets to the solution in one iteration.
         &#34;&#34;&#34;
 
         # Step 1.
-        self._compute_functions_of_future_exogenous_variables()
+        self._compute_functions_of_future_exogenous_variables(exogenous_projections=self.exo_projections)
         self._reference_c4t_used_to_compute_intertemporal_constants = self.c4t.copy()
         self._reference_h3t_used_to_compute_intertemporal_constants = self.h3t.copy()
 
         # Step 2.
+        
+        # Compute the first year projections - noting that no intertemporal 
+        # constant adjustments have been made yet.
         self.__evaluate_first_projection_year_vector_projections()
+
+        # Capture the first year projections of the intertemporal variables. 
+        # These are used in this function for Newton&#39;s method below
+        # and they are also deep-copied and stored as a property of the 
+        # class for benchmarking purposes.
+        self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants = self.first_year_projections_of_variables_adjusted_by_intertemporal_constants.copy()
+
+        # For benchmarking purposes only, preserve the original first year projections
         self._first_year_original_projections_of_yxr = self.yxr_first_year_projections.copy()
         self._first_year_original_projections_of_yjr = self.yjr_first_year_projections.copy()
         self._first_year_original_projections_of_exz = self.exz_first_year_projections.copy()
         self._first_year_original_projections_of_z1l = self.z1l_first_year_projections.copy()
-        self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants = \
-            self.first_year_projections_of_variables_adjusted_by_intertemporal_constants.copy()
 
         # Step 3.
+        # Compute the partial derivatives matrix
         self._partial_derivatives = np.zeros(shape=(len(self.sym_data.intertemporal_constant_variables), len(
             self.sym_data.variables_adjusted_by_intertemporal_constants)))
         i = 0
         for index, variable_details in self.sym_data.intertemporal_constant_variables.iterrows():
             self.__update_perturbed_variable(variable_details=variable_details)
-            self._compute_functions_of_future_exogenous_variables()
+            self._compute_functions_of_future_exogenous_variables(exogenous_projections=self.exo_projections)
             self.__evaluate_first_projection_year_vector_projections()
             self._partial_derivatives[:, [i]] = (
                 self.first_year_projections_of_variables_adjusted_by_intertemporal_constants -
-                self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants) \
-                / __class__.PERTURBATION
+                self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants) / Constants().DELTA
             i += 1
-
-        # Get the unperturbed values of the variables in first projection year
 
         # Generate the baseline projection to use in computing partial derivatives
         # and to generate matrix values that are used later in projection processes.
         self.__update_perturbed_variable(variable_details=None)
 
-        # Use newtons method adjustment to compute intertemporal constant values
+        # Step 4.
+        # Use Newtons method adjustment to compute intertemporal constant values
         self._intertemporal_constants = self.sym_data.intertemporal_constant_variables
         values: np.ndarray = np.linalg.inv(self._partial_derivatives) @ \
             (self.first_year_observed_values_of_variables_adjusted_by_intertemporal_constants -
              self.first_year_original_projections_of_variables_adjusted_by_intertemporal_constants)
         values = values.reshape((len(self.intertemporal_constants.index), 1))
         self._intertemporal_constants[&#39;constant_value&#39;] = values
+
         logging.info(&#34;The intertemporal constants have been calibrated.&#34;)</code></pre>
 </details>
 </section>
@@ -818,7 +955,7 @@ class BaselineProjections(Projections):
 <dl>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections"><code class="flex name class">
 <span>class <span class="ident">BaselineProjections</span></span>
-<span>(</span><span>stable_manifold: <a title="gcubed.linearisation.stable_manifold.StableManifold" href="../linearisation/stable_manifold.html#gcubed.linearisation.stable_manifold.StableManifold">StableManifold</a>)</span>
+<span>(</span><span>stable_manifold: <a title="gcubed.linearisation.stable_manifold.StableManifold" href="../linearisation/stable_manifold.html#gcubed.linearisation.stable_manifold.StableManifold">StableManifold</a>, start_from_neutral_real_interest_rate: bool = None)</span>
 </code></dt>
 <dd>
 <div class="desc"><h3 id="overview">Overview</h3>
@@ -826,8 +963,13 @@ class BaselineProjections(Projections):
 from the first projection year (a year with available data to be
 matched by the projections) through to the last projection year.</p>
 <h3 id="arguments">Arguments</h3>
-<p>stable_manifold: The stable manifold that provides access to all
-of the model information required to produce projections.</p></div>
+<p><code>stable_manifold</code>: The stable manifold that provides access to all
+of the model information required to produce projections.</p>
+<p><code>start_from_neutral_real_interest_rate</code>: <code>True</code> if the baseline projections start from
+the neutral real interest rate and <code>False</code> if they start from the observed real interest rates.
+This parameter defaults to a value of <code>None</code> which means that the baseline projections start
+from the neutral real interest rate if the linear model used for the
+projections was done at the neutral real interest rate.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -839,22 +981,33 @@ of the model information required to produce projections.</p></div>
     Compute the baseline model projections over the projection horizon 
     from the first projection year (a year with available data to be 
     matched by the projections) through to the last projection year.
+
     &#34;&#34;&#34;
 
-    # The perturbation to use when computing partial derivatives for intertemporal constant determination.
-    PERTURBATION = 0.0001
-
-    def __init__(self, stable_manifold: StableManifold) -&gt; None:
+    def __init__(self, stable_manifold: StableManifold, start_from_neutral_real_interest_rate: bool = None) -&gt; None:
         &#34;&#34;&#34;
        ### Arguments
 
-        stable_manifold: The stable manifold that provides access to all 
+        `stable_manifold`: The stable manifold that provides access to all 
         of the model information required to produce projections.
+
+        `start_from_neutral_real_interest_rate`: `True` if the baseline projections start from 
+        the neutral real interest rate and `False` if they start from the observed real interest rates.
+        This parameter defaults to a value of `None` which means that the baseline projections start
+        from the neutral real interest rate if the linear model used for the
+        projections was done at the neutral real interest rate.
         &#34;&#34;&#34;
         logging.info(&#34;Setting up the baseline projections.&#34;)
 
         super().__init__(stable_manifold=stable_manifold)
         self._is_baseline_projections = True
+
+        # Determine whether the baseline projections start the projections from the neutral 
+        # real interest rate or from the observed real interest rates.
+        if start_from_neutral_real_interest_rate is None:
+            self._start_from_neutral_real_interest_rate = self.stable_manifold.ssf.linear_model.use_neutral_real_interest_rate
+        else:
+            self._start_from_neutral_real_interest_rate = start_from_neutral_real_interest_rate
         
         self._database = GDPScaledDatabase(database=self.model.database, base_year=self.configuration.base_year)
 
@@ -868,8 +1021,8 @@ of the model information required to produce projections.</p></div>
         self.__store_observed_values_of_variables_adjusted_by_intertemporal_constants_in_first_projection_year()
         self.__compute_first_projection_year_ssf_deviations_from_observed_values()
 
-        if not self.using_rolled_projections:
-            self.__calculate_intertemporal_constants()
+        # Set up the intertemporal constant variables
+        self.__calculate_intertemporal_constants()
 
         # Generate the baseline projections
         self._generate_projections()
@@ -892,6 +1045,10 @@ of the model information required to produce projections.</p></div>
         logging.info(&#34;The baseline projections have been generated.&#34;)
 
     @property
+    def baseline_projections(self) -&gt; Optional[&#39;BaselineProjections&#39;]:
+        return self
+
+    @property
     def database(self) -&gt; GDPScaledDatabase:
         &#34;&#34;&#34;
         The database used as the starting point for the projections.
@@ -899,24 +1056,40 @@ of the model information required to produce projections.</p></div>
         return self._database
 
     @property
-    def using_rolled_projections(self) -&gt; bool:
+    def start_from_neutral_real_interest_rate(self) -&gt; bool:
         &#34;&#34;&#34;
-        True if these projections are building on
-        previous projections rather than just observed data.
-
-        This affects how the baseline projections are set up in terms
-        of the constants used.
+        `True` if interest rates are set to the neutral real interest
+        rate for the start of the baseline projections and `False` otherwise.
         &#34;&#34;&#34;
-        return self.database.has_data_for_all_projection_years
+        return self._start_from_neutral_real_interest_rate
 
     def __update_perturbed_variable(self, variable_details: pd.Series):
         &#34;&#34;&#34;
         ### Overview
 
-        Changes the perturbed variable, preparing for the
-        next evaluation of the values needed to compute
-        partial derivatives relevant to the determination 
-        of the intertemporal constants.
+        For each variable that has an intertemporal constant, we need to compute
+        numerical approximations to the partial derivatives of the model with respect
+        to that constant. Those  partial derivatives are approximated by evaluating the 
+        relevant equations in the model using the data in the first projection year and then 
+        again evaluating those equations after perturbing the variable of interest by
+        `Constants.DELTA`. The difference between the two evaluations is used
+        to compute the partial derivatives for that constant.
+
+        This function does the work of perturbing the intertemporal constant 
+        associated with the variable, preparing for calculation of the partial 
+        derivatives for that constant.
+
+        The adjustment to the constant (the perturbation) is made by adjusting the
+        constants associated with variables&#39; observed differences from their state 
+        space form equation evaluations in the baseline&#39;s first projection year.
+
+        The original value of that constant is tracked using the private property, 
+        `_original_value`, so that it can be restored after the partial derivatives
+        have been computed.
+
+        This function is called once for each variable in the SYM table of intertemporal 
+        constant variables, as part of computing the intertemporal constants.
+
         &#34;&#34;&#34;
 
         if hasattr(self, &#39;_perturbed_variable_details&#39;):
@@ -939,23 +1112,26 @@ of the model information required to produce projections.</p></div>
             match variable_details[&#39;var_type&#39;]:
                 case &#39;x1l&#39;:
                     self._original_value = float(self.x1r_difference_from_ssf[sequence])
-                    self.x1r_difference_from_ssf[sequence] = self._original_value + __class__.PERTURBATION
+                    self.x1r_difference_from_ssf[sequence] = self._original_value + Constants().DELTA
                 case &#39;j1l&#39;:
                     self._original_value = float(self.j1r_difference_from_ssf[sequence])
-                    self.j1r_difference_from_ssf[sequence] = self._original_value + __class__.PERTURBATION
+                    self.j1r_difference_from_ssf[sequence] = self._original_value + Constants().DELTA
                 case &#39;zel&#39;:
                     self._original_value = float(self.zer_difference_from_ssf[sequence])
-                    self.zer_difference_from_ssf[sequence] = self._original_value + __class__.PERTURBATION
+                    self.zer_difference_from_ssf[sequence] = self._original_value + Constants().DELTA
                 case &#39;z1l&#39;:
                     self._original_value = float(self.z1r_difference_from_ssf[sequence])
-                    self.z1r_difference_from_ssf[sequence] = self._original_value + __class__.PERTURBATION
+                    self.z1r_difference_from_ssf[sequence] = self._original_value + Constants().DELTA
             self._perturbed_variable_details = variable_details
 
     @property
     def perturbed_variable_details(self) -&gt; pd.Series:
         &#34;&#34;&#34;
-        The var_map details of the variable being perturbed to as part of computing
-        derivatives needed to set intertemporal constants or none if just doing projections.
+        If computing intertemporal constants, 
+        the var_map details (the row of the SYM var_map dataframe)
+        for the variable being perturbed as part of computing
+        derivatives needed to set intertemporal constants. Otherwise, this returns
+        `None` if just producing the baseline projections.
         &#34;&#34;&#34;
         if hasattr(self, &#39;_perturbed_variable_details&#39;):
             return self._perturbed_variable_details
@@ -964,10 +1140,11 @@ of the model information required to produce projections.</p></div>
     @property
     def first_year_projections_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        The values of the variables that have been changed by the perturbation to 
-        an intertemporal constant as part of computing partial derivatives for setting the
-        intertemporal constants appropriately. These values are a column vector
-        for the first projection year only.
+        An column vector of first year projection values for those variables that are adjusted
+        by intertemporal constants.
+
+        The vector is populated from the vectors of first year projections for 
+        each of `x1l`, `j1l`, `zel`,  and `z1l`.
         &#34;&#34;&#34;
         result = np.zeros(shape=(len(self.sym_data.variables_adjusted_by_intertemporal_constants), 1))
         i = 0
@@ -989,24 +1166,33 @@ of the model information required to produce projections.</p></div>
         &#34;&#34;&#34;
         ### Overview
 
-        Sets the database values for the vectors in 
-        the model in the first projection year.
+        Populates the model vectors using the database values associated with 
+        the first projection year. 
+        
+        Note that some variables are populated iwth
+        data from adjacent years. Review the `Database.rhs_vector_value` method
+        for details. 
+        
+        Note also that there is the option to override real and 
+        nominal interest rates with values associated with inflation neutrality.
         &#34;&#34;&#34;
         # RHS (identical to LHS) vector values to be compared to SSF calculated values
-        self._first_projection_year_x1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;x1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t+1
-        self._first_projection_year_j1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;j1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t+1
-        self._first_projection_year_zer: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;zer&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
-        self._first_projection_year_z1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;z1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
+        self._first_projection_year_x1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;x1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=self.start_from_neutral_real_interest_rate)  # t+1
+        self._first_projection_year_j1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;j1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=self.start_from_neutral_real_interest_rate)  # t+1
+        self._first_projection_year_zer: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;zer&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=self.start_from_neutral_real_interest_rate)  # t
+        self._first_projection_year_z1r: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;z1r&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=self.start_from_neutral_real_interest_rate)  # t
 
         # SSF RHS vector values
-        self._first_projection_year_yxr: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;yxr&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
-        self._first_projection_year_yjr: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;yjr&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
-        self._first_projection_year_exz: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;exz&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t+1
-        self._first_projection_year_exo: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;exo&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=True)  # t
+        self._first_projection_year_yxr: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;yxr&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=self.start_from_neutral_real_interest_rate)  # t
+        self._first_projection_year_yjr: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;yjr&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=self.start_from_neutral_real_interest_rate)  # t
+        self._first_projection_year_exz: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;exz&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=self.start_from_neutral_real_interest_rate)  # t+1
+        self._first_projection_year_exo: np.ndarray = self.database.rhs_vector_value(vector_name=&#39;exo&#39;, year=self.first_projection_year, use_neutral_real_interest_rate=self.start_from_neutral_real_interest_rate)  # t
 
     def __store_observed_yxr_values_in_first_projection_year(self):
         &#34;&#34;&#34;
-        Save the values of the state vector in the base projection year to use in
+        ### Overview
+
+        Save the values of the state vector (X1) in the first projection year to use in
         initiating the projection process.
         &#34;&#34;&#34;
         yxr_initial_values = pd.DataFrame(self.first_projection_year_yxr.copy())
@@ -1016,6 +1202,8 @@ of the model information required to produce projections.</p></div>
 
     def __store_observed_values_of_variables_adjusted_by_intertemporal_constants_in_first_projection_year(self):
         &#34;&#34;&#34;
+        ### Overview
+
         Save the database values of the variables
         that are adjusted by intertemporal constants so that we can use
         those as the values we adjust the variables to using the intertemporal
@@ -1039,28 +1227,25 @@ of the model information required to produce projections.</p></div>
 
     def __compute_first_projection_year_ssf_deviations_from_observed_values(self):
         &#34;&#34;&#34;
-        Compute the SSF values for the base projection year and calculate the differences from
-        observed variable values for all system-determined variables (not the exogenous ones).
-        See setconSYMBL.ox for details of the Ox implementation.
+        ### Overview
 
-        Compute values for LHS variables based on RHS variable values in the projection base year 
-        based on the SSF model. Then determine the difference between these LHS variables 
-        (model predictions) and the actual values.
+        Step 1.
+        Compute the state-space-form values for the LHS vectors  in  thefirst projection year 
+        using the values from the database for the RHS vectors in the state space form.
 
-        Results are saved as data minus projections for all vectors.
+        and 
+
+        Step 2.
+        Calculate the differences between the database values for the RHS vectors
+        `x1r`, `j1r`, `zer`, and `z1r` and the values computed in Step 1. Store these
+        as properties of the class instance. They become constant adjustments that are
+        used in the projection process to ensure that the database values in 
+        the first projection year match the baseline projections of those values.
+
+        The differences are preserved as the database values minus projections.
         &#34;&#34;&#34;
 
-        # No constant adjustments for differences from SSF when doing rolling baseline projections
-        if self.using_rolled_projections:
-            self._x1r_difference_from_ssf = np.zeros((self.sym_data.vector_length(vector_name=&#39;x1r&#39;), 1))
-            self._j1r_difference_from_ssf = np.zeros((self.sym_data.vector_length(vector_name=&#39;j1r&#39;), 1))
-            self._zer_difference_from_ssf = np.zeros((self.sym_data.vector_length(vector_name=&#39;zer&#39;), 1))
-            self._z1r_difference_from_ssf = np.zeros((self.sym_data.vector_length(vector_name=&#39;z1r&#39;), 1))
-            return
-
-        # We got here so we must be done the initial baseline projections that require a constant adjustment
-        # for the SSF differences from observed data values in the base projection year.
-
+        # Step 1.
         self.x1l_ssf_calculations_using_first_projection_year_data = self.state_space_form.delta(&#39;x1l&#39;, &#39;yxr&#39;) @ self.first_projection_year_yxr + \
             self.state_space_form.delta(&#39;x1l&#39;, &#39;yjr&#39;) @ self.first_projection_year_yjr + \
             self.state_space_form.delta(&#39;x1l&#39;, &#39;exz&#39;) @ self.first_projection_year_exz + \
@@ -1081,6 +1266,7 @@ of the model information required to produce projections.</p></div>
             self.state_space_form.delta(&#39;z1l&#39;, &#39;exz&#39;) @ self.first_projection_year_exz + \
             self.state_space_form.delta(&#39;z1l&#39;, &#39;exo&#39;) @ self.first_projection_year_exo
 
+        # Step 2.
         self._x1r_difference_from_ssf = self.first_projection_year_x1r - self.x1l_ssf_calculations_using_first_projection_year_data  # t+1 = year after base year
         self._j1r_difference_from_ssf = self.first_projection_year_j1r - self.j1l_ssf_calculations_using_first_projection_year_data  # t+1 = year after base year
         self._zer_difference_from_ssf = self.first_projection_year_zer - self.zel_ssf_calculations_using_first_projection_year_data  # t = base year
@@ -1089,93 +1275,145 @@ of the model information required to produce projections.</p></div>
     @property
     def first_projection_year_x1r(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the first projection year = t:
-        Returns the value of x1r from the database as the value of x1 in period t+1
+        The `x1r` vector populated with database values
+        from the year after the first projection year.
+
+        These values are not adjusted by any constants and are never
+        altered after they are set.
         &#34;&#34;&#34;
         return self._first_projection_year_x1r
 
     @property
     def first_projection_year_j1r(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the first projection year = t:
-        Returns the value of j1r from the database as the value of j1 in period t+1
+        The `j1r` vector populated with database values
+        from the year after the first projection year.
+        
+        These values are not adjusted by any constants and are never
+        altered after they are set.
         &#34;&#34;&#34;
         return self._first_projection_year_j1r
 
     @property
     def first_projection_year_zer(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the first projection year = t:
-        Returns the value of zer from the database as the value of x1 in period t
+        The `zer` vector populated with database values
+        from the first projection year.
+        
+        These values are not adjusted by any constants and are never
+        altered after they are set.
         &#34;&#34;&#34;
         return self._first_projection_year_zer
 
     @property
     def first_projection_year_z1r(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the first projection year = t:
-        Returns the value of z1r from the database as the value of z1 in period t
+        The `z1r` vector populated with database values
+        from the first projection year.
+        
+        These values are not adjusted by any constants and are never
+        altered after they are set.
         &#34;&#34;&#34;
         return self._first_projection_year_z1r
 
     @property
     def first_projection_year_yxr(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the first projection year = t:
-        Returns the value of yxr from the database as the value of x1 in period t
+        The `yxr` vector populated with database values
+        from the first projection year.
+        
+        These values are not adjusted by any constants and are never
+        altered after they are set.
         &#34;&#34;&#34;
         return self._first_projection_year_yxr
 
     @property
     def first_projection_year_yjr(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the first projection year = t:
-        Returns the value of yjr from the database as the value of j1 in period t
+        The `yjr` vector populated with database values
+        from the first projection year.
+
+        These values are not adjusted by any constants and are never
+        altered after they are set.
         &#34;&#34;&#34;
         return self._first_projection_year_yjr
 
     @property
     def first_projection_year_exz(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the first projection year = t:
-        Returns the value of exz from the database as the value of ze in period t+1
+        The `exz` vector populated with database values
+        from the year after the first projection year.
+
+        These values are not adjusted by any constants and are never
+        altered after they are set.
         &#34;&#34;&#34;
         return self._first_projection_year_exz
 
     @property
     def first_projection_year_exo(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
-        If the first projection year = t:
-        Returns the value of exo from the database as the value of exogenous variables (exo)
-        in period t
+        The `exo` vector populated with database values
+        from the first projection year.
+
+        These values are not adjusted by any constants and are never
+        altered after they are set.
         &#34;&#34;&#34;
         return self._first_projection_year_exo
 
     @property
     def x1r_difference_from_ssf(self):
         &#34;&#34;&#34;
-        In Ox: decl cz2 = x1r - x1l
+        The difference between the database values of `x1r`
+        and the raw baseline projections of those values,
+        without making any constant adjustments at all.
+
+        These differences are added to the constants that
+        are used in the baseline projections to ensure that
+        the projections in the first projection year match
+        the database values in that year.
         &#34;&#34;&#34;
         return self._x1r_difference_from_ssf
 
     @property
     def j1r_difference_from_ssf(self):
         &#34;&#34;&#34;
-        In Ox: decl cz4 = j1r - j1l
+        The difference between the database values of `j1r`
+        and the raw baseline projections of those values,
+        without making any constant adjustments at all.
+
+        These differences are added to the constants that
+        are used in the baseline projections to ensure that
+        the projections in the first projection year match
+        the database values in that year.
+
         &#34;&#34;&#34;
         return self._j1r_difference_from_ssf
 
     @property
     def zer_difference_from_ssf(self):
         &#34;&#34;&#34;
-        In Ox: decl cz5 = zer - zel
+        The difference between the database values of `zer`
+        and the raw baseline projections of those values,
+        without making any constant adjustments at all.
+
+        These differences are added to the constants that
+        are used in the baseline projections to ensure that
+        the projections in the first projection year match
+        the database values in that year.
         &#34;&#34;&#34;
         return self._zer_difference_from_ssf
 
     @property
     def z1r_difference_from_ssf(self):
         &#34;&#34;&#34;
-        In Ox: decl cz6 = z1r - z1l
+        The difference between the database values of `z1r`
+        and the raw baseline projections of those values,
+        without making any constant adjustments at all.
+
+        These differences are added to the constants that
+        are used in the baseline projections to ensure that
+        the projections in the first projection year match
+        the database values in that year.
         &#34;&#34;&#34;
         return self._z1r_difference_from_ssf
 
@@ -1304,26 +1542,19 @@ of the model information required to produce projections.</p></div>
     def __create_exogenous_variable_projections(self):
         &#34;&#34;&#34;
         Populates the exogenous variable values through the projection years. 
-        These values are determined outside the system.
+        These values are determined outside of the model.
 
-        The rolling baseline projections just copy the exogenous values from the previous projections
-        and use those as the starting point for the next round of projection generation.
+        When setting up baseline projections for exogenous variables, start by
+        using the first projection year values for all of those variables and applying 
+        them in all years through to the last projection year.
+        
+        Then adjust the database exogenous variable projections for:
 
-        Otherwise, when initially setting up baseline projections, incorporate values from:
-        - the database in the base projection year
-        - effective labour productivity projections
-        - energy efficiency improvement projections
+        * effective labour productivity projections (based on population and productivity
+        growth rates in each region)
+        * energy efficiency improvement projections (based on projections of 
+        autonomous energy efficiency improvements)
         &#34;&#34;&#34;
-
-        # If we are doing the baseline projections after rolling forward to a new base projection year,
-        # just copy the database values for the exogenous variables over the projection years
-        # and then we are done.
-        if self.using_rolled_projections:
-            matching_indices: pd.Index = self.sym_data.combined_variable_summary.loc[self.sym_data.combined_variable_summary.vector == &#39;exo&#39;, :].index
-            self._exo_projections: pd.DataFrame = self.database.data.loc[matching_indices, self.projection_years_column_labels]
-            return
-
-        # We got here so we must be setting up the exogenous variable projections for the first time ...
 
         # Replicate projection base year values across all projection periods for all exogenous variables.
         projections: pd.DataFrame = pd.DataFrame(np.tile(self.first_projection_year_exo, (1, self.configuration.projection_years_count)))
@@ -1344,7 +1575,7 @@ of the model information required to produce projections.</p></div>
             rogy_name: str = f&#34;{variable_prefix_ROGY}({region})&#34;
             if self.sym_data.has_variables(variable_name_prefix=rogy_name):
                 rogy_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=rogy_name)
-                rogy_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_ROGY)
+                rogy_units = self.sym_data.units_for_variables_with_given_name_prefix(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_ROGY)
                 rogy_data: pd.DataFrame = rogy.loc[[region], self.projection_years_column_labels]
                 if &#39;gdp&#39; in rogy_units:
                     raise Exception(f&#34;{rogy_name} has gdp units so shocks to that variable are not supported.&#34;)
@@ -1357,7 +1588,7 @@ of the model information required to produce projections.</p></div>
             shefc_name: str = f&#34;{shefc_name_prefix}({region})&#34;
             if self.sym_data.has_variables(variable_name_prefix=shefc_name_prefix):
                 shefc_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=shefc_name)
-                shefc_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=shefc_name_prefix)
+                shefc_units = self.sym_data.units_for_variables_with_given_name_prefix(vector_name=&#39;exo&#39;, variable_name_prefix=shefc_name_prefix)
                 shefc_data: pd.DataFrame = consumption_energy_usage_efficiency.loc[[region], self.projection_years_column_labels]
                 if &#39;gdp&#39; in shefc_units:
                     raise Exception(f&#34;{shefc_name} has gdp units so shocks to that variable are not supported.&#34;)
@@ -1372,7 +1603,7 @@ of the model information required to produce projections.</p></div>
                 shl_name: str = f&#34;{variable_prefix_SHL}({region},{sector})&#34;
                 if self.sym_data.has_variables(variable_name_prefix=shl_name):
                     shl_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=shl_name)
-                    shl_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_SHL)
+                    shl_units = self.sym_data.units_for_variables_with_given_name_prefix(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_SHL)
                     shl_data: pd.DataFrame = regional_effective_labour_productivity.loc[[sector], self.projection_years_column_labels]
                     if &#39;gdp&#39; in shl_units:
                         raise Exception(f&#34;{shl_name} has gdp units so shocks to that variable are not supported.&#34;)
@@ -1384,7 +1615,7 @@ of the model information required to produce projections.</p></div>
                 shef_name: str = f&#34;{variable_prefix_SHEF}({sector},{region})&#34;
                 if self.sym_data.has_variables(variable_name_prefix=shef_name):
                     shef_index: int = self.sym_data.variable_index(vector_name=&#39;exo&#39;, variable_name=shef_name)
-                    shef_units = self.sym_data.variable_units(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_SHEF)
+                    shef_units = self.sym_data.units_for_variables_with_given_name_prefix(vector_name=&#39;exo&#39;, variable_name_prefix=variable_prefix_SHEF)
                     shef_data: pd.DataFrame = regional_energy_usage_efficiency.loc[[sector], self.projection_years_column_labels]
                     if &#39;gdp&#39; in shef_units:
                         raise Exception(f&#34;{shef_name} has gdp units so shocks to that variable are not supported.&#34;)
@@ -1404,7 +1635,7 @@ of the model information required to produce projections.</p></div>
         using the functions of future exogenous variables, the stable manifold, etc
         &#34;&#34;&#34;
 
-        self._exo_first_year_projections = self.exo_projections[:, [0]]
+        self._exo_first_year_projections = self.exo_projections.loc[:, [str(self.first_projection_year)]].to_numpy()
 
         self._yxr_first_year_projections = self.yxr_initial_values.to_numpy().copy()
 
@@ -1470,6 +1701,9 @@ of the model information required to produce projections.</p></div>
         adjusted by the intertemporal constants.
 
         The values are those for the projection that is not adjusted by intertemporal constants.
+
+        It is used in the calculation of the intertemporal constants but it is only preserved
+        as a property to facilitate benchmarking against Ox.
         &#34;&#34;&#34;
         return self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants
 
@@ -1477,7 +1711,8 @@ of the model information required to produce projections.</p></div>
     def first_year_original_projections_of_yxr(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
         The first year projected values for the state variables.
-        Required for benchmarking against Ox.
+        
+        This is only required for benchmarking against Ox.
         &#34;&#34;&#34;
         return self._first_year_original_projections_of_yxr
 
@@ -1485,7 +1720,8 @@ of the model information required to produce projections.</p></div>
     def first_year_original_projections_of_yjr(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
         The first year projected values for the costate variables.
-        Required for benchmarking against Ox.
+
+        This is only required for benchmarking against Ox.
         &#34;&#34;&#34;
         return self._first_year_original_projections_of_yjr
 
@@ -1493,7 +1729,8 @@ of the model information required to produce projections.</p></div>
     def first_year_original_projections_of_exz(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
         The first year projected values for the expected endogenous variables exz.
-        Required for benchmarking against Ox.
+
+        This is only required for benchmarking against Ox.
         &#34;&#34;&#34;
         return self._first_year_original_projections_of_exz
 
@@ -1501,7 +1738,8 @@ of the model information required to produce projections.</p></div>
     def first_year_original_projections_of_z1l(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
         The first year projected values for the endogenous variables.
-        Required for benchmarking against Ox.
+
+        This is only required for benchmarking against Ox.
         &#34;&#34;&#34;
         return self._first_year_original_projections_of_z1l
 
@@ -1510,19 +1748,40 @@ of the model information required to produce projections.</p></div>
         &#34;&#34;&#34;
         Returns the observed values, in the first projection year, of the 
         variables that are adjusted by intertemporal constants.
+
+        The values are not adjusted after they are initially set so they
+        can be relied up and reused by the constant calculation process in this
+        baseline projections and in any later relinearisation projections.
         &#34;&#34;&#34;
         return self._first_year_observed_values_of_variables_adjusted_by_intertemporal_constants
 
     @property
     def intertemporal_constants(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        The data frame of intertemporal constants information
+        obtained from SYM but augmented with the values of the
+        intertemporal constants.
+
+        The dataframe is indexed by the variable names.
+
+        The constant values are stored in a column called `constant_value`.
+        &#34;&#34;&#34;
         return self._intertemporal_constants
 
     @property
     def partial_derivatives_wrt_intertemporal_constants(self) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+        The matrix of partial derivatives used in Newton&#39;s method to
+        compute the intertemporal constants.
+
+        This is a property of the class just to support benchmarking against Ox.
+        &#34;&#34;&#34;
         return self._partial_derivatives
 
     def __calculate_intertemporal_constants(self):
         &#34;&#34;&#34;
+        ### Overview
+
         Computes the intertemporal constant adjustments to jump and other variables to align starting data
         values with model projections in the first year.
 
@@ -1539,53 +1798,76 @@ of the model information required to produce projections.</p></div>
         Step 3.
         Initialise the partial derivatives matrix. This is the matrix of derivatives of each of the
         variables that is adjusted by intertemporal constants, with respect to each of the intertemporal
-        constants.
+        constants, in the SSF equations (each of which is linear).
+
         Iterate over the intertemporal constants, perturbing each and recalculating the base year projections
         of the variables that are adjusted by intertemporal constants so that we can 
         estimate the relevant numeric derivatives.
+
+        At the end of this step, update the perturbed variable details to `None` so that
+        all constants associated with the difference between observed values and SSF calculated values
+        are at their unpurturbed values when doing actual baseline projections.
+
+        Step 4.
+        Apply Newton&#39;s method to solve for the intertemporal constants.
+        Multiply the difference between the observed values of the variables that are adjusted by
+        the intertemporal constants and their original projected values, in the first projection year,
+        by the inverse of the partial derivatives matrix.
+
+        This only needs to be done once because the SSF of the model is linear so Newton&#39;s method
+        gets to the solution in one iteration.
         &#34;&#34;&#34;
 
         # Step 1.
-        self._compute_functions_of_future_exogenous_variables()
+        self._compute_functions_of_future_exogenous_variables(exogenous_projections=self.exo_projections)
         self._reference_c4t_used_to_compute_intertemporal_constants = self.c4t.copy()
         self._reference_h3t_used_to_compute_intertemporal_constants = self.h3t.copy()
 
         # Step 2.
+        
+        # Compute the first year projections - noting that no intertemporal 
+        # constant adjustments have been made yet.
         self.__evaluate_first_projection_year_vector_projections()
+
+        # Capture the first year projections of the intertemporal variables. 
+        # These are used in this function for Newton&#39;s method below
+        # and they are also deep-copied and stored as a property of the 
+        # class for benchmarking purposes.
+        self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants = self.first_year_projections_of_variables_adjusted_by_intertemporal_constants.copy()
+
+        # For benchmarking purposes only, preserve the original first year projections
         self._first_year_original_projections_of_yxr = self.yxr_first_year_projections.copy()
         self._first_year_original_projections_of_yjr = self.yjr_first_year_projections.copy()
         self._first_year_original_projections_of_exz = self.exz_first_year_projections.copy()
         self._first_year_original_projections_of_z1l = self.z1l_first_year_projections.copy()
-        self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants = \
-            self.first_year_projections_of_variables_adjusted_by_intertemporal_constants.copy()
 
         # Step 3.
+        # Compute the partial derivatives matrix
         self._partial_derivatives = np.zeros(shape=(len(self.sym_data.intertemporal_constant_variables), len(
             self.sym_data.variables_adjusted_by_intertemporal_constants)))
         i = 0
         for index, variable_details in self.sym_data.intertemporal_constant_variables.iterrows():
             self.__update_perturbed_variable(variable_details=variable_details)
-            self._compute_functions_of_future_exogenous_variables()
+            self._compute_functions_of_future_exogenous_variables(exogenous_projections=self.exo_projections)
             self.__evaluate_first_projection_year_vector_projections()
             self._partial_derivatives[:, [i]] = (
                 self.first_year_projections_of_variables_adjusted_by_intertemporal_constants -
-                self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants) \
-                / __class__.PERTURBATION
+                self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants) / Constants().DELTA
             i += 1
-
-        # Get the unperturbed values of the variables in first projection year
 
         # Generate the baseline projection to use in computing partial derivatives
         # and to generate matrix values that are used later in projection processes.
         self.__update_perturbed_variable(variable_details=None)
 
-        # Use newtons method adjustment to compute intertemporal constant values
+        # Step 4.
+        # Use Newtons method adjustment to compute intertemporal constant values
         self._intertemporal_constants = self.sym_data.intertemporal_constant_variables
         values: np.ndarray = np.linalg.inv(self._partial_derivatives) @ \
             (self.first_year_observed_values_of_variables_adjusted_by_intertemporal_constants -
              self.first_year_original_projections_of_variables_adjusted_by_intertemporal_constants)
         values = values.reshape((len(self.intertemporal_constants.index), 1))
         self._intertemporal_constants[&#39;constant_value&#39;] = values
+
         logging.info(&#34;The intertemporal constants have been calibrated.&#34;)</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -1593,15 +1875,20 @@ of the model information required to produce projections.</p></div>
 <li><a title="gcubed.projections.projections.Projections" href="projections.html#gcubed.projections.projections.Projections">Projections</a></li>
 <li><a title="gcubed.base.Base" href="../base.html#gcubed.base.Base">Base</a></li>
 </ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.PERTURBATION"><code class="name">var <span class="ident">PERTURBATION</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
 <h3>Instance variables</h3>
 <dl>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.baseline_projections"><code class="name">var <span class="ident">baseline_projections</span> : Optional[<a title="gcubed.projections.baseline_projections.BaselineProjections" href="#gcubed.projections.baseline_projections.BaselineProjections">BaselineProjections</a>]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def baseline_projections(self) -&gt; Optional[&#39;BaselineProjections&#39;]:
+    return self</code></pre>
+</details>
+</dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.database"><code class="name">var <span class="ident">database</span> : <a title="gcubed.data.gdp_scaled_database.GDPScaledDatabase" href="../data/gdp_scaled_database.html#gcubed.data.gdp_scaled_database.GDPScaledDatabase">GDPScaledDatabase</a></code></dt>
 <dd>
 <div class="desc"><p>The database used as the starting point for the projections.</p></div>
@@ -1649,9 +1936,10 @@ def exz_first_year_projections(self) -&gt; np.ndarray:
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_exo"><code class="name">var <span class="ident">first_projection_year_exo</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>If the first projection year = t:
-Returns the value of exo from the database as the value of exogenous variables (exo)
-in period t</p></div>
+<div class="desc"><p>The <code>exo</code> vector populated with database values
+from the first projection year.</p>
+<p>These values are not adjusted by any constants and are never
+altered after they are set.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1659,17 +1947,21 @@ in period t</p></div>
 <pre><code class="python">@property
 def first_projection_year_exo(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    If the first projection year = t:
-    Returns the value of exo from the database as the value of exogenous variables (exo)
-    in period t
+    The `exo` vector populated with database values
+    from the first projection year.
+
+    These values are not adjusted by any constants and are never
+    altered after they are set.
     &#34;&#34;&#34;
     return self._first_projection_year_exo</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_exz"><code class="name">var <span class="ident">first_projection_year_exz</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>If the first projection year = t:
-Returns the value of exz from the database as the value of ze in period t+1</p></div>
+<div class="desc"><p>The <code>exz</code> vector populated with database values
+from the year after the first projection year.</p>
+<p>These values are not adjusted by any constants and are never
+altered after they are set.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1677,16 +1969,21 @@ Returns the value of exz from the database as the value of ze in period t+1</p><
 <pre><code class="python">@property
 def first_projection_year_exz(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    If the first projection year = t:
-    Returns the value of exz from the database as the value of ze in period t+1
+    The `exz` vector populated with database values
+    from the year after the first projection year.
+
+    These values are not adjusted by any constants and are never
+    altered after they are set.
     &#34;&#34;&#34;
     return self._first_projection_year_exz</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_j1r"><code class="name">var <span class="ident">first_projection_year_j1r</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>If the first projection year = t:
-Returns the value of j1r from the database as the value of j1 in period t+1</p></div>
+<div class="desc"><p>The <code>j1r</code> vector populated with database values
+from the year after the first projection year.</p>
+<p>These values are not adjusted by any constants and are never
+altered after they are set.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1694,16 +1991,21 @@ Returns the value of j1r from the database as the value of j1 in period t+1</p><
 <pre><code class="python">@property
 def first_projection_year_j1r(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    If the first projection year = t:
-    Returns the value of j1r from the database as the value of j1 in period t+1
+    The `j1r` vector populated with database values
+    from the year after the first projection year.
+    
+    These values are not adjusted by any constants and are never
+    altered after they are set.
     &#34;&#34;&#34;
     return self._first_projection_year_j1r</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_x1r"><code class="name">var <span class="ident">first_projection_year_x1r</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>If the first projection year = t:
-Returns the value of x1r from the database as the value of x1 in period t+1</p></div>
+<div class="desc"><p>The <code>x1r</code> vector populated with database values
+from the year after the first projection year.</p>
+<p>These values are not adjusted by any constants and are never
+altered after they are set.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1711,16 +2013,21 @@ Returns the value of x1r from the database as the value of x1 in period t+1</p><
 <pre><code class="python">@property
 def first_projection_year_x1r(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    If the first projection year = t:
-    Returns the value of x1r from the database as the value of x1 in period t+1
+    The `x1r` vector populated with database values
+    from the year after the first projection year.
+
+    These values are not adjusted by any constants and are never
+    altered after they are set.
     &#34;&#34;&#34;
     return self._first_projection_year_x1r</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_yjr"><code class="name">var <span class="ident">first_projection_year_yjr</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>If the first projection year = t:
-Returns the value of yjr from the database as the value of j1 in period t</p></div>
+<div class="desc"><p>The <code>yjr</code> vector populated with database values
+from the first projection year.</p>
+<p>These values are not adjusted by any constants and are never
+altered after they are set.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1728,16 +2035,21 @@ Returns the value of yjr from the database as the value of j1 in period t</p></d
 <pre><code class="python">@property
 def first_projection_year_yjr(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    If the first projection year = t:
-    Returns the value of yjr from the database as the value of j1 in period t
+    The `yjr` vector populated with database values
+    from the first projection year.
+
+    These values are not adjusted by any constants and are never
+    altered after they are set.
     &#34;&#34;&#34;
     return self._first_projection_year_yjr</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_yxr"><code class="name">var <span class="ident">first_projection_year_yxr</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>If the first projection year = t:
-Returns the value of yxr from the database as the value of x1 in period t</p></div>
+<div class="desc"><p>The <code>yxr</code> vector populated with database values
+from the first projection year.</p>
+<p>These values are not adjusted by any constants and are never
+altered after they are set.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1745,16 +2057,21 @@ Returns the value of yxr from the database as the value of x1 in period t</p></d
 <pre><code class="python">@property
 def first_projection_year_yxr(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    If the first projection year = t:
-    Returns the value of yxr from the database as the value of x1 in period t
+    The `yxr` vector populated with database values
+    from the first projection year.
+    
+    These values are not adjusted by any constants and are never
+    altered after they are set.
     &#34;&#34;&#34;
     return self._first_projection_year_yxr</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_z1r"><code class="name">var <span class="ident">first_projection_year_z1r</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>If the first projection year = t:
-Returns the value of z1r from the database as the value of z1 in period t</p></div>
+<div class="desc"><p>The <code>z1r</code> vector populated with database values
+from the first projection year.</p>
+<p>These values are not adjusted by any constants and are never
+altered after they are set.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1762,16 +2079,21 @@ Returns the value of z1r from the database as the value of z1 in period t</p></d
 <pre><code class="python">@property
 def first_projection_year_z1r(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    If the first projection year = t:
-    Returns the value of z1r from the database as the value of z1 in period t
+    The `z1r` vector populated with database values
+    from the first projection year.
+    
+    These values are not adjusted by any constants and are never
+    altered after they are set.
     &#34;&#34;&#34;
     return self._first_projection_year_z1r</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.first_projection_year_zer"><code class="name">var <span class="ident">first_projection_year_zer</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>If the first projection year = t:
-Returns the value of zer from the database as the value of x1 in period t</p></div>
+<div class="desc"><p>The <code>zer</code> vector populated with database values
+from the first projection year.</p>
+<p>These values are not adjusted by any constants and are never
+altered after they are set.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1779,8 +2101,11 @@ Returns the value of zer from the database as the value of x1 in period t</p></d
 <pre><code class="python">@property
 def first_projection_year_zer(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    If the first projection year = t:
-    Returns the value of zer from the database as the value of x1 in period t
+    The `zer` vector populated with database values
+    from the first projection year.
+    
+    These values are not adjusted by any constants and are never
+    altered after they are set.
     &#34;&#34;&#34;
     return self._first_projection_year_zer</code></pre>
 </details>
@@ -1788,7 +2113,10 @@ def first_projection_year_zer(self) -&gt; np.ndarray:
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.first_year_observed_values_of_variables_adjusted_by_intertemporal_constants"><code class="name">var <span class="ident">first_year_observed_values_of_variables_adjusted_by_intertemporal_constants</span> : numpy.ndarray</code></dt>
 <dd>
 <div class="desc"><p>Returns the observed values, in the first projection year, of the
-variables that are adjusted by intertemporal constants.</p></div>
+variables that are adjusted by intertemporal constants.</p>
+<p>The values are not adjusted after they are initially set so they
+can be relied up and reused by the constant calculation process in this
+baseline projections and in any later relinearisation projections.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1798,14 +2126,18 @@ def first_year_observed_values_of_variables_adjusted_by_intertemporal_constants(
     &#34;&#34;&#34;
     Returns the observed values, in the first projection year, of the 
     variables that are adjusted by intertemporal constants.
+
+    The values are not adjusted after they are initially set so they
+    can be relied up and reused by the constant calculation process in this
+    baseline projections and in any later relinearisation projections.
     &#34;&#34;&#34;
     return self._first_year_observed_values_of_variables_adjusted_by_intertemporal_constants</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_exz"><code class="name">var <span class="ident">first_year_original_projections_of_exz</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>The first year projected values for the expected endogenous variables exz.
-Required for benchmarking against Ox.</p></div>
+<div class="desc"><p>The first year projected values for the expected endogenous variables exz.</p>
+<p>This is only required for benchmarking against Ox.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1814,7 +2146,8 @@ Required for benchmarking against Ox.</p></div>
 def first_year_original_projections_of_exz(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
     The first year projected values for the expected endogenous variables exz.
-    Required for benchmarking against Ox.
+
+    This is only required for benchmarking against Ox.
     &#34;&#34;&#34;
     return self._first_year_original_projections_of_exz</code></pre>
 </details>
@@ -1823,7 +2156,9 @@ def first_year_original_projections_of_exz(self) -&gt; np.ndarray:
 <dd>
 <div class="desc"><p>The first year projected values for the variables that are being
 adjusted by the intertemporal constants.</p>
-<p>The values are those for the projection that is not adjusted by intertemporal constants.</p></div>
+<p>The values are those for the projection that is not adjusted by intertemporal constants.</p>
+<p>It is used in the calculation of the intertemporal constants but it is only preserved
+as a property to facilitate benchmarking against Ox.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1835,14 +2170,17 @@ def first_year_original_projections_of_variables_adjusted_by_intertemporal_const
     adjusted by the intertemporal constants.
 
     The values are those for the projection that is not adjusted by intertemporal constants.
+
+    It is used in the calculation of the intertemporal constants but it is only preserved
+    as a property to facilitate benchmarking against Ox.
     &#34;&#34;&#34;
     return self._first_year_original_projections_of_variables_adjusted_by_intertemporal_constants</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_yjr"><code class="name">var <span class="ident">first_year_original_projections_of_yjr</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>The first year projected values for the costate variables.
-Required for benchmarking against Ox.</p></div>
+<div class="desc"><p>The first year projected values for the costate variables.</p>
+<p>This is only required for benchmarking against Ox.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1851,15 +2189,16 @@ Required for benchmarking against Ox.</p></div>
 def first_year_original_projections_of_yjr(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
     The first year projected values for the costate variables.
-    Required for benchmarking against Ox.
+
+    This is only required for benchmarking against Ox.
     &#34;&#34;&#34;
     return self._first_year_original_projections_of_yjr</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_yxr"><code class="name">var <span class="ident">first_year_original_projections_of_yxr</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>The first year projected values for the state variables.
-Required for benchmarking against Ox.</p></div>
+<div class="desc"><p>The first year projected values for the state variables.</p>
+<p>This is only required for benchmarking against Ox.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1868,15 +2207,16 @@ Required for benchmarking against Ox.</p></div>
 def first_year_original_projections_of_yxr(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
     The first year projected values for the state variables.
-    Required for benchmarking against Ox.
+    
+    This is only required for benchmarking against Ox.
     &#34;&#34;&#34;
     return self._first_year_original_projections_of_yxr</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.first_year_original_projections_of_z1l"><code class="name">var <span class="ident">first_year_original_projections_of_z1l</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>The first year projected values for the endogenous variables.
-Required for benchmarking against Ox.</p></div>
+<div class="desc"><p>The first year projected values for the endogenous variables.</p>
+<p>This is only required for benchmarking against Ox.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1885,17 +2225,19 @@ Required for benchmarking against Ox.</p></div>
 def first_year_original_projections_of_z1l(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
     The first year projected values for the endogenous variables.
-    Required for benchmarking against Ox.
+
+    This is only required for benchmarking against Ox.
     &#34;&#34;&#34;
     return self._first_year_original_projections_of_z1l</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.first_year_projections_of_variables_adjusted_by_intertemporal_constants"><code class="name">var <span class="ident">first_year_projections_of_variables_adjusted_by_intertemporal_constants</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"><p>The values of the variables that have been changed by the perturbation to
-an intertemporal constant as part of computing partial derivatives for setting the
-intertemporal constants appropriately. These values are a column vector
-for the first projection year only.</p></div>
+<div class="desc"><p>An column vector of first year projection values for those variables that are adjusted
+by intertemporal constants.</p>
+<p>The vector is populated from the vectors of first year projections for
+each of <code>x1l</code>, <code>j1l</code>, <code>zel</code>,
+and <code>z1l</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1903,10 +2245,11 @@ for the first projection year only.</p></div>
 <pre><code class="python">@property
 def first_year_projections_of_variables_adjusted_by_intertemporal_constants(self) -&gt; np.ndarray:
     &#34;&#34;&#34;
-    The values of the variables that have been changed by the perturbation to 
-    an intertemporal constant as part of computing partial derivatives for setting the
-    intertemporal constants appropriately. These values are a column vector
-    for the first projection year only.
+    An column vector of first year projection values for those variables that are adjusted
+    by intertemporal constants.
+
+    The vector is populated from the vectors of first year projections for 
+    each of `x1l`, `j1l`, `zel`,  and `z1l`.
     &#34;&#34;&#34;
     result = np.zeros(shape=(len(self.sym_data.variables_adjusted_by_intertemporal_constants), 1))
     i = 0
@@ -1927,13 +2270,26 @@ def first_year_projections_of_variables_adjusted_by_intertemporal_constants(self
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.intertemporal_constants"><code class="name">var <span class="ident">intertemporal_constants</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The data frame of intertemporal constants information
+obtained from SYM but augmented with the values of the
+intertemporal constants.</p>
+<p>The dataframe is indexed by the variable names.</p>
+<p>The constant values are stored in a column called <code>constant_value</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def intertemporal_constants(self) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    The data frame of intertemporal constants information
+    obtained from SYM but augmented with the values of the
+    intertemporal constants.
+
+    The dataframe is indexed by the variable names.
+
+    The constant values are stored in a column called `constant_value`.
+    &#34;&#34;&#34;
     return self._intertemporal_constants</code></pre>
 </details>
 </dd>
@@ -1972,7 +2328,13 @@ def j1_constants(self) -&gt; np.ndarray:
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.j1r_difference_from_ssf"><code class="name">var <span class="ident">j1r_difference_from_ssf</span></code></dt>
 <dd>
-<div class="desc"><p>In Ox: decl cz4 = j1r - j1l</p></div>
+<div class="desc"><p>The difference between the database values of <code>j1r</code>
+and the raw baseline projections of those values,
+without making any constant adjustments at all.</p>
+<p>These differences are added to the constants that
+are used in the baseline projections to ensure that
+the projections in the first projection year match
+the database values in that year.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1980,27 +2342,46 @@ def j1_constants(self) -&gt; np.ndarray:
 <pre><code class="python">@property
 def j1r_difference_from_ssf(self):
     &#34;&#34;&#34;
-    In Ox: decl cz4 = j1r - j1l
+    The difference between the database values of `j1r`
+    and the raw baseline projections of those values,
+    without making any constant adjustments at all.
+
+    These differences are added to the constants that
+    are used in the baseline projections to ensure that
+    the projections in the first projection year match
+    the database values in that year.
+
     &#34;&#34;&#34;
     return self._j1r_difference_from_ssf</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.partial_derivatives_wrt_intertemporal_constants"><code class="name">var <span class="ident">partial_derivatives_wrt_intertemporal_constants</span> : numpy.ndarray</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The matrix of partial derivatives used in Newton's method to
+compute the intertemporal constants.</p>
+<p>This is a property of the class just to support benchmarking against Ox.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def partial_derivatives_wrt_intertemporal_constants(self) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    The matrix of partial derivatives used in Newton&#39;s method to
+    compute the intertemporal constants.
+
+    This is a property of the class just to support benchmarking against Ox.
+    &#34;&#34;&#34;
     return self._partial_derivatives</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.perturbed_variable_details"><code class="name">var <span class="ident">perturbed_variable_details</span> : pandas.core.series.Series</code></dt>
 <dd>
-<div class="desc"><p>The var_map details of the variable being perturbed to as part of computing
-derivatives needed to set intertemporal constants or none if just doing projections.</p></div>
+<div class="desc"><p>If computing intertemporal constants,
+the var_map details (the row of the SYM var_map dataframe)
+for the variable being perturbed as part of computing
+derivatives needed to set intertemporal constants. Otherwise, this returns
+<code>None</code> if just producing the baseline projections.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2008,8 +2389,11 @@ derivatives needed to set intertemporal constants or none if just doing projecti
 <pre><code class="python">@property
 def perturbed_variable_details(self) -&gt; pd.Series:
     &#34;&#34;&#34;
-    The var_map details of the variable being perturbed to as part of computing
-    derivatives needed to set intertemporal constants or none if just doing projections.
+    If computing intertemporal constants, 
+    the var_map details (the row of the SYM var_map dataframe)
+    for the variable being perturbed as part of computing
+    derivatives needed to set intertemporal constants. Otherwise, this returns
+    `None` if just producing the baseline projections.
     &#34;&#34;&#34;
     if hasattr(self, &#39;_perturbed_variable_details&#39;):
         return self._perturbed_variable_details
@@ -2068,26 +2452,21 @@ def reference_h3t_used_to_compute_intertemporal_constants(self) -&gt; np.ndarray
     return self._reference_h3t_used_to_compute_intertemporal_constants</code></pre>
 </details>
 </dd>
-<dt id="gcubed.projections.baseline_projections.BaselineProjections.using_rolled_projections"><code class="name">var <span class="ident">using_rolled_projections</span> : bool</code></dt>
+<dt id="gcubed.projections.baseline_projections.BaselineProjections.start_from_neutral_real_interest_rate"><code class="name">var <span class="ident">start_from_neutral_real_interest_rate</span> : bool</code></dt>
 <dd>
-<div class="desc"><p>True if these projections are building on
-previous projections rather than just observed data.</p>
-<p>This affects how the baseline projections are set up in terms
-of the constants used.</p></div>
+<div class="desc"><p><code>True</code> if interest rates are set to the neutral real interest
+rate for the start of the baseline projections and <code>False</code> otherwise.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def using_rolled_projections(self) -&gt; bool:
+def start_from_neutral_real_interest_rate(self) -&gt; bool:
     &#34;&#34;&#34;
-    True if these projections are building on
-    previous projections rather than just observed data.
-
-    This affects how the baseline projections are set up in terms
-    of the constants used.
+    `True` if interest rates are set to the neutral real interest
+    rate for the start of the baseline projections and `False` otherwise.
     &#34;&#34;&#34;
-    return self.database.has_data_for_all_projection_years</code></pre>
+    return self._start_from_neutral_real_interest_rate</code></pre>
 </details>
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.x1_constants"><code class="name">var <span class="ident">x1_constants</span> : numpy.ndarray</code></dt>
@@ -2126,7 +2505,13 @@ def x1_constants(self) -&gt; np.ndarray:
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.x1r_difference_from_ssf"><code class="name">var <span class="ident">x1r_difference_from_ssf</span></code></dt>
 <dd>
-<div class="desc"><p>In Ox: decl cz2 = x1r - x1l</p></div>
+<div class="desc"><p>The difference between the database values of <code>x1r</code>
+and the raw baseline projections of those values,
+without making any constant adjustments at all.</p>
+<p>These differences are added to the constants that
+are used in the baseline projections to ensure that
+the projections in the first projection year match
+the database values in that year.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2134,7 +2519,14 @@ def x1_constants(self) -&gt; np.ndarray:
 <pre><code class="python">@property
 def x1r_difference_from_ssf(self):
     &#34;&#34;&#34;
-    In Ox: decl cz2 = x1r - x1l
+    The difference between the database values of `x1r`
+    and the raw baseline projections of those values,
+    without making any constant adjustments at all.
+
+    These differences are added to the constants that
+    are used in the baseline projections to ensure that
+    the projections in the first projection year match
+    the database values in that year.
     &#34;&#34;&#34;
     return self._x1r_difference_from_ssf</code></pre>
 </details>
@@ -2219,7 +2611,13 @@ def z1l_first_year_projections(self) -&gt; np.ndarray:
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.z1r_difference_from_ssf"><code class="name">var <span class="ident">z1r_difference_from_ssf</span></code></dt>
 <dd>
-<div class="desc"><p>In Ox: decl cz6 = z1r - z1l</p></div>
+<div class="desc"><p>The difference between the database values of <code>z1r</code>
+and the raw baseline projections of those values,
+without making any constant adjustments at all.</p>
+<p>These differences are added to the constants that
+are used in the baseline projections to ensure that
+the projections in the first projection year match
+the database values in that year.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2227,7 +2625,14 @@ def z1l_first_year_projections(self) -&gt; np.ndarray:
 <pre><code class="python">@property
 def z1r_difference_from_ssf(self):
     &#34;&#34;&#34;
-    In Ox: decl cz6 = z1r - z1l
+    The difference between the database values of `z1r`
+    and the raw baseline projections of those values,
+    without making any constant adjustments at all.
+
+    These differences are added to the constants that
+    are used in the baseline projections to ensure that
+    the projections in the first projection year match
+    the database values in that year.
     &#34;&#34;&#34;
     return self._z1r_difference_from_ssf</code></pre>
 </details>
@@ -2270,7 +2675,13 @@ def ze_constants(self) -&gt; np.ndarray:
 </dd>
 <dt id="gcubed.projections.baseline_projections.BaselineProjections.zer_difference_from_ssf"><code class="name">var <span class="ident">zer_difference_from_ssf</span></code></dt>
 <dd>
-<div class="desc"><p>In Ox: decl cz5 = zer - zel</p></div>
+<div class="desc"><p>The difference between the database values of <code>zer</code>
+and the raw baseline projections of those values,
+without making any constant adjustments at all.</p>
+<p>These differences are added to the constants that
+are used in the baseline projections to ensure that
+the projections in the first projection year match
+the database values in that year.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2278,7 +2689,14 @@ def ze_constants(self) -&gt; np.ndarray:
 <pre><code class="python">@property
 def zer_difference_from_ssf(self):
     &#34;&#34;&#34;
-    In Ox: decl cz5 = zer - zel
+    The difference between the database values of `zer`
+    and the raw baseline projections of those values,
+    without making any constant adjustments at all.
+
+    These differences are added to the constants that
+    are used in the baseline projections to ensure that
+    the projections in the first projection year match
+    the database values in that year.
     &#34;&#34;&#34;
     return self._zer_difference_from_ssf</code></pre>
 </details>
@@ -2288,23 +2706,27 @@ def zer_difference_from_ssf(self):
 <ul class="hlist">
 <li><code><b><a title="gcubed.projections.projections.Projections" href="projections.html#gcubed.projections.projections.Projections">Projections</a></b></code>:
 <ul class="hlist">
+<li><code><a title="gcubed.projections.projections.Projections.annotated_database_projections" href="projections.html#gcubed.projections.projections.Projections.annotated_database_projections">annotated_database_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.annotated_projections" href="projections.html#gcubed.projections.projections.Projections.annotated_projections">annotated_projections</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.annotated_publishable_projections" href="projections.html#gcubed.projections.projections.Projections.annotated_publishable_projections">annotated_publishable_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.c4t" href="projections.html#gcubed.projections.projections.Projections.c4t">c4t</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.c4t_as_dataframe" href="projections.html#gcubed.projections.projections.Projections.c4t_as_dataframe">c4t_as_dataframe</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.configuration" href="projections.html#gcubed.projections.projections.Projections.configuration">configuration</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.database_projections" href="projections.html#gcubed.projections.projections.Projections.database_projections">database_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exo_projections" href="projections.html#gcubed.projections.projections.Projections.exo_projections">exo_projections</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.exo_projections_as_dataframe" href="projections.html#gcubed.projections.projections.Projections.exo_projections_as_dataframe">exo_projections_as_dataframe</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exz_projections" href="projections.html#gcubed.projections.projections.Projections.exz_projections">exz_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.exz_projections_as_dataframe" href="projections.html#gcubed.projections.projections.Projections.exz_projections_as_dataframe">exz_projections_as_dataframe</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.first_projection_year" href="projections.html#gcubed.projections.projections.Projections.first_projection_year">first_projection_year</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.get_differences_between_projections" href="projections.html#gcubed.projections.projections.Projections.get_differences_between_projections">get_differences_between_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
-<li><code><a title="gcubed.projections.projections.Projections.graphable_projections" href="projections.html#gcubed.projections.projections.Projections.graphable_projections">graphable_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.h3t" href="projections.html#gcubed.projections.projections.Projections.h3t">h3t</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.h3t_as_dataframe" href="projections.html#gcubed.projections.projections.Projections.h3t_as_dataframe">h3t_as_dataframe</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.is_baseline_projections" href="projections.html#gcubed.projections.projections.Projections.is_baseline_projections">is_baseline_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.last_projection_year" href="projections.html#gcubed.projections.projections.Projections.last_projection_year">last_projection_year</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.long_rate_constants" href="projections.html#gcubed.projections.projections.Projections.long_rate_constants">long_rate_constants</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.model" href="projections.html#gcubed.projections.projections.Projections.model">model</a></code></li>
+<li><code><a title="gcubed.projections.projections.Projections.now" href="../base.html#gcubed.base.Base.now">now</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.parameters" href="projections.html#gcubed.projections.projections.Projections.parameters">parameters</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.previous_projections" href="projections.html#gcubed.projections.projections.Projections.previous_projections">previous_projections</a></code></li>
 <li><code><a title="gcubed.projections.projections.Projections.projection_years" href="projections.html#gcubed.projections.projections.Projections.projection_years">projection_years</a></code></li>
@@ -2347,7 +2769,7 @@ def zer_difference_from_ssf(self):
 <li>
 <h4><code><a title="gcubed.projections.baseline_projections.BaselineProjections" href="#gcubed.projections.baseline_projections.BaselineProjections">BaselineProjections</a></code></h4>
 <ul class="">
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.PERTURBATION" href="#gcubed.projections.baseline_projections.BaselineProjections.PERTURBATION">PERTURBATION</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.baseline_projections" href="#gcubed.projections.baseline_projections.BaselineProjections.baseline_projections">baseline_projections</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.database" href="#gcubed.projections.baseline_projections.BaselineProjections.database">database</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.exo_first_year_projections" href="#gcubed.projections.baseline_projections.BaselineProjections.exo_first_year_projections">exo_first_year_projections</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.exz_first_year_projections" href="#gcubed.projections.baseline_projections.BaselineProjections.exz_first_year_projections">exz_first_year_projections</a></code></li>
@@ -2373,7 +2795,7 @@ def zer_difference_from_ssf(self):
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.perturbed_variable_details" href="#gcubed.projections.baseline_projections.BaselineProjections.perturbed_variable_details">perturbed_variable_details</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.reference_c4t_used_to_compute_intertemporal_constants" href="#gcubed.projections.baseline_projections.BaselineProjections.reference_c4t_used_to_compute_intertemporal_constants">reference_c4t_used_to_compute_intertemporal_constants</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.reference_h3t_used_to_compute_intertemporal_constants" href="#gcubed.projections.baseline_projections.BaselineProjections.reference_h3t_used_to_compute_intertemporal_constants">reference_h3t_used_to_compute_intertemporal_constants</a></code></li>
-<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.using_rolled_projections" href="#gcubed.projections.baseline_projections.BaselineProjections.using_rolled_projections">using_rolled_projections</a></code></li>
+<li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.start_from_neutral_real_interest_rate" href="#gcubed.projections.baseline_projections.BaselineProjections.start_from_neutral_real_interest_rate">start_from_neutral_real_interest_rate</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.x1_constants" href="#gcubed.projections.baseline_projections.BaselineProjections.x1_constants">x1_constants</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.x1r_difference_from_ssf" href="#gcubed.projections.baseline_projections.BaselineProjections.x1r_difference_from_ssf">x1r_difference_from_ssf</a></code></li>
 <li><code><a title="gcubed.projections.baseline_projections.BaselineProjections.yjr_first_year_projections" href="#gcubed.projections.baseline_projections.BaselineProjections.yjr_first_year_projections">yjr_first_year_projections</a></code></li>

@@ -48,7 +48,7 @@ class ModelSolver(Base):
 
     ### Overview
 
-    The solver finds a point (a value for each variable in the model)
+    The model solver finds a point (a value for each variable in the model)
     that simultaneously solves the nonlinear equations 
     in the model, taking as given the values for the vectors:
     - yxr
@@ -63,18 +63,29 @@ class ModelSolver(Base):
     - zer
     - z1r
 
-    The process will be:
-    1. Set up database
-    2. Populate all vectors using database values for the linearisation year.
-    3. Rearrange the model equations so that we can solve for all vectors by evaluating all 
-    of the model equations and then take the RHS of the equation
+    The process is:
 
-    TODO: Implement based on logic in TestLinearisationRootFindingModel2R164
-
+    1. Populate all vectors using database values for the linearisation year.
+    2. Select just those model equations that involve a LHS variable on the RHS.
+    3. Solve for roots of those equations using the least squares algorithm.
+    4. Check that the roots are indeed roots (least squares could converge to
+    values that minimise the sum of squares while not producing roots) by ensuring
+    that the RHS values that are the proposed solution to the equations are the LHS
+    values for those RHS values.
     &#34;&#34;&#34;
 
+    def __init__(self, model: Model, linearisation_year: int, use_neutral_real_interest_rate: bool = True):
+        &#34;&#34;&#34;        
+        ### Arguments
 
-    def __init__(self, model: Model, linearisation_year: int ):
+        `model`: The model to linearise.
+
+        `linearisation_year`: The year to linearise around.
+
+        `use_neutral_real_interest_rate`: If `True`, the neutral real interest rate will be used, otherwise
+        the real interest rates will be the value from the database. This parameter defaults to `True`.
+        &#34;&#34;&#34;
+
 
         logging.info(f&#34;Seeking a model solution close to the data values in {linearisation_year}.&#34;)
         self._solution_found = False
@@ -91,7 +102,9 @@ class ModelSolver(Base):
         self._parameters = self.model.parameters.parameter_values_vector
 
         # Set up the RHS vectors for the model using data for the linearisation year.
-        self.__load_rhs_vectors(linearisation_year=self.model.configuration.linearisation_year)
+        self.__load_rhs_vectors(
+                linearisation_year=self.linearisation_year,
+                use_neutral_real_interest_rate=use_neutral_real_interest_rate)
 
         # Set up the LHS vectors as vectors of zeros.
         self.__configure_lhs_vectors()
@@ -129,21 +142,21 @@ class ModelSolver(Base):
     @property
     def model(self) -&gt; Model:
         &#34;&#34;&#34;
-        Model: The model that needs a solution to linearise around.
+        The model that needs a solution to linearise around.
         &#34;&#34;&#34;
         return self._model
 
     @property
     def linearisation_year(self) -&gt; int:
         &#34;&#34;&#34;
-        int: The return value, the 4 digit linearisation year.
+        The return value, the 4 digit linearisation year.
         &#34;&#34;&#34;
         return self._linearisation_year
 
     @property
     def solution_found(self) -&gt; bool:
         &#34;&#34;&#34;
-        bool: True if the model solution has been found and False otherwise.
+        `True` if the model solution has been found and `False` otherwise.
         &#34;&#34;&#34;
         return self._solution_found
 
@@ -239,14 +252,15 @@ class ModelSolver(Base):
 
     def index_of(self, variable:tuple[str,int]) -&gt; int:
         &#34;&#34;&#34;
-        Args:
-            variable (tuple[str,int]): The vector and index pair that
-            identifies the variable.
+        ### Arguments
 
-       ### Returns
-            int: The return value, equal to the index of the variable
-            in the vector of variables that we are adjusting to find 
-            a model solution.
+        `variable`: The vector and index pair that identifies the variable.
+
+        ### Returns
+
+        The return value, equal to the index of the variable
+        in the vector of variables that we are adjusting to find 
+        a model solution.
         &#34;&#34;&#34;
         return self.lhs_variables_indices[variable]
 
@@ -264,7 +278,7 @@ class ModelSolver(Base):
             setattr(self, &#34;_{}&#34;.format(vector_name), np.zeros(
                 shape=(self.model.sym_data.vector_length(vector_name=vector_name), 1), dtype=float))
 
-    def __load_rhs_vectors(self, linearisation_year: int):
+    def __load_rhs_vectors(self, linearisation_year: int, use_neutral_real_interest_rate:bool):
         &#34;&#34;&#34;
         Create and set values for the RHS vectors that are used by the 
         model equations.
@@ -279,13 +293,21 @@ class ModelSolver(Base):
         That process will underpin the numeric search for a model solution near
         the data values from the linearisation year.
 
-        Args:
-        linearisation_year (int): The (YYYY format) year for which the 
+        ### Arguments:
+
+        `linearisation_year`: The (YYYY format) year for which the 
         model is being linearised. This determines the data that is retrieved
         from the database to populate the RHS vectors.
+
+        `use_neutral_real_interest_rate`: If `True`, the neutral real interest rate,
+        otherwise the actual real interest rate is used.
+
         &#34;&#34;&#34;
         for vector_name in self.model.sym_data.rhs_vector_names:
-            rhs_vector:pd.DataFrame = self.database.rhs_vector_value(vector_name=vector_name, year=linearisation_year, use_neutral_real_interest_rate=True)
+            rhs_vector:pd.DataFrame = self.database.rhs_vector_value(
+                vector_name=vector_name, 
+                year=linearisation_year, 
+                use_neutral_real_interest_rate=use_neutral_real_interest_rate)
             if rhs_vector is not None:
                 setattr(self, f&#34;_{vector_name}&#34;, rhs_vector)
                 # Save the original value of the vector for comparison purposes.
@@ -338,9 +360,9 @@ class ModelSolver(Base):
         These LHS and RHS vector values are then exposed as model solver properties and they
         can be accessed as vector values around which the model can be linearised.
 
-       ### Returns
+        ### Returns
 
-        bool: True if the model could be solved and False otherwise.
+        `True` if the model could be solved and `False` otherwise.
 
         &#34;&#34;&#34;
 
@@ -370,15 +392,17 @@ class ModelSolver(Base):
             When this difference between x and the result of the equation evaluations
             is equal to zero for all equations, then a model solution has been found.
 
-            Args:
-            x (np.ndarray): The vector of values being used to evaluate the objective function.
+            ### Arguments
+
+            `x`: The vector of values being used to evaluate the objective function.
             These are the LHS vector values that need to be adjusted to find a model solution.
 
             This objective function implements the model equations to be solved so that we get 
             (model LHS - model RHS) = 0
 
-           ### Returns
-            np.ndarray: The return value, the vector (model LHS - model RHS), evaluated at the
+            ### Returns
+
+            The return value, the vector (model LHS - model RHS), evaluated at the
             input x, for the vector of equations associated with those variables in the model 
             that the solver is adjusting.
             &#34;&#34;&#34;
@@ -450,15 +474,16 @@ class ModelSolver(Base):
             each of the adjusting variables that occurs on the RHS of
             an equation that is being used by the solver to find a model solution.
 
-            Args:
-            x (np.ndarray): The vector of values being used to evaluate the objective function.
+            ### Arguments
+            `x`: The vector of values being used to evaluate the objective function.
             These are the LHS vector values that need to be adjusted to find a model solution.
 
             This objective function implements the model equations to be solved so that we get 
             (model LHS - model RHS) = 0
 
-           ### Returns
-            The return value, the sparse matrix representing the Jacobian.
+            ### Returns
+
+            The sparse matrix representing the Jacobian.
             &#34;&#34;&#34;
 
             # Step 0.
@@ -570,10 +595,22 @@ class ModelSolver(Base):
             if not np.allclose(lhs_vector, rhs_vector, atol=0.000001):
                 logging.error(f&#34;The model solver failed to find a solution for {lhs_vector_name}&#34;)
                 result = False
+            else:
+                logging.info(f&#34;The model solver found a solution for {lhs_vector_name}&#34;)
             # data: pd.DataFrame = pd.DataFrame(np.hstack(( getattr(self, f&#34;_original_{lhs_vector_name}&#34;),  getattr(self, f&#34;_original_{rhs_vector_name}&#34;), getattr(self, f&#34;_solution_{lhs_vector_name}&#34;), getattr(self, f&#34;_{lhs_vector_name}&#34;) )))
             # data.index = self.model.sym_data.vector_variable_names(vector_name=rhs_vector_name)
             # data.columns = [&#39;LHS original&#39;, &#39;RHS original&#39;, &#39;RHS/LHS adjusted&#39;, &#39;RHS/LHS iteration test&#39;]
             # data.to_csv(f&#34;{self.model.configuration.benchmarking_reports_directory}{rhs_vector_name} adjusted linearisation values.csv&#34;)
+
+        # Get a look at the starting values found by the solver.
+        # x1l = pd.DataFrame(getattr(self, &#39;_x1l&#39;))
+        # x1l.index = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
+        # logging.debug(f&#34;The INTN(UU) value is {x1l.loc[&#39;INTN(UU)&#39;,:]}&#34;)
+
+        # z1l = pd.DataFrame(getattr(self, &#39;_z1l&#39;))
+        # z1l.index = self.model.sym_data.vector_variable_names(vector_name=&#39;z1l&#39;)
+        # logging.debug(f&#34;The INFL(UU) value is {z1l.loc[&#39;INFL(UU)&#39;,:]}&#34;)
+        # logging.debug(f&#34;The INTR(UU) value is {z1l.loc[&#39;INTR(UU)&#39;,:]}&#34;)
 
         # Model solved successfully.
         return result</code></pre>
@@ -590,11 +627,11 @@ class ModelSolver(Base):
 <dl>
 <dt id="gcubed.linearisation.model_solver.ModelSolver"><code class="flex name class">
 <span>class <span class="ident">ModelSolver</span></span>
-<span>(</span><span>model: <a title="gcubed.model.Model" href="../model.html#gcubed.model.Model">Model</a>, linearisation_year: int)</span>
+<span>(</span><span>model: <a title="gcubed.model.Model" href="../model.html#gcubed.model.Model">Model</a>, linearisation_year: int, use_neutral_real_interest_rate: bool = True)</span>
 </code></dt>
 <dd>
 <div class="desc"><h3 id="overview">Overview</h3>
-<p>The solver finds a point (a value for each variable in the model)
+<p>The model solver finds a point (a value for each variable in the model)
 that simultaneously solves the nonlinear equations
 in the model, taking as given the values for the vectors:
 - yxr
@@ -607,15 +644,21 @@ following vectors:
 - j1r
 - zer
 - z1r</p>
-<p>The process will be:
-1. Set up database
-2. Populate all vectors using database values for the linearisation year.
-3. Rearrange the model equations so that we can solve for all vectors by evaluating all
-of the model equations and then take the RHS of the equation</p>
-<p>TODO: Implement based on logic in TestLinearisationRootFindingModel2R164</p>
-<h3 id="constructor">Constructor</h3>
-<p>Does constructor operations required by all classes that inherit from this base class.</p>
-<p>These currently just set up numpy array print options.</p></div>
+<p>The process is:</p>
+<ol>
+<li>Populate all vectors using database values for the linearisation year.</li>
+<li>Select just those model equations that involve a LHS variable on the RHS.</li>
+<li>Solve for roots of those equations using the least squares algorithm.</li>
+<li>Check that the roots are indeed roots (least squares could converge to
+values that minimise the sum of squares while not producing roots) by ensuring
+that the RHS values that are the proposed solution to the equations are the LHS
+values for those RHS values.</li>
+</ol>
+<h3 id="arguments">Arguments</h3>
+<p><code>model</code>: The model to linearise.</p>
+<p><code>linearisation_year</code>: The year to linearise around.</p>
+<p><code>use_neutral_real_interest_rate</code>: If <code>True</code>, the neutral real interest rate will be used, otherwise
+the real interest rates will be the value from the database. This parameter defaults to <code>True</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -625,7 +668,7 @@ of the model equations and then take the RHS of the equation</p>
 
     ### Overview
 
-    The solver finds a point (a value for each variable in the model)
+    The model solver finds a point (a value for each variable in the model)
     that simultaneously solves the nonlinear equations 
     in the model, taking as given the values for the vectors:
     - yxr
@@ -640,18 +683,29 @@ of the model equations and then take the RHS of the equation</p>
     - zer
     - z1r
 
-    The process will be:
-    1. Set up database
-    2. Populate all vectors using database values for the linearisation year.
-    3. Rearrange the model equations so that we can solve for all vectors by evaluating all 
-    of the model equations and then take the RHS of the equation
+    The process is:
 
-    TODO: Implement based on logic in TestLinearisationRootFindingModel2R164
-
+    1. Populate all vectors using database values for the linearisation year.
+    2. Select just those model equations that involve a LHS variable on the RHS.
+    3. Solve for roots of those equations using the least squares algorithm.
+    4. Check that the roots are indeed roots (least squares could converge to
+    values that minimise the sum of squares while not producing roots) by ensuring
+    that the RHS values that are the proposed solution to the equations are the LHS
+    values for those RHS values.
     &#34;&#34;&#34;
 
+    def __init__(self, model: Model, linearisation_year: int, use_neutral_real_interest_rate: bool = True):
+        &#34;&#34;&#34;        
+        ### Arguments
 
-    def __init__(self, model: Model, linearisation_year: int ):
+        `model`: The model to linearise.
+
+        `linearisation_year`: The year to linearise around.
+
+        `use_neutral_real_interest_rate`: If `True`, the neutral real interest rate will be used, otherwise
+        the real interest rates will be the value from the database. This parameter defaults to `True`.
+        &#34;&#34;&#34;
+
 
         logging.info(f&#34;Seeking a model solution close to the data values in {linearisation_year}.&#34;)
         self._solution_found = False
@@ -668,7 +722,9 @@ of the model equations and then take the RHS of the equation</p>
         self._parameters = self.model.parameters.parameter_values_vector
 
         # Set up the RHS vectors for the model using data for the linearisation year.
-        self.__load_rhs_vectors(linearisation_year=self.model.configuration.linearisation_year)
+        self.__load_rhs_vectors(
+                linearisation_year=self.linearisation_year,
+                use_neutral_real_interest_rate=use_neutral_real_interest_rate)
 
         # Set up the LHS vectors as vectors of zeros.
         self.__configure_lhs_vectors()
@@ -706,21 +762,21 @@ of the model equations and then take the RHS of the equation</p>
     @property
     def model(self) -&gt; Model:
         &#34;&#34;&#34;
-        Model: The model that needs a solution to linearise around.
+        The model that needs a solution to linearise around.
         &#34;&#34;&#34;
         return self._model
 
     @property
     def linearisation_year(self) -&gt; int:
         &#34;&#34;&#34;
-        int: The return value, the 4 digit linearisation year.
+        The return value, the 4 digit linearisation year.
         &#34;&#34;&#34;
         return self._linearisation_year
 
     @property
     def solution_found(self) -&gt; bool:
         &#34;&#34;&#34;
-        bool: True if the model solution has been found and False otherwise.
+        `True` if the model solution has been found and `False` otherwise.
         &#34;&#34;&#34;
         return self._solution_found
 
@@ -816,14 +872,15 @@ of the model equations and then take the RHS of the equation</p>
 
     def index_of(self, variable:tuple[str,int]) -&gt; int:
         &#34;&#34;&#34;
-        Args:
-            variable (tuple[str,int]): The vector and index pair that
-            identifies the variable.
+        ### Arguments
 
-       ### Returns
-            int: The return value, equal to the index of the variable
-            in the vector of variables that we are adjusting to find 
-            a model solution.
+        `variable`: The vector and index pair that identifies the variable.
+
+        ### Returns
+
+        The return value, equal to the index of the variable
+        in the vector of variables that we are adjusting to find 
+        a model solution.
         &#34;&#34;&#34;
         return self.lhs_variables_indices[variable]
 
@@ -841,7 +898,7 @@ of the model equations and then take the RHS of the equation</p>
             setattr(self, &#34;_{}&#34;.format(vector_name), np.zeros(
                 shape=(self.model.sym_data.vector_length(vector_name=vector_name), 1), dtype=float))
 
-    def __load_rhs_vectors(self, linearisation_year: int):
+    def __load_rhs_vectors(self, linearisation_year: int, use_neutral_real_interest_rate:bool):
         &#34;&#34;&#34;
         Create and set values for the RHS vectors that are used by the 
         model equations.
@@ -856,13 +913,21 @@ of the model equations and then take the RHS of the equation</p>
         That process will underpin the numeric search for a model solution near
         the data values from the linearisation year.
 
-        Args:
-        linearisation_year (int): The (YYYY format) year for which the 
+        ### Arguments:
+
+        `linearisation_year`: The (YYYY format) year for which the 
         model is being linearised. This determines the data that is retrieved
         from the database to populate the RHS vectors.
+
+        `use_neutral_real_interest_rate`: If `True`, the neutral real interest rate,
+        otherwise the actual real interest rate is used.
+
         &#34;&#34;&#34;
         for vector_name in self.model.sym_data.rhs_vector_names:
-            rhs_vector:pd.DataFrame = self.database.rhs_vector_value(vector_name=vector_name, year=linearisation_year, use_neutral_real_interest_rate=True)
+            rhs_vector:pd.DataFrame = self.database.rhs_vector_value(
+                vector_name=vector_name, 
+                year=linearisation_year, 
+                use_neutral_real_interest_rate=use_neutral_real_interest_rate)
             if rhs_vector is not None:
                 setattr(self, f&#34;_{vector_name}&#34;, rhs_vector)
                 # Save the original value of the vector for comparison purposes.
@@ -915,9 +980,9 @@ of the model equations and then take the RHS of the equation</p>
         These LHS and RHS vector values are then exposed as model solver properties and they
         can be accessed as vector values around which the model can be linearised.
 
-       ### Returns
+        ### Returns
 
-        bool: True if the model could be solved and False otherwise.
+        `True` if the model could be solved and `False` otherwise.
 
         &#34;&#34;&#34;
 
@@ -947,15 +1012,17 @@ of the model equations and then take the RHS of the equation</p>
             When this difference between x and the result of the equation evaluations
             is equal to zero for all equations, then a model solution has been found.
 
-            Args:
-            x (np.ndarray): The vector of values being used to evaluate the objective function.
+            ### Arguments
+
+            `x`: The vector of values being used to evaluate the objective function.
             These are the LHS vector values that need to be adjusted to find a model solution.
 
             This objective function implements the model equations to be solved so that we get 
             (model LHS - model RHS) = 0
 
-           ### Returns
-            np.ndarray: The return value, the vector (model LHS - model RHS), evaluated at the
+            ### Returns
+
+            The return value, the vector (model LHS - model RHS), evaluated at the
             input x, for the vector of equations associated with those variables in the model 
             that the solver is adjusting.
             &#34;&#34;&#34;
@@ -1027,15 +1094,16 @@ of the model equations and then take the RHS of the equation</p>
             each of the adjusting variables that occurs on the RHS of
             an equation that is being used by the solver to find a model solution.
 
-            Args:
-            x (np.ndarray): The vector of values being used to evaluate the objective function.
+            ### Arguments
+            `x`: The vector of values being used to evaluate the objective function.
             These are the LHS vector values that need to be adjusted to find a model solution.
 
             This objective function implements the model equations to be solved so that we get 
             (model LHS - model RHS) = 0
 
-           ### Returns
-            The return value, the sparse matrix representing the Jacobian.
+            ### Returns
+
+            The sparse matrix representing the Jacobian.
             &#34;&#34;&#34;
 
             # Step 0.
@@ -1147,10 +1215,22 @@ of the model equations and then take the RHS of the equation</p>
             if not np.allclose(lhs_vector, rhs_vector, atol=0.000001):
                 logging.error(f&#34;The model solver failed to find a solution for {lhs_vector_name}&#34;)
                 result = False
+            else:
+                logging.info(f&#34;The model solver found a solution for {lhs_vector_name}&#34;)
             # data: pd.DataFrame = pd.DataFrame(np.hstack(( getattr(self, f&#34;_original_{lhs_vector_name}&#34;),  getattr(self, f&#34;_original_{rhs_vector_name}&#34;), getattr(self, f&#34;_solution_{lhs_vector_name}&#34;), getattr(self, f&#34;_{lhs_vector_name}&#34;) )))
             # data.index = self.model.sym_data.vector_variable_names(vector_name=rhs_vector_name)
             # data.columns = [&#39;LHS original&#39;, &#39;RHS original&#39;, &#39;RHS/LHS adjusted&#39;, &#39;RHS/LHS iteration test&#39;]
             # data.to_csv(f&#34;{self.model.configuration.benchmarking_reports_directory}{rhs_vector_name} adjusted linearisation values.csv&#34;)
+
+        # Get a look at the starting values found by the solver.
+        # x1l = pd.DataFrame(getattr(self, &#39;_x1l&#39;))
+        # x1l.index = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
+        # logging.debug(f&#34;The INTN(UU) value is {x1l.loc[&#39;INTN(UU)&#39;,:]}&#34;)
+
+        # z1l = pd.DataFrame(getattr(self, &#39;_z1l&#39;))
+        # z1l.index = self.model.sym_data.vector_variable_names(vector_name=&#39;z1l&#39;)
+        # logging.debug(f&#34;The INFL(UU) value is {z1l.loc[&#39;INFL(UU)&#39;,:]}&#34;)
+        # logging.debug(f&#34;The INTR(UU) value is {z1l.loc[&#39;INTR(UU)&#39;,:]}&#34;)
 
         # Model solved successfully.
         return result</code></pre>
@@ -1163,7 +1243,7 @@ of the model equations and then take the RHS of the equation</p>
 <dl>
 <dt id="gcubed.linearisation.model_solver.ModelSolver.linearisation_year"><code class="name">var <span class="ident">linearisation_year</span> : int</code></dt>
 <dd>
-<div class="desc"><p>int: The return value, the 4 digit linearisation year.</p></div>
+<div class="desc"><p>The return value, the 4 digit linearisation year.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1171,14 +1251,14 @@ of the model equations and then take the RHS of the equation</p>
 <pre><code class="python">@property
 def linearisation_year(self) -&gt; int:
     &#34;&#34;&#34;
-    int: The return value, the 4 digit linearisation year.
+    The return value, the 4 digit linearisation year.
     &#34;&#34;&#34;
     return self._linearisation_year</code></pre>
 </details>
 </dd>
 <dt id="gcubed.linearisation.model_solver.ModelSolver.model"><code class="name">var <span class="ident">model</span> : <a title="gcubed.model.Model" href="../model.html#gcubed.model.Model">Model</a></code></dt>
 <dd>
-<div class="desc"><p>Model: The model that needs a solution to linearise around.</p></div>
+<div class="desc"><p>The model that needs a solution to linearise around.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1186,14 +1266,14 @@ def linearisation_year(self) -&gt; int:
 <pre><code class="python">@property
 def model(self) -&gt; Model:
     &#34;&#34;&#34;
-    Model: The model that needs a solution to linearise around.
+    The model that needs a solution to linearise around.
     &#34;&#34;&#34;
     return self._model</code></pre>
 </details>
 </dd>
 <dt id="gcubed.linearisation.model_solver.ModelSolver.solution_found"><code class="name">var <span class="ident">solution_found</span> : bool</code></dt>
 <dd>
-<div class="desc"><p>bool: True if the model solution has been found and False otherwise.</p></div>
+<div class="desc"><p><code>True</code> if the model solution has been found and <code>False</code> otherwise.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1201,7 +1281,7 @@ def model(self) -&gt; Model:
 <pre><code class="python">@property
 def solution_found(self) -&gt; bool:
     &#34;&#34;&#34;
-    bool: True if the model solution has been found and False otherwise.
+    `True` if the model solution has been found and `False` otherwise.
     &#34;&#34;&#34;
     return self._solution_found</code></pre>
 </details>
@@ -1213,31 +1293,27 @@ def solution_found(self) -&gt; bool:
 <span>def <span class="ident">index_of</span></span>(<span>self, variable: tuple[str, int]) ‑> int</span>
 </code></dt>
 <dd>
-<div class="desc"><h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>variable</code></strong> :&ensp;<code>tuple[str,int]</code></dt>
-<dd>The vector and index pair that</dd>
-</dl>
-<p>identifies the variable.</p>
+<div class="desc"><h3 id="arguments">Arguments</h3>
+<p><code>variable</code>: The vector and index pair that identifies the variable.</p>
 <h3 id="returns">Returns</h3>
-<pre><code> int: The return value, equal to the index of the variable
- in the vector of variables that we are adjusting to find 
- a model solution.
-</code></pre></div>
+<p>The return value, equal to the index of the variable
+in the vector of variables that we are adjusting to find
+a model solution.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def index_of(self, variable:tuple[str,int]) -&gt; int:
     &#34;&#34;&#34;
-    Args:
-        variable (tuple[str,int]): The vector and index pair that
-        identifies the variable.
+    ### Arguments
 
-   ### Returns
-        int: The return value, equal to the index of the variable
-        in the vector of variables that we are adjusting to find 
-        a model solution.
+    `variable`: The vector and index pair that identifies the variable.
+
+    ### Returns
+
+    The return value, equal to the index of the variable
+    in the vector of variables that we are adjusting to find 
+    a model solution.
     &#34;&#34;&#34;
     return self.lhs_variables_indices[variable]</code></pre>
 </details>
@@ -1249,6 +1325,7 @@ def solution_found(self) -&gt; bool:
 <ul class="hlist">
 <li><code><a title="gcubed.base.Base.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.base.Base.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.now" href="../base.html#gcubed.base.Base.now">now</a></code></li>
 <li><code><a title="gcubed.base.Base.zeros" href="../base.html#gcubed.base.Base.zeros">zeros</a></code></li>
 </ul>
 </li>

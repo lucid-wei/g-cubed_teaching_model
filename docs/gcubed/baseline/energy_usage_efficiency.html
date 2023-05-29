@@ -39,6 +39,10 @@ from gcubed.base import Base
 from gcubed.model_configuration import ModelConfiguration
 from gcubed.sym_data import SymData
 
+# Ensure pdoc generated API documentation includes the following methods.
+__pdoc__ = {}
+__pdoc__[&#39;EnergyUsageEfficiency._load_energy_usage_efficiency_data&#39;] = True
+
 class EnergyUsageEfficiency(Base):
     &#34;&#34;&#34;
     Loads energy usage efficiency (AEEI) data.
@@ -48,7 +52,7 @@ class EnergyUsageEfficiency(Base):
         assert sym_data is not None
         assert sym_data.configuration is not None
         self._sym_data: SymData = sym_data
-        self.__load_energy_usage_efficiency_data()
+        self._load_energy_usage_efficiency_data()
 
         self.__validate()
 
@@ -100,8 +104,10 @@ class EnergyUsageEfficiency(Base):
         return self._consumption_cumulative_aeei
 
 
-    def __load_energy_usage_efficiency_data(self):
+    def _load_energy_usage_efficiency_data(self):
         &#34;&#34;&#34;
+        **This function is intended for gcubed module internal use. It is exposed only for documentation purposes.**
+
         Parse the CSV file into its the dataframe of energy usage efficiency data.
         &#34;&#34;&#34;
 
@@ -172,7 +178,7 @@ class EnergyUsageEfficiency(Base):
         assert sym_data is not None
         assert sym_data.configuration is not None
         self._sym_data: SymData = sym_data
-        self.__load_energy_usage_efficiency_data()
+        self._load_energy_usage_efficiency_data()
 
         self.__validate()
 
@@ -224,8 +230,10 @@ class EnergyUsageEfficiency(Base):
         return self._consumption_cumulative_aeei
 
 
-    def __load_energy_usage_efficiency_data(self):
+    def _load_energy_usage_efficiency_data(self):
         &#34;&#34;&#34;
+        **This function is intended for gcubed module internal use. It is exposed only for documentation purposes.**
+
         Parse the CSV file into its the dataframe of energy usage efficiency data.
         &#34;&#34;&#34;
 
@@ -329,6 +337,59 @@ def sym_data(self) -&gt; SymData:
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="gcubed.baseline.energy_usage_efficiency.EnergyUsageEfficiency._load_energy_usage_efficiency_data"><code class="name flex">
+<span>def <span class="ident">_load_energy_usage_efficiency_data</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p><strong>This function is intended for gcubed module internal use. It is exposed only for documentation purposes.</strong></p>
+<p>Parse the CSV file into its the dataframe of energy usage efficiency data.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def _load_energy_usage_efficiency_data(self):
+    &#34;&#34;&#34;
+    **This function is intended for gcubed module internal use. It is exposed only for documentation purposes.**
+
+    Parse the CSV file into its the dataframe of energy usage efficiency data.
+    &#34;&#34;&#34;
+
+    # Load the data into a dataframe
+    self._filename: str = self.configuration.aeei_file
+    if not os.path.isfile(self._filename):
+        raise Exception(f&#34;The energy usage efficiency (AEEI) file, {self._filename}, does not exist. Check the model configuration.&#34;)
+    input: pd.DataFrame = pd.read_csv(self._filename)
+    input.index = input.iloc[:,0]
+    input = input.loc[:, self.configuration.projection_years_column_labels]
+
+    # Get the consumption energy usage efficiency first.
+    self._consumption_energy_usage_efficiency = input.tail(self.sym_data.regions_count)
+    self._consumption_energy_usage_efficiency.index = self.sym_data.regions_members
+    self._consumption_cumulative_aeei = self._consumption_energy_usage_efficiency.copy()
+    self._consumption_cumulative_aeei.iloc[:, 0] = 0
+    self._consumption_cumulative_aeei = self._consumption_cumulative_aeei.cumsum(axis=1)
+    # logging.debug(self._consumption_cumulative_aeei)
+
+    # Split the remaining data by region
+    sectors_input = input.head(len(input.index) - self.sym_data.regions_count)
+    self._sector_aeei = dict()
+    self._sector_cumulative_aeei = dict()
+    for region in self.sym_data.regions_members:
+        region_aeei = sectors_input.loc[sectors_input.index.str.endswith(region, na=False), self.configuration.projection_years_column_labels].copy()
+        region_aeei.index = self.sym_data.sectors_members
+
+        # logging.debug(f&#34;{region} aeei index\n{region_aeei}&#34;)
+
+        region_cumulative_aeei = region_aeei.copy()
+        region_cumulative_aeei.iloc[:, 0] = 0
+        region_cumulative_aeei = region_cumulative_aeei.cumsum(axis=1)
+
+        # logging.debug(f&#34;{region} region_cumulative_aeei\n{region_cumulative_aeei}&#34;)
+
+        self._sector_cumulative_aeei[region] = region_cumulative_aeei
+        self._sector_aeei[region] = region_aeei</code></pre>
+</details>
+</dd>
 <dt id="gcubed.baseline.energy_usage_efficiency.EnergyUsageEfficiency.sector_cumulative_energy_usage_efficiency_gains"><code class="name flex">
 <span>def <span class="ident">sector_cumulative_energy_usage_efficiency_gains</span></span>(<span>self, region: str) ‑> pandas.core.frame.DataFrame</span>
 </code></dt>
@@ -376,6 +437,7 @@ This corresponds to the SHL rows and the SHLY row and SHLZ row for each region o
 <ul class="hlist">
 <li><code><a title="gcubed.base.Base.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.base.Base.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.now" href="../base.html#gcubed.base.Base.now">now</a></code></li>
 <li><code><a title="gcubed.base.Base.zeros" href="../base.html#gcubed.base.Base.zeros">zeros</a></code></li>
 </ul>
 </li>
@@ -400,6 +462,7 @@ This corresponds to the SHL rows and the SHLY row and SHLZ row for each region o
 <li>
 <h4><code><a title="gcubed.baseline.energy_usage_efficiency.EnergyUsageEfficiency" href="#gcubed.baseline.energy_usage_efficiency.EnergyUsageEfficiency">EnergyUsageEfficiency</a></code></h4>
 <ul class="">
+<li><code><a title="gcubed.baseline.energy_usage_efficiency.EnergyUsageEfficiency._load_energy_usage_efficiency_data" href="#gcubed.baseline.energy_usage_efficiency.EnergyUsageEfficiency._load_energy_usage_efficiency_data">_load_energy_usage_efficiency_data</a></code></li>
 <li><code><a title="gcubed.baseline.energy_usage_efficiency.EnergyUsageEfficiency.configuration" href="#gcubed.baseline.energy_usage_efficiency.EnergyUsageEfficiency.configuration">configuration</a></code></li>
 <li><code><a title="gcubed.baseline.energy_usage_efficiency.EnergyUsageEfficiency.consumption_cumulative_energy_usage_efficiency_gains" href="#gcubed.baseline.energy_usage_efficiency.EnergyUsageEfficiency.consumption_cumulative_energy_usage_efficiency_gains">consumption_cumulative_energy_usage_efficiency_gains</a></code></li>
 <li><code><a title="gcubed.baseline.energy_usage_efficiency.EnergyUsageEfficiency.consumption_energy_usage_efficiency_gains" href="#gcubed.baseline.energy_usage_efficiency.EnergyUsageEfficiency.consumption_energy_usage_efficiency_gains">consumption_energy_usage_efficiency_gains</a></code></li>

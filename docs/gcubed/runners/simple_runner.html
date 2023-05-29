@@ -82,6 +82,26 @@ class SimpleRunner(Base):
     that is located in the `simulations/experiment1` subdirectory of the model&#39;s root
     directory.
 
+    After a successful run, if the `SimpleRunner.save_results` = `True`, 
+    you will see the results generated in a new timestamped results 
+    subdirectory of the directory that you ran the command from.
+    
+    The results directory contains three CSV files and a log file:
+
+    * `baseline_projections.csv` 
+    * `deviation_projections.csv`
+    * `final_projections.csv`
+    * `run.log`
+
+    #### Note: Determine behaviour with regard to neutral real interest rates
+    by setting the `SimpleRunner.linearise_around_the_neutral_real_interest_rate` and
+    the `SimpleRunner.start_projections_from_the_neutral_real_interest_rate` properties
+    before triggering the model run by calling `SimpleRunner.run`. The default
+    behaviour is to:
+    
+    * use neutral real interest rates for linearisation and
+    * start the projections from the neutral real interest rate.
+
     &#34;&#34;&#34;
 
     def __init__(self, working_directory:str, configuration_file: str, experiment_design_file: str = None):
@@ -94,15 +114,20 @@ class SimpleRunner(Base):
 
         ### Arguments
         
-        working_directory: The directory where the results and logs are to be stored.
+        `working_directory`: The directory where the results and logs are to be stored.
 
-        configuration_file: The location of the configuration file, as an absolute path or relative to the 
+        `configuration_file`: The location of the configuration file, as an absolute path or relative to the 
         specified working directory.
 
-        experiment_design_file: The optional location of the experiment design CSV file, as a relative path directory
+        `experiment_design_file`: The optional location of the experiment design CSV file, as a relative path directory
         to the experiment design file from the simulations directory within the model directory (the model directory contains
         the configuration file). If the experiment design file is not specified then the run just produces baseline 
         projections.
+
+        use_neutral_real_interest_rate: If `True` then the neutral real interest rate is used in the model, otherwise
+        the real interest rates are based on the database values. This parameter is optional and defaults to
+        a value of `True`.
+
         &#34;&#34;&#34;
 
         self.save_results = False
@@ -113,15 +138,9 @@ class SimpleRunner(Base):
         if not os.access(working_directory, os.W_OK):
             raise Exception(f&#34;You need write access to {working_directory} but that permission has not been granted to you.&#34;)
 
-        if self.save_results:
-            # Set up directory where results will be stored
-            self.timestamp: str = datetime.now().strftime(&#34;%Y-%m-%d_%H-%M-%S&#34;)
-            self.results_directory: str = os.path.join(working_directory, f&#34;results_{self.timestamp}&#34;)
-            if not os.path.exists(self.results_directory):
-                os.mkdir(self.results_directory)
-            if not os.path.isdir(self.results_directory):
-                raise Exception(f&#34;Results are to be stored in the directory {self.results_directory} but it is a file, not a directory.&#34;)
-
+        # Set up defaults for the linearisation and the starting projection values for interest rates.
+        self.linearise_around_the_neutral_real_interest_rate = True
+        self.start_projections_from_the_neutral_real_interest_rate = True
 
         # Get the absolute path to the model configuration file.
         if os.path.isabs(configuration_file):
@@ -136,8 +155,11 @@ class SimpleRunner(Base):
         model_configuration: ModelConfiguration = ModelConfiguration(configuration_file=self.filename)
         self._model: Model = Model(model_configuration)
 
+        # Save the working directory for later use.
+        self._working_directory = working_directory
+
         # Save the experiment design file for later use.
-        self.experiment_design_file = experiment_design_file
+        self._experiment_design_file = experiment_design_file
 
     @property
     def model(self) -&gt; ModelConfiguration:
@@ -188,16 +210,51 @@ class SimpleRunner(Base):
         return self._save_results
 
     @save_results.setter
-    def save_results(self, value: bool) -&gt; bool:
+    def save_results(self, value: bool):
         &#34;&#34;&#34;
-        ### Overview
-        
-        Set the value to True if the results are to be saved to a 
-        results directory automatically at the end of the run and false otherwise.
+        Set to True if the results are to be saved to a results 
+        directory automatically at the end of the
+        run and false otherwise. 
         &#34;&#34;&#34;
         assert value is not None
         assert isinstance(value, bool)
         self._save_results = value
+    
+    @property
+    def linearise_around_the_neutral_real_interest_rate(self) -&gt; bool:
+        &#34;&#34;&#34;
+        `True` if the baseline linearisation is around the neutral real interest rate
+        and `False` if it is around database values.
+        &#34;&#34;&#34;
+        return self._linearise_around_the_neutral_real_interest_rate
+    
+    @linearise_around_the_neutral_real_interest_rate.setter
+    def linearise_around_the_neutral_real_interest_rate(self, value: bool):
+        &#34;&#34;&#34;
+        Set to `True` if the baseline linearisation is around the neutral real interest rate
+        and `False` if it is around database values.
+        &#34;&#34;&#34;
+        assert value is not None
+        assert isinstance(value, bool)
+        self._linearise_around_the_neutral_real_interest_rate = value
+
+    @property
+    def start_projections_from_the_neutral_real_interest_rate(self) -&gt; bool:
+        &#34;&#34;&#34;
+        `True` if the baseline linearisation is around neutral real interest rates
+        and `False` if they are around database values.
+        &#34;&#34;&#34;
+        return self._start_projections_from_the_neutral_real_interest_rate
+    
+    @start_projections_from_the_neutral_real_interest_rate.setter
+    def start_projections_from_the_neutral_real_interest_rate(self, value: bool):
+        &#34;&#34;&#34;
+        Set to `True` if the baseline projections start with neutral real interest rate
+        and `False` if they start with database values.
+        &#34;&#34;&#34;
+        assert value is not None
+        assert isinstance(value, bool)
+        self._start_projections_from_the_neutral_real_interest_rate = value
 
     def run(self):
         &#34;&#34;&#34;
@@ -212,6 +269,17 @@ class SimpleRunner(Base):
         the simulation layer(s) of interest and the baseline for comparison and
         analysis purposes.
         &#34;&#34;&#34;
+
+        if self.save_results:
+            # Set up directory where results will be stored
+            self._timestamp: str = self.now
+            experiment_name = os.path.dirname(self._experiment_design_file)
+            self.results_directory: str = os.path.join(self._working_directory, &#34;simulations&#34;, experiment_name, f&#34;results_{self._timestamp}&#34;)
+            if not os.path.exists(self.results_directory):
+                os.mkdir(self.results_directory)
+            if not os.path.isdir(self.results_directory):
+                raise Exception(f&#34;Results are to be stored in the directory {self.results_directory} but it is a file, not a directory.&#34;)
+
         if self.save_results:
             log_file: str = os.path.join(self.results_directory, &#34;run.log&#34;)
             fh = logging.FileHandler(log_file, mode=&#39;w&#39;)
@@ -231,26 +299,30 @@ class SimpleRunner(Base):
             logging.info(f&#34;Only logging to the console. No results being saved to files.&#34;)
 
         # Get the model stable manifold and related results
-        linear_model: LinearModel = LinearModel(model=self.model)
+        linear_model: LinearModel = LinearModel(
+            model=self.model, 
+            use_neutral_real_interest_rate=self.linearise_around_the_neutral_real_interest_rate)
         state_space_form: StateSpaceForm = StateSpaceForm(linear_model=linear_model)
         stable_manifold: StableManifold = StableManifold(state_space_form=state_space_form)
 
         # Generate the baseline projections
-        self._baseline_projections: BaselineProjections = BaselineProjections(stable_manifold=stable_manifold)
+        self._baseline_projections: BaselineProjections = BaselineProjections(
+            stable_manifold=stable_manifold, 
+            start_from_neutral_real_interest_rate=self.start_projections_from_the_neutral_real_interest_rate)
 
         # Generate the CSV file containing baseline projections
         if self.save_results:
             self.baseline_projections.publishable_projections.to_csv(f&#34;{self.results_directory}/baseline_projections.csv&#34;)
             logging.info(f&#34;Baseline publication projections have been saved to a CSV file in {self.results_directory}&#34;)
 
-        if self.experiment_design_file is not None:
+        if self._experiment_design_file is not None:
 
             # Run the simulation experiment
-            self._experiment = SimulationExperiment(baseline_projections=self.baseline_projections, design_file=self.experiment_design_file)
+            self._experiment = SimulationExperiment(baseline_projections=self.baseline_projections, design_file=self._experiment_design_file)
 
             if self.save_results:
                 # Generate the CSV file containing simulation projections
-                self.final_projections.publishable_projections.to_csv(f&#34;{self.results_directory}/simulation_projections.csv&#34;)
+                self.final_projections.publishable_projections.to_csv(f&#34;{self.results_directory}/final_projections.csv&#34;)
                 # Generate the CSV file containing the simulation deviation from baseline projections
                 Projections.get_differences_between_projections(new_projections=self.final_projections.publishable_projections, original_projections=self.baseline_projections.publishable_projections).to_csv(f&#34;{self.results_directory}/deviation_projections.csv&#34;)
                 logging.info(f&#34;The simulation experiment results have been saved as CSV files in {self.results_directory}&#34;)
@@ -300,17 +372,39 @@ called <code>configuration2R164.csv</code>. It also assumes that the simulation 
 described by the design.csv file that is contained in the <code>design.csv</code> file
 that is located in the <code>simulations/experiment1</code> subdirectory of the model's root
 directory.</p>
+<p>After a successful run, if the <code><a title="gcubed.runners.simple_runner.SimpleRunner.save_results" href="#gcubed.runners.simple_runner.SimpleRunner.save_results">SimpleRunner.save_results</a></code> = <code>True</code>,
+you will see the results generated in a new timestamped results
+subdirectory of the directory that you ran the command from.</p>
+<p>The results directory contains three CSV files and a log file:</p>
+<ul>
+<li><code>baseline_projections.csv</code> </li>
+<li><code>deviation_projections.csv</code></li>
+<li><code>final_projections.csv</code></li>
+<li><code>run.log</code></li>
+</ul>
+<h4 id="note-determine-behaviour-with-regard-to-neutral-real-interest-rates">Note: Determine behaviour with regard to neutral real interest rates</h4>
+<p>by setting the <code><a title="gcubed.runners.simple_runner.SimpleRunner.linearise_around_the_neutral_real_interest_rate" href="#gcubed.runners.simple_runner.SimpleRunner.linearise_around_the_neutral_real_interest_rate">SimpleRunner.linearise_around_the_neutral_real_interest_rate</a></code> and
+the <code><a title="gcubed.runners.simple_runner.SimpleRunner.start_projections_from_the_neutral_real_interest_rate" href="#gcubed.runners.simple_runner.SimpleRunner.start_projections_from_the_neutral_real_interest_rate">SimpleRunner.start_projections_from_the_neutral_real_interest_rate</a></code> properties
+before triggering the model run by calling <code><a title="gcubed.runners.simple_runner.SimpleRunner.run" href="#gcubed.runners.simple_runner.SimpleRunner.run">SimpleRunner.run()</a></code>. The default
+behaviour is to:</p>
+<ul>
+<li>use neutral real interest rates for linearisation and</li>
+<li>start the projections from the neutral real interest rate.</li>
+</ul>
 <h3 id="overview_1">Overview</h3>
 <p>Loads the configuration and the model, ready for running. Call the run method
 when you are ready to start model linearisation etc.</p>
 <h3 id="arguments">Arguments</h3>
-<p>working_directory: The directory where the results and logs are to be stored.</p>
-<p>configuration_file: The location of the configuration file, as an absolute path or relative to the
+<p><code>working_directory</code>: The directory where the results and logs are to be stored.</p>
+<p><code>configuration_file</code>: The location of the configuration file, as an absolute path or relative to the
 specified working directory.</p>
-<p>experiment_design_file: The optional location of the experiment design CSV file, as a relative path directory
+<p><code>experiment_design_file</code>: The optional location of the experiment design CSV file, as a relative path directory
 to the experiment design file from the simulations directory within the model directory (the model directory contains
 the configuration file). If the experiment design file is not specified then the run just produces baseline
-projections.</p></div>
+projections.</p>
+<p>use_neutral_real_interest_rate: If <code>True</code> then the neutral real interest rate is used in the model, otherwise
+the real interest rates are based on the database values. This parameter is optional and defaults to
+a value of <code>True</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -352,6 +446,26 @@ projections.</p></div>
     that is located in the `simulations/experiment1` subdirectory of the model&#39;s root
     directory.
 
+    After a successful run, if the `SimpleRunner.save_results` = `True`, 
+    you will see the results generated in a new timestamped results 
+    subdirectory of the directory that you ran the command from.
+    
+    The results directory contains three CSV files and a log file:
+
+    * `baseline_projections.csv` 
+    * `deviation_projections.csv`
+    * `final_projections.csv`
+    * `run.log`
+
+    #### Note: Determine behaviour with regard to neutral real interest rates
+    by setting the `SimpleRunner.linearise_around_the_neutral_real_interest_rate` and
+    the `SimpleRunner.start_projections_from_the_neutral_real_interest_rate` properties
+    before triggering the model run by calling `SimpleRunner.run`. The default
+    behaviour is to:
+    
+    * use neutral real interest rates for linearisation and
+    * start the projections from the neutral real interest rate.
+
     &#34;&#34;&#34;
 
     def __init__(self, working_directory:str, configuration_file: str, experiment_design_file: str = None):
@@ -364,15 +478,20 @@ projections.</p></div>
 
         ### Arguments
         
-        working_directory: The directory where the results and logs are to be stored.
+        `working_directory`: The directory where the results and logs are to be stored.
 
-        configuration_file: The location of the configuration file, as an absolute path or relative to the 
+        `configuration_file`: The location of the configuration file, as an absolute path or relative to the 
         specified working directory.
 
-        experiment_design_file: The optional location of the experiment design CSV file, as a relative path directory
+        `experiment_design_file`: The optional location of the experiment design CSV file, as a relative path directory
         to the experiment design file from the simulations directory within the model directory (the model directory contains
         the configuration file). If the experiment design file is not specified then the run just produces baseline 
         projections.
+
+        use_neutral_real_interest_rate: If `True` then the neutral real interest rate is used in the model, otherwise
+        the real interest rates are based on the database values. This parameter is optional and defaults to
+        a value of `True`.
+
         &#34;&#34;&#34;
 
         self.save_results = False
@@ -383,15 +502,9 @@ projections.</p></div>
         if not os.access(working_directory, os.W_OK):
             raise Exception(f&#34;You need write access to {working_directory} but that permission has not been granted to you.&#34;)
 
-        if self.save_results:
-            # Set up directory where results will be stored
-            self.timestamp: str = datetime.now().strftime(&#34;%Y-%m-%d_%H-%M-%S&#34;)
-            self.results_directory: str = os.path.join(working_directory, f&#34;results_{self.timestamp}&#34;)
-            if not os.path.exists(self.results_directory):
-                os.mkdir(self.results_directory)
-            if not os.path.isdir(self.results_directory):
-                raise Exception(f&#34;Results are to be stored in the directory {self.results_directory} but it is a file, not a directory.&#34;)
-
+        # Set up defaults for the linearisation and the starting projection values for interest rates.
+        self.linearise_around_the_neutral_real_interest_rate = True
+        self.start_projections_from_the_neutral_real_interest_rate = True
 
         # Get the absolute path to the model configuration file.
         if os.path.isabs(configuration_file):
@@ -406,8 +519,11 @@ projections.</p></div>
         model_configuration: ModelConfiguration = ModelConfiguration(configuration_file=self.filename)
         self._model: Model = Model(model_configuration)
 
+        # Save the working directory for later use.
+        self._working_directory = working_directory
+
         # Save the experiment design file for later use.
-        self.experiment_design_file = experiment_design_file
+        self._experiment_design_file = experiment_design_file
 
     @property
     def model(self) -&gt; ModelConfiguration:
@@ -458,16 +574,51 @@ projections.</p></div>
         return self._save_results
 
     @save_results.setter
-    def save_results(self, value: bool) -&gt; bool:
+    def save_results(self, value: bool):
         &#34;&#34;&#34;
-        ### Overview
-        
-        Set the value to True if the results are to be saved to a 
-        results directory automatically at the end of the run and false otherwise.
+        Set to True if the results are to be saved to a results 
+        directory automatically at the end of the
+        run and false otherwise. 
         &#34;&#34;&#34;
         assert value is not None
         assert isinstance(value, bool)
         self._save_results = value
+    
+    @property
+    def linearise_around_the_neutral_real_interest_rate(self) -&gt; bool:
+        &#34;&#34;&#34;
+        `True` if the baseline linearisation is around the neutral real interest rate
+        and `False` if it is around database values.
+        &#34;&#34;&#34;
+        return self._linearise_around_the_neutral_real_interest_rate
+    
+    @linearise_around_the_neutral_real_interest_rate.setter
+    def linearise_around_the_neutral_real_interest_rate(self, value: bool):
+        &#34;&#34;&#34;
+        Set to `True` if the baseline linearisation is around the neutral real interest rate
+        and `False` if it is around database values.
+        &#34;&#34;&#34;
+        assert value is not None
+        assert isinstance(value, bool)
+        self._linearise_around_the_neutral_real_interest_rate = value
+
+    @property
+    def start_projections_from_the_neutral_real_interest_rate(self) -&gt; bool:
+        &#34;&#34;&#34;
+        `True` if the baseline linearisation is around neutral real interest rates
+        and `False` if they are around database values.
+        &#34;&#34;&#34;
+        return self._start_projections_from_the_neutral_real_interest_rate
+    
+    @start_projections_from_the_neutral_real_interest_rate.setter
+    def start_projections_from_the_neutral_real_interest_rate(self, value: bool):
+        &#34;&#34;&#34;
+        Set to `True` if the baseline projections start with neutral real interest rate
+        and `False` if they start with database values.
+        &#34;&#34;&#34;
+        assert value is not None
+        assert isinstance(value, bool)
+        self._start_projections_from_the_neutral_real_interest_rate = value
 
     def run(self):
         &#34;&#34;&#34;
@@ -482,6 +633,17 @@ projections.</p></div>
         the simulation layer(s) of interest and the baseline for comparison and
         analysis purposes.
         &#34;&#34;&#34;
+
+        if self.save_results:
+            # Set up directory where results will be stored
+            self._timestamp: str = self.now
+            experiment_name = os.path.dirname(self._experiment_design_file)
+            self.results_directory: str = os.path.join(self._working_directory, &#34;simulations&#34;, experiment_name, f&#34;results_{self._timestamp}&#34;)
+            if not os.path.exists(self.results_directory):
+                os.mkdir(self.results_directory)
+            if not os.path.isdir(self.results_directory):
+                raise Exception(f&#34;Results are to be stored in the directory {self.results_directory} but it is a file, not a directory.&#34;)
+
         if self.save_results:
             log_file: str = os.path.join(self.results_directory, &#34;run.log&#34;)
             fh = logging.FileHandler(log_file, mode=&#39;w&#39;)
@@ -501,26 +663,30 @@ projections.</p></div>
             logging.info(f&#34;Only logging to the console. No results being saved to files.&#34;)
 
         # Get the model stable manifold and related results
-        linear_model: LinearModel = LinearModel(model=self.model)
+        linear_model: LinearModel = LinearModel(
+            model=self.model, 
+            use_neutral_real_interest_rate=self.linearise_around_the_neutral_real_interest_rate)
         state_space_form: StateSpaceForm = StateSpaceForm(linear_model=linear_model)
         stable_manifold: StableManifold = StableManifold(state_space_form=state_space_form)
 
         # Generate the baseline projections
-        self._baseline_projections: BaselineProjections = BaselineProjections(stable_manifold=stable_manifold)
+        self._baseline_projections: BaselineProjections = BaselineProjections(
+            stable_manifold=stable_manifold, 
+            start_from_neutral_real_interest_rate=self.start_projections_from_the_neutral_real_interest_rate)
 
         # Generate the CSV file containing baseline projections
         if self.save_results:
             self.baseline_projections.publishable_projections.to_csv(f&#34;{self.results_directory}/baseline_projections.csv&#34;)
             logging.info(f&#34;Baseline publication projections have been saved to a CSV file in {self.results_directory}&#34;)
 
-        if self.experiment_design_file is not None:
+        if self._experiment_design_file is not None:
 
             # Run the simulation experiment
-            self._experiment = SimulationExperiment(baseline_projections=self.baseline_projections, design_file=self.experiment_design_file)
+            self._experiment = SimulationExperiment(baseline_projections=self.baseline_projections, design_file=self._experiment_design_file)
 
             if self.save_results:
                 # Generate the CSV file containing simulation projections
-                self.final_projections.publishable_projections.to_csv(f&#34;{self.results_directory}/simulation_projections.csv&#34;)
+                self.final_projections.publishable_projections.to_csv(f&#34;{self.results_directory}/final_projections.csv&#34;)
                 # Generate the CSV file containing the simulation deviation from baseline projections
                 Projections.get_differences_between_projections(new_projections=self.final_projections.publishable_projections, original_projections=self.baseline_projections.publishable_projections).to_csv(f&#34;{self.results_directory}/deviation_projections.csv&#34;)
                 logging.info(f&#34;The simulation experiment results have been saved as CSV files in {self.results_directory}&#34;)
@@ -585,6 +751,23 @@ def final_projections(self) -&gt; Projections:
     return self.experiment.final_projections</code></pre>
 </details>
 </dd>
+<dt id="gcubed.runners.simple_runner.SimpleRunner.linearise_around_the_neutral_real_interest_rate"><code class="name">var <span class="ident">linearise_around_the_neutral_real_interest_rate</span> : bool</code></dt>
+<dd>
+<div class="desc"><p><code>True</code> if the baseline linearisation is around the neutral real interest rate
+and <code>False</code> if it is around database values.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def linearise_around_the_neutral_real_interest_rate(self) -&gt; bool:
+    &#34;&#34;&#34;
+    `True` if the baseline linearisation is around the neutral real interest rate
+    and `False` if it is around database values.
+    &#34;&#34;&#34;
+    return self._linearise_around_the_neutral_real_interest_rate</code></pre>
+</details>
+</dd>
 <dt id="gcubed.runners.simple_runner.SimpleRunner.model"><code class="name">var <span class="ident">model</span> : <a title="gcubed.model_configuration.ModelConfiguration" href="../model_configuration.html#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a></code></dt>
 <dd>
 <div class="desc"><p>The model being run.</p></div>
@@ -625,6 +808,23 @@ def save_results(self) -&gt; bool:
     return self._save_results</code></pre>
 </details>
 </dd>
+<dt id="gcubed.runners.simple_runner.SimpleRunner.start_projections_from_the_neutral_real_interest_rate"><code class="name">var <span class="ident">start_projections_from_the_neutral_real_interest_rate</span> : bool</code></dt>
+<dd>
+<div class="desc"><p><code>True</code> if the baseline linearisation is around neutral real interest rates
+and <code>False</code> if they are around database values.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def start_projections_from_the_neutral_real_interest_rate(self) -&gt; bool:
+    &#34;&#34;&#34;
+    `True` if the baseline linearisation is around neutral real interest rates
+    and `False` if they are around database values.
+    &#34;&#34;&#34;
+    return self._start_projections_from_the_neutral_real_interest_rate</code></pre>
+</details>
+</dd>
 </dl>
 <h3>Methods</h3>
 <dl>
@@ -656,6 +856,17 @@ analysis purposes.</p></div>
     the simulation layer(s) of interest and the baseline for comparison and
     analysis purposes.
     &#34;&#34;&#34;
+
+    if self.save_results:
+        # Set up directory where results will be stored
+        self._timestamp: str = self.now
+        experiment_name = os.path.dirname(self._experiment_design_file)
+        self.results_directory: str = os.path.join(self._working_directory, &#34;simulations&#34;, experiment_name, f&#34;results_{self._timestamp}&#34;)
+        if not os.path.exists(self.results_directory):
+            os.mkdir(self.results_directory)
+        if not os.path.isdir(self.results_directory):
+            raise Exception(f&#34;Results are to be stored in the directory {self.results_directory} but it is a file, not a directory.&#34;)
+
     if self.save_results:
         log_file: str = os.path.join(self.results_directory, &#34;run.log&#34;)
         fh = logging.FileHandler(log_file, mode=&#39;w&#39;)
@@ -675,26 +886,30 @@ analysis purposes.</p></div>
         logging.info(f&#34;Only logging to the console. No results being saved to files.&#34;)
 
     # Get the model stable manifold and related results
-    linear_model: LinearModel = LinearModel(model=self.model)
+    linear_model: LinearModel = LinearModel(
+        model=self.model, 
+        use_neutral_real_interest_rate=self.linearise_around_the_neutral_real_interest_rate)
     state_space_form: StateSpaceForm = StateSpaceForm(linear_model=linear_model)
     stable_manifold: StableManifold = StableManifold(state_space_form=state_space_form)
 
     # Generate the baseline projections
-    self._baseline_projections: BaselineProjections = BaselineProjections(stable_manifold=stable_manifold)
+    self._baseline_projections: BaselineProjections = BaselineProjections(
+        stable_manifold=stable_manifold, 
+        start_from_neutral_real_interest_rate=self.start_projections_from_the_neutral_real_interest_rate)
 
     # Generate the CSV file containing baseline projections
     if self.save_results:
         self.baseline_projections.publishable_projections.to_csv(f&#34;{self.results_directory}/baseline_projections.csv&#34;)
         logging.info(f&#34;Baseline publication projections have been saved to a CSV file in {self.results_directory}&#34;)
 
-    if self.experiment_design_file is not None:
+    if self._experiment_design_file is not None:
 
         # Run the simulation experiment
-        self._experiment = SimulationExperiment(baseline_projections=self.baseline_projections, design_file=self.experiment_design_file)
+        self._experiment = SimulationExperiment(baseline_projections=self.baseline_projections, design_file=self._experiment_design_file)
 
         if self.save_results:
             # Generate the CSV file containing simulation projections
-            self.final_projections.publishable_projections.to_csv(f&#34;{self.results_directory}/simulation_projections.csv&#34;)
+            self.final_projections.publishable_projections.to_csv(f&#34;{self.results_directory}/final_projections.csv&#34;)
             # Generate the CSV file containing the simulation deviation from baseline projections
             Projections.get_differences_between_projections(new_projections=self.final_projections.publishable_projections, original_projections=self.baseline_projections.publishable_projections).to_csv(f&#34;{self.results_directory}/deviation_projections.csv&#34;)
             logging.info(f&#34;The simulation experiment results have been saved as CSV files in {self.results_directory}&#34;)
@@ -709,6 +924,7 @@ analysis purposes.</p></div>
 <ul class="hlist">
 <li><code><a title="gcubed.base.Base.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.base.Base.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.now" href="../base.html#gcubed.base.Base.now">now</a></code></li>
 <li><code><a title="gcubed.base.Base.zeros" href="../base.html#gcubed.base.Base.zeros">zeros</a></code></li>
 </ul>
 </li>
@@ -736,9 +952,11 @@ analysis purposes.</p></div>
 <li><code><a title="gcubed.runners.simple_runner.SimpleRunner.baseline_projections" href="#gcubed.runners.simple_runner.SimpleRunner.baseline_projections">baseline_projections</a></code></li>
 <li><code><a title="gcubed.runners.simple_runner.SimpleRunner.experiment" href="#gcubed.runners.simple_runner.SimpleRunner.experiment">experiment</a></code></li>
 <li><code><a title="gcubed.runners.simple_runner.SimpleRunner.final_projections" href="#gcubed.runners.simple_runner.SimpleRunner.final_projections">final_projections</a></code></li>
+<li><code><a title="gcubed.runners.simple_runner.SimpleRunner.linearise_around_the_neutral_real_interest_rate" href="#gcubed.runners.simple_runner.SimpleRunner.linearise_around_the_neutral_real_interest_rate">linearise_around_the_neutral_real_interest_rate</a></code></li>
 <li><code><a title="gcubed.runners.simple_runner.SimpleRunner.model" href="#gcubed.runners.simple_runner.SimpleRunner.model">model</a></code></li>
 <li><code><a title="gcubed.runners.simple_runner.SimpleRunner.run" href="#gcubed.runners.simple_runner.SimpleRunner.run">run</a></code></li>
 <li><code><a title="gcubed.runners.simple_runner.SimpleRunner.save_results" href="#gcubed.runners.simple_runner.SimpleRunner.save_results">save_results</a></code></li>
+<li><code><a title="gcubed.runners.simple_runner.SimpleRunner.start_projections_from_the_neutral_real_interest_rate" href="#gcubed.runners.simple_runner.SimpleRunner.start_projections_from_the_neutral_real_interest_rate">start_projections_from_the_neutral_real_interest_rate</a></code></li>
 </ul>
 </li>
 </ul>

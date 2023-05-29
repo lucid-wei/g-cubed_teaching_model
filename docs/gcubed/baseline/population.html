@@ -39,6 +39,11 @@ from gcubed.base import Base
 from gcubed.model_configuration import ModelConfiguration
 from gcubed.sym_data import SymData
 
+# Ensure pdoc generated API documentation includes the following methods.
+__pdoc__ = {}
+__pdoc__[&#39;Population._load_population_growth_rates&#39;] = True
+
+
 class Population(Base):
     &#34;&#34;&#34;
     Loads population growth rates for all sectors within each region.
@@ -50,7 +55,7 @@ class Population(Base):
         self._configuration: ModelConfiguration = sym_data.configuration
         self._sym_data: SymData = sym_data
 
-        self.__load_population_growth_rates()
+        self._load_population_growth_rates()
 
         self.__validate()
 
@@ -80,8 +85,10 @@ class Population(Base):
     def population_growth_rates(self) -&gt; pd.DataFrame:
         return self._population_growth_rates
 
-    def __load_population_growth_rates(self):
+    def _load_population_growth_rates(self):
         &#34;&#34;&#34;
+        **This function is intended for gcubed module internal use. It is exposed only for documentation purposes.**
+
         Parse the CSV file into its the dataframe of population 
         growth rates expressed as decimal values so 1% growth rate is 0.01.
         &#34;&#34;&#34;
@@ -131,7 +138,7 @@ class Population(Base):
         self._configuration: ModelConfiguration = sym_data.configuration
         self._sym_data: SymData = sym_data
 
-        self.__load_population_growth_rates()
+        self._load_population_growth_rates()
 
         self.__validate()
 
@@ -161,8 +168,10 @@ class Population(Base):
     def population_growth_rates(self) -&gt; pd.DataFrame:
         return self._population_growth_rates
 
-    def __load_population_growth_rates(self):
+    def _load_population_growth_rates(self):
         &#34;&#34;&#34;
+        **This function is intended for gcubed module internal use. It is exposed only for documentation purposes.**
+
         Parse the CSV file into its the dataframe of population 
         growth rates expressed as decimal values so 1% growth rate is 0.01.
         &#34;&#34;&#34;
@@ -221,12 +230,47 @@ def sym_data(self):
 </details>
 </dd>
 </dl>
+<h3>Methods</h3>
+<dl>
+<dt id="gcubed.baseline.population.Population._load_population_growth_rates"><code class="name flex">
+<span>def <span class="ident">_load_population_growth_rates</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p><strong>This function is intended for gcubed module internal use. It is exposed only for documentation purposes.</strong></p>
+<p>Parse the CSV file into its the dataframe of population
+growth rates expressed as decimal values so 1% growth rate is 0.01.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def _load_population_growth_rates(self):
+    &#34;&#34;&#34;
+    **This function is intended for gcubed module internal use. It is exposed only for documentation purposes.**
+
+    Parse the CSV file into its the dataframe of population 
+    growth rates expressed as decimal values so 1% growth rate is 0.01.
+    &#34;&#34;&#34;
+
+    # Load the data into a dataframe
+    self._filename: str = self.configuration.population_file
+    if not os.path.isfile(self._filename):
+        raise Exception(f&#34;The productivity parameters file {self._filename} does not exist. Check the model configuration.&#34;)
+    population_growth_rates: pd.DataFrame = pd.read_csv(self._filename)
+    population_growth_rates.index = population_growth_rates.iloc[:,0]
+    self._data_column_names = self.get_year_labels(labels=population_growth_rates.columns)
+    population_growth_rates = population_growth_rates.loc[:, self._data_column_names] / 100
+    population_growth_rates = population_growth_rates.loc[:,self.configuration.projection_years_column_labels]
+    self._population_growth_rates = population_growth_rates</code></pre>
+</details>
+</dd>
+</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="gcubed.base.Base" href="../base.html#gcubed.base.Base">Base</a></b></code>:
 <ul class="hlist">
 <li><code><a title="gcubed.base.Base.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.base.Base.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.now" href="../base.html#gcubed.base.Base.now">now</a></code></li>
 <li><code><a title="gcubed.base.Base.zeros" href="../base.html#gcubed.base.Base.zeros">zeros</a></code></li>
 </ul>
 </li>
@@ -251,6 +295,7 @@ def sym_data(self):
 <li>
 <h4><code><a title="gcubed.baseline.population.Population" href="#gcubed.baseline.population.Population">Population</a></code></h4>
 <ul class="">
+<li><code><a title="gcubed.baseline.population.Population._load_population_growth_rates" href="#gcubed.baseline.population.Population._load_population_growth_rates">_load_population_growth_rates</a></code></li>
 <li><code><a title="gcubed.baseline.population.Population.configuration" href="#gcubed.baseline.population.Population.configuration">configuration</a></code></li>
 <li><code><a title="gcubed.baseline.population.Population.population_growth_rates" href="#gcubed.baseline.population.Population.population_growth_rates">population_growth_rates</a></code></li>
 <li><code><a title="gcubed.baseline.population.Population.sym_data" href="#gcubed.baseline.population.Population.sym_data">sym_data</a></code></li>

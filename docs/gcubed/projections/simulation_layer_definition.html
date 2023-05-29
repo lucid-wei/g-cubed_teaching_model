@@ -104,6 +104,8 @@ class SimulationLayerDefinition(Base):
         for variable_name in variables.name:
             if not self.sym_data.has_variable(variable_name=variable_name):
                 raise Exception(f&#34;The data for simulation {self.name} includes a variable {variable_name} that is not in the model.&#34;)
+            if not self.sym_data.is_adjustable_in_simulations(variable_name=variable_name):
+                raise Exception(f&#34;The data for simulation {self.name} includes a variable {variable_name} that is not exogenous or a state variable so it should not be adjusted in a simulation layer.&#34;)
 
     def __str__(self):
         return f&#34;Simulation layer {self.name} with event year {self.first_projection_year}: {self.description}.\nData is in {self.data_filename}&#34;
@@ -223,6 +225,8 @@ known to the agents in the model.</p>
         for variable_name in variables.name:
             if not self.sym_data.has_variable(variable_name=variable_name):
                 raise Exception(f&#34;The data for simulation {self.name} includes a variable {variable_name} that is not in the model.&#34;)
+            if not self.sym_data.is_adjustable_in_simulations(variable_name=variable_name):
+                raise Exception(f&#34;The data for simulation {self.name} includes a variable {variable_name} that is not exogenous or a state variable so it should not be adjusted in a simulation layer.&#34;)
 
     def __str__(self):
         return f&#34;Simulation layer {self.name} with event year {self.first_projection_year}: {self.description}.\nData is in {self.data_filename}&#34;
@@ -336,6 +340,7 @@ def sym_data(self) -&gt; SymData:
 <ul class="hlist">
 <li><code><a title="gcubed.base.Base.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.base.Base.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.now" href="../base.html#gcubed.base.Base.now">now</a></code></li>
 <li><code><a title="gcubed.base.Base.zeros" href="../base.html#gcubed.base.Base.zeros">zeros</a></code></li>
 </ul>
 </li>

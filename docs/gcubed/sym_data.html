@@ -37,8 +37,6 @@
 &#34;&#34;&#34;
 Contains the SymData class
 &#34;&#34;&#34;
-from ast import match_case
-from concurrent.futures import process
 import logging
 import os
 from gcubed.constants import Constants
@@ -785,8 +783,7 @@ class SymData:
                 return self.exogenous_variable_count
 
             case _:
-                raise Exception(
-                    &#34;No vector length available for the vector named {}&#34;.format(vector_name))
+                raise Exception(f&#34;No vector length available for the {vector_name} vector.&#34;)
 
     def vector_variable_names(self, vector_name: str) -&gt; list[str]:
         &#34;&#34;&#34;
@@ -956,7 +953,9 @@ class SymData:
         return self._variable_information.loc[self._variable_information[&#34;var_type&#34;].isin(types), &#34;size&#34;].sum()
 
     def __validate(self):
-
+        &#34;&#34;&#34;
+        Validates the SYM data about the model.
+        &#34;&#34;&#34;
         # Validate regions
         if self.regions_count &lt; 2:
             raise Exception(&#34;The model needs to include at least 2 regions.&#34;)
@@ -1004,7 +1003,9 @@ class SymData:
         `variable_name_prefix`: The variable name prefix string.
 
         ### Returns
+
         True iff the SYM model definition includes a variable with the given root name.
+
         &#34;&#34;&#34;
         return self.var_map.name.str.startswith(variable_name_prefix).any()
 
@@ -1021,12 +1022,38 @@ class SymData:
         the set qualifier in round brackets (e.g. `INFL(UU)`).
 
         ### Returns
+
         True if the SYM model definition includes 
         a variable with the given complete name.
+
         &#34;&#34;&#34;
         return (self.var_map.name == variable_name).any()
 
     def variable_index(self, vector_name: str, variable_name: str) -&gt; int:
+        &#34;&#34;&#34;
+
+        ### Overview
+
+        Used to get the integer index of a variable  in the specified vector.
+        
+        ### Arguments
+
+        `variable_name`: The complete variable name including
+        the set qualifier in round brackets (e.g. `INFL(UU)`).
+
+        ### Returns
+        
+        The integer indicating the row index of the variable in the given vector.
+        Indexing starts from `0`.
+
+        ### Throws
+
+        An exception is thrown if the variable is not in the SYM model.
+
+        An exception is thrown if the named variable is not unique within the SYM model
+        though that should not be possible once the SYM processor has run without problems.
+
+        &#34;&#34;&#34;
         variable_type: str = self.varmap_variable_type(vector_name=vector_name)
         type_matches: list[bool] = self.var_map.var_type == variable_type
         name_matches: list[bool] = self.var_map.name == variable_name
@@ -1039,19 +1066,22 @@ class SymData:
                 f&#34;The variable name, {variable_name} must be unique within the SYM model to retrieve its unique index.&#34;)
         return int(result.values[0])
 
-    def variable_units(self, vector_name: str, variable_name_prefix: str) -&gt; int:
+    def units_for_variables_with_given_name_prefix(self, vector_name: str, variable_name_prefix: str) -&gt; str:
         &#34;&#34;&#34;
-       ### Arguments
+        ### Arguments
 
+        vector_name: The name of the vector that contains the variable.
+        
         variable_name_prefix: The prefix is the set of characters up to but not including the 
         round bracket that starts the full qualification of the variable based on the sets it is
         defined over.
 
         e.g. use SHL for SHL(region,sector)
 
-        Returns the units of measurement for the variable identified by the prefix.
-        true iff the SYM model definition includes a variable with the given complete name including
-        the set qualifier in round brackets.
+        ### Returns
+        
+        The units of measurement for the variables that match the given name prefix 
+        and that are of the variable type associated with the given vector name.
         &#34;&#34;&#34;
         variable_type: str = self.varmap_variable_type(vector_name=vector_name)
         type_matches: list[bool] = self.var_info.var_type == variable_type
@@ -1068,7 +1098,10 @@ class SymData:
     @property
     def intertemporal_constant_variables(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        Provide access to the information about the variables that are associated with intertemporal constants.
+
+        ### Overview
+
+        Provides access to the information about the variables that are associated with intertemporal constants.
 
         The intertemporal constants are used to ensure that jump variables equal to their observed values in the year
         where there is available data (typically the base projection year, one year before the start of projections).
@@ -1076,11 +1109,14 @@ class SymData:
         An intertemporal constant is also used in each WAGE equation to ensure that real interest rates align with nominal 
         interest rates less expected inflation in the next year.
 
-        Return a dataframe containing a row per variable that has an intertemporal constant in its equation.
+        ### Returns 
+        
+        A dataframe containing a row per variable that has an intertemporal constant in its equation.
         The dataframe has the following columns:
-        - &#39;name&#39; variable name (complete with set identifiers for region/sector etc.)
-        - &#39;var_type&#39; variable type (the associated LHS vector name)
-        - &#39;sequence&#39; the index of the variable in the associated vector
+        * `name` variable name (complete with set identifiers for region/sector etc.)
+        * `var_type` variable type (the associated LHS vector name)
+        * `sequence` the index of the variable in the associated vector
+
         &#34;&#34;&#34;
         if hasattr(self, &#39;_intertemporal_constant_variables&#39;):
             return self._intertemporal_constant_variables
@@ -1105,18 +1141,23 @@ class SymData:
     @property
     def variables_adjusted_by_intertemporal_constants(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        Provide access to the information about the variables that have their values adjusted 
+        ### Overview
+
+        Provides access to the information about the variables that have their values adjusted 
         by the intertemporal constants. Note that this list is slightly different from the 
         list of variables that have intertemporal constants added to their equations in the model
         to match up model projections with observed values at the start of the projections because
         a constant is added to the WAGE equation but it is used to adjust the WAGE equation in a way
         that leads to the required expected price inflation rate.
 
-        Return a dataframe containing a row per variable that has an intertemporal constant in its equation.
+        ### Returns
+        
+        A dataframe containing a row per variable that has an intertemporal constant in its equation.
         The dataframe has the following columns:
-        - &#39;name&#39; variable name (complete with set identifiers for region/sector etc.)
-        - &#39;var_type&#39; variable type (the associated LHS vector name)
-        - &#39;sequence&#39; the index of the variable in the associated vector
+
+        * `name` variable name (complete with set identifiers for region/sector etc.)
+        * `var_type` variable type (the associated LHS vector name)
+        * `sequence` the index of the variable in the associated vector
         &#34;&#34;&#34;
 
         if hasattr(self, &#39;_variables_adjusted_by_intertemporal_constants&#39;):
@@ -1142,18 +1183,22 @@ class SymData:
 
     def __combine_varinfo_varmap(self):
         &#34;&#34;&#34;
-        To combine the information in the varmap and in the varinfo files generated by sym so that
+
+        ### Overview
+
+        Combines the information in the varmap and in the varinfo files generated by sym so that
         we have a single dataframe, indexed by variable name and with a column for each of:
-        -Variable name with all set identifiers e.g. GDPN(UU)
-        -Variable name prefix e.g. GDPN
-        -Variable units as specified in the varinfo. 
-        -&#39;publication_units&#39; - the units code to use when publishing variable projections.
-        -Variable description
-        -Projection vector that the variable is associated with (j1l, x1l, z1l, zel or exo).
-        -Index of the variable in its projection vector (the sequence number accessible from the varmap).
-        -Column indicating if it has an intertemporal constant in its equation. Column should be a missing value if not
+
+        - Variable name with all set identifiers e.g. GDPN(UU)
+        - Variable name prefix e.g. GDPN
+        - Variable units as specified in the varinfo. 
+        - &#39;publication_units&#39; - the units code to use when publishing variable projections.
+        - Variable description
+        - Projection vector that the variable is associated with (j1l, x1l, z1l, zel or exo).
+        - Index of the variable in its projection vector (the sequence number accessible from the varmap).
+        - Column indicating if it has an intertemporal constant in its equation. Column should be a missing value if not
             and the index of the intertemporal constant if it is.
-        -Column indicating if it is the target of an intertemporal constant adjustment. Column should be a missing value if not
+        - Column indicating if it is the target of an intertemporal constant adjustment. Column should be a missing value if not
             and the index of the intertemporal constant if it is.
         &#34;&#34;&#34;
 
@@ -1205,72 +1250,183 @@ class SymData:
         self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;del&#39;, &#39;publication_units&#39;] = &#39;del&#39;
         self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;pct&#39;, &#39;publication_units&#39;] = &#39;pct&#39;
 
-        # # Slow and now obsolete code - iterating rows of the summary data.
-        # for ind, row in self._combined_variable_summary.iterrows():
-            
-        #     # if not self.intertemporal_constant_variables.loc[
-        #     #     (self.intertemporal_constant_variables[[&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]] == row[
-        #     #         [&#39;name&#39;, &#39;vector&#39;, &#39;sequence&#39;]].to_numpy()).all(axis=1)
-        #     # ].empty:
-        #     #     self._combined_variable_summary.loc[ind, &#39;is_intertemp&#39;] = self._combined_variable_summary.loc[ind, &#39;sequence&#39;]
-
-        #     # if not self.variables_adjusted_by_intertemporal_constants.loc[
-        #     #     (self.variables_adjusted_by_intertemporal_constants[[&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]] == row[
-        #     #         [&#39;name&#39;, &#39;vector&#39;, &#39;sequence&#39;]].to_numpy()).all(axis=1)
-        #     # ].empty:
-        #     #     self._combined_variable_summary.loc[ind, &#39;is_adjusted&#39;] = self._combined_variable_summary.loc[
-        #     #         ind, &#39;sequence&#39;]
-
-        #     # Generate the column of units for the variables that will be used when 
-        #     # their projections are converted to publication form.
-        #     match row.loc[&#39;units&#39;]:
-        #         case &#39;usgdp&#39; | &#39;gdp&#39;:
-        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;$US Bil&#39;
-        #         case &#39;mmtusgdp&#39; | &#39;mmtgdp&#39;:
-        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;mmt&#39;
-        #         case &#39;btuusgdp&#39; | &#39;btugdp&#39;:
-        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;btu&#39;
-        #         case &#39;gwhgdp&#39; | &#39;gwh&#39;:
-        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;gwh&#39;
-        #         case &#39;del&#39;:
-        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;pct&#39;
-        #         case &#39;pct&#39;:
-        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;Index&#39;
-        #         case &#39;cent&#39; | &#39;btu&#39; | &#39;mmt&#39; | &#39;dollar&#39;:
-        #             pass
-        #         case _:
-        #             logging.warning(f&#34;Could not convert database unit, {row.loc[&#39;units&#39;]}, to a publication unit for {row.loc[&#39;name&#39;]}.&#34;)
-
-        # self._combined_variable_summary = self._combined_variable_summary[[
-        #     &#39;name&#39;, &#39;prefix&#39;, &#39;units&#39;, &#39;publication_units&#39;, &#39;description&#39;, &#39;var_type&#39;, &#39;vector_code&#39;, &#39;vector&#39;, &#39;sequence&#39;, &#39;is_intertemp&#39;, &#39;is_adjusted&#39;]]
-
     @property
     def combined_variable_summary(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        Return the combined variable summary data.
-        This should be used to drive a lot of the 
-        variable filtering throughout the model.
-        The columns of this summary dataframe are:
-        &#39;name&#39; - the full name of the variable
-        &#39;prefix&#39; - the name prefix - up to the open bracket.
-        &#39;units&#39; - the units code
-        &#39;publication_units&#39; - the units code to use when publishing variable projections.
-        &#39;description&#39; - the description
-        &#39;var_type&#39; - one of:
-            par = parameter
-            ets = expected endogenous variable? TODO: Check what ets means
-            end = endogenous
-            sta = state
-            stl = lead state variable? TODO: Check what stl var type means.
-            exo = exogenous
-            cos = costate or jump
-        &#39;vector_code&#39; - the vector name and index combination
-        &#39;vector&#39; - the vector name z1l, yxr, exo etc.
-        &#39;sequence&#39; - the index in the vector that corresponds to the variable.
-        &#39;is_intertemp&#39; - the index of the variable in the vector of intertemporal constants (or NaN)
-        &#39;is_adjusted&#39; - the index of the variable in the vector of variables being adjusted by intertemporal constants (or NaN)
+
+        ### Overview
+
+        This summary dataframe of the SYM information about variables 
+        should be used to drive a lot of the 
+        variable filtering during model processing.
+
+        The rows of the dataframe are the variable names.
+
+        The columns of the dataframe are:
+
+        * `name` - the full name of the variable
+        * `prefix` - the name prefix - up to the open bracket.
+        * `units` - the units code.
+        * `publication_units` - the units code to use when publishing variable projections.
+        * `description` - the description
+        * `var_type` - one of:
+            - `par` = parameter
+            - `ets` = expected next-period value of an endogenous variable
+            - `end` = endogenous
+            - `sta` = state
+            - `stl` = lead state variable
+            - `exo` = exogenous
+            - `cos` = costate or jump
+        * `vector` - the vector name e.g. `z1l`, `yxr`, `exo` etc.
+        * `vector_code` - the vector name and index combination - e.g. `exo[3]`.
+        * `sequence` - the index in the vector that corresponds to the variable - e.g `3`.
+        * `is_intertemp` - the index of the variable in the vector of intertemporal constants (or NaN)
+        * `is_adjusted` - the index of the variable in the vector of variables being adjusted by intertemporal constants (or NaN)
+
+        ### Returns
+        
+        The combined variable summary dataframe.
+
         &#34;&#34;&#34;
-        return self._combined_variable_summary</code></pre>
+        return self._combined_variable_summary
+    
+    def variable_units(self, variable_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        variable_name: The full name of the variable.
+
+        ### Returns
+         
+        The units of measurement for the variable with the given name.
+
+        ### Throws
+
+        Exception if the named variable is not in the model.
+
+        &#34;&#34;&#34;
+        try:
+            return self.combined_variable_summary.loc[[variable_name], &#39;units&#39;]
+        except:
+            raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)
+
+    def variable_publication_units(self, variable_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        variable_name: The full name of the variable.
+
+        ### Returns
+         
+        The publication units of measurement for the variable with the given name.
+
+        ### Throws
+
+        Exception if the named variable is not in the model.
+
+        &#34;&#34;&#34;
+        try:
+            return self.combined_variable_summary.loc[[variable_name], &#39;publication_units&#39;]
+        except:
+            raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)
+        
+
+    def variable_var_type(self, variable_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        variable_name: The full name of the variable.
+
+        ### Returns
+         
+        The variable type of the vector that the variable is in. One of:
+        
+        - `par` = parameter
+        - `ets` = expected next-period value of an endogenous variable
+        - `end` = endogenous
+        - `sta` = state
+        - `stl` = lead state variable
+        - `exo` = exogenous
+        - `cos` = costate or jump
+
+        ### Throws
+
+        Exception if the named variable is not in the model.
+
+        &#34;&#34;&#34;
+        try:
+            return str(self.combined_variable_summary.loc[[variable_name], &#39;var_type&#39;].values[0])
+        except:
+            raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)
+        
+    def is_exogenous(self, variable_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        variable_name: The full name of the variable.
+
+        ### Returns
+         
+        `True` if the variable is exogenous and `False` otherwise.
+
+        ### Throws
+
+        Exception if the named variable is not in the model.
+
+        &#34;&#34;&#34;
+        try:
+            return self.variable_var_type(variable_name=variable_name) == &#39;exo&#39;
+        except:
+            raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)
+        
+    def is_state(self, variable_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        variable_name: The full name of the variable.
+
+        ### Returns
+         
+        `True` if the variable is a state or lead state variable and `False` otherwise.
+
+        ### Throws
+
+        Exception if the named variable is not in the model.
+
+        &#34;&#34;&#34;
+        try:
+            match self.variable_var_type(variable_name=variable_name):
+                case &#39;sta&#39; | &#39;stl&#39;:
+                    return True
+                case _:
+                    return False
+        except:
+            raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)
+
+    def is_adjustable_in_simulations(self, variable_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        variable_name: The full name of the variable.
+
+        ### Returns
+         
+        `True` if the variable can be adjusted in a simulation layer
+        and `False` otherwise.
+
+        ### Throws
+
+        Exception if the named variable is not in the model.
+
+        &#34;&#34;&#34;
+        try:
+            match self.variable_var_type(variable_name=variable_name):
+                case &#39;sta&#39; | &#39;stl&#39; | &#39;exo&#39;:
+                    return True
+                case _:
+                    return False
+        except:
+            raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)</code></pre>
 </details>
 </section>
 <section>
@@ -2053,8 +2209,7 @@ in the SYM model definition.</p>
                 return self.exogenous_variable_count
 
             case _:
-                raise Exception(
-                    &#34;No vector length available for the vector named {}&#34;.format(vector_name))
+                raise Exception(f&#34;No vector length available for the {vector_name} vector.&#34;)
 
     def vector_variable_names(self, vector_name: str) -&gt; list[str]:
         &#34;&#34;&#34;
@@ -2224,7 +2379,9 @@ in the SYM model definition.</p>
         return self._variable_information.loc[self._variable_information[&#34;var_type&#34;].isin(types), &#34;size&#34;].sum()
 
     def __validate(self):
-
+        &#34;&#34;&#34;
+        Validates the SYM data about the model.
+        &#34;&#34;&#34;
         # Validate regions
         if self.regions_count &lt; 2:
             raise Exception(&#34;The model needs to include at least 2 regions.&#34;)
@@ -2272,7 +2429,9 @@ in the SYM model definition.</p>
         `variable_name_prefix`: The variable name prefix string.
 
         ### Returns
+
         True iff the SYM model definition includes a variable with the given root name.
+
         &#34;&#34;&#34;
         return self.var_map.name.str.startswith(variable_name_prefix).any()
 
@@ -2289,12 +2448,38 @@ in the SYM model definition.</p>
         the set qualifier in round brackets (e.g. `INFL(UU)`).
 
         ### Returns
+
         True if the SYM model definition includes 
         a variable with the given complete name.
+
         &#34;&#34;&#34;
         return (self.var_map.name == variable_name).any()
 
     def variable_index(self, vector_name: str, variable_name: str) -&gt; int:
+        &#34;&#34;&#34;
+
+        ### Overview
+
+        Used to get the integer index of a variable  in the specified vector.
+        
+        ### Arguments
+
+        `variable_name`: The complete variable name including
+        the set qualifier in round brackets (e.g. `INFL(UU)`).
+
+        ### Returns
+        
+        The integer indicating the row index of the variable in the given vector.
+        Indexing starts from `0`.
+
+        ### Throws
+
+        An exception is thrown if the variable is not in the SYM model.
+
+        An exception is thrown if the named variable is not unique within the SYM model
+        though that should not be possible once the SYM processor has run without problems.
+
+        &#34;&#34;&#34;
         variable_type: str = self.varmap_variable_type(vector_name=vector_name)
         type_matches: list[bool] = self.var_map.var_type == variable_type
         name_matches: list[bool] = self.var_map.name == variable_name
@@ -2307,19 +2492,22 @@ in the SYM model definition.</p>
                 f&#34;The variable name, {variable_name} must be unique within the SYM model to retrieve its unique index.&#34;)
         return int(result.values[0])
 
-    def variable_units(self, vector_name: str, variable_name_prefix: str) -&gt; int:
+    def units_for_variables_with_given_name_prefix(self, vector_name: str, variable_name_prefix: str) -&gt; str:
         &#34;&#34;&#34;
-       ### Arguments
+        ### Arguments
 
+        vector_name: The name of the vector that contains the variable.
+        
         variable_name_prefix: The prefix is the set of characters up to but not including the 
         round bracket that starts the full qualification of the variable based on the sets it is
         defined over.
 
         e.g. use SHL for SHL(region,sector)
 
-        Returns the units of measurement for the variable identified by the prefix.
-        true iff the SYM model definition includes a variable with the given complete name including
-        the set qualifier in round brackets.
+        ### Returns
+        
+        The units of measurement for the variables that match the given name prefix 
+        and that are of the variable type associated with the given vector name.
         &#34;&#34;&#34;
         variable_type: str = self.varmap_variable_type(vector_name=vector_name)
         type_matches: list[bool] = self.var_info.var_type == variable_type
@@ -2336,7 +2524,10 @@ in the SYM model definition.</p>
     @property
     def intertemporal_constant_variables(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        Provide access to the information about the variables that are associated with intertemporal constants.
+
+        ### Overview
+
+        Provides access to the information about the variables that are associated with intertemporal constants.
 
         The intertemporal constants are used to ensure that jump variables equal to their observed values in the year
         where there is available data (typically the base projection year, one year before the start of projections).
@@ -2344,11 +2535,14 @@ in the SYM model definition.</p>
         An intertemporal constant is also used in each WAGE equation to ensure that real interest rates align with nominal 
         interest rates less expected inflation in the next year.
 
-        Return a dataframe containing a row per variable that has an intertemporal constant in its equation.
+        ### Returns 
+        
+        A dataframe containing a row per variable that has an intertemporal constant in its equation.
         The dataframe has the following columns:
-        - &#39;name&#39; variable name (complete with set identifiers for region/sector etc.)
-        - &#39;var_type&#39; variable type (the associated LHS vector name)
-        - &#39;sequence&#39; the index of the variable in the associated vector
+        * `name` variable name (complete with set identifiers for region/sector etc.)
+        * `var_type` variable type (the associated LHS vector name)
+        * `sequence` the index of the variable in the associated vector
+
         &#34;&#34;&#34;
         if hasattr(self, &#39;_intertemporal_constant_variables&#39;):
             return self._intertemporal_constant_variables
@@ -2373,18 +2567,23 @@ in the SYM model definition.</p>
     @property
     def variables_adjusted_by_intertemporal_constants(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        Provide access to the information about the variables that have their values adjusted 
+        ### Overview
+
+        Provides access to the information about the variables that have their values adjusted 
         by the intertemporal constants. Note that this list is slightly different from the 
         list of variables that have intertemporal constants added to their equations in the model
         to match up model projections with observed values at the start of the projections because
         a constant is added to the WAGE equation but it is used to adjust the WAGE equation in a way
         that leads to the required expected price inflation rate.
 
-        Return a dataframe containing a row per variable that has an intertemporal constant in its equation.
+        ### Returns
+        
+        A dataframe containing a row per variable that has an intertemporal constant in its equation.
         The dataframe has the following columns:
-        - &#39;name&#39; variable name (complete with set identifiers for region/sector etc.)
-        - &#39;var_type&#39; variable type (the associated LHS vector name)
-        - &#39;sequence&#39; the index of the variable in the associated vector
+
+        * `name` variable name (complete with set identifiers for region/sector etc.)
+        * `var_type` variable type (the associated LHS vector name)
+        * `sequence` the index of the variable in the associated vector
         &#34;&#34;&#34;
 
         if hasattr(self, &#39;_variables_adjusted_by_intertemporal_constants&#39;):
@@ -2410,18 +2609,22 @@ in the SYM model definition.</p>
 
     def __combine_varinfo_varmap(self):
         &#34;&#34;&#34;
-        To combine the information in the varmap and in the varinfo files generated by sym so that
+
+        ### Overview
+
+        Combines the information in the varmap and in the varinfo files generated by sym so that
         we have a single dataframe, indexed by variable name and with a column for each of:
-        -Variable name with all set identifiers e.g. GDPN(UU)
-        -Variable name prefix e.g. GDPN
-        -Variable units as specified in the varinfo. 
-        -&#39;publication_units&#39; - the units code to use when publishing variable projections.
-        -Variable description
-        -Projection vector that the variable is associated with (j1l, x1l, z1l, zel or exo).
-        -Index of the variable in its projection vector (the sequence number accessible from the varmap).
-        -Column indicating if it has an intertemporal constant in its equation. Column should be a missing value if not
+
+        - Variable name with all set identifiers e.g. GDPN(UU)
+        - Variable name prefix e.g. GDPN
+        - Variable units as specified in the varinfo. 
+        - &#39;publication_units&#39; - the units code to use when publishing variable projections.
+        - Variable description
+        - Projection vector that the variable is associated with (j1l, x1l, z1l, zel or exo).
+        - Index of the variable in its projection vector (the sequence number accessible from the varmap).
+        - Column indicating if it has an intertemporal constant in its equation. Column should be a missing value if not
             and the index of the intertemporal constant if it is.
-        -Column indicating if it is the target of an intertemporal constant adjustment. Column should be a missing value if not
+        - Column indicating if it is the target of an intertemporal constant adjustment. Column should be a missing value if not
             and the index of the intertemporal constant if it is.
         &#34;&#34;&#34;
 
@@ -2473,72 +2676,183 @@ in the SYM model definition.</p>
         self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;del&#39;, &#39;publication_units&#39;] = &#39;del&#39;
         self._combined_variable_summary.loc[self._combined_variable_summary.units == &#39;pct&#39;, &#39;publication_units&#39;] = &#39;pct&#39;
 
-        # # Slow and now obsolete code - iterating rows of the summary data.
-        # for ind, row in self._combined_variable_summary.iterrows():
-            
-        #     # if not self.intertemporal_constant_variables.loc[
-        #     #     (self.intertemporal_constant_variables[[&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]] == row[
-        #     #         [&#39;name&#39;, &#39;vector&#39;, &#39;sequence&#39;]].to_numpy()).all(axis=1)
-        #     # ].empty:
-        #     #     self._combined_variable_summary.loc[ind, &#39;is_intertemp&#39;] = self._combined_variable_summary.loc[ind, &#39;sequence&#39;]
-
-        #     # if not self.variables_adjusted_by_intertemporal_constants.loc[
-        #     #     (self.variables_adjusted_by_intertemporal_constants[[&#39;name&#39;, &#39;var_type&#39;, &#39;sequence&#39;]] == row[
-        #     #         [&#39;name&#39;, &#39;vector&#39;, &#39;sequence&#39;]].to_numpy()).all(axis=1)
-        #     # ].empty:
-        #     #     self._combined_variable_summary.loc[ind, &#39;is_adjusted&#39;] = self._combined_variable_summary.loc[
-        #     #         ind, &#39;sequence&#39;]
-
-        #     # Generate the column of units for the variables that will be used when 
-        #     # their projections are converted to publication form.
-        #     match row.loc[&#39;units&#39;]:
-        #         case &#39;usgdp&#39; | &#39;gdp&#39;:
-        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;$US Bil&#39;
-        #         case &#39;mmtusgdp&#39; | &#39;mmtgdp&#39;:
-        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;mmt&#39;
-        #         case &#39;btuusgdp&#39; | &#39;btugdp&#39;:
-        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;btu&#39;
-        #         case &#39;gwhgdp&#39; | &#39;gwh&#39;:
-        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;gwh&#39;
-        #         case &#39;del&#39;:
-        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;pct&#39;
-        #         case &#39;pct&#39;:
-        #             self._combined_variable_summary.loc[ind, &#39;publication_units&#39;] = &#39;Index&#39;
-        #         case &#39;cent&#39; | &#39;btu&#39; | &#39;mmt&#39; | &#39;dollar&#39;:
-        #             pass
-        #         case _:
-        #             logging.warning(f&#34;Could not convert database unit, {row.loc[&#39;units&#39;]}, to a publication unit for {row.loc[&#39;name&#39;]}.&#34;)
-
-        # self._combined_variable_summary = self._combined_variable_summary[[
-        #     &#39;name&#39;, &#39;prefix&#39;, &#39;units&#39;, &#39;publication_units&#39;, &#39;description&#39;, &#39;var_type&#39;, &#39;vector_code&#39;, &#39;vector&#39;, &#39;sequence&#39;, &#39;is_intertemp&#39;, &#39;is_adjusted&#39;]]
-
     @property
     def combined_variable_summary(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        Return the combined variable summary data.
-        This should be used to drive a lot of the 
-        variable filtering throughout the model.
-        The columns of this summary dataframe are:
-        &#39;name&#39; - the full name of the variable
-        &#39;prefix&#39; - the name prefix - up to the open bracket.
-        &#39;units&#39; - the units code
-        &#39;publication_units&#39; - the units code to use when publishing variable projections.
-        &#39;description&#39; - the description
-        &#39;var_type&#39; - one of:
-            par = parameter
-            ets = expected endogenous variable? TODO: Check what ets means
-            end = endogenous
-            sta = state
-            stl = lead state variable? TODO: Check what stl var type means.
-            exo = exogenous
-            cos = costate or jump
-        &#39;vector_code&#39; - the vector name and index combination
-        &#39;vector&#39; - the vector name z1l, yxr, exo etc.
-        &#39;sequence&#39; - the index in the vector that corresponds to the variable.
-        &#39;is_intertemp&#39; - the index of the variable in the vector of intertemporal constants (or NaN)
-        &#39;is_adjusted&#39; - the index of the variable in the vector of variables being adjusted by intertemporal constants (or NaN)
+
+        ### Overview
+
+        This summary dataframe of the SYM information about variables 
+        should be used to drive a lot of the 
+        variable filtering during model processing.
+
+        The rows of the dataframe are the variable names.
+
+        The columns of the dataframe are:
+
+        * `name` - the full name of the variable
+        * `prefix` - the name prefix - up to the open bracket.
+        * `units` - the units code.
+        * `publication_units` - the units code to use when publishing variable projections.
+        * `description` - the description
+        * `var_type` - one of:
+            - `par` = parameter
+            - `ets` = expected next-period value of an endogenous variable
+            - `end` = endogenous
+            - `sta` = state
+            - `stl` = lead state variable
+            - `exo` = exogenous
+            - `cos` = costate or jump
+        * `vector` - the vector name e.g. `z1l`, `yxr`, `exo` etc.
+        * `vector_code` - the vector name and index combination - e.g. `exo[3]`.
+        * `sequence` - the index in the vector that corresponds to the variable - e.g `3`.
+        * `is_intertemp` - the index of the variable in the vector of intertemporal constants (or NaN)
+        * `is_adjusted` - the index of the variable in the vector of variables being adjusted by intertemporal constants (or NaN)
+
+        ### Returns
+        
+        The combined variable summary dataframe.
+
         &#34;&#34;&#34;
-        return self._combined_variable_summary</code></pre>
+        return self._combined_variable_summary
+    
+    def variable_units(self, variable_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        variable_name: The full name of the variable.
+
+        ### Returns
+         
+        The units of measurement for the variable with the given name.
+
+        ### Throws
+
+        Exception if the named variable is not in the model.
+
+        &#34;&#34;&#34;
+        try:
+            return self.combined_variable_summary.loc[[variable_name], &#39;units&#39;]
+        except:
+            raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)
+
+    def variable_publication_units(self, variable_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        variable_name: The full name of the variable.
+
+        ### Returns
+         
+        The publication units of measurement for the variable with the given name.
+
+        ### Throws
+
+        Exception if the named variable is not in the model.
+
+        &#34;&#34;&#34;
+        try:
+            return self.combined_variable_summary.loc[[variable_name], &#39;publication_units&#39;]
+        except:
+            raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)
+        
+
+    def variable_var_type(self, variable_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        variable_name: The full name of the variable.
+
+        ### Returns
+         
+        The variable type of the vector that the variable is in. One of:
+        
+        - `par` = parameter
+        - `ets` = expected next-period value of an endogenous variable
+        - `end` = endogenous
+        - `sta` = state
+        - `stl` = lead state variable
+        - `exo` = exogenous
+        - `cos` = costate or jump
+
+        ### Throws
+
+        Exception if the named variable is not in the model.
+
+        &#34;&#34;&#34;
+        try:
+            return str(self.combined_variable_summary.loc[[variable_name], &#39;var_type&#39;].values[0])
+        except:
+            raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)
+        
+    def is_exogenous(self, variable_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        variable_name: The full name of the variable.
+
+        ### Returns
+         
+        `True` if the variable is exogenous and `False` otherwise.
+
+        ### Throws
+
+        Exception if the named variable is not in the model.
+
+        &#34;&#34;&#34;
+        try:
+            return self.variable_var_type(variable_name=variable_name) == &#39;exo&#39;
+        except:
+            raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)
+        
+    def is_state(self, variable_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        variable_name: The full name of the variable.
+
+        ### Returns
+         
+        `True` if the variable is a state or lead state variable and `False` otherwise.
+
+        ### Throws
+
+        Exception if the named variable is not in the model.
+
+        &#34;&#34;&#34;
+        try:
+            match self.variable_var_type(variable_name=variable_name):
+                case &#39;sta&#39; | &#39;stl&#39;:
+                    return True
+                case _:
+                    return False
+        except:
+            raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)
+
+    def is_adjustable_in_simulations(self, variable_name: str) -&gt; int:
+        &#34;&#34;&#34;
+        ### Arguments
+
+        variable_name: The full name of the variable.
+
+        ### Returns
+         
+        `True` if the variable can be adjusted in a simulation layer
+        and `False` otherwise.
+
+        ### Throws
+
+        Exception if the named variable is not in the model.
+
+        &#34;&#34;&#34;
+        try:
+            match self.variable_var_type(variable_name=variable_name):
+                case &#39;sta&#39; | &#39;stl&#39; | &#39;exo&#39;:
+                    return True
+                case _:
+                    return False
+        except:
+            raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)</code></pre>
 </details>
 <h3>Instance variables</h3>
 <dl>
@@ -2651,28 +2965,36 @@ def coal_sector_good(self) -&gt; str:
 </dd>
 <dt id="gcubed.sym_data.SymData.combined_variable_summary"><code class="name">var <span class="ident">combined_variable_summary</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
-<div class="desc"><p>Return the combined variable summary data.
-This should be used to drive a lot of the
-variable filtering throughout the model.
-The columns of this summary dataframe are:
-'name' - the full name of the variable
-'prefix' - the name prefix - up to the open bracket.
-'units' - the units code
-'publication_units' - the units code to use when publishing variable projections.
-'description' - the description
-'var_type' - one of:
-par = parameter
-ets = expected endogenous variable? TODO: Check what ets means
-end = endogenous
-sta = state
-stl = lead state variable? TODO: Check what stl var type means.
-exo = exogenous
-cos = costate or jump
-'vector_code' - the vector name and index combination
-'vector' - the vector name z1l, yxr, exo etc.
-'sequence' - the index in the vector that corresponds to the variable.
-'is_intertemp' - the index of the variable in the vector of intertemporal constants (or NaN)
-'is_adjusted' - the index of the variable in the vector of variables being adjusted by intertemporal constants (or NaN)</p></div>
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>This summary dataframe of the SYM information about variables
+should be used to drive a lot of the
+variable filtering during model processing.</p>
+<p>The rows of the dataframe are the variable names.</p>
+<p>The columns of the dataframe are:</p>
+<ul>
+<li><code>name</code> - the full name of the variable</li>
+<li><code>prefix</code> - the name prefix - up to the open bracket.</li>
+<li><code>units</code> - the units code.</li>
+<li><code>publication_units</code> - the units code to use when publishing variable projections.</li>
+<li><code>description</code> - the description</li>
+<li><code>var_type</code> - one of:<ul>
+<li><code>par</code> = parameter</li>
+<li><code>ets</code> = expected next-period value of an endogenous variable</li>
+<li><code>end</code> = endogenous</li>
+<li><code>sta</code> = state</li>
+<li><code>stl</code> = lead state variable</li>
+<li><code>exo</code> = exogenous</li>
+<li><code>cos</code> = costate or jump</li>
+</ul>
+</li>
+<li><code>vector</code> - the vector name e.g. <code>z1l</code>, <code>yxr</code>, <code>exo</code> etc.</li>
+<li><code>vector_code</code> - the vector name and index combination - e.g. <code>exo[3]</code>.</li>
+<li><code>sequence</code> - the index in the vector that corresponds to the variable - e.g <code>3</code>.</li>
+<li><code>is_intertemp</code> - the index of the variable in the vector of intertemporal constants (or NaN)</li>
+<li><code>is_adjusted</code> - the index of the variable in the vector of variables being adjusted by intertemporal constants (or NaN)</li>
+</ul>
+<h3 id="returns">Returns</h3>
+<p>The combined variable summary dataframe.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2680,28 +3002,40 @@ cos = costate or jump
 <pre><code class="python">@property
 def combined_variable_summary(self) -&gt; pd.DataFrame:
     &#34;&#34;&#34;
-    Return the combined variable summary data.
-    This should be used to drive a lot of the 
-    variable filtering throughout the model.
-    The columns of this summary dataframe are:
-    &#39;name&#39; - the full name of the variable
-    &#39;prefix&#39; - the name prefix - up to the open bracket.
-    &#39;units&#39; - the units code
-    &#39;publication_units&#39; - the units code to use when publishing variable projections.
-    &#39;description&#39; - the description
-    &#39;var_type&#39; - one of:
-        par = parameter
-        ets = expected endogenous variable? TODO: Check what ets means
-        end = endogenous
-        sta = state
-        stl = lead state variable? TODO: Check what stl var type means.
-        exo = exogenous
-        cos = costate or jump
-    &#39;vector_code&#39; - the vector name and index combination
-    &#39;vector&#39; - the vector name z1l, yxr, exo etc.
-    &#39;sequence&#39; - the index in the vector that corresponds to the variable.
-    &#39;is_intertemp&#39; - the index of the variable in the vector of intertemporal constants (or NaN)
-    &#39;is_adjusted&#39; - the index of the variable in the vector of variables being adjusted by intertemporal constants (or NaN)
+
+    ### Overview
+
+    This summary dataframe of the SYM information about variables 
+    should be used to drive a lot of the 
+    variable filtering during model processing.
+
+    The rows of the dataframe are the variable names.
+
+    The columns of the dataframe are:
+
+    * `name` - the full name of the variable
+    * `prefix` - the name prefix - up to the open bracket.
+    * `units` - the units code.
+    * `publication_units` - the units code to use when publishing variable projections.
+    * `description` - the description
+    * `var_type` - one of:
+        - `par` = parameter
+        - `ets` = expected next-period value of an endogenous variable
+        - `end` = endogenous
+        - `sta` = state
+        - `stl` = lead state variable
+        - `exo` = exogenous
+        - `cos` = costate or jump
+    * `vector` - the vector name e.g. `z1l`, `yxr`, `exo` etc.
+    * `vector_code` - the vector name and index combination - e.g. `exo[3]`.
+    * `sequence` - the index in the vector that corresponds to the variable - e.g `3`.
+    * `is_intertemp` - the index of the variable in the vector of intertemporal constants (or NaN)
+    * `is_adjusted` - the index of the variable in the vector of variables being adjusted by intertemporal constants (or NaN)
+
+    ### Returns
+    
+    The combined variable summary dataframe.
+
     &#34;&#34;&#34;
     return self._combined_variable_summary</code></pre>
 </details>
@@ -3041,16 +3375,18 @@ def goods_members(self) -&gt; list[str]:
 </dd>
 <dt id="gcubed.sym_data.SymData.intertemporal_constant_variables"><code class="name">var <span class="ident">intertemporal_constant_variables</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
-<div class="desc"><p>Provide access to the information about the variables that are associated with intertemporal constants.</p>
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Provides access to the information about the variables that are associated with intertemporal constants.</p>
 <p>The intertemporal constants are used to ensure that jump variables equal to their observed values in the year
 where there is available data (typically the base projection year, one year before the start of projections).</p>
 <p>An intertemporal constant is also used in each WAGE equation to ensure that real interest rates align with nominal
 interest rates less expected inflation in the next year.</p>
-<p>Return a dataframe containing a row per variable that has an intertemporal constant in its equation.
+<h3 id="returns">Returns</h3>
+<p>A dataframe containing a row per variable that has an intertemporal constant in its equation.
 The dataframe has the following columns:
-- 'name' variable name (complete with set identifiers for region/sector etc.)
-- 'var_type' variable type (the associated LHS vector name)
-- 'sequence' the index of the variable in the associated vector</p></div>
+* <code>name</code> variable name (complete with set identifiers for region/sector etc.)
+* <code>var_type</code> variable type (the associated LHS vector name)
+* <code>sequence</code> the index of the variable in the associated vector</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -3058,7 +3394,10 @@ The dataframe has the following columns:
 <pre><code class="python">@property
 def intertemporal_constant_variables(self) -&gt; pd.DataFrame:
     &#34;&#34;&#34;
-    Provide access to the information about the variables that are associated with intertemporal constants.
+
+    ### Overview
+
+    Provides access to the information about the variables that are associated with intertemporal constants.
 
     The intertemporal constants are used to ensure that jump variables equal to their observed values in the year
     where there is available data (typically the base projection year, one year before the start of projections).
@@ -3066,11 +3405,14 @@ def intertemporal_constant_variables(self) -&gt; pd.DataFrame:
     An intertemporal constant is also used in each WAGE equation to ensure that real interest rates align with nominal 
     interest rates less expected inflation in the next year.
 
-    Return a dataframe containing a row per variable that has an intertemporal constant in its equation.
+    ### Returns 
+    
+    A dataframe containing a row per variable that has an intertemporal constant in its equation.
     The dataframe has the following columns:
-    - &#39;name&#39; variable name (complete with set identifiers for region/sector etc.)
-    - &#39;var_type&#39; variable type (the associated LHS vector name)
-    - &#39;sequence&#39; the index of the variable in the associated vector
+    * `name` variable name (complete with set identifiers for region/sector etc.)
+    * `var_type` variable type (the associated LHS vector name)
+    * `sequence` the index of the variable in the associated vector
+
     &#34;&#34;&#34;
     if hasattr(self, &#39;_intertemporal_constant_variables&#39;):
         return self._intertemporal_constant_variables
@@ -3692,17 +4034,21 @@ def var_map(self) -&gt; pd.DataFrame:
 </dd>
 <dt id="gcubed.sym_data.SymData.variables_adjusted_by_intertemporal_constants"><code class="name">var <span class="ident">variables_adjusted_by_intertemporal_constants</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
-<div class="desc"><p>Provide access to the information about the variables that have their values adjusted
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Provides access to the information about the variables that have their values adjusted
 by the intertemporal constants. Note that this list is slightly different from the
 list of variables that have intertemporal constants added to their equations in the model
 to match up model projections with observed values at the start of the projections because
 a constant is added to the WAGE equation but it is used to adjust the WAGE equation in a way
 that leads to the required expected price inflation rate.</p>
-<p>Return a dataframe containing a row per variable that has an intertemporal constant in its equation.
-The dataframe has the following columns:
-- 'name' variable name (complete with set identifiers for region/sector etc.)
-- 'var_type' variable type (the associated LHS vector name)
-- 'sequence' the index of the variable in the associated vector</p></div>
+<h3 id="returns">Returns</h3>
+<p>A dataframe containing a row per variable that has an intertemporal constant in its equation.
+The dataframe has the following columns:</p>
+<ul>
+<li><code>name</code> variable name (complete with set identifiers for region/sector etc.)</li>
+<li><code>var_type</code> variable type (the associated LHS vector name)</li>
+<li><code>sequence</code> the index of the variable in the associated vector</li>
+</ul></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -3710,18 +4056,23 @@ The dataframe has the following columns:
 <pre><code class="python">@property
 def variables_adjusted_by_intertemporal_constants(self) -&gt; pd.DataFrame:
     &#34;&#34;&#34;
-    Provide access to the information about the variables that have their values adjusted 
+    ### Overview
+
+    Provides access to the information about the variables that have their values adjusted 
     by the intertemporal constants. Note that this list is slightly different from the 
     list of variables that have intertemporal constants added to their equations in the model
     to match up model projections with observed values at the start of the projections because
     a constant is added to the WAGE equation but it is used to adjust the WAGE equation in a way
     that leads to the required expected price inflation rate.
 
-    Return a dataframe containing a row per variable that has an intertemporal constant in its equation.
+    ### Returns
+    
+    A dataframe containing a row per variable that has an intertemporal constant in its equation.
     The dataframe has the following columns:
-    - &#39;name&#39; variable name (complete with set identifiers for region/sector etc.)
-    - &#39;var_type&#39; variable type (the associated LHS vector name)
-    - &#39;sequence&#39; the index of the variable in the associated vector
+
+    * `name` variable name (complete with set identifiers for region/sector etc.)
+    * `var_type` variable type (the associated LHS vector name)
+    * `sequence` the index of the variable in the associated vector
     &#34;&#34;&#34;
 
     if hasattr(self, &#39;_variables_adjusted_by_intertemporal_constants&#39;):
@@ -3832,8 +4183,10 @@ a variable with the given complete name.</p></div>
     the set qualifier in round brackets (e.g. `INFL(UU)`).
 
     ### Returns
+
     True if the SYM model definition includes 
     a variable with the given complete name.
+
     &#34;&#34;&#34;
     return (self.var_map.name == variable_name).any()</code></pre>
 </details>
@@ -3866,9 +4219,126 @@ supplied prefix. The prefix is matched as a string rather than a regular express
     `variable_name_prefix`: The variable name prefix string.
 
     ### Returns
+
     True iff the SYM model definition includes a variable with the given root name.
+
     &#34;&#34;&#34;
     return self.var_map.name.str.startswith(variable_name_prefix).any()</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.is_adjustable_in_simulations"><code class="name flex">
+<span>def <span class="ident">is_adjustable_in_simulations</span></span>(<span>self, variable_name: str) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><h3 id="arguments">Arguments</h3>
+<p>variable_name: The full name of the variable.</p>
+<h3 id="returns">Returns</h3>
+<p><code>True</code> if the variable can be adjusted in a simulation layer
+and <code>False</code> otherwise.</p>
+<h3 id="throws">Throws</h3>
+<p>Exception if the named variable is not in the model.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_adjustable_in_simulations(self, variable_name: str) -&gt; int:
+    &#34;&#34;&#34;
+    ### Arguments
+
+    variable_name: The full name of the variable.
+
+    ### Returns
+     
+    `True` if the variable can be adjusted in a simulation layer
+    and `False` otherwise.
+
+    ### Throws
+
+    Exception if the named variable is not in the model.
+
+    &#34;&#34;&#34;
+    try:
+        match self.variable_var_type(variable_name=variable_name):
+            case &#39;sta&#39; | &#39;stl&#39; | &#39;exo&#39;:
+                return True
+            case _:
+                return False
+    except:
+        raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.is_exogenous"><code class="name flex">
+<span>def <span class="ident">is_exogenous</span></span>(<span>self, variable_name: str) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><h3 id="arguments">Arguments</h3>
+<p>variable_name: The full name of the variable.</p>
+<h3 id="returns">Returns</h3>
+<p><code>True</code> if the variable is exogenous and <code>False</code> otherwise.</p>
+<h3 id="throws">Throws</h3>
+<p>Exception if the named variable is not in the model.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_exogenous(self, variable_name: str) -&gt; int:
+    &#34;&#34;&#34;
+    ### Arguments
+
+    variable_name: The full name of the variable.
+
+    ### Returns
+     
+    `True` if the variable is exogenous and `False` otherwise.
+
+    ### Throws
+
+    Exception if the named variable is not in the model.
+
+    &#34;&#34;&#34;
+    try:
+        return self.variable_var_type(variable_name=variable_name) == &#39;exo&#39;
+    except:
+        raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.is_state"><code class="name flex">
+<span>def <span class="ident">is_state</span></span>(<span>self, variable_name: str) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><h3 id="arguments">Arguments</h3>
+<p>variable_name: The full name of the variable.</p>
+<h3 id="returns">Returns</h3>
+<p><code>True</code> if the variable is a state or lead state variable and <code>False</code> otherwise.</p>
+<h3 id="throws">Throws</h3>
+<p>Exception if the named variable is not in the model.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_state(self, variable_name: str) -&gt; int:
+    &#34;&#34;&#34;
+    ### Arguments
+
+    variable_name: The full name of the variable.
+
+    ### Returns
+     
+    `True` if the variable is a state or lead state variable and `False` otherwise.
+
+    ### Throws
+
+    Exception if the named variable is not in the model.
+
+    &#34;&#34;&#34;
+    try:
+        match self.variable_var_type(variable_name=variable_name):
+            case &#39;sta&#39; | &#39;stl&#39;:
+                return True
+            case _:
+                return False
+    except:
+        raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.matching_rhs_vector_name"><code class="name flex">
@@ -3980,16 +4450,99 @@ goods in the supplied list.</p></div>
     return [self.sector_producing(x) for x in goods]</code></pre>
 </details>
 </dd>
+<dt id="gcubed.sym_data.SymData.units_for_variables_with_given_name_prefix"><code class="name flex">
+<span>def <span class="ident">units_for_variables_with_given_name_prefix</span></span>(<span>self, vector_name: str, variable_name_prefix: str) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><h3 id="arguments">Arguments</h3>
+<p>vector_name: The name of the vector that contains the variable.</p>
+<p>variable_name_prefix: The prefix is the set of characters up to but not including the
+round bracket that starts the full qualification of the variable based on the sets it is
+defined over.</p>
+<p>e.g. use SHL for SHL(region,sector)</p>
+<h3 id="returns">Returns</h3>
+<p>The units of measurement for the variables that match the given name prefix
+and that are of the variable type associated with the given vector name.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def units_for_variables_with_given_name_prefix(self, vector_name: str, variable_name_prefix: str) -&gt; str:
+    &#34;&#34;&#34;
+    ### Arguments
+
+    vector_name: The name of the vector that contains the variable.
+    
+    variable_name_prefix: The prefix is the set of characters up to but not including the 
+    round bracket that starts the full qualification of the variable based on the sets it is
+    defined over.
+
+    e.g. use SHL for SHL(region,sector)
+
+    ### Returns
+    
+    The units of measurement for the variables that match the given name prefix 
+    and that are of the variable type associated with the given vector name.
+    &#34;&#34;&#34;
+    variable_type: str = self.varmap_variable_type(vector_name=vector_name)
+    type_matches: list[bool] = self.var_info.var_type == variable_type
+    name_matches: list[bool] = self.var_info.name.str.startswith(f&#34;{variable_name_prefix}(&#34;)
+    result = self.var_info.loc[type_matches &amp; name_matches, &#39;units&#39;]
+    if len(result) == 0:
+        raise Exception(
+            f&#34;The variable name prefix, {variable_name_prefix}, is not defined in the SYM model as part of vector {vector_name}.&#34;)
+    if len(result) != 1:
+        raise Exception(
+            f&#34;The variable name prefix, {variable_name_prefix}, must be unique within the SYM model to retrieve its unique index.&#34;)
+    return str(result)</code></pre>
+</details>
+</dd>
 <dt id="gcubed.sym_data.SymData.variable_index"><code class="name flex">
 <span>def <span class="ident">variable_index</span></span>(<span>self, vector_name: str, variable_name: str) ‑> int</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><h3 id="overview">Overview</h3>
+<p>Used to get the integer index of a variable
+in the specified vector.</p>
+<h3 id="arguments">Arguments</h3>
+<p><code>variable_name</code>: The complete variable name including
+the set qualifier in round brackets (e.g. <code>INFL(UU)</code>).</p>
+<h3 id="returns">Returns</h3>
+<p>The integer indicating the row index of the variable in the given vector.
+Indexing starts from <code>0</code>.</p>
+<h3 id="throws">Throws</h3>
+<p>An exception is thrown if the variable is not in the SYM model.</p>
+<p>An exception is thrown if the named variable is not unique within the SYM model
+though that should not be possible once the SYM processor has run without problems.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def variable_index(self, vector_name: str, variable_name: str) -&gt; int:
+    &#34;&#34;&#34;
+
+    ### Overview
+
+    Used to get the integer index of a variable  in the specified vector.
+    
+    ### Arguments
+
+    `variable_name`: The complete variable name including
+    the set qualifier in round brackets (e.g. `INFL(UU)`).
+
+    ### Returns
+    
+    The integer indicating the row index of the variable in the given vector.
+    Indexing starts from `0`.
+
+    ### Throws
+
+    An exception is thrown if the variable is not in the SYM model.
+
+    An exception is thrown if the named variable is not unique within the SYM model
+    though that should not be possible once the SYM processor has run without problems.
+
+    &#34;&#34;&#34;
     variable_type: str = self.varmap_variable_type(vector_name=vector_name)
     type_matches: list[bool] = self.var_map.var_type == variable_type
     name_matches: list[bool] = self.var_map.name == variable_name
@@ -4003,47 +4556,126 @@ goods in the supplied list.</p></div>
     return int(result.values[0])</code></pre>
 </details>
 </dd>
-<dt id="gcubed.sym_data.SymData.variable_units"><code class="name flex">
-<span>def <span class="ident">variable_units</span></span>(<span>self, vector_name: str, variable_name_prefix: str) ‑> int</span>
+<dt id="gcubed.sym_data.SymData.variable_publication_units"><code class="name flex">
+<span>def <span class="ident">variable_publication_units</span></span>(<span>self, variable_name: str) ‑> int</span>
 </code></dt>
 <dd>
 <div class="desc"><h3 id="arguments">Arguments</h3>
-<p>variable_name_prefix: The prefix is the set of characters up to but not including the
-round bracket that starts the full qualification of the variable based on the sets it is
-defined over.</p>
-<p>e.g. use SHL for SHL(region,sector)</p>
-<p>Returns the units of measurement for the variable identified by the prefix.
-true iff the SYM model definition includes a variable with the given complete name including
-the set qualifier in round brackets.</p></div>
+<p>variable_name: The full name of the variable.</p>
+<h3 id="returns">Returns</h3>
+<p>The publication units of measurement for the variable with the given name.</p>
+<h3 id="throws">Throws</h3>
+<p>Exception if the named variable is not in the model.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def variable_units(self, vector_name: str, variable_name_prefix: str) -&gt; int:
+<pre><code class="python">def variable_publication_units(self, variable_name: str) -&gt; int:
     &#34;&#34;&#34;
-   ### Arguments
+    ### Arguments
 
-    variable_name_prefix: The prefix is the set of characters up to but not including the 
-    round bracket that starts the full qualification of the variable based on the sets it is
-    defined over.
+    variable_name: The full name of the variable.
 
-    e.g. use SHL for SHL(region,sector)
+    ### Returns
+     
+    The publication units of measurement for the variable with the given name.
 
-    Returns the units of measurement for the variable identified by the prefix.
-    true iff the SYM model definition includes a variable with the given complete name including
-    the set qualifier in round brackets.
+    ### Throws
+
+    Exception if the named variable is not in the model.
+
     &#34;&#34;&#34;
-    variable_type: str = self.varmap_variable_type(vector_name=vector_name)
-    type_matches: list[bool] = self.var_info.var_type == variable_type
-    name_matches: list[bool] = self.var_info.name.str.startswith(f&#34;{variable_name_prefix}(&#34;)
-    result = self.var_info.loc[type_matches &amp; name_matches, &#39;units&#39;]
-    if len(result) == 0:
-        raise Exception(
-            f&#34;The variable name prefix, {variable_name_prefix}, is not defined in the SYM model as part of vector {vector_name}.&#34;)
-    if len(result) != 1:
-        raise Exception(
-            f&#34;The variable name prefix, {variable_name_prefix}, must be unique within the SYM model to retrieve its unique index.&#34;)
-    return str(result)</code></pre>
+    try:
+        return self.combined_variable_summary.loc[[variable_name], &#39;publication_units&#39;]
+    except:
+        raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.variable_units"><code class="name flex">
+<span>def <span class="ident">variable_units</span></span>(<span>self, variable_name: str) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><h3 id="arguments">Arguments</h3>
+<p>variable_name: The full name of the variable.</p>
+<h3 id="returns">Returns</h3>
+<p>The units of measurement for the variable with the given name.</p>
+<h3 id="throws">Throws</h3>
+<p>Exception if the named variable is not in the model.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def variable_units(self, variable_name: str) -&gt; int:
+    &#34;&#34;&#34;
+    ### Arguments
+
+    variable_name: The full name of the variable.
+
+    ### Returns
+     
+    The units of measurement for the variable with the given name.
+
+    ### Throws
+
+    Exception if the named variable is not in the model.
+
+    &#34;&#34;&#34;
+    try:
+        return self.combined_variable_summary.loc[[variable_name], &#39;units&#39;]
+    except:
+        raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="gcubed.sym_data.SymData.variable_var_type"><code class="name flex">
+<span>def <span class="ident">variable_var_type</span></span>(<span>self, variable_name: str) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><h3 id="arguments">Arguments</h3>
+<p>variable_name: The full name of the variable.</p>
+<h3 id="returns">Returns</h3>
+<p>The variable type of the vector that the variable is in. One of:</p>
+<ul>
+<li><code>par</code> = parameter</li>
+<li><code>ets</code> = expected next-period value of an endogenous variable</li>
+<li><code>end</code> = endogenous</li>
+<li><code>sta</code> = state</li>
+<li><code>stl</code> = lead state variable</li>
+<li><code>exo</code> = exogenous</li>
+<li><code>cos</code> = costate or jump</li>
+</ul>
+<h3 id="throws">Throws</h3>
+<p>Exception if the named variable is not in the model.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def variable_var_type(self, variable_name: str) -&gt; int:
+    &#34;&#34;&#34;
+    ### Arguments
+
+    variable_name: The full name of the variable.
+
+    ### Returns
+     
+    The variable type of the vector that the variable is in. One of:
+    
+    - `par` = parameter
+    - `ets` = expected next-period value of an endogenous variable
+    - `end` = endogenous
+    - `sta` = state
+    - `stl` = lead state variable
+    - `exo` = exogenous
+    - `cos` = costate or jump
+
+    ### Throws
+
+    Exception if the named variable is not in the model.
+
+    &#34;&#34;&#34;
+    try:
+        return str(self.combined_variable_summary.loc[[variable_name], &#39;var_type&#39;].values[0])
+    except:
+        raise Exception(f&#34;{variable_name} does not appear to be the full name of a variable in the model.&#34;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.varmap_variable_type"><code class="name flex">
@@ -4119,8 +4751,7 @@ the varmap information associated with the vector.</p></div>
             return self.exogenous_variable_count
 
         case _:
-            raise Exception(
-                &#34;No vector length available for the vector named {}&#34;.format(vector_name))</code></pre>
+            raise Exception(f&#34;No vector length available for the {vector_name} vector.&#34;)</code></pre>
 </details>
 </dd>
 <dt id="gcubed.sym_data.SymData.vector_variable_names"><code class="name flex">
@@ -4201,6 +4832,9 @@ linear model partial derivatives, and SSF matrices.</p></div>
 <li><code><a title="gcubed.sym_data.SymData.has_variable" href="#gcubed.sym_data.SymData.has_variable">has_variable</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.has_variables" href="#gcubed.sym_data.SymData.has_variables">has_variables</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.intertemporal_constant_variables" href="#gcubed.sym_data.SymData.intertemporal_constant_variables">intertemporal_constant_variables</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.is_adjustable_in_simulations" href="#gcubed.sym_data.SymData.is_adjustable_in_simulations">is_adjustable_in_simulations</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.is_exogenous" href="#gcubed.sym_data.SymData.is_exogenous">is_exogenous</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.is_state" href="#gcubed.sym_data.SymData.is_state">is_state</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.jump_variable_count" href="#gcubed.sym_data.SymData.jump_variable_count">jump_variable_count</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.lhs_vector_names" href="#gcubed.sym_data.SymData.lhs_vector_names">lhs_vector_names</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.matching_rhs_vector_name" href="#gcubed.sym_data.SymData.matching_rhs_vector_name">matching_rhs_vector_name</a></code></li>
@@ -4233,11 +4867,14 @@ linear model partial derivatives, and SSF matrices.</p></div>
 <li><code><a title="gcubed.sym_data.SymData.ssf_rhs_vector_names" href="#gcubed.sym_data.SymData.ssf_rhs_vector_names">ssf_rhs_vector_names</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.state_variable_count" href="#gcubed.sym_data.SymData.state_variable_count">state_variable_count</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.sym_sets" href="#gcubed.sym_data.SymData.sym_sets">sym_sets</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.units_for_variables_with_given_name_prefix" href="#gcubed.sym_data.SymData.units_for_variables_with_given_name_prefix">units_for_variables_with_given_name_prefix</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.us_region" href="#gcubed.sym_data.SymData.us_region">us_region</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.var_info" href="#gcubed.sym_data.SymData.var_info">var_info</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.var_map" href="#gcubed.sym_data.SymData.var_map">var_map</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.variable_index" href="#gcubed.sym_data.SymData.variable_index">variable_index</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.variable_publication_units" href="#gcubed.sym_data.SymData.variable_publication_units">variable_publication_units</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.variable_units" href="#gcubed.sym_data.SymData.variable_units">variable_units</a></code></li>
+<li><code><a title="gcubed.sym_data.SymData.variable_var_type" href="#gcubed.sym_data.SymData.variable_var_type">variable_var_type</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.variables_adjusted_by_intertemporal_constants" href="#gcubed.sym_data.SymData.variables_adjusted_by_intertemporal_constants">variables_adjusted_by_intertemporal_constants</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.varmap_variable_type" href="#gcubed.sym_data.SymData.varmap_variable_type">varmap_variable_type</a></code></li>
 <li><code><a title="gcubed.sym_data.SymData.vector_length" href="#gcubed.sym_data.SymData.vector_length">vector_length</a></code></li>
