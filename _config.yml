@@ -1,6 +1,6 @@
 remote_theme: just-the-docs/just-the-docs
 
-title: The G-Cubed Model Doc
+title: Python G-Cubed Model
 baseurl: "/g-cubed_teaching_model" # the subpath of your site, e.g. /blog
 url: "https://lucid-wei.github.io"
 
@@ -9,20 +9,18 @@ permalink: /:title/
 
 # External navigation links
 nav_external_links:
-  - title: Auto-gen gcubed API documentation
+  - title: Python API documentation
     url: https://lucid-wei.github.io/g-cubed_teaching_model/docs/gcubed/
     hide_icon: true
-  - title: Download teaching contents
-    url: https://github.com/lucid-wei/g-cubed_teaching_model/archive/refs/heads/main.zip
   - title: G-Cubed official website
-    url: http://www.sensiblepolicy.com/index.html
+    url: https://www.gcubed.com/
   - title: Page maintainer
     url: mailto:lucid.wei@alumni.anu.edu.au
 
 
 # Aux links for the upper right navigation
 aux_links:
-  "GitHub for this page":
+  "GitHub repository":
     - "https://github.com/lucid-wei/g-cubed_teaching_model"
 aux_links_new_tab: true
 
@@ -31,4 +29,4 @@ source: docs
 back_to_top: true
 back_to_top_text: "Back to top"
 
-#logo: "/docs/assets/images/g-cubed-logo.jpg"
+logo: "/docs/assets/images/g-cubed-logo.jpg"
