@@ -64,7 +64,14 @@ class Constants:
         &#34;&#34;&#34;
         return __class__._USA_REGION_CODE
 
-    # 
+    _INFX_PREFIX: str = &#34;INFX&#34;
+    @property
+    def INFX_PREFIX(self) -&gt; str:
+        &#34;&#34;&#34;
+        The INFX (inflation rate target) variable prefix.
+        &#34;&#34;&#34;
+        return __class__._INFX_PREFIX
+
     _PRID_PREFIX: str = &#34;PRID&#34;
     @property
     def PRID_PREFIX(self) -&gt; str:
@@ -124,13 +131,72 @@ class Constants:
         &#34;&#34;&#34;
         return __class__._NOMINAL_INTEREST_RATE_PREFIX
 
-    _INTEREST_RATE_PREFIXES: list[str] = [&#34;INPL&#34;, &#34;INPN&#34;, &#34;INTF&#34;, &#34;INTL&#34;, &#34;INTN&#34;, &#34;INTR&#34;]
+    # _INTEREST_RATE_PREFIXES: list[str] = [&#34;INPN&#34;, &#34;INPL&#34;, &#34;INTF&#34;, &#34;INTL&#34;, &#34;INTN&#34;, &#34;INTR&#34;]
+    # @property
+    # def INTEREST_RATE_PREFIXES(self) -&gt; list[str]:
+    #     &#34;&#34;&#34;
+    #     The interest rate variable prefixes.
+
+    #     These are the prefixes of the variables that are set equal to the neutral real interest
+    #     rate (set in the model configuration, `ModelConfiguration.neutral_real_interest_rate`)
+    #     when doing linearisation of the model and when determining the
+    #     adjustments to make to equate projections to observed data when 
+    #     doing the baseline projections.
+
+    #     * `INPN` is the desired nominal short-run interest rate in the current period.
+    #     * `INPL` is the desired nominal short-run interest rate, lagged by 1 period.
+    #     * `INTF` is the real short-run interest rate.
+    #     * `INTL` is the real short-run interest rate, lagged by 1 period.
+    #     * `INTN` is the nominal short-run interest rate, controlled by the central bank.
+    #     * `INTR` is the &#39;risk-adjusted&#39; real short-run interest rate, controlled by the central bank,
+    #     equal to INTF plus RISR - an exogenous risk-premium in the yield curve. Note that
+    #     RISR is typically zero in the databases and would be used to run simulation experiments.
+
+    #     &#34;&#34;&#34;
+    #     return __class__._INTEREST_RATE_PREFIXES
+
+
+    _ALL_REAL_INTEREST_RATE_PREFIXES: list[str] = [&#34;INTF&#34;, &#34;INTL&#34;, &#34;INTR&#34;]
     @property
-    def INTEREST_RATE_PREFIXES(self) -&gt; list[str]:
+    def ALL_REAL_INTEREST_RATE_PREFIXES(self) -&gt; list[str]:
         &#34;&#34;&#34;
-        The interest rate variable prefixes.
+        The real interest rate variable prefixes.
+
+        These are the prefixes of the variables that are set equal to the neutral real interest
+        rate (set in the model configuration, `ModelConfiguration.neutral_real_interest_rate`)
+        when doing linearisation of the model and when determining the
+        adjustments to make to equate projections to observed data when 
+        doing the baseline projections.
+
+        * `INTF` is the real short-run interest rate.
+        * `INTL` is the real short-run interest rate, lagged by 1 period.
+        * `INTR` is the &#39;risk-adjusted&#39; real short-run interest rate, controlled by the central bank,
+        equal to INTF plus RISR - an exogenous risk-premium in the yield curve. Note that
+        RISR is typically zero in the databases and would be used to run simulation experiments.
+
         &#34;&#34;&#34;
-        return __class__._INTEREST_RATE_PREFIXES
+        return __class__._ALL_REAL_INTEREST_RATE_PREFIXES
+
+
+    _ALL_NOMINAL_INTEREST_RATE_PREFIXES: list[str] = [&#34;INPN&#34;, &#34;INPL&#34;, &#34;INTN&#34;]
+    @property
+    def ALL_NOMINAL_INTEREST_RATE_PREFIXES(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The nominal interest rate variable prefixes.
+
+        These are the prefixes of the variables that are set equal to the neutral real interest
+        rate plus the target inflation rate
+        when doing linearisation of the model and when determining the
+        adjustments to make to equate projections to observed data when 
+        doing the baseline projections.
+
+        * `INPN` is the desired nominal short-run interest rate in the current period.
+        * `INPL` is the desired nominal short-run interest rate, lagged by 1 period.
+        * `INTN` is the nominal short-run interest rate, controlled by the central bank.
+
+        &#34;&#34;&#34;
+        return __class__._ALL_NOMINAL_INTEREST_RATE_PREFIXES
+
 
 
     _BOND_RATE_PREFIXES: list[str] = [&#34;NB02&#34;, &#34;NB05&#34;, &#34;NB10&#34;, &#34;RB10&#34;]
@@ -245,7 +311,7 @@ class Constants:
         return __class__._REXC_FOR_USA
     
     # Pick out the variables of interest to report.
-    _REPORTING_VARIABLES:list[str] = [&#39;INFX(UU)&#39;, &#39;INFL(UU)&#39;, &#39;INTN(UU)&#39;, &#39;NB10(UU)&#39;, &#39;INTR(UU)&#39;, &#39;RB10(UU)&#39;, &#39;GDPN(UU)&#39;, &#39;GDPR(UU)&#39;, &#39;INVT(UU)&#39;]
+    _REPORTING_VARIABLES:list[str] = [&#39;TIX(g05,UU)&#39;, &#39;INFX(UU)&#39;, &#39;INFL(UU)&#39;, &#39;INTN(UU)&#39;, &#39;NB10(UU)&#39;, &#39;INTR(UU)&#39;, &#39;RB10(UU)&#39;, &#39;GDPN(UU)&#39;, &#39;GDPR(UU)&#39;, &#39;INVT(UU)&#39;]
     @property
     def REPORTING_VARIABLES(self) -&gt; list[str]:
         &#34;&#34;&#34;
@@ -307,7 +373,14 @@ class Constants:
         &#34;&#34;&#34;
         return __class__._USA_REGION_CODE
 
-    # 
+    _INFX_PREFIX: str = &#34;INFX&#34;
+    @property
+    def INFX_PREFIX(self) -&gt; str:
+        &#34;&#34;&#34;
+        The INFX (inflation rate target) variable prefix.
+        &#34;&#34;&#34;
+        return __class__._INFX_PREFIX
+
     _PRID_PREFIX: str = &#34;PRID&#34;
     @property
     def PRID_PREFIX(self) -&gt; str:
@@ -367,13 +440,72 @@ class Constants:
         &#34;&#34;&#34;
         return __class__._NOMINAL_INTEREST_RATE_PREFIX
 
-    _INTEREST_RATE_PREFIXES: list[str] = [&#34;INPL&#34;, &#34;INPN&#34;, &#34;INTF&#34;, &#34;INTL&#34;, &#34;INTN&#34;, &#34;INTR&#34;]
+    # _INTEREST_RATE_PREFIXES: list[str] = [&#34;INPN&#34;, &#34;INPL&#34;, &#34;INTF&#34;, &#34;INTL&#34;, &#34;INTN&#34;, &#34;INTR&#34;]
+    # @property
+    # def INTEREST_RATE_PREFIXES(self) -&gt; list[str]:
+    #     &#34;&#34;&#34;
+    #     The interest rate variable prefixes.
+
+    #     These are the prefixes of the variables that are set equal to the neutral real interest
+    #     rate (set in the model configuration, `ModelConfiguration.neutral_real_interest_rate`)
+    #     when doing linearisation of the model and when determining the
+    #     adjustments to make to equate projections to observed data when 
+    #     doing the baseline projections.
+
+    #     * `INPN` is the desired nominal short-run interest rate in the current period.
+    #     * `INPL` is the desired nominal short-run interest rate, lagged by 1 period.
+    #     * `INTF` is the real short-run interest rate.
+    #     * `INTL` is the real short-run interest rate, lagged by 1 period.
+    #     * `INTN` is the nominal short-run interest rate, controlled by the central bank.
+    #     * `INTR` is the &#39;risk-adjusted&#39; real short-run interest rate, controlled by the central bank,
+    #     equal to INTF plus RISR - an exogenous risk-premium in the yield curve. Note that
+    #     RISR is typically zero in the databases and would be used to run simulation experiments.
+
+    #     &#34;&#34;&#34;
+    #     return __class__._INTEREST_RATE_PREFIXES
+
+
+    _ALL_REAL_INTEREST_RATE_PREFIXES: list[str] = [&#34;INTF&#34;, &#34;INTL&#34;, &#34;INTR&#34;]
     @property
-    def INTEREST_RATE_PREFIXES(self) -&gt; list[str]:
+    def ALL_REAL_INTEREST_RATE_PREFIXES(self) -&gt; list[str]:
         &#34;&#34;&#34;
-        The interest rate variable prefixes.
+        The real interest rate variable prefixes.
+
+        These are the prefixes of the variables that are set equal to the neutral real interest
+        rate (set in the model configuration, `ModelConfiguration.neutral_real_interest_rate`)
+        when doing linearisation of the model and when determining the
+        adjustments to make to equate projections to observed data when 
+        doing the baseline projections.
+
+        * `INTF` is the real short-run interest rate.
+        * `INTL` is the real short-run interest rate, lagged by 1 period.
+        * `INTR` is the &#39;risk-adjusted&#39; real short-run interest rate, controlled by the central bank,
+        equal to INTF plus RISR - an exogenous risk-premium in the yield curve. Note that
+        RISR is typically zero in the databases and would be used to run simulation experiments.
+
         &#34;&#34;&#34;
-        return __class__._INTEREST_RATE_PREFIXES
+        return __class__._ALL_REAL_INTEREST_RATE_PREFIXES
+
+
+    _ALL_NOMINAL_INTEREST_RATE_PREFIXES: list[str] = [&#34;INPN&#34;, &#34;INPL&#34;, &#34;INTN&#34;]
+    @property
+    def ALL_NOMINAL_INTEREST_RATE_PREFIXES(self) -&gt; list[str]:
+        &#34;&#34;&#34;
+        The nominal interest rate variable prefixes.
+
+        These are the prefixes of the variables that are set equal to the neutral real interest
+        rate plus the target inflation rate
+        when doing linearisation of the model and when determining the
+        adjustments to make to equate projections to observed data when 
+        doing the baseline projections.
+
+        * `INPN` is the desired nominal short-run interest rate in the current period.
+        * `INPL` is the desired nominal short-run interest rate, lagged by 1 period.
+        * `INTN` is the nominal short-run interest rate, controlled by the central bank.
+
+        &#34;&#34;&#34;
+        return __class__._ALL_NOMINAL_INTEREST_RATE_PREFIXES
+
 
 
     _BOND_RATE_PREFIXES: list[str] = [&#34;NB02&#34;, &#34;NB05&#34;, &#34;NB10&#34;, &#34;RB10&#34;]
@@ -488,7 +620,7 @@ class Constants:
         return __class__._REXC_FOR_USA
     
     # Pick out the variables of interest to report.
-    _REPORTING_VARIABLES:list[str] = [&#39;INFX(UU)&#39;, &#39;INFL(UU)&#39;, &#39;INTN(UU)&#39;, &#39;NB10(UU)&#39;, &#39;INTR(UU)&#39;, &#39;RB10(UU)&#39;, &#39;GDPN(UU)&#39;, &#39;GDPR(UU)&#39;, &#39;INVT(UU)&#39;]
+    _REPORTING_VARIABLES:list[str] = [&#39;TIX(g05,UU)&#39;, &#39;INFX(UU)&#39;, &#39;INFL(UU)&#39;, &#39;INTN(UU)&#39;, &#39;NB10(UU)&#39;, &#39;INTR(UU)&#39;, &#39;RB10(UU)&#39;, &#39;GDPN(UU)&#39;, &#39;GDPR(UU)&#39;, &#39;INVT(UU)&#39;]
     @property
     def REPORTING_VARIABLES(self) -&gt; list[str]:
         &#34;&#34;&#34;
@@ -507,6 +639,82 @@ class Constants:
 </details>
 <h3>Instance variables</h3>
 <dl>
+<dt id="gcubed.constants.Constants.ALL_NOMINAL_INTEREST_RATE_PREFIXES"><code class="name">var <span class="ident">ALL_NOMINAL_INTEREST_RATE_PREFIXES</span> : list[str]</code></dt>
+<dd>
+<div class="desc"><p>The nominal interest rate variable prefixes.</p>
+<p>These are the prefixes of the variables that are set equal to the neutral real interest
+rate plus the target inflation rate
+when doing linearisation of the model and when determining the
+adjustments to make to equate projections to observed data when
+doing the baseline projections.</p>
+<ul>
+<li><code>INPN</code> is the desired nominal short-run interest rate in the current period.</li>
+<li><code>INPL</code> is the desired nominal short-run interest rate, lagged by 1 period.</li>
+<li><code>INTN</code> is the nominal short-run interest rate, controlled by the central bank.</li>
+</ul></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def ALL_NOMINAL_INTEREST_RATE_PREFIXES(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    The nominal interest rate variable prefixes.
+
+    These are the prefixes of the variables that are set equal to the neutral real interest
+    rate plus the target inflation rate
+    when doing linearisation of the model and when determining the
+    adjustments to make to equate projections to observed data when 
+    doing the baseline projections.
+
+    * `INPN` is the desired nominal short-run interest rate in the current period.
+    * `INPL` is the desired nominal short-run interest rate, lagged by 1 period.
+    * `INTN` is the nominal short-run interest rate, controlled by the central bank.
+
+    &#34;&#34;&#34;
+    return __class__._ALL_NOMINAL_INTEREST_RATE_PREFIXES</code></pre>
+</details>
+</dd>
+<dt id="gcubed.constants.Constants.ALL_REAL_INTEREST_RATE_PREFIXES"><code class="name">var <span class="ident">ALL_REAL_INTEREST_RATE_PREFIXES</span> : list[str]</code></dt>
+<dd>
+<div class="desc"><p>The real interest rate variable prefixes.</p>
+<p>These are the prefixes of the variables that are set equal to the neutral real interest
+rate (set in the model configuration, <code>ModelConfiguration.neutral_real_interest_rate</code>)
+when doing linearisation of the model and when determining the
+adjustments to make to equate projections to observed data when
+doing the baseline projections.</p>
+<ul>
+<li><code>INTF</code> is the real short-run interest rate.</li>
+<li><code>INTL</code> is the real short-run interest rate, lagged by 1 period.</li>
+<li><code>INTR</code> is the 'risk-adjusted' real short-run interest rate, controlled by the central bank,
+equal to INTF plus RISR - an exogenous risk-premium in the yield curve. Note that
+RISR is typically zero in the databases and would be used to run simulation experiments.</li>
+</ul></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def ALL_REAL_INTEREST_RATE_PREFIXES(self) -&gt; list[str]:
+    &#34;&#34;&#34;
+    The real interest rate variable prefixes.
+
+    These are the prefixes of the variables that are set equal to the neutral real interest
+    rate (set in the model configuration, `ModelConfiguration.neutral_real_interest_rate`)
+    when doing linearisation of the model and when determining the
+    adjustments to make to equate projections to observed data when 
+    doing the baseline projections.
+
+    * `INTF` is the real short-run interest rate.
+    * `INTL` is the real short-run interest rate, lagged by 1 period.
+    * `INTR` is the &#39;risk-adjusted&#39; real short-run interest rate, controlled by the central bank,
+    equal to INTF plus RISR - an exogenous risk-premium in the yield curve. Note that
+    RISR is typically zero in the databases and would be used to run simulation experiments.
+
+    &#34;&#34;&#34;
+    return __class__._ALL_REAL_INTEREST_RATE_PREFIXES</code></pre>
+</details>
+</dd>
 <dt id="gcubed.constants.Constants.BOND_RATE_PREFIXES"><code class="name">var <span class="ident">BOND_RATE_PREFIXES</span> : list[str]</code></dt>
 <dd>
 <div class="desc"><p>The long bond rate (real and nominal) variable prefixes.</p></div>
@@ -555,19 +763,19 @@ def INDEX_PREFIXES(self) -&gt; list[str]:
     return __class__._INDEX_PREFIXES</code></pre>
 </details>
 </dd>
-<dt id="gcubed.constants.Constants.INTEREST_RATE_PREFIXES"><code class="name">var <span class="ident">INTEREST_RATE_PREFIXES</span> : list[str]</code></dt>
+<dt id="gcubed.constants.Constants.INFX_PREFIX"><code class="name">var <span class="ident">INFX_PREFIX</span> : str</code></dt>
 <dd>
-<div class="desc"><p>The interest rate variable prefixes.</p></div>
+<div class="desc"><p>The INFX (inflation rate target) variable prefix.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def INTEREST_RATE_PREFIXES(self) -&gt; list[str]:
+def INFX_PREFIX(self) -&gt; str:
     &#34;&#34;&#34;
-    The interest rate variable prefixes.
+    The INFX (inflation rate target) variable prefix.
     &#34;&#34;&#34;
-    return __class__._INTEREST_RATE_PREFIXES</code></pre>
+    return __class__._INFX_PREFIX</code></pre>
 </details>
 </dd>
 <dt id="gcubed.constants.Constants.JUMPING_VARIABLE_PREFIXES_FOR_REGIONS"><code class="name">var <span class="ident">JUMPING_VARIABLE_PREFIXES_FOR_REGIONS</span> : list[str]</code></dt>
@@ -892,10 +1100,12 @@ def WAGE_PREFIX(self) -&gt; str:
 <li>
 <h4><code><a title="gcubed.constants.Constants" href="#gcubed.constants.Constants">Constants</a></code></h4>
 <ul class="">
+<li><code><a title="gcubed.constants.Constants.ALL_NOMINAL_INTEREST_RATE_PREFIXES" href="#gcubed.constants.Constants.ALL_NOMINAL_INTEREST_RATE_PREFIXES">ALL_NOMINAL_INTEREST_RATE_PREFIXES</a></code></li>
+<li><code><a title="gcubed.constants.Constants.ALL_REAL_INTEREST_RATE_PREFIXES" href="#gcubed.constants.Constants.ALL_REAL_INTEREST_RATE_PREFIXES">ALL_REAL_INTEREST_RATE_PREFIXES</a></code></li>
 <li><code><a title="gcubed.constants.Constants.BOND_RATE_PREFIXES" href="#gcubed.constants.Constants.BOND_RATE_PREFIXES">BOND_RATE_PREFIXES</a></code></li>
 <li><code><a title="gcubed.constants.Constants.DELTA" href="#gcubed.constants.Constants.DELTA">DELTA</a></code></li>
 <li><code><a title="gcubed.constants.Constants.INDEX_PREFIXES" href="#gcubed.constants.Constants.INDEX_PREFIXES">INDEX_PREFIXES</a></code></li>
-<li><code><a title="gcubed.constants.Constants.INTEREST_RATE_PREFIXES" href="#gcubed.constants.Constants.INTEREST_RATE_PREFIXES">INTEREST_RATE_PREFIXES</a></code></li>
+<li><code><a title="gcubed.constants.Constants.INFX_PREFIX" href="#gcubed.constants.Constants.INFX_PREFIX">INFX_PREFIX</a></code></li>
 <li><code><a title="gcubed.constants.Constants.JUMPING_VARIABLE_PREFIXES_FOR_REGIONS" href="#gcubed.constants.Constants.JUMPING_VARIABLE_PREFIXES_FOR_REGIONS">JUMPING_VARIABLE_PREFIXES_FOR_REGIONS</a></code></li>
 <li><code><a title="gcubed.constants.Constants.JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS" href="#gcubed.constants.Constants.JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS">JUMPING_VARIABLE_PREFIXES_FOR_REGIONS_AND_SECTORS</a></code></li>
 <li><code><a title="gcubed.constants.Constants.LAG_LOG_INDEX_PREFIXES" href="#gcubed.constants.Constants.LAG_LOG_INDEX_PREFIXES">LAG_LOG_INDEX_PREFIXES</a></code></li>

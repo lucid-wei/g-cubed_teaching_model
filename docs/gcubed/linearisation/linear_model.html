@@ -95,16 +95,24 @@ class LinearModel(Base):
     &lt;LHS_vector_name&gt;_&lt;RHS_vector_name&gt;_partials.
     &#34;&#34;&#34;
 
-    def __init__(self, model: Model) -&gt; None:
+    def __init__(self, model: Model, use_neutral_real_interest_rate: bool = True) -&gt; None:
         &#34;&#34;&#34;
         ### Arguments
 
-        model: The model that is to be linearised with the linearisation
+        `model`: The model that is to be linearised with the linearisation
         year specified as part of the model configuration.
+
+        `use_neutral_real_interest_rate`: If `True`, use the neutral real interest rate
+        for the values around which linearisation is done, otherwise use the real interest rate
+        from the database (which may be negative). This parameter defaults to `True`.
         &#34;&#34;&#34;
 
         # Set this switch to true when the partial derivatives have been computed.
         self._linear_model_is_available: bool = False
+
+        # Track the use of the neutral real interest rate to ensure
+        # that baseline projections etc are done consistently.
+        self._use_neutral_real_interest_rate: bool = use_neutral_real_interest_rate
 
         assert model is not None
         self._model = model
@@ -119,10 +127,16 @@ class LinearModel(Base):
         # First check which linearisation approach to use.
         if not self.model.configuration.linearise_around_strict_model_solution:
             # Do the standard kind of linearisation
-            self.__load_rhs_vectors(linearisation_year=self.configuration.linearisation_year)
+            self.__load_rhs_vectors(
+                linearisation_year=self.configuration.linearisation_year,
+                use_neutral_real_interest_rate=use_neutral_real_interest_rate
+                )
         else:
             # Do the fancy linearisation where we search for a strict solution to the model first.
-            model_solver: ModelSolver = ModelSolver(model=self.model, linearisation_year=self.configuration.linearisation_year)
+            model_solver: ModelSolver = ModelSolver(
+                model=self.model, 
+                linearisation_year=self.configuration.linearisation_year,
+                use_neutral_real_interest_rate = use_neutral_real_interest_rate)
             if not model_solver.solution_found:
                 raise Exception(f&#34;Failed to find a solution to the model for data values near those in the database for linearisation year {self.configuration.linearisation_year}. Linearisation cannot proceed.&#34;)
             for vector_name in self.sym_data.rhs_vector_names:
@@ -171,7 +185,7 @@ class LinearModel(Base):
 
     def __validate(self):
         &#34;&#34;&#34;
-        Validate the linear model details and 
+        Validate the linear model details
         &#34;&#34;&#34;
 
         # Check we have all vectors and they are the right lengths.
@@ -189,8 +203,7 @@ class LinearModel(Base):
     @property
     def linearisation_database(self) -&gt; GDPScaledDatabase:
         &#34;&#34;&#34;
-        linearisation_database (GDPScaledDatabase): The database 
-        containing the values that will be utilised to populate 
+        The database containing the values that will be utilised to populate 
         variable values for the linearisation.
         &#34;&#34;&#34;
         return self._linearisation_database
@@ -198,16 +211,29 @@ class LinearModel(Base):
     @property
     def linear_model_is_available(self) -&gt; bool:
         &#34;&#34;&#34;
-        linear_model_is_available (bool): True if the model has been linearised 
-        successfully and False otherwise (either because linearisation has not
+        `True` if the model has been linearised 
+        successfully and `False` otherwise (either because linearisation has not
         finished or linearisation was not possible for whatever reason).
         &#34;&#34;&#34;
         return self._linear_model_is_available
 
     @property
+    def use_neutral_real_interest_rate(self) -&gt; bool:
+        &#34;&#34;&#34;
+        This property is checked when doing baseline projections
+        to ensure that baseline projections never start from the
+        neutral real interest rate unless the linearisation was done
+        around the neutral real interest rate.
+
+        `True` if the linearisation used the neutral real interest rate
+        and `False` otherwise.
+        &#34;&#34;&#34;
+        return self._use_neutral_real_interest_rate
+
+    @property
     def equations(self):
         &#34;&#34;&#34;
-        (BaseEquations): The equations subclass instance that implements the functions
+        The equations subclass instance that implements the functions
         for each of the nonlinear equations in the model.
         &#34;&#34;&#34;
         return self._equations
@@ -215,9 +241,25 @@ class LinearModel(Base):
     @property
     def model(self):
         &#34;&#34;&#34;
-        (Model): The model being linearised.
+        The model being linearised.
         &#34;&#34;&#34;
         return self._model
+    
+    @model.setter
+    def model(self, value: Model):
+        &#34;&#34;&#34;
+        ### Overview
+
+        Updates the model associated with this linear model.
+
+        Do not use this setter. It is just provided to assist with unit
+        testing experiments.
+        &#34;&#34;&#34;
+        if value is None:
+            raise Exception(&#34;The new model must not be None&#34;)
+        if not isinstance(value, Model):
+            raise Exception(f&#34;The new model must be a gcubed.Model. It is instead a {type(value)}&#34;)
+        self._model = value
 
     @property
     def sym_data(self) -&gt; SymData:
@@ -262,7 +304,7 @@ class LinearModel(Base):
 
         ### Arguments
 
-        vector_name: The name of the LHS or RHS vector.
+        `vector_name`: The name of the LHS or RHS vector.
         
         ### Returns
         
@@ -286,7 +328,7 @@ class LinearModel(Base):
 
         ### Arguments
 
-        lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+        `lhs_vector_name`: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
         
         ### Returns
         
@@ -310,9 +352,9 @@ class LinearModel(Base):
 
         ### Arguments
 
-        lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+        `lhs_vector_name`: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
 
-        rhs_vector_name: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
+        `rhs_vector_name`: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
 
         ### Returns
         
@@ -332,9 +374,9 @@ class LinearModel(Base):
 
         ### Arguments
 
-        lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+        `lhs_vector_name`: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
 
-        rhs_vector_name: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
+        `rhs_vector_name`: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
 
         ### Returns
         
@@ -357,13 +399,14 @@ class LinearModel(Base):
         ### Overview
 
         Create the LHS vectors that are used by the model equations.
-        Initialise LHS vectors with zeros.
+
+        Initialises the LHS vectors with zeros.
         &#34;&#34;&#34;
         for vector_name in self.sym_data.lhs_vector_names:
             setattr(self, &#34;_{}&#34;.format(vector_name), np.zeros(
                 shape=(self.sym_data.vector_length(vector_name=vector_name), 1), dtype=float))
 
-    def __load_rhs_vectors(self, linearisation_year: int):
+    def __load_rhs_vectors(self, linearisation_year: int, use_neutral_real_interest_rate:bool):
         &#34;&#34;&#34;
 
         ### Overview
@@ -375,14 +418,18 @@ class LinearModel(Base):
 
         ### Arguments
 
-        linearisation_year: The year in which the model is linearised.
+        `linearisation_year`: The year in which the model is linearised.
         e.g. 2011 implies linearise model equations around the values
-        of the model variables in 2011 (or in adjacent years for leads/lags).
+        of the model variables in 2011 (or in adjacent years for leads/lags
+        
+        `use_neutral_real_interest_rate`: If `True`, use the neutral real interest rate,
+        otherwise use the actual real interest rate (which may be negative).
         
         &#34;&#34;&#34;
         # Initialise RHS vectors with database values from the linearisation base year or the lead/lag from that year.
+        logging.debug(f&#34;Getting database data but overriding with neutral real interest rate? {use_neutral_real_interest_rate}&#34;)
         for vector_name in self.sym_data.rhs_vector_names:
-            rhs_vector:pd.DataFrame = self.linearisation_database.rhs_vector_value(vector_name=vector_name, year=linearisation_year, use_neutral_real_interest_rate=True)
+            rhs_vector:pd.DataFrame = self.linearisation_database.rhs_vector_value(vector_name=vector_name, year=linearisation_year, use_neutral_real_interest_rate=use_neutral_real_interest_rate)
             if rhs_vector is not None:
                 setattr(self, f&#34;_{vector_name}&#34;, rhs_vector)
             else:
@@ -587,7 +634,7 @@ class LinearModel(Base):
 <dl>
 <dt id="gcubed.linearisation.linear_model.LinearModel"><code class="flex name class">
 <span>class <span class="ident">LinearModel</span></span>
-<span>(</span><span>model: <a title="gcubed.model.Model" href="../model.html#gcubed.model.Model">Model</a>)</span>
+<span>(</span><span>model: <a title="gcubed.model.Model" href="../model.html#gcubed.model.Model">Model</a>, use_neutral_real_interest_rate: bool = True)</span>
 </code></dt>
 <dd>
 <div class="desc"><h3 id="overview">Overview</h3>
@@ -627,8 +674,11 @@ x1l with respect to z1r are stored in a property called x1l_z1r_partials.
 The same naming convention is used for all partials matrices:
 <LHS_vector_name>_<RHS_vector_name>_partials.</p>
 <h3 id="arguments">Arguments</h3>
-<p>model: The model that is to be linearised with the linearisation
-year specified as part of the model configuration.</p></div>
+<p><code>model</code>: The model that is to be linearised with the linearisation
+year specified as part of the model configuration.</p>
+<p><code>use_neutral_real_interest_rate</code>: If <code>True</code>, use the neutral real interest rate
+for the values around which linearisation is done, otherwise use the real interest rate
+from the database (which may be negative). This parameter defaults to <code>True</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -681,16 +731,24 @@ year specified as part of the model configuration.</p></div>
     &lt;LHS_vector_name&gt;_&lt;RHS_vector_name&gt;_partials.
     &#34;&#34;&#34;
 
-    def __init__(self, model: Model) -&gt; None:
+    def __init__(self, model: Model, use_neutral_real_interest_rate: bool = True) -&gt; None:
         &#34;&#34;&#34;
         ### Arguments
 
-        model: The model that is to be linearised with the linearisation
+        `model`: The model that is to be linearised with the linearisation
         year specified as part of the model configuration.
+
+        `use_neutral_real_interest_rate`: If `True`, use the neutral real interest rate
+        for the values around which linearisation is done, otherwise use the real interest rate
+        from the database (which may be negative). This parameter defaults to `True`.
         &#34;&#34;&#34;
 
         # Set this switch to true when the partial derivatives have been computed.
         self._linear_model_is_available: bool = False
+
+        # Track the use of the neutral real interest rate to ensure
+        # that baseline projections etc are done consistently.
+        self._use_neutral_real_interest_rate: bool = use_neutral_real_interest_rate
 
         assert model is not None
         self._model = model
@@ -705,10 +763,16 @@ year specified as part of the model configuration.</p></div>
         # First check which linearisation approach to use.
         if not self.model.configuration.linearise_around_strict_model_solution:
             # Do the standard kind of linearisation
-            self.__load_rhs_vectors(linearisation_year=self.configuration.linearisation_year)
+            self.__load_rhs_vectors(
+                linearisation_year=self.configuration.linearisation_year,
+                use_neutral_real_interest_rate=use_neutral_real_interest_rate
+                )
         else:
             # Do the fancy linearisation where we search for a strict solution to the model first.
-            model_solver: ModelSolver = ModelSolver(model=self.model, linearisation_year=self.configuration.linearisation_year)
+            model_solver: ModelSolver = ModelSolver(
+                model=self.model, 
+                linearisation_year=self.configuration.linearisation_year,
+                use_neutral_real_interest_rate = use_neutral_real_interest_rate)
             if not model_solver.solution_found:
                 raise Exception(f&#34;Failed to find a solution to the model for data values near those in the database for linearisation year {self.configuration.linearisation_year}. Linearisation cannot proceed.&#34;)
             for vector_name in self.sym_data.rhs_vector_names:
@@ -757,7 +821,7 @@ year specified as part of the model configuration.</p></div>
 
     def __validate(self):
         &#34;&#34;&#34;
-        Validate the linear model details and 
+        Validate the linear model details
         &#34;&#34;&#34;
 
         # Check we have all vectors and they are the right lengths.
@@ -775,8 +839,7 @@ year specified as part of the model configuration.</p></div>
     @property
     def linearisation_database(self) -&gt; GDPScaledDatabase:
         &#34;&#34;&#34;
-        linearisation_database (GDPScaledDatabase): The database 
-        containing the values that will be utilised to populate 
+        The database containing the values that will be utilised to populate 
         variable values for the linearisation.
         &#34;&#34;&#34;
         return self._linearisation_database
@@ -784,16 +847,29 @@ year specified as part of the model configuration.</p></div>
     @property
     def linear_model_is_available(self) -&gt; bool:
         &#34;&#34;&#34;
-        linear_model_is_available (bool): True if the model has been linearised 
-        successfully and False otherwise (either because linearisation has not
+        `True` if the model has been linearised 
+        successfully and `False` otherwise (either because linearisation has not
         finished or linearisation was not possible for whatever reason).
         &#34;&#34;&#34;
         return self._linear_model_is_available
 
     @property
+    def use_neutral_real_interest_rate(self) -&gt; bool:
+        &#34;&#34;&#34;
+        This property is checked when doing baseline projections
+        to ensure that baseline projections never start from the
+        neutral real interest rate unless the linearisation was done
+        around the neutral real interest rate.
+
+        `True` if the linearisation used the neutral real interest rate
+        and `False` otherwise.
+        &#34;&#34;&#34;
+        return self._use_neutral_real_interest_rate
+
+    @property
     def equations(self):
         &#34;&#34;&#34;
-        (BaseEquations): The equations subclass instance that implements the functions
+        The equations subclass instance that implements the functions
         for each of the nonlinear equations in the model.
         &#34;&#34;&#34;
         return self._equations
@@ -801,9 +877,25 @@ year specified as part of the model configuration.</p></div>
     @property
     def model(self):
         &#34;&#34;&#34;
-        (Model): The model being linearised.
+        The model being linearised.
         &#34;&#34;&#34;
         return self._model
+    
+    @model.setter
+    def model(self, value: Model):
+        &#34;&#34;&#34;
+        ### Overview
+
+        Updates the model associated with this linear model.
+
+        Do not use this setter. It is just provided to assist with unit
+        testing experiments.
+        &#34;&#34;&#34;
+        if value is None:
+            raise Exception(&#34;The new model must not be None&#34;)
+        if not isinstance(value, Model):
+            raise Exception(f&#34;The new model must be a gcubed.Model. It is instead a {type(value)}&#34;)
+        self._model = value
 
     @property
     def sym_data(self) -&gt; SymData:
@@ -848,7 +940,7 @@ year specified as part of the model configuration.</p></div>
 
         ### Arguments
 
-        vector_name: The name of the LHS or RHS vector.
+        `vector_name`: The name of the LHS or RHS vector.
         
         ### Returns
         
@@ -872,7 +964,7 @@ year specified as part of the model configuration.</p></div>
 
         ### Arguments
 
-        lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+        `lhs_vector_name`: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
         
         ### Returns
         
@@ -896,9 +988,9 @@ year specified as part of the model configuration.</p></div>
 
         ### Arguments
 
-        lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+        `lhs_vector_name`: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
 
-        rhs_vector_name: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
+        `rhs_vector_name`: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
 
         ### Returns
         
@@ -918,9 +1010,9 @@ year specified as part of the model configuration.</p></div>
 
         ### Arguments
 
-        lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+        `lhs_vector_name`: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
 
-        rhs_vector_name: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
+        `rhs_vector_name`: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
 
         ### Returns
         
@@ -943,13 +1035,14 @@ year specified as part of the model configuration.</p></div>
         ### Overview
 
         Create the LHS vectors that are used by the model equations.
-        Initialise LHS vectors with zeros.
+
+        Initialises the LHS vectors with zeros.
         &#34;&#34;&#34;
         for vector_name in self.sym_data.lhs_vector_names:
             setattr(self, &#34;_{}&#34;.format(vector_name), np.zeros(
                 shape=(self.sym_data.vector_length(vector_name=vector_name), 1), dtype=float))
 
-    def __load_rhs_vectors(self, linearisation_year: int):
+    def __load_rhs_vectors(self, linearisation_year: int, use_neutral_real_interest_rate:bool):
         &#34;&#34;&#34;
 
         ### Overview
@@ -961,14 +1054,18 @@ year specified as part of the model configuration.</p></div>
 
         ### Arguments
 
-        linearisation_year: The year in which the model is linearised.
+        `linearisation_year`: The year in which the model is linearised.
         e.g. 2011 implies linearise model equations around the values
-        of the model variables in 2011 (or in adjacent years for leads/lags).
+        of the model variables in 2011 (or in adjacent years for leads/lags
+        
+        `use_neutral_real_interest_rate`: If `True`, use the neutral real interest rate,
+        otherwise use the actual real interest rate (which may be negative).
         
         &#34;&#34;&#34;
         # Initialise RHS vectors with database values from the linearisation base year or the lead/lag from that year.
+        logging.debug(f&#34;Getting database data but overriding with neutral real interest rate? {use_neutral_real_interest_rate}&#34;)
         for vector_name in self.sym_data.rhs_vector_names:
-            rhs_vector:pd.DataFrame = self.linearisation_database.rhs_vector_value(vector_name=vector_name, year=linearisation_year, use_neutral_real_interest_rate=True)
+            rhs_vector:pd.DataFrame = self.linearisation_database.rhs_vector_value(vector_name=vector_name, year=linearisation_year, use_neutral_real_interest_rate=use_neutral_real_interest_rate)
             if rhs_vector is not None:
                 setattr(self, f&#34;_{vector_name}&#34;, rhs_vector)
             else:
@@ -1186,7 +1283,7 @@ def configuration(self) -&gt; ModelConfiguration:
 </dd>
 <dt id="gcubed.linearisation.linear_model.LinearModel.equations"><code class="name">var <span class="ident">equations</span></code></dt>
 <dd>
-<div class="desc"><p>(BaseEquations): The equations subclass instance that implements the functions
+<div class="desc"><p>The equations subclass instance that implements the functions
 for each of the nonlinear equations in the model.</p></div>
 <details class="source">
 <summary>
@@ -1195,7 +1292,7 @@ for each of the nonlinear equations in the model.</p></div>
 <pre><code class="python">@property
 def equations(self):
     &#34;&#34;&#34;
-    (BaseEquations): The equations subclass instance that implements the functions
+    The equations subclass instance that implements the functions
     for each of the nonlinear equations in the model.
     &#34;&#34;&#34;
     return self._equations</code></pre>
@@ -1238,8 +1335,8 @@ def equations_map(self) -&gt; dict[tuple[str, int], list[tuple[str, int]]]:
 </dd>
 <dt id="gcubed.linearisation.linear_model.LinearModel.linear_model_is_available"><code class="name">var <span class="ident">linear_model_is_available</span> : bool</code></dt>
 <dd>
-<div class="desc"><p>linear_model_is_available (bool): True if the model has been linearised
-successfully and False otherwise (either because linearisation has not
+<div class="desc"><p><code>True</code> if the model has been linearised
+successfully and <code>False</code> otherwise (either because linearisation has not
 finished or linearisation was not possible for whatever reason).</p></div>
 <details class="source">
 <summary>
@@ -1248,8 +1345,8 @@ finished or linearisation was not possible for whatever reason).</p></div>
 <pre><code class="python">@property
 def linear_model_is_available(self) -&gt; bool:
     &#34;&#34;&#34;
-    linear_model_is_available (bool): True if the model has been linearised 
-    successfully and False otherwise (either because linearisation has not
+    `True` if the model has been linearised 
+    successfully and `False` otherwise (either because linearisation has not
     finished or linearisation was not possible for whatever reason).
     &#34;&#34;&#34;
     return self._linear_model_is_available</code></pre>
@@ -1257,8 +1354,7 @@ def linear_model_is_available(self) -&gt; bool:
 </dd>
 <dt id="gcubed.linearisation.linear_model.LinearModel.linearisation_database"><code class="name">var <span class="ident">linearisation_database</span> : <a title="gcubed.data.gdp_scaled_database.GDPScaledDatabase" href="../data/gdp_scaled_database.html#gcubed.data.gdp_scaled_database.GDPScaledDatabase">GDPScaledDatabase</a></code></dt>
 <dd>
-<div class="desc"><p>linearisation_database (GDPScaledDatabase): The database
-containing the values that will be utilised to populate
+<div class="desc"><p>The database containing the values that will be utilised to populate
 variable values for the linearisation.</p></div>
 <details class="source">
 <summary>
@@ -1267,8 +1363,7 @@ variable values for the linearisation.</p></div>
 <pre><code class="python">@property
 def linearisation_database(self) -&gt; GDPScaledDatabase:
     &#34;&#34;&#34;
-    linearisation_database (GDPScaledDatabase): The database 
-    containing the values that will be utilised to populate 
+    The database containing the values that will be utilised to populate 
     variable values for the linearisation.
     &#34;&#34;&#34;
     return self._linearisation_database</code></pre>
@@ -1276,7 +1371,7 @@ def linearisation_database(self) -&gt; GDPScaledDatabase:
 </dd>
 <dt id="gcubed.linearisation.linear_model.LinearModel.model"><code class="name">var <span class="ident">model</span></code></dt>
 <dd>
-<div class="desc"><p>(Model): The model being linearised.</p></div>
+<div class="desc"><p>The model being linearised.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1284,7 +1379,7 @@ def linearisation_database(self) -&gt; GDPScaledDatabase:
 <pre><code class="python">@property
 def model(self):
     &#34;&#34;&#34;
-    (Model): The model being linearised.
+    The model being linearised.
     &#34;&#34;&#34;
     return self._model</code></pre>
 </details>
@@ -1324,6 +1419,32 @@ def sym_data(self) -&gt; SymData:
     return self.model.sym_data</code></pre>
 </details>
 </dd>
+<dt id="gcubed.linearisation.linear_model.LinearModel.use_neutral_real_interest_rate"><code class="name">var <span class="ident">use_neutral_real_interest_rate</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>This property is checked when doing baseline projections
+to ensure that baseline projections never start from the
+neutral real interest rate unless the linearisation was done
+around the neutral real interest rate.</p>
+<p><code>True</code> if the linearisation used the neutral real interest rate
+and <code>False</code> otherwise.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def use_neutral_real_interest_rate(self) -&gt; bool:
+    &#34;&#34;&#34;
+    This property is checked when doing baseline projections
+    to ensure that baseline projections never start from the
+    neutral real interest rate unless the linearisation was done
+    around the neutral real interest rate.
+
+    `True` if the linearisation used the neutral real interest rate
+    and `False` otherwise.
+    &#34;&#34;&#34;
+    return self._use_neutral_real_interest_rate</code></pre>
+</details>
+</dd>
 </dl>
 <h3>Methods</h3>
 <dl>
@@ -1337,7 +1458,7 @@ def sym_data(self) -&gt; SymData:
 These values have been set by evaluating the model's non-linear equations
 using the RHS vector values for the base year chosen for the linearisation.</p>
 <h3 id="arguments">Arguments</h3>
-<p>lhs_vector_name: The name of the LHS vector, e.g. 'x1l' or 'j1l'.</p>
+<p><code>lhs_vector_name</code>: The name of the LHS vector, e.g. 'x1l' or 'j1l'.</p>
 <h3 id="returns">Returns</h3>
 <p>The named LHS column vector.</p></div>
 <details class="source">
@@ -1357,7 +1478,7 @@ using the RHS vector values for the base year chosen for the linearisation.</p>
 
     ### Arguments
 
-    lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+    `lhs_vector_name`: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
     
     ### Returns
     
@@ -1379,8 +1500,8 @@ the numpy matrix value for the partial derivatives.</p>
 <p>The matrices of partial derivatives are stored in a dictionary indexed
 by the lhs and rhs vector names.</p>
 <h3 id="arguments">Arguments</h3>
-<p>lhs_vector_name: The name of the LHS vector, e.g. 'x1l' or 'j1l'.</p>
-<p>rhs_vector_name: The name of the RHS vector, e.g. 'yxr' or 'j1r'.</p>
+<p><code>lhs_vector_name</code>: The name of the LHS vector, e.g. 'x1l' or 'j1l'.</p>
+<p><code>rhs_vector_name</code>: The name of the RHS vector, e.g. 'yxr' or 'j1r'.</p>
 <h3 id="returns">Returns</h3>
 <p>The required partial derivatives as a dataframe
 with variable names as the row and column labels.</p></div>
@@ -1401,9 +1522,9 @@ with variable names as the row and column labels.</p></div>
 
     ### Arguments
 
-    lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+    `lhs_vector_name`: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
 
-    rhs_vector_name: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
+    `rhs_vector_name`: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
 
     ### Returns
     
@@ -1424,8 +1545,8 @@ with variable names as the row and column labels.</p></div>
 </code></dt>
 <dd>
 <div class="desc"><h3 id="arguments">Arguments</h3>
-<p>lhs_vector_name: The name of the LHS vector, e.g. 'x1l' or 'j1l'.</p>
-<p>rhs_vector_name: The name of the RHS vector, e.g. 'yxr' or 'j1r'.</p>
+<p><code>lhs_vector_name</code>: The name of the LHS vector, e.g. 'x1l' or 'j1l'.</p>
+<p><code>rhs_vector_name</code>: The name of the RHS vector, e.g. 'yxr' or 'j1r'.</p>
 <h3 id="returns">Returns</h3>
 <p>The required partial derivatives as a dataframe
 with variable names as the row and column labels.</p></div>
@@ -1438,9 +1559,9 @@ with variable names as the row and column labels.</p></div>
 
     ### Arguments
 
-    lhs_vector_name: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
+    `lhs_vector_name`: The name of the LHS vector, e.g. &#39;x1l&#39; or &#39;j1l&#39;.
 
-    rhs_vector_name: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
+    `rhs_vector_name`: The name of the RHS vector, e.g. &#39;yxr&#39; or &#39;j1r&#39;.
 
     ### Returns
     
@@ -1467,7 +1588,7 @@ with variable names as the row and column labels.</p></div>
 <p>Use the name of the vector to retrieve its numpy array value.
 These values have been set using data in the database.</p>
 <h3 id="arguments">Arguments</h3>
-<p>vector_name: The name of the LHS or RHS vector.</p>
+<p><code>vector_name</code>: The name of the LHS or RHS vector.</p>
 <h3 id="returns">Returns</h3>
 <p>The named column vector.</p></div>
 <details class="source">
@@ -1483,7 +1604,7 @@ These values have been set using data in the database.</p>
 
     ### Arguments
 
-    vector_name: The name of the LHS or RHS vector.
+    `vector_name`: The name of the LHS or RHS vector.
     
     ### Returns
     
@@ -1502,6 +1623,7 @@ These values have been set using data in the database.</p>
 <ul class="hlist">
 <li><code><a title="gcubed.base.Base.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.base.Base.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.now" href="../base.html#gcubed.base.Base.now">now</a></code></li>
 <li><code><a title="gcubed.base.Base.zeros" href="../base.html#gcubed.base.Base.zeros">zeros</a></code></li>
 </ul>
 </li>
@@ -1538,6 +1660,7 @@ These values have been set using data in the database.</p>
 <li><code><a title="gcubed.linearisation.linear_model.LinearModel.model" href="#gcubed.linearisation.linear_model.LinearModel.model">model</a></code></li>
 <li><code><a title="gcubed.linearisation.linear_model.LinearModel.nonlinear_equation_differences" href="#gcubed.linearisation.linear_model.LinearModel.nonlinear_equation_differences">nonlinear_equation_differences</a></code></li>
 <li><code><a title="gcubed.linearisation.linear_model.LinearModel.sym_data" href="#gcubed.linearisation.linear_model.LinearModel.sym_data">sym_data</a></code></li>
+<li><code><a title="gcubed.linearisation.linear_model.LinearModel.use_neutral_real_interest_rate" href="#gcubed.linearisation.linear_model.LinearModel.use_neutral_real_interest_rate">use_neutral_real_interest_rate</a></code></li>
 </ul>
 </li>
 </ul>

@@ -42,7 +42,7 @@ from gcubed.sym_data import SymData
 
 # Ensure pdoc generated API documentation includes the following methods.
 __pdoc__ = {}
-__pdoc__[&#39;Productivity._create_productivity_projections&#39;] = True
+__pdoc__[&#39;Productivity._create_productivity_projections&#39;, &#39;Productivity._load_productivity_parameters&#39;] = True
 
 
 class Productivity(Base):
@@ -60,7 +60,7 @@ class Productivity(Base):
     def __init__(self, sym_data: SymData) -&gt; None:
         assert sym_data is not None
         self._sym_data: SymData = sym_data
-        self.__load_productivity_parameters()
+        self._load_productivity_parameters()
         self.__validate()
         self._create_productivity_projections()
 
@@ -123,8 +123,10 @@ class Productivity(Base):
 
 
 
-    def __load_productivity_parameters(self):
+    def _load_productivity_parameters(self):
         &#34;&#34;&#34;
+        **This function is intended for gcubed module internal use. It is exposed only for documentation purposes.**
+
         Parse the CSV file into its various components and store them as properties.
         &#34;&#34;&#34;
 
@@ -285,7 +287,7 @@ for all regions and all sectors within each region.</p>
     def __init__(self, sym_data: SymData) -&gt; None:
         assert sym_data is not None
         self._sym_data: SymData = sym_data
-        self.__load_productivity_parameters()
+        self._load_productivity_parameters()
         self.__validate()
         self._create_productivity_projections()
 
@@ -348,8 +350,10 @@ for all regions and all sectors within each region.</p>
 
 
 
-    def __load_productivity_parameters(self):
+    def _load_productivity_parameters(self):
         &#34;&#34;&#34;
+        **This function is intended for gcubed module internal use. It is exposed only for documentation purposes.**
+
         Parse the CSV file into its various components and store them as properties.
         &#34;&#34;&#34;
 
@@ -523,77 +527,6 @@ def sym_data(self):
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="gcubed.baseline.productivity.Productivity._create_productivity_projections"><code class="name flex">
-<span>def <span class="ident">_create_productivity_projections</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"><p><strong>This function is intended for gcubed module internal use. It is exposed only for documentation purposes.</strong></p>
-<p>Generate productivity growth and index projections from the start year to the end year
-of the projection period for all regions and sectors.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def _create_productivity_projections(self):
-    &#34;&#34;&#34;
-    **This function is intended for gcubed module internal use. It is exposed only for documentation purposes.**
-
-    Generate productivity growth and index projections from the start year to the end year 
-    of the projection period for all regions and sectors.
-    &#34;&#34;&#34;
-    
-    # Set up the region and sector columns if we store all productivity level projections in the one dataframe.
-    # Note that this is not being done yet - it is unlikely to be helpful in Python.
-    ## region_column:list[str] = [x for x in self.sym_data.regions_members for i in range(self.sym_data.sectors_count)]
-    ## sector_column:list[str] = self.sym_data.sectors_members * self.sym_data.regions_count
-    ## assert len(region_column) == len(sector_column)
-
-    # Initialise dictionary to store productivity levels for each region
-    self._region_productivity_indices: dict[str, pd.DataFrame] = dict()
-
-    # Project levels for the US, setting the level to 1 for each sector in the base year.
-    us_productivity_indices = self._us_productivity_growth_rates.loc[:,self.configuration.projection_years_column_labels]
-    us_productivity_indices.loc[:, str(self.configuration.first_projection_year)] = 1
-    for year in self.configuration.projection_years[1:]:
-        us_productivity_indices.loc[:, str(year)] = (us_productivity_indices.loc[:, str(year)] + 1) * us_productivity_indices.loc[:, str(year - 1)]
-    self._region_productivity_indices[self.sym_data.us_region] = us_productivity_indices
-    
-    # Iterate the other regions, apply the catchup rates.
-    for region in self.sym_data.regions_members:
-        if region == Constants().USA_REGION_CODE:
-            continue
-        region_productivity_indices = self._region_catchup_rates[region].loc[:,self.configuration.projection_years_column_labels]
-        region_productivity_indices.loc[:, str(self.configuration.first_projection_year)] = us_productivity_indices.loc[:, str(self.configuration.first_projection_year)] * self._region_productivity_ratios[region].loc[:, &#34;ratio&#34;]
-        for year in self.configuration.projection_years[1:]:
-            # The productivity index in year is determined as US index in the same 
-            # # year percentage gap in previous year adjusted for 
-            # a year of catch-up based on the catch-up rate over the previous year.
-            region_productivity_indices.loc[:, str(year)] = us_productivity_indices.loc[:, str(year)] * \
-                (1 + (1-self._region_catchup_rates[region].loc[:, str(year-1)]) * \
-                    (region_productivity_indices.loc[:, str(year - 1)] / us_productivity_indices.loc[:, str(year - 1)]-1))
-        self._region_productivity_indices[region] = region_productivity_indices
-
-    # Generate the dictionary of regional productivity growth rates by sector.
-    self._region_productivity_growth_rates: dict[str, pd.DataFrame] = dict()
-    self._region_productivity_growth_rates[self.sym_data.regions_members[0]] = self._us_productivity_growth_rates
-    for region in self.sym_data.regions_members[1:]:
-        region_productivity_growth_rates = self._region_productivity_indices[region]
-        for year in self.configuration.projection_years[:-1]: # For all but the last year...
-            region_productivity_growth_rates.loc[:,str(year)] = region_productivity_growth_rates.loc[:, str(year+1)] / region_productivity_growth_rates.loc[:, str(year)] - 1
-
-        # Handle the final year by assuming continuation of the most recently available growth and catchup.
-        final_year_region_productivity_indices = self._region_productivity_indices[region].loc[:, str(self.configuration.last_projection_year)]
-        final_year_region_catchup_rates = self._region_catchup_rates[region].loc[:, str(self.configuration.last_projection_year)]
-        final_year_us_productivity_indices = us_productivity_indices.loc[:, str(self.configuration.last_projection_year)]
-        next_us_productivity_indices: float = final_year_us_productivity_indices * (1 + self._us_productivity_growth_rates.loc[:, str(self.configuration.last_projection_year)])
-        next_region_productivity_indices = next_us_productivity_indices * \
-            (1 + (1-final_year_region_catchup_rates) * \
-                (final_year_region_productivity_indices / final_year_us_productivity_indices - 1) )
-        region_productivity_growth_rates.loc[:, str(self.configuration.last_projection_year)] = next_region_productivity_indices / final_year_region_productivity_indices - 1
-
-        self._region_productivity_growth_rates[region] = region_productivity_growth_rates</code></pre>
-</details>
-</dd>
 <dt id="gcubed.baseline.productivity.Productivity.productivity_growth_rates"><code class="name flex">
 <span>def <span class="ident">productivity_growth_rates</span></span>(<span>self, region: str) ‑> pandas.core.frame.DataFrame</span>
 </code></dt>
@@ -631,6 +564,7 @@ of the projection period for all regions and sectors.</p></div>
 <ul class="hlist">
 <li><code><a title="gcubed.base.Base.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.base.Base.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.now" href="../base.html#gcubed.base.Base.now">now</a></code></li>
 <li><code><a title="gcubed.base.Base.zeros" href="../base.html#gcubed.base.Base.zeros">zeros</a></code></li>
 </ul>
 </li>
@@ -655,7 +589,6 @@ of the projection period for all regions and sectors.</p></div>
 <li>
 <h4><code><a title="gcubed.baseline.productivity.Productivity" href="#gcubed.baseline.productivity.Productivity">Productivity</a></code></h4>
 <ul class="">
-<li><code><a title="gcubed.baseline.productivity.Productivity._create_productivity_projections" href="#gcubed.baseline.productivity.Productivity._create_productivity_projections">_create_productivity_projections</a></code></li>
 <li><code><a title="gcubed.baseline.productivity.Productivity.configuration" href="#gcubed.baseline.productivity.Productivity.configuration">configuration</a></code></li>
 <li><code><a title="gcubed.baseline.productivity.Productivity.label_productivity_growth" href="#gcubed.baseline.productivity.Productivity.label_productivity_growth">label_productivity_growth</a></code></li>
 <li><code><a title="gcubed.baseline.productivity.Productivity.label_regional_sector_catchup_to_us_rates" href="#gcubed.baseline.productivity.Productivity.label_regional_sector_catchup_to_us_rates">label_regional_sector_catchup_to_us_rates</a></code></li>

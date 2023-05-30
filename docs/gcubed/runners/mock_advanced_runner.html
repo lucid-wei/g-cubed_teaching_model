@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>gcubed.runners.advanced_runner API documentation</title>
-<meta name="description" content="This runner is still experimental …" />
+<title>gcubed.runners.mock_advanced_runner API documentation</title>
+<meta name="description" content="This runner uses the mock relinearisation projections. Only used
+for unit testing purposes." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -20,29 +21,25 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>gcubed.runners.advanced_runner</code></h1>
+<h1 class="title">Module <code>gcubed.runners.mock_advanced_runner</code></h1>
 </header>
 <section id="section-intro">
-<h2 id="this-runner-is-still-experimental">This runner is still experimental</h2>
-<p>Do not use it unless you are involved in its development.</p>
-<p>Contains the advanced runner class - used to run advanced model experiments.</p>
+<h2 id="this-runner-uses-the-mock-relinearisation-projections-only-used">This runner uses the mock relinearisation projections. Only used</h2>
+<p>for unit testing purposes.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
 
-## This runner is still experimental 
-    
-Do not use it unless you are involved in its development.
+## This runner uses the mock relinearisation projections. Only used
+for unit testing purposes.
 
-Contains the advanced runner class - used to run advanced model experiments.
 &#34;&#34;&#34;
 import os
 import logging
 from datetime import datetime
 from queue import Empty
-from sre_constants import RANGE
 from gcubed.base import Base
 from gcubed.model_configuration import ModelConfiguration
 from gcubed.model import Model
@@ -53,9 +50,9 @@ from gcubed.projections.projections import Projections
 from gcubed.projections.baseline_projections import BaselineProjections
 from gcubed.projections.simulation_layer_definitions import SimulationLayerDefinitions
 from gcubed.projections.simulation_layer import SimulationLayer
-from gcubed.projections.relinearisation_projections import RelinearisationProjections
+from gcubed.projections.mock_relinearisation_projections import MockRelinearisationProjections
 
-class AdvancedRunner(Base):
+class MockAdvancedRunner(Base):
     &#34;&#34;&#34;
 
     ### Overview
@@ -75,34 +72,20 @@ class AdvancedRunner(Base):
     
     Projections based on any of the simulation layers can be compared to projections
     from the baseline or from other simulation layers associated with the experiment.
-
-    #### Note: Determine behaviour with regard to neutral real interest rates
-    by setting the `AdvancedRunner.linearise_around_the_neutral_real_interest_rate` and
-    the `AdvancedRunner.start_projections_from_the_neutral_real_interest_rate` and the
-    `AdvancedRunner.relinearise_around_the_neutral_real_interest_rate` properties
-    before triggering the model run by calling `AdvancedRunner.run`. The default
-    behaviour is to:
-    
-    * use neutral real interest rates for linearisation
-    * start the projections from the neutral real interest rate and
-    * relinearise around the neutral real interest rate.
-
     &#34;&#34;&#34;
 
     def __init__(self, working_directory:str, configuration_file: str, relinearisation_years: list[int] = None, experiment_design_file: str = None):
         &#34;&#34;&#34;
+
         ### Overview
 
-        When the constructor is called, the runner loads the configuration 
-        and the model, ready for running. Call the run method
-        when you are ready to start model linearisation etc. after having set 
-        properties for the runner to determine its behaviour, for example, how
-        linearisation is done in relation to the neutral real interest rate.
+        Loads the configuration and the model, ready for running. Call the run method
+        when you are ready to start model linearisation etc.
 
         The relinearisation of the model is done for each event year associated with
         a simulation layer and for each year nominated for relinearisation.
 
-        After a successful run, if `AdvancedRunner.save_results` = `True`,
+        After a successful run, if the `SimpleRunner.save_results` = `True`,
         you will see the results generated in a new timestamped results subdirectory 
         of the directory that you ran the command from.
         
@@ -115,7 +98,7 @@ class AdvancedRunner(Base):
 
         The log file is a text file that contains messages 
         about the progress of the model run and any problems that arose.
-        
+
         ### Arguments
         
         `working_directory`: The directory where the results 
@@ -127,11 +110,7 @@ class AdvancedRunner(Base):
 
         `relinearisation_years`: The list of years where a 
         relinearisation is required. This list can be empty
-        in which case the model is not relinearised. To generate a 
-        list of years, from 2018 to say, 2030, you can supply the
-        following as as this parameter value:
-        `list(range(2018, 2031))`. (Note that the upper bound is not
-        included in the range.)
+        in which case the model is not relinearised.
 
         `experiment_design_file`: The optional location of the 
         experiment design CSV file, as a relative path directory
@@ -143,10 +122,6 @@ class AdvancedRunner(Base):
         self._all_projections: list[Projections] = []
 
         self.save_results = False
-
-        self.start_projections_from_the_neutral_real_interest_rate = True
-        self.linearise_around_the_neutral_real_interest_rate = True
-        self.relinearise_around_the_neutral_real_interest_rate = True
 
         self.relinearise_in_event_years = False
 
@@ -200,7 +175,7 @@ class AdvancedRunner(Base):
             self._relinearisation_years = relinearisation_years
 
         # Save the experiment design file for later use.
-        self._experiment_design_file = experiment_design_file
+        self.experiment_design_file = experiment_design_file
 
     @property
     def model(self) -&gt; ModelConfiguration:
@@ -273,16 +248,6 @@ class AdvancedRunner(Base):
         return self.all_projections[-1]
         
     @property
-    def experiment_design_file(self) -&gt; str:
-        &#34;&#34;&#34;
-        The experiment design file name or `None` if no experiment is to be 
-        run.
-        &#34;&#34;&#34;
-        if not hasattr(self, &#34;_experiment_design_file&#34;):
-            return None
-        return self._experiment_design_file
-
-    @property
     def simulation_layer_definitions(self) -&gt; SimulationLayerDefinitions:
         &#34;&#34;&#34;
         The simulation layer definitions documented in the experiment design.
@@ -315,63 +280,6 @@ class AdvancedRunner(Base):
         assert value is not None
         assert isinstance(value, bool)
         self._save_results = value
-
-    @property
-    def linearise_around_the_neutral_real_interest_rate(self) -&gt; bool:
-        &#34;&#34;&#34;
-        `True` if the baseline linearisation is around the neutral real interest rate
-        and `False` if it is around database values.
-        &#34;&#34;&#34;
-        return self._linearise_around_the_neutral_real_interest_rate
-    
-    @linearise_around_the_neutral_real_interest_rate.setter
-    def linearise_around_the_neutral_real_interest_rate(self, value: bool):
-        &#34;&#34;&#34;
-        Set to `True` if the baseline linearisation is around the neutral real interest rate
-        and `False` if it is around database values.
-        &#34;&#34;&#34;
-        assert value is not None
-        assert isinstance(value, bool)
-        self._linearise_around_the_neutral_real_interest_rate = value
-
-    @property
-    def relinearise_around_the_neutral_real_interest_rate(self) -&gt; bool:
-        &#34;&#34;&#34;
-        `True` if  relinearisations are around the neutral real interest rate
-        and `False` if they are around previous projection values
-        in the relinearisation year.
-        &#34;&#34;&#34;
-        return self._relinearise_around_the_neutral_real_interest_rate
-    
-    @relinearise_around_the_neutral_real_interest_rate.setter
-    def relinearise_around_the_neutral_real_interest_rate(self, value: bool):
-        &#34;&#34;&#34;
-        Set to `True` if the relinearisations are around the neutral real interest rate
-        and `False`  if they are around previous projection values
-        in the relinearisation year.
-        &#34;&#34;&#34;
-        assert value is not None
-        assert isinstance(value, bool)
-        self._relinearise_around_the_neutral_real_interest_rate = value
-
-    @property
-    def start_projections_from_the_neutral_real_interest_rate(self) -&gt; bool:
-        &#34;&#34;&#34;
-        `True` if the baseline linearisation is around neutral real interest rates
-        and `False` if they are around database values.
-        &#34;&#34;&#34;
-        return self._start_projections_from_the_neutral_real_interest_rate
-    
-    @start_projections_from_the_neutral_real_interest_rate.setter
-    def start_projections_from_the_neutral_real_interest_rate(self, value: bool):
-        &#34;&#34;&#34;
-        Set to `True` if the baseline projections start with neutral real interest rate
-        and `False` if they start with database values.
-        &#34;&#34;&#34;
-        assert value is not None
-        assert isinstance(value, bool)
-        self._start_projections_from_the_neutral_real_interest_rate = value
-
 
     @property
     def relinearise_in_event_years(self) -&gt; bool:
@@ -439,16 +347,12 @@ class AdvancedRunner(Base):
             logging.info(f&#34;Only logging to the console. No results being saved to files.&#34;)
 
         # Get the model stable manifold and related results for the baseline projections
-        linear_model: LinearModel = LinearModel(
-            model=self.model,
-            use_neutral_real_interest_rate=self.linearise_around_the_neutral_real_interest_rate)
+        linear_model: LinearModel = LinearModel(model=self.model)
         state_space_form: StateSpaceForm = StateSpaceForm(linear_model=linear_model)
         stable_manifold: StableManifold = StableManifold(state_space_form=state_space_form)
 
         # Generate and store the baseline projections
-        self.all_projections.append(BaselineProjections(
-            stable_manifold=stable_manifold,
-            start_from_neutral_real_interest_rate=self.start_projections_from_the_neutral_real_interest_rate))
+        self.all_projections.append(BaselineProjections(stable_manifold=stable_manifold))
 
         # Generate the CSV file containing baseline projections
         if self.save_results:
@@ -456,9 +360,8 @@ class AdvancedRunner(Base):
             logging.info(f&#34;Baseline publication projections have been saved to a CSV file in {self.results_directory}&#34;)
 
         # Load the simulation layer definitions from the experiment design file.
-        self._simulation_layer_definitions = SimulationLayerDefinitions(sym_data=self.baseline_projections.sym_data)
-        if self.experiment_design_file is not None:
-            self.simulation_layer_definitions.load_from_csv_file(design_file=self.experiment_design_file)
+        self._simulation_layer_definitions = SimulationLayerDefinitions(sym_data=self.baseline_projections.sym_data)        
+        self.simulation_layer_definitions.load_from_csv_file(design_file=self.experiment_design_file)
         
         self._event_years = self.simulation_layer_definitions.all_event_years_in_ascending_order
 
@@ -475,12 +378,12 @@ class AdvancedRunner(Base):
             if year in self.relinearisation_years:
 
                 self.all_projections.append(
-                    RelinearisationProjections(
+                    MockRelinearisationProjections(
                         baseline_projections=self.baseline_projections, 
                         previous_projections=self.most_recently_generated_projections,
                         relinearisation_year=year, 
-                        simulation_layer_definitions=self.simulation_layer_definitions,
-                        relinearise_around_the_neutral_real_interest_rate=self.relinearise_around_the_neutral_real_interest_rate)
+                        simulation_layer_definitions=self.simulation_layer_definitions
+                        )
                     )
 
                 logging.info(f&#34;Generated relinearised projections from {self.most_recently_generated_projections.first_projection_year}.&#34;)
@@ -522,8 +425,8 @@ class AdvancedRunner(Base):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="gcubed.runners.advanced_runner.AdvancedRunner"><code class="flex name class">
-<span>class <span class="ident">AdvancedRunner</span></span>
+<dt id="gcubed.runners.mock_advanced_runner.MockAdvancedRunner"><code class="flex name class">
+<span>class <span class="ident">MockAdvancedRunner</span></span>
 <span>(</span><span>working_directory: str, configuration_file: str, relinearisation_years: list[int] = None, experiment_design_file: str = None)</span>
 </code></dt>
 <dd>
@@ -542,26 +445,12 @@ projection updates. </li>
 </ol>
 <p>Projections based on any of the simulation layers can be compared to projections
 from the baseline or from other simulation layers associated with the experiment.</p>
-<h4 id="note-determine-behaviour-with-regard-to-neutral-real-interest-rates">Note: Determine behaviour with regard to neutral real interest rates</h4>
-<p>by setting the <code><a title="gcubed.runners.advanced_runner.AdvancedRunner.linearise_around_the_neutral_real_interest_rate" href="#gcubed.runners.advanced_runner.AdvancedRunner.linearise_around_the_neutral_real_interest_rate">AdvancedRunner.linearise_around_the_neutral_real_interest_rate</a></code> and
-the <code><a title="gcubed.runners.advanced_runner.AdvancedRunner.start_projections_from_the_neutral_real_interest_rate" href="#gcubed.runners.advanced_runner.AdvancedRunner.start_projections_from_the_neutral_real_interest_rate">AdvancedRunner.start_projections_from_the_neutral_real_interest_rate</a></code> and the
-<code><a title="gcubed.runners.advanced_runner.AdvancedRunner.relinearise_around_the_neutral_real_interest_rate" href="#gcubed.runners.advanced_runner.AdvancedRunner.relinearise_around_the_neutral_real_interest_rate">AdvancedRunner.relinearise_around_the_neutral_real_interest_rate</a></code> properties
-before triggering the model run by calling <code><a title="gcubed.runners.advanced_runner.AdvancedRunner.run" href="#gcubed.runners.advanced_runner.AdvancedRunner.run">AdvancedRunner.run()</a></code>. The default
-behaviour is to:</p>
-<ul>
-<li>use neutral real interest rates for linearisation</li>
-<li>start the projections from the neutral real interest rate and</li>
-<li>relinearise around the neutral real interest rate.</li>
-</ul>
 <h3 id="overview_1">Overview</h3>
-<p>When the constructor is called, the runner loads the configuration
-and the model, ready for running. Call the run method
-when you are ready to start model linearisation etc. after having set
-properties for the runner to determine its behaviour, for example, how
-linearisation is done in relation to the neutral real interest rate.</p>
+<p>Loads the configuration and the model, ready for running. Call the run method
+when you are ready to start model linearisation etc.</p>
 <p>The relinearisation of the model is done for each event year associated with
 a simulation layer and for each year nominated for relinearisation.</p>
-<p>After a successful run, if <code><a title="gcubed.runners.advanced_runner.AdvancedRunner.save_results" href="#gcubed.runners.advanced_runner.AdvancedRunner.save_results">AdvancedRunner.save_results</a></code> = <code>True</code>,
+<p>After a successful run, if the <code>SimpleRunner.save_results</code> = <code>True</code>,
 you will see the results generated in a new timestamped results subdirectory
 of the directory that you ran the command from.</p>
 <p>The results directory contains three CSV files and a log file:</p>
@@ -581,11 +470,7 @@ file, as an absolute path or relative to the
 specified working directory.</p>
 <p><code>relinearisation_years</code>: The list of years where a
 relinearisation is required. This list can be empty
-in which case the model is not relinearised. To generate a
-list of years, from 2018 to say, 2030, you can supply the
-following as as this parameter value:
-<code>list(range(2018, 2031))</code>. (Note that the upper bound is not
-included in the range.)</p>
+in which case the model is not relinearised.</p>
 <p><code>experiment_design_file</code>: The optional location of the
 experiment design CSV file, as a relative path directory
 to the experiment design file from the simulations directory
@@ -595,7 +480,7 @@ the configuration file).</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class AdvancedRunner(Base):
+<pre><code class="python">class MockAdvancedRunner(Base):
     &#34;&#34;&#34;
 
     ### Overview
@@ -615,34 +500,20 @@ the configuration file).</p></div>
     
     Projections based on any of the simulation layers can be compared to projections
     from the baseline or from other simulation layers associated with the experiment.
-
-    #### Note: Determine behaviour with regard to neutral real interest rates
-    by setting the `AdvancedRunner.linearise_around_the_neutral_real_interest_rate` and
-    the `AdvancedRunner.start_projections_from_the_neutral_real_interest_rate` and the
-    `AdvancedRunner.relinearise_around_the_neutral_real_interest_rate` properties
-    before triggering the model run by calling `AdvancedRunner.run`. The default
-    behaviour is to:
-    
-    * use neutral real interest rates for linearisation
-    * start the projections from the neutral real interest rate and
-    * relinearise around the neutral real interest rate.
-
     &#34;&#34;&#34;
 
     def __init__(self, working_directory:str, configuration_file: str, relinearisation_years: list[int] = None, experiment_design_file: str = None):
         &#34;&#34;&#34;
+
         ### Overview
 
-        When the constructor is called, the runner loads the configuration 
-        and the model, ready for running. Call the run method
-        when you are ready to start model linearisation etc. after having set 
-        properties for the runner to determine its behaviour, for example, how
-        linearisation is done in relation to the neutral real interest rate.
+        Loads the configuration and the model, ready for running. Call the run method
+        when you are ready to start model linearisation etc.
 
         The relinearisation of the model is done for each event year associated with
         a simulation layer and for each year nominated for relinearisation.
 
-        After a successful run, if `AdvancedRunner.save_results` = `True`,
+        After a successful run, if the `SimpleRunner.save_results` = `True`,
         you will see the results generated in a new timestamped results subdirectory 
         of the directory that you ran the command from.
         
@@ -655,7 +526,7 @@ the configuration file).</p></div>
 
         The log file is a text file that contains messages 
         about the progress of the model run and any problems that arose.
-        
+
         ### Arguments
         
         `working_directory`: The directory where the results 
@@ -667,11 +538,7 @@ the configuration file).</p></div>
 
         `relinearisation_years`: The list of years where a 
         relinearisation is required. This list can be empty
-        in which case the model is not relinearised. To generate a 
-        list of years, from 2018 to say, 2030, you can supply the
-        following as as this parameter value:
-        `list(range(2018, 2031))`. (Note that the upper bound is not
-        included in the range.)
+        in which case the model is not relinearised.
 
         `experiment_design_file`: The optional location of the 
         experiment design CSV file, as a relative path directory
@@ -683,10 +550,6 @@ the configuration file).</p></div>
         self._all_projections: list[Projections] = []
 
         self.save_results = False
-
-        self.start_projections_from_the_neutral_real_interest_rate = True
-        self.linearise_around_the_neutral_real_interest_rate = True
-        self.relinearise_around_the_neutral_real_interest_rate = True
 
         self.relinearise_in_event_years = False
 
@@ -740,7 +603,7 @@ the configuration file).</p></div>
             self._relinearisation_years = relinearisation_years
 
         # Save the experiment design file for later use.
-        self._experiment_design_file = experiment_design_file
+        self.experiment_design_file = experiment_design_file
 
     @property
     def model(self) -&gt; ModelConfiguration:
@@ -813,16 +676,6 @@ the configuration file).</p></div>
         return self.all_projections[-1]
         
     @property
-    def experiment_design_file(self) -&gt; str:
-        &#34;&#34;&#34;
-        The experiment design file name or `None` if no experiment is to be 
-        run.
-        &#34;&#34;&#34;
-        if not hasattr(self, &#34;_experiment_design_file&#34;):
-            return None
-        return self._experiment_design_file
-
-    @property
     def simulation_layer_definitions(self) -&gt; SimulationLayerDefinitions:
         &#34;&#34;&#34;
         The simulation layer definitions documented in the experiment design.
@@ -855,63 +708,6 @@ the configuration file).</p></div>
         assert value is not None
         assert isinstance(value, bool)
         self._save_results = value
-
-    @property
-    def linearise_around_the_neutral_real_interest_rate(self) -&gt; bool:
-        &#34;&#34;&#34;
-        `True` if the baseline linearisation is around the neutral real interest rate
-        and `False` if it is around database values.
-        &#34;&#34;&#34;
-        return self._linearise_around_the_neutral_real_interest_rate
-    
-    @linearise_around_the_neutral_real_interest_rate.setter
-    def linearise_around_the_neutral_real_interest_rate(self, value: bool):
-        &#34;&#34;&#34;
-        Set to `True` if the baseline linearisation is around the neutral real interest rate
-        and `False` if it is around database values.
-        &#34;&#34;&#34;
-        assert value is not None
-        assert isinstance(value, bool)
-        self._linearise_around_the_neutral_real_interest_rate = value
-
-    @property
-    def relinearise_around_the_neutral_real_interest_rate(self) -&gt; bool:
-        &#34;&#34;&#34;
-        `True` if  relinearisations are around the neutral real interest rate
-        and `False` if they are around previous projection values
-        in the relinearisation year.
-        &#34;&#34;&#34;
-        return self._relinearise_around_the_neutral_real_interest_rate
-    
-    @relinearise_around_the_neutral_real_interest_rate.setter
-    def relinearise_around_the_neutral_real_interest_rate(self, value: bool):
-        &#34;&#34;&#34;
-        Set to `True` if the relinearisations are around the neutral real interest rate
-        and `False`  if they are around previous projection values
-        in the relinearisation year.
-        &#34;&#34;&#34;
-        assert value is not None
-        assert isinstance(value, bool)
-        self._relinearise_around_the_neutral_real_interest_rate = value
-
-    @property
-    def start_projections_from_the_neutral_real_interest_rate(self) -&gt; bool:
-        &#34;&#34;&#34;
-        `True` if the baseline linearisation is around neutral real interest rates
-        and `False` if they are around database values.
-        &#34;&#34;&#34;
-        return self._start_projections_from_the_neutral_real_interest_rate
-    
-    @start_projections_from_the_neutral_real_interest_rate.setter
-    def start_projections_from_the_neutral_real_interest_rate(self, value: bool):
-        &#34;&#34;&#34;
-        Set to `True` if the baseline projections start with neutral real interest rate
-        and `False` if they start with database values.
-        &#34;&#34;&#34;
-        assert value is not None
-        assert isinstance(value, bool)
-        self._start_projections_from_the_neutral_real_interest_rate = value
-
 
     @property
     def relinearise_in_event_years(self) -&gt; bool:
@@ -979,16 +775,12 @@ the configuration file).</p></div>
             logging.info(f&#34;Only logging to the console. No results being saved to files.&#34;)
 
         # Get the model stable manifold and related results for the baseline projections
-        linear_model: LinearModel = LinearModel(
-            model=self.model,
-            use_neutral_real_interest_rate=self.linearise_around_the_neutral_real_interest_rate)
+        linear_model: LinearModel = LinearModel(model=self.model)
         state_space_form: StateSpaceForm = StateSpaceForm(linear_model=linear_model)
         stable_manifold: StableManifold = StableManifold(state_space_form=state_space_form)
 
         # Generate and store the baseline projections
-        self.all_projections.append(BaselineProjections(
-            stable_manifold=stable_manifold,
-            start_from_neutral_real_interest_rate=self.start_projections_from_the_neutral_real_interest_rate))
+        self.all_projections.append(BaselineProjections(stable_manifold=stable_manifold))
 
         # Generate the CSV file containing baseline projections
         if self.save_results:
@@ -996,9 +788,8 @@ the configuration file).</p></div>
             logging.info(f&#34;Baseline publication projections have been saved to a CSV file in {self.results_directory}&#34;)
 
         # Load the simulation layer definitions from the experiment design file.
-        self._simulation_layer_definitions = SimulationLayerDefinitions(sym_data=self.baseline_projections.sym_data)
-        if self.experiment_design_file is not None:
-            self.simulation_layer_definitions.load_from_csv_file(design_file=self.experiment_design_file)
+        self._simulation_layer_definitions = SimulationLayerDefinitions(sym_data=self.baseline_projections.sym_data)        
+        self.simulation_layer_definitions.load_from_csv_file(design_file=self.experiment_design_file)
         
         self._event_years = self.simulation_layer_definitions.all_event_years_in_ascending_order
 
@@ -1015,12 +806,12 @@ the configuration file).</p></div>
             if year in self.relinearisation_years:
 
                 self.all_projections.append(
-                    RelinearisationProjections(
+                    MockRelinearisationProjections(
                         baseline_projections=self.baseline_projections, 
                         previous_projections=self.most_recently_generated_projections,
                         relinearisation_year=year, 
-                        simulation_layer_definitions=self.simulation_layer_definitions,
-                        relinearise_around_the_neutral_real_interest_rate=self.relinearise_around_the_neutral_real_interest_rate)
+                        simulation_layer_definitions=self.simulation_layer_definitions
+                        )
                     )
 
                 logging.info(f&#34;Generated relinearised projections from {self.most_recently_generated_projections.first_projection_year}.&#34;)
@@ -1058,7 +849,7 @@ the configuration file).</p></div>
 </ul>
 <h3>Instance variables</h3>
 <dl>
-<dt id="gcubed.runners.advanced_runner.AdvancedRunner.all_projections"><code class="name">var <span class="ident">all_projections</span> : list[<a title="gcubed.projections.projections.Projections" href="../projections/projections.html#gcubed.projections.projections.Projections">Projections</a>]</code></dt>
+<dt id="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.all_projections"><code class="name">var <span class="ident">all_projections</span> : list[<a title="gcubed.projections.projections.Projections" href="../projections/projections.html#gcubed.projections.projections.Projections">Projections</a>]</code></dt>
 <dd>
 <div class="desc"><p>A list of all projections generated by the
 runner or an empty list if no projections
@@ -1094,7 +885,7 @@ def all_projections(self) -&gt; list[Projections]:
     return self._all_projections</code></pre>
 </details>
 </dd>
-<dt id="gcubed.runners.advanced_runner.AdvancedRunner.baseline_projections"><code class="name">var <span class="ident">baseline_projections</span> : <a title="gcubed.projections.baseline_projections.BaselineProjections" href="../projections/baseline_projections.html#gcubed.projections.baseline_projections.BaselineProjections">BaselineProjections</a></code></dt>
+<dt id="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.baseline_projections"><code class="name">var <span class="ident">baseline_projections</span> : <a title="gcubed.projections.baseline_projections.BaselineProjections" href="../projections/baseline_projections.html#gcubed.projections.baseline_projections.BaselineProjections">BaselineProjections</a></code></dt>
 <dd>
 <div class="desc"><p>The baseline projections.</p></div>
 <details class="source">
@@ -1111,7 +902,7 @@ def baseline_projections(self) -&gt; BaselineProjections:
     return self.all_projections[0]</code></pre>
 </details>
 </dd>
-<dt id="gcubed.runners.advanced_runner.AdvancedRunner.completed_successfully"><code class="name">var <span class="ident">completed_successfully</span> : bool</code></dt>
+<dt id="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.completed_successfully"><code class="name">var <span class="ident">completed_successfully</span> : bool</code></dt>
 <dd>
 <div class="desc"><p><code>True</code> if the runner has completed all projections successfully and <code>False</code> otherwise.</p></div>
 <details class="source">
@@ -1126,7 +917,7 @@ def completed_successfully(self) -&gt; bool:
     return self._completed_successfully</code></pre>
 </details>
 </dd>
-<dt id="gcubed.runners.advanced_runner.AdvancedRunner.event_years"><code class="name">var <span class="ident">event_years</span> : list[int]</code></dt>
+<dt id="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.event_years"><code class="name">var <span class="ident">event_years</span> : list[int]</code></dt>
 <dd>
 <div class="desc"><p>The (possibly empty) list of event years (all in YYYY format).</p></div>
 <details class="source">
@@ -1141,26 +932,7 @@ def event_years(self) -&gt; list[int]:
     return self._event_years</code></pre>
 </details>
 </dd>
-<dt id="gcubed.runners.advanced_runner.AdvancedRunner.experiment_design_file"><code class="name">var <span class="ident">experiment_design_file</span> : str</code></dt>
-<dd>
-<div class="desc"><p>The experiment design file name or <code>None</code> if no experiment is to be
-run.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def experiment_design_file(self) -&gt; str:
-    &#34;&#34;&#34;
-    The experiment design file name or `None` if no experiment is to be 
-    run.
-    &#34;&#34;&#34;
-    if not hasattr(self, &#34;_experiment_design_file&#34;):
-        return None
-    return self._experiment_design_file</code></pre>
-</details>
-</dd>
-<dt id="gcubed.runners.advanced_runner.AdvancedRunner.final_projections"><code class="name">var <span class="ident">final_projections</span> : <a title="gcubed.projections.projections.Projections" href="../projections/projections.html#gcubed.projections.projections.Projections">Projections</a></code></dt>
+<dt id="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.final_projections"><code class="name">var <span class="ident">final_projections</span> : <a title="gcubed.projections.projections.Projections" href="../projections/projections.html#gcubed.projections.projections.Projections">Projections</a></code></dt>
 <dd>
 <div class="desc"><p>The final projections which can be the baseline
 projections if there was no simulation experiment to do.</p></div>
@@ -1181,24 +953,7 @@ def final_projections(self) -&gt; Projections:
     return self.all_projections[-1]</code></pre>
 </details>
 </dd>
-<dt id="gcubed.runners.advanced_runner.AdvancedRunner.linearise_around_the_neutral_real_interest_rate"><code class="name">var <span class="ident">linearise_around_the_neutral_real_interest_rate</span> : bool</code></dt>
-<dd>
-<div class="desc"><p><code>True</code> if the baseline linearisation is around the neutral real interest rate
-and <code>False</code> if it is around database values.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def linearise_around_the_neutral_real_interest_rate(self) -&gt; bool:
-    &#34;&#34;&#34;
-    `True` if the baseline linearisation is around the neutral real interest rate
-    and `False` if it is around database values.
-    &#34;&#34;&#34;
-    return self._linearise_around_the_neutral_real_interest_rate</code></pre>
-</details>
-</dd>
-<dt id="gcubed.runners.advanced_runner.AdvancedRunner.model"><code class="name">var <span class="ident">model</span> : <a title="gcubed.model_configuration.ModelConfiguration" href="../model_configuration.html#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a></code></dt>
+<dt id="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.model"><code class="name">var <span class="ident">model</span> : <a title="gcubed.model_configuration.ModelConfiguration" href="../model_configuration.html#gcubed.model_configuration.ModelConfiguration">ModelConfiguration</a></code></dt>
 <dd>
 <div class="desc"><p>The model being run.</p></div>
 <details class="source">
@@ -1213,7 +968,7 @@ def model(self) -&gt; ModelConfiguration:
     return self._model</code></pre>
 </details>
 </dd>
-<dt id="gcubed.runners.advanced_runner.AdvancedRunner.most_recently_generated_projections"><code class="name">var <span class="ident">most_recently_generated_projections</span> : <a title="gcubed.projections.projections.Projections" href="../projections/projections.html#gcubed.projections.projections.Projections">Projections</a></code></dt>
+<dt id="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.most_recently_generated_projections"><code class="name">var <span class="ident">most_recently_generated_projections</span> : <a title="gcubed.projections.projections.Projections" href="../projections/projections.html#gcubed.projections.projections.Projections">Projections</a></code></dt>
 <dd>
 <div class="desc"><p>The projections most recently generated in the run.</p></div>
 <details class="source">
@@ -1230,7 +985,7 @@ def most_recently_generated_projections(self) -&gt; Projections:
     return self.all_projections[-1]</code></pre>
 </details>
 </dd>
-<dt id="gcubed.runners.advanced_runner.AdvancedRunner.relinearisation_years"><code class="name">var <span class="ident">relinearisation_years</span> : list[int]</code></dt>
+<dt id="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.relinearisation_years"><code class="name">var <span class="ident">relinearisation_years</span> : list[int]</code></dt>
 <dd>
 <div class="desc"><p>The (possibly empty) list of relinearisation years (all in YYYY format).</p></div>
 <details class="source">
@@ -1245,27 +1000,7 @@ def relinearisation_years(self) -&gt; list[int]:
     return self._relinearisation_years</code></pre>
 </details>
 </dd>
-<dt id="gcubed.runners.advanced_runner.AdvancedRunner.relinearise_around_the_neutral_real_interest_rate"><code class="name">var <span class="ident">relinearise_around_the_neutral_real_interest_rate</span> : bool</code></dt>
-<dd>
-<div class="desc"><p><code>True</code> if
-relinearisations are around the neutral real interest rate
-and <code>False</code> if they are around previous projection values
-in the relinearisation year.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def relinearise_around_the_neutral_real_interest_rate(self) -&gt; bool:
-    &#34;&#34;&#34;
-    `True` if  relinearisations are around the neutral real interest rate
-    and `False` if they are around previous projection values
-    in the relinearisation year.
-    &#34;&#34;&#34;
-    return self._relinearise_around_the_neutral_real_interest_rate</code></pre>
-</details>
-</dd>
-<dt id="gcubed.runners.advanced_runner.AdvancedRunner.relinearise_in_event_years"><code class="name">var <span class="ident">relinearise_in_event_years</span> : bool</code></dt>
+<dt id="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.relinearise_in_event_years"><code class="name">var <span class="ident">relinearise_in_event_years</span> : bool</code></dt>
 <dd>
 <div class="desc"><p><code>True</code> if the runner is to relinearise the model in all event years
 as well as the years specified and <code>False</code> if the runner is to relinearise the model only
@@ -1292,7 +1027,7 @@ def relinearise_in_event_years(self) -&gt; bool:
     return self._relinearise_in_event_years</code></pre>
 </details>
 </dd>
-<dt id="gcubed.runners.advanced_runner.AdvancedRunner.save_results"><code class="name">var <span class="ident">save_results</span> : bool</code></dt>
+<dt id="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.save_results"><code class="name">var <span class="ident">save_results</span> : bool</code></dt>
 <dd>
 <div class="desc"><p><code>True</code> if the results are to be saved to a results directory automatically at the end of the
 run and <code>False</code> otherwise. </p>
@@ -1317,7 +1052,7 @@ def save_results(self) -&gt; bool:
     return self._save_results</code></pre>
 </details>
 </dd>
-<dt id="gcubed.runners.advanced_runner.AdvancedRunner.simulation_layer_definitions"><code class="name">var <span class="ident">simulation_layer_definitions</span> : <a title="gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions" href="../projections/simulation_layer_definitions.html#gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions">SimulationLayerDefinitions</a></code></dt>
+<dt id="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.simulation_layer_definitions"><code class="name">var <span class="ident">simulation_layer_definitions</span> : <a title="gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions" href="../projections/simulation_layer_definitions.html#gcubed.projections.simulation_layer_definitions.SimulationLayerDefinitions">SimulationLayerDefinitions</a></code></dt>
 <dd>
 <div class="desc"><p>The simulation layer definitions documented in the experiment design.</p></div>
 <details class="source">
@@ -1334,27 +1069,10 @@ def simulation_layer_definitions(self) -&gt; SimulationLayerDefinitions:
     return self._simulation_layer_definitions</code></pre>
 </details>
 </dd>
-<dt id="gcubed.runners.advanced_runner.AdvancedRunner.start_projections_from_the_neutral_real_interest_rate"><code class="name">var <span class="ident">start_projections_from_the_neutral_real_interest_rate</span> : bool</code></dt>
-<dd>
-<div class="desc"><p><code>True</code> if the baseline linearisation is around neutral real interest rates
-and <code>False</code> if they are around database values.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def start_projections_from_the_neutral_real_interest_rate(self) -&gt; bool:
-    &#34;&#34;&#34;
-    `True` if the baseline linearisation is around neutral real interest rates
-    and `False` if they are around database values.
-    &#34;&#34;&#34;
-    return self._start_projections_from_the_neutral_real_interest_rate</code></pre>
-</details>
-</dd>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="gcubed.runners.advanced_runner.AdvancedRunner.run"><code class="name flex">
+<dt id="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.run"><code class="name flex">
 <span>def <span class="ident">run</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1401,16 +1119,12 @@ analysis purposes.</p></div>
         logging.info(f&#34;Only logging to the console. No results being saved to files.&#34;)
 
     # Get the model stable manifold and related results for the baseline projections
-    linear_model: LinearModel = LinearModel(
-        model=self.model,
-        use_neutral_real_interest_rate=self.linearise_around_the_neutral_real_interest_rate)
+    linear_model: LinearModel = LinearModel(model=self.model)
     state_space_form: StateSpaceForm = StateSpaceForm(linear_model=linear_model)
     stable_manifold: StableManifold = StableManifold(state_space_form=state_space_form)
 
     # Generate and store the baseline projections
-    self.all_projections.append(BaselineProjections(
-        stable_manifold=stable_manifold,
-        start_from_neutral_real_interest_rate=self.start_projections_from_the_neutral_real_interest_rate))
+    self.all_projections.append(BaselineProjections(stable_manifold=stable_manifold))
 
     # Generate the CSV file containing baseline projections
     if self.save_results:
@@ -1418,9 +1132,8 @@ analysis purposes.</p></div>
         logging.info(f&#34;Baseline publication projections have been saved to a CSV file in {self.results_directory}&#34;)
 
     # Load the simulation layer definitions from the experiment design file.
-    self._simulation_layer_definitions = SimulationLayerDefinitions(sym_data=self.baseline_projections.sym_data)
-    if self.experiment_design_file is not None:
-        self.simulation_layer_definitions.load_from_csv_file(design_file=self.experiment_design_file)
+    self._simulation_layer_definitions = SimulationLayerDefinitions(sym_data=self.baseline_projections.sym_data)        
+    self.simulation_layer_definitions.load_from_csv_file(design_file=self.experiment_design_file)
     
     self._event_years = self.simulation_layer_definitions.all_event_years_in_ascending_order
 
@@ -1437,12 +1150,12 @@ analysis purposes.</p></div>
         if year in self.relinearisation_years:
 
             self.all_projections.append(
-                RelinearisationProjections(
+                MockRelinearisationProjections(
                     baseline_projections=self.baseline_projections, 
                     previous_projections=self.most_recently_generated_projections,
                     relinearisation_year=year, 
-                    simulation_layer_definitions=self.simulation_layer_definitions,
-                    relinearise_around_the_neutral_real_interest_rate=self.relinearise_around_the_neutral_real_interest_rate)
+                    simulation_layer_definitions=self.simulation_layer_definitions
+                    )
                 )
 
             logging.info(f&#34;Generated relinearised projections from {self.most_recently_generated_projections.first_projection_year}.&#34;)
@@ -1482,7 +1195,6 @@ analysis purposes.</p></div>
 <ul class="hlist">
 <li><code><a title="gcubed.base.Base.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.base.Base.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
-<li><code><a title="gcubed.base.Base.now" href="../base.html#gcubed.base.Base.now">now</a></code></li>
 <li><code><a title="gcubed.base.Base.zeros" href="../base.html#gcubed.base.Base.zeros">zeros</a></code></li>
 </ul>
 </li>
@@ -1495,7 +1207,7 @@ analysis purposes.</p></div>
 <h1>Index</h1>
 <div class="toc">
 <ul>
-<li><a href="#this-runner-is-still-experimental">This runner is still experimental</a></li>
+<li><a href="#this-runner-uses-the-mock-relinearisation-projections-only-used">This runner uses the mock relinearisation projections. Only used</a></li>
 </ul>
 </div>
 <ul id="index">
@@ -1507,24 +1219,20 @@ analysis purposes.</p></div>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="gcubed.runners.advanced_runner.AdvancedRunner" href="#gcubed.runners.advanced_runner.AdvancedRunner">AdvancedRunner</a></code></h4>
+<h4><code><a title="gcubed.runners.mock_advanced_runner.MockAdvancedRunner" href="#gcubed.runners.mock_advanced_runner.MockAdvancedRunner">MockAdvancedRunner</a></code></h4>
 <ul class="">
-<li><code><a title="gcubed.runners.advanced_runner.AdvancedRunner.all_projections" href="#gcubed.runners.advanced_runner.AdvancedRunner.all_projections">all_projections</a></code></li>
-<li><code><a title="gcubed.runners.advanced_runner.AdvancedRunner.baseline_projections" href="#gcubed.runners.advanced_runner.AdvancedRunner.baseline_projections">baseline_projections</a></code></li>
-<li><code><a title="gcubed.runners.advanced_runner.AdvancedRunner.completed_successfully" href="#gcubed.runners.advanced_runner.AdvancedRunner.completed_successfully">completed_successfully</a></code></li>
-<li><code><a title="gcubed.runners.advanced_runner.AdvancedRunner.event_years" href="#gcubed.runners.advanced_runner.AdvancedRunner.event_years">event_years</a></code></li>
-<li><code><a title="gcubed.runners.advanced_runner.AdvancedRunner.experiment_design_file" href="#gcubed.runners.advanced_runner.AdvancedRunner.experiment_design_file">experiment_design_file</a></code></li>
-<li><code><a title="gcubed.runners.advanced_runner.AdvancedRunner.final_projections" href="#gcubed.runners.advanced_runner.AdvancedRunner.final_projections">final_projections</a></code></li>
-<li><code><a title="gcubed.runners.advanced_runner.AdvancedRunner.linearise_around_the_neutral_real_interest_rate" href="#gcubed.runners.advanced_runner.AdvancedRunner.linearise_around_the_neutral_real_interest_rate">linearise_around_the_neutral_real_interest_rate</a></code></li>
-<li><code><a title="gcubed.runners.advanced_runner.AdvancedRunner.model" href="#gcubed.runners.advanced_runner.AdvancedRunner.model">model</a></code></li>
-<li><code><a title="gcubed.runners.advanced_runner.AdvancedRunner.most_recently_generated_projections" href="#gcubed.runners.advanced_runner.AdvancedRunner.most_recently_generated_projections">most_recently_generated_projections</a></code></li>
-<li><code><a title="gcubed.runners.advanced_runner.AdvancedRunner.relinearisation_years" href="#gcubed.runners.advanced_runner.AdvancedRunner.relinearisation_years">relinearisation_years</a></code></li>
-<li><code><a title="gcubed.runners.advanced_runner.AdvancedRunner.relinearise_around_the_neutral_real_interest_rate" href="#gcubed.runners.advanced_runner.AdvancedRunner.relinearise_around_the_neutral_real_interest_rate">relinearise_around_the_neutral_real_interest_rate</a></code></li>
-<li><code><a title="gcubed.runners.advanced_runner.AdvancedRunner.relinearise_in_event_years" href="#gcubed.runners.advanced_runner.AdvancedRunner.relinearise_in_event_years">relinearise_in_event_years</a></code></li>
-<li><code><a title="gcubed.runners.advanced_runner.AdvancedRunner.run" href="#gcubed.runners.advanced_runner.AdvancedRunner.run">run</a></code></li>
-<li><code><a title="gcubed.runners.advanced_runner.AdvancedRunner.save_results" href="#gcubed.runners.advanced_runner.AdvancedRunner.save_results">save_results</a></code></li>
-<li><code><a title="gcubed.runners.advanced_runner.AdvancedRunner.simulation_layer_definitions" href="#gcubed.runners.advanced_runner.AdvancedRunner.simulation_layer_definitions">simulation_layer_definitions</a></code></li>
-<li><code><a title="gcubed.runners.advanced_runner.AdvancedRunner.start_projections_from_the_neutral_real_interest_rate" href="#gcubed.runners.advanced_runner.AdvancedRunner.start_projections_from_the_neutral_real_interest_rate">start_projections_from_the_neutral_real_interest_rate</a></code></li>
+<li><code><a title="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.all_projections" href="#gcubed.runners.mock_advanced_runner.MockAdvancedRunner.all_projections">all_projections</a></code></li>
+<li><code><a title="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.baseline_projections" href="#gcubed.runners.mock_advanced_runner.MockAdvancedRunner.baseline_projections">baseline_projections</a></code></li>
+<li><code><a title="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.completed_successfully" href="#gcubed.runners.mock_advanced_runner.MockAdvancedRunner.completed_successfully">completed_successfully</a></code></li>
+<li><code><a title="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.event_years" href="#gcubed.runners.mock_advanced_runner.MockAdvancedRunner.event_years">event_years</a></code></li>
+<li><code><a title="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.final_projections" href="#gcubed.runners.mock_advanced_runner.MockAdvancedRunner.final_projections">final_projections</a></code></li>
+<li><code><a title="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.model" href="#gcubed.runners.mock_advanced_runner.MockAdvancedRunner.model">model</a></code></li>
+<li><code><a title="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.most_recently_generated_projections" href="#gcubed.runners.mock_advanced_runner.MockAdvancedRunner.most_recently_generated_projections">most_recently_generated_projections</a></code></li>
+<li><code><a title="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.relinearisation_years" href="#gcubed.runners.mock_advanced_runner.MockAdvancedRunner.relinearisation_years">relinearisation_years</a></code></li>
+<li><code><a title="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.relinearise_in_event_years" href="#gcubed.runners.mock_advanced_runner.MockAdvancedRunner.relinearise_in_event_years">relinearise_in_event_years</a></code></li>
+<li><code><a title="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.run" href="#gcubed.runners.mock_advanced_runner.MockAdvancedRunner.run">run</a></code></li>
+<li><code><a title="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.save_results" href="#gcubed.runners.mock_advanced_runner.MockAdvancedRunner.save_results">save_results</a></code></li>
+<li><code><a title="gcubed.runners.mock_advanced_runner.MockAdvancedRunner.simulation_layer_definitions" href="#gcubed.runners.mock_advanced_runner.MockAdvancedRunner.simulation_layer_definitions">simulation_layer_definitions</a></code></li>
 </ul>
 </li>
 </ul>

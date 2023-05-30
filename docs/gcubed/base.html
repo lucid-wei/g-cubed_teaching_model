@@ -41,6 +41,7 @@ import re
 import os
 import pandas as pd
 import numpy as np
+from datetime import datetime
 
 
 class Base:
@@ -160,7 +161,16 @@ class Base:
         all strings in the list that match the YYYY year format.
         &#34;&#34;&#34;
         return list(filter(__class__.__YYY_regular_expression.match, labels))
-        </code></pre>
+        
+
+    @property
+    def now(self) -&gt; str:
+        &#34;&#34;&#34;
+        The current time and date as a string.
+
+        This is useful for debugging purposes.
+        &#34;&#34;&#34;
+        return datetime.now().strftime(&#34;%Y-%m-%d_%H-%M-%S&#34;) </code></pre>
 </details>
 </section>
 <section>
@@ -302,7 +312,17 @@ class Base:
         
         all strings in the list that match the YYYY year format.
         &#34;&#34;&#34;
-        return list(filter(__class__.__YYY_regular_expression.match, labels))</code></pre>
+        return list(filter(__class__.__YYY_regular_expression.match, labels))
+        
+
+    @property
+    def now(self) -&gt; str:
+        &#34;&#34;&#34;
+        The current time and date as a string.
+
+        This is useful for debugging purposes.
+        &#34;&#34;&#34;
+        return datetime.now().strftime(&#34;%Y-%m-%d_%H-%M-%S&#34;) </code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -333,6 +353,27 @@ class Base:
 <dt id="gcubed.base.Base.DOING_DETAILED_DEBUG"><code class="name">var <span class="ident">DOING_DETAILED_DEBUG</span></code></dt>
 <dd>
 <div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="gcubed.base.Base.now"><code class="name">var <span class="ident">now</span> : str</code></dt>
+<dd>
+<div class="desc"><p>The current time and date as a string.</p>
+<p>This is useful for debugging purposes.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def now(self) -&gt; str:
+    &#34;&#34;&#34;
+    The current time and date as a string.
+
+    This is useful for debugging purposes.
+    &#34;&#34;&#34;
+    return datetime.now().strftime(&#34;%Y-%m-%d_%H-%M-%S&#34;) </code></pre>
+</details>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -506,6 +547,7 @@ of rows and the given number of columns.</p></div>
 <li><code><a title="gcubed.base.Base.DOING_DETAILED_DEBUG" href="#gcubed.base.Base.DOING_DETAILED_DEBUG">DOING_DETAILED_DEBUG</a></code></li>
 <li><code><a title="gcubed.base.Base.get_year_labels" href="#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.base.Base.load_data" href="#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.now" href="#gcubed.base.Base.now">now</a></code></li>
 <li><code><a title="gcubed.base.Base.zeros" href="#gcubed.base.Base.zeros">zeros</a></code></li>
 </ul>
 </li>

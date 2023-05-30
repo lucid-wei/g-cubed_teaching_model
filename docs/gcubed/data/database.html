@@ -369,18 +369,36 @@ class Database(Base):
             case &#34;_&#34;:
                 raise Exception(f&#34;Invalid RHS vector name {vector_name}.&#34;)
 
-        # Replace all actual interest rate values with r0 parameter value for regions.
         if use_neutral_real_interest_rate:
+
             neutral_real_interest_rate: float = self.configuration.neutral_real_interest_rate
             var_type = self.sym_data.varmap_variable_type(vector_name)
-            for prefix in Constants().INTEREST_RATE_PREFIXES:
+
+            target_inflation_rates_for_regions: np.ndarray = self.get_data(name_regular_expression=f&#34;{Constants().INFX_PREFIX}\(&#34;, years=[year]).to_numpy()
+
+            # Replace all real interest rate values with r0 parameter value.
+            for prefix in Constants().ALL_REAL_INTEREST_RATE_PREFIXES:
                 vector_rows_in_map = self.sym_data.var_map.var_type == var_type
                 variable_rows_in_map = self.sym_data.var_map.name.str.startswith(f&#34;{prefix}(&#34;)
                 rows_in_map = (vector_rows_in_map &amp; variable_rows_in_map)
-                sequences:pd.DataFrame = self.sym_data.var_map.loc[rows_in_map, [&#34;sequence&#34;]]
-                if not sequences.empty:
+                sequences:pd.DataFrame = self.sym_data.var_map.loc[rows_in_map, [&#34;sequence&#34;]].to_numpy().flatten()
+                if len(sequences) != 0:
                     vector_value[sequences] = neutral_real_interest_rate
 
+            # Replace all nominal interest rate values with (r0 parameter value + target inflation rate).
+            var_type = self.sym_data.varmap_variable_type(vector_name)
+            for prefix in Constants().ALL_NOMINAL_INTEREST_RATE_PREFIXES:
+                vector_rows_in_map = self.sym_data.var_map.var_type == var_type
+                variable_rows_in_map = self.sym_data.var_map.name.str.startswith(f&#34;{prefix}(&#34;)
+                rows_in_map = (vector_rows_in_map &amp; variable_rows_in_map)
+                sequences:pd.DataFrame = self.sym_data.var_map.loc[rows_in_map, [&#34;sequence&#34;]].to_numpy().flatten()
+
+                if len(sequences) != 0:
+                    # logging.debug(f&#34;Original nominal rates = \n{vector_value[sequences]}&#34;)
+                    # logging.debug(f&#34;equilibrium nominal rates  = \n{(target_inflation_rates_for_regions + self.configuration.neutral_real_interest_rate)}&#34;)
+                    # logging.debug(f&#34;constant adjustment = \n{vector_value[sequences] - (target_inflation_rates_for_regions + self.configuration.neutral_real_interest_rate)}&#34;)
+                    vector_value[sequences] = target_inflation_rates_for_regions + neutral_real_interest_rate
+                    # logging.debug(f&#34;Returning nominal rates = \n{vector_value[sequences]}&#34;)
         return vector_value
 
     def get_data_and_varmap_indices(self, vector_name: str, year: int) -&gt; tuple:
@@ -872,18 +890,36 @@ of values for all variables across a range of years.</p>
             case &#34;_&#34;:
                 raise Exception(f&#34;Invalid RHS vector name {vector_name}.&#34;)
 
-        # Replace all actual interest rate values with r0 parameter value for regions.
         if use_neutral_real_interest_rate:
+
             neutral_real_interest_rate: float = self.configuration.neutral_real_interest_rate
             var_type = self.sym_data.varmap_variable_type(vector_name)
-            for prefix in Constants().INTEREST_RATE_PREFIXES:
+
+            target_inflation_rates_for_regions: np.ndarray = self.get_data(name_regular_expression=f&#34;{Constants().INFX_PREFIX}\(&#34;, years=[year]).to_numpy()
+
+            # Replace all real interest rate values with r0 parameter value.
+            for prefix in Constants().ALL_REAL_INTEREST_RATE_PREFIXES:
                 vector_rows_in_map = self.sym_data.var_map.var_type == var_type
                 variable_rows_in_map = self.sym_data.var_map.name.str.startswith(f&#34;{prefix}(&#34;)
                 rows_in_map = (vector_rows_in_map &amp; variable_rows_in_map)
-                sequences:pd.DataFrame = self.sym_data.var_map.loc[rows_in_map, [&#34;sequence&#34;]]
-                if not sequences.empty:
+                sequences:pd.DataFrame = self.sym_data.var_map.loc[rows_in_map, [&#34;sequence&#34;]].to_numpy().flatten()
+                if len(sequences) != 0:
                     vector_value[sequences] = neutral_real_interest_rate
 
+            # Replace all nominal interest rate values with (r0 parameter value + target inflation rate).
+            var_type = self.sym_data.varmap_variable_type(vector_name)
+            for prefix in Constants().ALL_NOMINAL_INTEREST_RATE_PREFIXES:
+                vector_rows_in_map = self.sym_data.var_map.var_type == var_type
+                variable_rows_in_map = self.sym_data.var_map.name.str.startswith(f&#34;{prefix}(&#34;)
+                rows_in_map = (vector_rows_in_map &amp; variable_rows_in_map)
+                sequences:pd.DataFrame = self.sym_data.var_map.loc[rows_in_map, [&#34;sequence&#34;]].to_numpy().flatten()
+
+                if len(sequences) != 0:
+                    # logging.debug(f&#34;Original nominal rates = \n{vector_value[sequences]}&#34;)
+                    # logging.debug(f&#34;equilibrium nominal rates  = \n{(target_inflation_rates_for_regions + self.configuration.neutral_real_interest_rate)}&#34;)
+                    # logging.debug(f&#34;constant adjustment = \n{vector_value[sequences] - (target_inflation_rates_for_regions + self.configuration.neutral_real_interest_rate)}&#34;)
+                    vector_value[sequences] = target_inflation_rates_for_regions + neutral_real_interest_rate
+                    # logging.debug(f&#34;Returning nominal rates = \n{vector_value[sequences]}&#34;)
         return vector_value
 
     def get_data_and_varmap_indices(self, vector_name: str, year: int) -&gt; tuple:
@@ -1598,18 +1634,36 @@ model configuration neutral real interest rate and False otherwise.</p>
         case &#34;_&#34;:
             raise Exception(f&#34;Invalid RHS vector name {vector_name}.&#34;)
 
-    # Replace all actual interest rate values with r0 parameter value for regions.
     if use_neutral_real_interest_rate:
+
         neutral_real_interest_rate: float = self.configuration.neutral_real_interest_rate
         var_type = self.sym_data.varmap_variable_type(vector_name)
-        for prefix in Constants().INTEREST_RATE_PREFIXES:
+
+        target_inflation_rates_for_regions: np.ndarray = self.get_data(name_regular_expression=f&#34;{Constants().INFX_PREFIX}\(&#34;, years=[year]).to_numpy()
+
+        # Replace all real interest rate values with r0 parameter value.
+        for prefix in Constants().ALL_REAL_INTEREST_RATE_PREFIXES:
             vector_rows_in_map = self.sym_data.var_map.var_type == var_type
             variable_rows_in_map = self.sym_data.var_map.name.str.startswith(f&#34;{prefix}(&#34;)
             rows_in_map = (vector_rows_in_map &amp; variable_rows_in_map)
-            sequences:pd.DataFrame = self.sym_data.var_map.loc[rows_in_map, [&#34;sequence&#34;]]
-            if not sequences.empty:
+            sequences:pd.DataFrame = self.sym_data.var_map.loc[rows_in_map, [&#34;sequence&#34;]].to_numpy().flatten()
+            if len(sequences) != 0:
                 vector_value[sequences] = neutral_real_interest_rate
 
+        # Replace all nominal interest rate values with (r0 parameter value + target inflation rate).
+        var_type = self.sym_data.varmap_variable_type(vector_name)
+        for prefix in Constants().ALL_NOMINAL_INTEREST_RATE_PREFIXES:
+            vector_rows_in_map = self.sym_data.var_map.var_type == var_type
+            variable_rows_in_map = self.sym_data.var_map.name.str.startswith(f&#34;{prefix}(&#34;)
+            rows_in_map = (vector_rows_in_map &amp; variable_rows_in_map)
+            sequences:pd.DataFrame = self.sym_data.var_map.loc[rows_in_map, [&#34;sequence&#34;]].to_numpy().flatten()
+
+            if len(sequences) != 0:
+                # logging.debug(f&#34;Original nominal rates = \n{vector_value[sequences]}&#34;)
+                # logging.debug(f&#34;equilibrium nominal rates  = \n{(target_inflation_rates_for_regions + self.configuration.neutral_real_interest_rate)}&#34;)
+                # logging.debug(f&#34;constant adjustment = \n{vector_value[sequences] - (target_inflation_rates_for_regions + self.configuration.neutral_real_interest_rate)}&#34;)
+                vector_value[sequences] = target_inflation_rates_for_regions + neutral_real_interest_rate
+                # logging.debug(f&#34;Returning nominal rates = \n{vector_value[sequences]}&#34;)
     return vector_value</code></pre>
 </details>
 </dd>
@@ -1649,6 +1703,7 @@ in a subsequent step in your analysis pipeline.</p>
 <ul class="hlist">
 <li><code><a title="gcubed.base.Base.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.base.Base.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.now" href="../base.html#gcubed.base.Base.now">now</a></code></li>
 <li><code><a title="gcubed.base.Base.zeros" href="../base.html#gcubed.base.Base.zeros">zeros</a></code></li>
 </ul>
 </li>

@@ -410,7 +410,7 @@ class StableManifold(Base):
         if not self.converged:
             logging.warning(&#34;The search for the stable manifold has not converged.&#34;)
         return self._Anew
-
+    
     @property
     def Znew(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
@@ -427,7 +427,7 @@ class StableManifold(Base):
         A dataframe representation of H1 that labels the rows and 
         columns of H1 with the relevant variables.
         &#34;&#34;&#34;
-        result:pd.DataFrame = pd.DataFrame(self.H1.copy())
+        result: pd.DataFrame = pd.DataFrame(self.H1.copy())
         result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;j1l&#39;)
         result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
         return result
@@ -468,11 +468,21 @@ class StableManifold(Base):
     @property
     def Anew_as_dataframe(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        A dataframe representation of Anew that labels the rows and 
-        columns of Anew with the relevant variables.
+        The matrix relating endogenous state variables (x1) s_{t+1} to previous state variables (x1) s_{t}
+        as a dataframe.
+
+        This is typically used for debugging purposes.
         &#34;&#34;&#34;
         result:pd.DataFrame = pd.DataFrame(self.Anew.copy())
-        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;z1l&#39;)
+        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
+        result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
+        return result
+    @property
+    def Anew_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        &#34;&#34;&#34;
+        result: pd.DataFrame = pd.DataFrame(self.Anew)
+        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
         result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
         return result
 
@@ -539,6 +549,7 @@ class StableManifold(Base):
         self._unit_roots = sum( ~(self.roots_outside_unit_circle) and eigenvalue_moduli &gt; 0.999999999 )
         if self.solution_is_stable:
             logging.info(f&#34;All roots are on or inside the unit circle, indicating stability of the solution.&#34;)
+            # logging.debug(f&#34;The eigenvalue moduli are:\n{np.sort(eigenvalue_moduli)}&#34;)
         else:
             logging.warning(f&#34;The eigenvalue moduli are:\n{np.sort(eigenvalue_moduli)}&#34;)
             raise Exception(f&#34;There are {self.roots_outside_unit_circle} roots outside the unit circle. All eigenvalues must be on or inside the unit circle for stability.&#34;)
@@ -1021,7 +1032,7 @@ the coefficient matrices that define the state-space form itself.</p></div>
         if not self.converged:
             logging.warning(&#34;The search for the stable manifold has not converged.&#34;)
         return self._Anew
-
+    
     @property
     def Znew(self) -&gt; np.ndarray:
         &#34;&#34;&#34;
@@ -1038,7 +1049,7 @@ the coefficient matrices that define the state-space form itself.</p></div>
         A dataframe representation of H1 that labels the rows and 
         columns of H1 with the relevant variables.
         &#34;&#34;&#34;
-        result:pd.DataFrame = pd.DataFrame(self.H1.copy())
+        result: pd.DataFrame = pd.DataFrame(self.H1.copy())
         result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;j1l&#39;)
         result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
         return result
@@ -1079,11 +1090,21 @@ the coefficient matrices that define the state-space form itself.</p></div>
     @property
     def Anew_as_dataframe(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;
-        A dataframe representation of Anew that labels the rows and 
-        columns of Anew with the relevant variables.
+        The matrix relating endogenous state variables (x1) s_{t+1} to previous state variables (x1) s_{t}
+        as a dataframe.
+
+        This is typically used for debugging purposes.
         &#34;&#34;&#34;
         result:pd.DataFrame = pd.DataFrame(self.Anew.copy())
-        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;z1l&#39;)
+        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
+        result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
+        return result
+    @property
+    def Anew_as_dataframe(self) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        &#34;&#34;&#34;
+        result: pd.DataFrame = pd.DataFrame(self.Anew)
+        result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
         result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
         return result
 
@@ -1150,6 +1171,7 @@ the coefficient matrices that define the state-space form itself.</p></div>
         self._unit_roots = sum( ~(self.roots_outside_unit_circle) and eigenvalue_moduli &gt; 0.999999999 )
         if self.solution_is_stable:
             logging.info(f&#34;All roots are on or inside the unit circle, indicating stability of the solution.&#34;)
+            # logging.debug(f&#34;The eigenvalue moduli are:\n{np.sort(eigenvalue_moduli)}&#34;)
         else:
             logging.warning(f&#34;The eigenvalue moduli are:\n{np.sort(eigenvalue_moduli)}&#34;)
             raise Exception(f&#34;There are {self.roots_outside_unit_circle} roots outside the unit circle. All eigenvalues must be on or inside the unit circle for stability.&#34;)
@@ -1236,8 +1258,7 @@ def Anew(self) -&gt; np.ndarray:
 </dd>
 <dt id="gcubed.linearisation.stable_manifold.StableManifold.Anew_as_dataframe"><code class="name">var <span class="ident">Anew_as_dataframe</span> : pandas.core.frame.DataFrame</code></dt>
 <dd>
-<div class="desc"><p>A dataframe representation of Anew that labels the rows and
-columns of Anew with the relevant variables.</p></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1245,11 +1266,9 @@ columns of Anew with the relevant variables.</p></div>
 <pre><code class="python">@property
 def Anew_as_dataframe(self) -&gt; pd.DataFrame:
     &#34;&#34;&#34;
-    A dataframe representation of Anew that labels the rows and 
-    columns of Anew with the relevant variables.
     &#34;&#34;&#34;
-    result:pd.DataFrame = pd.DataFrame(self.Anew.copy())
-    result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;z1l&#39;)
+    result: pd.DataFrame = pd.DataFrame(self.Anew)
+    result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
     result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
     return result</code></pre>
 </details>
@@ -1372,7 +1391,7 @@ def H1_as_dataframe(self) -&gt; pd.DataFrame:
     A dataframe representation of H1 that labels the rows and 
     columns of H1 with the relevant variables.
     &#34;&#34;&#34;
-    result:pd.DataFrame = pd.DataFrame(self.H1.copy())
+    result: pd.DataFrame = pd.DataFrame(self.H1.copy())
     result.index = self.model.sym_data.vector_variable_names(vector_name=&#39;j1l&#39;)
     result.columns = self.model.sym_data.vector_variable_names(vector_name=&#39;x1l&#39;)
     return result</code></pre>
@@ -1895,6 +1914,7 @@ in the model).</p></div>
     self._unit_roots = sum( ~(self.roots_outside_unit_circle) and eigenvalue_moduli &gt; 0.999999999 )
     if self.solution_is_stable:
         logging.info(f&#34;All roots are on or inside the unit circle, indicating stability of the solution.&#34;)
+        # logging.debug(f&#34;The eigenvalue moduli are:\n{np.sort(eigenvalue_moduli)}&#34;)
     else:
         logging.warning(f&#34;The eigenvalue moduli are:\n{np.sort(eigenvalue_moduli)}&#34;)
         raise Exception(f&#34;There are {self.roots_outside_unit_circle} roots outside the unit circle. All eigenvalues must be on or inside the unit circle for stability.&#34;)</code></pre>
@@ -1951,6 +1971,7 @@ or the maximum number of iterations has occurred.</p></div>
 <ul class="hlist">
 <li><code><a title="gcubed.base.Base.get_year_labels" href="../base.html#gcubed.base.Base.get_year_labels">get_year_labels</a></code></li>
 <li><code><a title="gcubed.base.Base.load_data" href="../base.html#gcubed.base.Base.load_data">load_data</a></code></li>
+<li><code><a title="gcubed.base.Base.now" href="../base.html#gcubed.base.Base.now">now</a></code></li>
 <li><code><a title="gcubed.base.Base.zeros" href="../base.html#gcubed.base.Base.zeros">zeros</a></code></li>
 </ul>
 </li>
